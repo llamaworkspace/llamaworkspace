@@ -1,0 +1,254 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Account {
+    id                String   @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String?
+    access_token      String?
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String?
+    session_state     String?
+    user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    @@unique([identifier, token])
+}
+
+model User {
+    id                 String              @id @default(cuid())
+    name               String?
+    username           String?             @unique
+    email              String?             @unique
+    emailVerified      DateTime?
+    image              String?
+    defaultOpenaiModel String              @default("gpt-3.5-turbo")
+    createdAt          DateTime            @default(now())
+    updatedAt          DateTime            @updatedAt
+    accounts           Account[]
+    posts              Post[]
+    sessions           Session[]
+    postShares         PostShare[]
+    transactionEntries TransactionEntry[]
+    invites            Invite[]
+    workspaces         UsersOnWorkspaces[]
+    authoredChats      Chat[]
+    PostSort           PostSort[]
+    WorkspaceInvite    WorkspaceInvite[]
+}
+
+model Workspace {
+    id                 String              @id @default(cuid())
+    name               String
+    openAiApiKey       String? /// @encrypted
+    balanceInNanoCents BigInt              @default(0)
+    createdAt          DateTime            @default(now())
+    updatedAt          DateTime            @updatedAt
+    users              UsersOnWorkspaces[]
+    posts              Post[]
+    transactions       Transaction[]
+    PostSort           PostSort[]
+    WorkspaceInvite    WorkspaceInvite[]
+}
+
+model UsersOnWorkspaces {
+    id          String    @id @default(cuid())
+    userId      String
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    workspaceId String
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+
+    @@unique([userId, workspaceId])
+}
+
+model WorkspaceInvite {
+    id          String    @id @default(cuid())
+    email       String
+    invitedById String?
+    invitedBy   User?     @relation(fields: [invitedById], references: [id], onDelete: SetNull)
+    workspaceId String
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+
+    @@unique([email, workspaceId])
+}
+
+model Transaction {
+    id                 String             @id @default(cuid())
+    trxDate            DateTime
+    workspaceId        String?
+    description        String?
+    createdAt          DateTime           @default(now())
+    updatedAt          DateTime           @updatedAt
+    transactionEntries TransactionEntry[]
+    workspace          Workspace?         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model TransactionEntry {
+    id                String      @id @default(cuid())
+    transactionId     String
+    account           String
+    type              String
+    amountInNanoCents BigInt
+    userId            String?
+    createdAt         DateTime    @default(now())
+    updatedAt         DateTime    @updatedAt
+    user              User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    transaction       Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+    id                     String              @id @default(cuid())
+    title                  String?
+    emoji                  String?
+    userId                 String
+    workspaceId            String
+    previousId             String?             @unique
+    isDefault              Boolean             @default(false)
+    isDemo                 Boolean             @default(false)
+    hideEmptySettingsAlert Boolean             @default(false)
+    createdAt              DateTime            @default(now())
+    updatedAt              DateTime            @updatedAt
+    user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+    workspace              Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    previous               Post?               @relation("PostLinkedList", fields: [previousId], references: [id], onDelete: SetNull)
+    next                   Post?               @relation("PostLinkedList")
+    chats                  Chat[]
+    postShares             PostShare[]
+    postConfigVersions     PostConfigVersion[]
+}
+
+model PostShare {
+    id          String   @id @default(cuid())
+    postId      String
+    post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+    userId      String?
+    user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    inviteId    String?  @unique
+    invite      Invite?  @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+    accessLevel String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+model PostSort {
+    id          String    @id @default(cuid())
+    sortedPosts Json
+    userId      String
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    workspaceId String
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+
+    @@unique([userId, workspaceId])
+}
+
+model Invite {
+    id          String     @id @default(cuid())
+    email       String
+    invitedById String
+    invitedBy   User       @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+    token       String     @unique
+    completedAt DateTime?
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+    postShare   PostShare?
+}
+
+model Chat {
+    id                  String             @id @default(cuid())
+    postId              String
+    title               String?
+    post                Post               @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postConfigVersionId String?
+    postConfigVersion   PostConfigVersion? @relation(fields: [postConfigVersionId], references: [id], onDelete: Cascade)
+    authorId            String?
+    author              User?              @relation(fields: [authorId], references: [id])
+    messages            Message[]
+    createdAt           DateTime           @default(now())
+    updatedAt           DateTime           @updatedAt
+    chatRun             ChatRun[]
+}
+
+model Message {
+    id                  String             @id @default(cuid())
+    chatId              String?
+    chat                Chat?              @relation(fields: [chatId], references: [id], onDelete: Cascade)
+    postConfigVersionId String?
+    postConfigVersion   PostConfigVersion? @relation(fields: [postConfigVersionId], references: [id], onDelete: Cascade)
+    message             String?
+    author              String
+    openaiTokens        Int?
+    createdAt           DateTime           @default(now())
+    updatedAt           DateTime           @updatedAt
+    ChatRunMessage      ChatRunMessage[]
+}
+
+model PostConfigVersion {
+    id             String    @id @default(cuid())
+    postId         String
+    post           Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    initialMessage String?
+    model          String
+    createdAt      DateTime  @default(now())
+    updatedAt      DateTime  @updatedAt
+    chats          Chat[]
+    messages       Message[]
+}
+
+model ChatRun {
+    id                            String           @id @default(cuid())
+    chatId                        String
+    chat                          Chat             @relation(fields: [chatId], references: [id], onDelete: Cascade)
+    requestTokens                 Int?
+    responseTokens                Int?
+    requestTokensCostInNanoCents  Int?
+    responseTokensCostInNanoCents Int?
+    createdAt                     DateTime         @default(now())
+    updatedAt                     DateTime         @updatedAt
+    chatRunMessages               ChatRunMessage[]
+}
+
+model ChatRunMessage {
+    id        String  @id @default(cuid())
+    chatRunId String
+    chatRun   ChatRun @relation(fields: [chatRunId], references: [id], onDelete: Cascade)
+    messageId String
+    message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}

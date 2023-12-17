@@ -1,0 +1,42 @@
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { protectedProcedure } from '@/server/trpc/trpc'
+import { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { z } from 'zod'
+import { chatVisibilityFilter } from '../chatsBackendUtils'
+
+const zOpenAiModelEnum = z.nativeEnum(OpenAiModelEnum)
+
+const zInput = z.object({
+  chatId: z.string(),
+  model: z.optional(zOpenAiModelEnum),
+})
+
+export const updatePostConfigForStandaloneChat = protectedProcedure
+  .input(zInput)
+  .mutation(async ({ ctx, input }) => {
+    const { chatId } = input
+
+    const userId = ctx.session.user.id
+    const chat = await ctx.prisma.chat.findFirstOrThrow({
+      where: {
+        id: chatId,
+        ...chatVisibilityFilter(userId),
+      },
+    })
+
+    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
+      PermissionAction.Use,
+      userId,
+      chat.postId,
+    )
+
+    await ctx.prisma.postConfigVersion.update({
+      where: {
+        id: chat.postConfigVersionId!,
+      },
+      data: {
+        model: input.model,
+      },
+    })
+  })
