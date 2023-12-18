@@ -25,7 +25,7 @@ const server = z.object({
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   OPENAI_API_KEY: z.string(),
-  OPTIONAL_OPENAI_BASE_URL: z.string().url().optional(),
+  OPTIONAL_OPENAI_BASE_URL: z.string().optional(),
   SMTP_EMAIL_SERVER: z.string(),
   SMTP_EMAIL_FROM: z.string().email(),
   ENCRYPTION_KEY: z.string(),
