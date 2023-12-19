@@ -9,7 +9,7 @@ import { z } from 'zod'
 const server = z.object({
   DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(['development', 'test', 'production']),
-  NEXT_PUBLIC_HOSTNAME: z.string().url(),
+  NEXT_PUBLIC_FRONTEND_URL: z.string().url(),
   NEXTAUTH_SECRET:
     process.env.NODE_ENV === 'production'
       ? z.string().min(1)
@@ -21,11 +21,10 @@ const server = z.object({
     // VERCEL_URL doesn't include `https` so it cant be validated as a URL
     process.env.VERCEL ? z.string().min(1) : z.string().url(),
   ),
-  FRONTEND_URL: z.string().url(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   OPENAI_API_KEY: z.string(),
-  OPTIONAL_OPENAI_BASE_URL: z.string().url().optional(),
+  OPTIONAL_OPENAI_BASE_URL: z.string().optional(),
   SMTP_EMAIL_SERVER: z.string(),
   SMTP_EMAIL_FROM: z.string().email(),
   ENCRYPTION_KEY: z.string(),
@@ -37,7 +36,7 @@ const server = z.object({
  */
 const client = z.object({
   NEXT_PUBLIC_ENV: z.enum(['development', 'test', 'production']),
-  NEXT_PUBLIC_HOSTNAME: z.string().url(),
+  NEXT_PUBLIC_FRONTEND_URL: z.string().url(),
   NEXT_PUBLIC_TRPC_DEBUG: z.optional(z.string()),
 })
 
@@ -52,8 +51,7 @@ const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.ENCRYPTION_KEY,
   ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
-  FRONTEND_URL: process.env.NEXT_PUBLIC_HOSTNAME,
-  NEXTAUTH_URL: process.env.NEXT_PUBLIC_HOSTNAME,
+  NEXTAUTH_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
@@ -61,7 +59,7 @@ const processEnv = {
   SMTP_EMAIL_SERVER: process.env.SMTP_EMAIL_SERVER,
   SMTP_EMAIL_FROM: process.env.SMTP_EMAIL_FROM,
   NEXT_PUBLIC_ENV: process.env.NODE_ENV,
-  NEXT_PUBLIC_HOSTNAME: process.env.NEXT_PUBLIC_HOSTNAME,
+  NEXT_PUBLIC_FRONTEND_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
   NEXT_PUBLIC_TRPC_DEBUG: process.env.NEXT_PUBLIC_TRPC_DEBUG,
 }
 

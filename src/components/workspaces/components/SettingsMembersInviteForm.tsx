@@ -8,8 +8,8 @@ import {
 } from '@/components/ui/tooltip'
 import { validateFormWithZod } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { InformationCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid'
-import { type Config } from 'final-form'
+import { InformationCircleIcon } from '@heroicons/react/24/solid'
+import { FORM_ERROR, type Config } from 'final-form'
 import { useCallback, useEffect, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { z } from 'zod'
@@ -53,7 +53,9 @@ export const SettingsMembersInviteForm = () => {
             form.reset()
           },
         },
-      ).catch(() => undefined)
+      ).catch(() => {
+        return { [FORM_ERROR]: 'Submission failed' }
+      })
     },
     [workspace, inviteUser, toast],
   )
@@ -75,20 +77,9 @@ export const SettingsMembersInviteForm = () => {
       <FinalForm<InviteUserFormValues>
         onSubmit={handleFormSubmit}
         validate={validateFormWithZod(zodInviteUserFormValues)}
-        render={({
-          handleSubmit,
-          submitting,
-          error,
-          submitFailed,
-          invalid,
-        }) => {
+        render={({ handleSubmit, submitting, hasValidationErrors }) => {
           return (
-            <form
-              onSubmit={(event) => {
-                event.preventDefault()
-                void handleSubmit()
-              }}
-            >
+            <form onSubmit={(ev) => void handleSubmit(ev)}>
               <div className="flex flex-row">
                 <Field<string>
                   name="email"
@@ -111,16 +102,11 @@ export const SettingsMembersInviteForm = () => {
                   type="submit"
                   variant="primary"
                   className="ml-2 whitespace-nowrap"
-                  disabled={invalid || submitting}
+                  disabled={hasValidationErrors || submitting}
                 >
-                  <UserPlusIcon className="mr-2 h-4 w-4" />
                   Invite member
                 </Button>
               </div>
-
-              {error && submitFailed && (
-                <div className="mt-1 text-xs text-red-600">{error}</div>
-              )}
             </form>
           )
         }}

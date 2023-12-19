@@ -1,10 +1,10 @@
+import { env } from '@/env.mjs'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
-import { env } from 'process'
 import { z } from 'zod'
 import { workspaceEditionFilter } from '../workspacesBackendUtils'
 
@@ -163,7 +163,7 @@ const sendEmailToInvitedUser = async (
 
   const subject = `Your invitation to the workspace "${workspaceName}"`
 
-  const workspaceUrl = `${env.FRONTEND_URL}/w/${workspaceId}`
+  const workspaceUrl = `${env.NEXT_PUBLIC_FRONTEND_URL}/w/${workspaceId}`
   const invitingUserOrEmail = invitingUser.name! && invitingUser.email!
 
   await sendEmail({

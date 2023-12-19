@@ -4,7 +4,7 @@ import { TRPCClientError } from '@trpc/client'
 import { useErrorToast } from '../ui/toastHooks'
 import { AppClientError, type AppHttpErrorPayload } from './AppClientError'
 
-const DEFAULT_MESSAGE = 'Something unexpected happened. Please try again.'
+const DEFAULT_MESSAGE = 'An unexpected error just happened. Please try again.'
 
 export const useErrorHandler = () => {
   const toast = useErrorToast()
