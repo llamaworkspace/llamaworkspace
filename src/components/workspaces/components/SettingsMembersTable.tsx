@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
 import { useSelf } from '@/components/users/usersHooks'
-import { UserMinusIcon } from '@heroicons/react/24/solid'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useCallback, useMemo } from 'react'
 import { type z } from 'zod'
@@ -76,10 +75,11 @@ export const SettingsMembersTable = () => {
           return (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" className="gap-1 whitespace-nowrap">
-                  <UserMinusIcon className="h-4 w-4" />
-                  Revoke access
-                </Button>
+                <div className="flex justify-end">
+                  <Button variant="outline" className="gap-1 whitespace-nowrap">
+                    Revoke access
+                  </Button>
+                </div>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
