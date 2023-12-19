@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/tooltip'
 import { validateFormWithZod } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { InformationCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid'
+import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { FORM_ERROR, type Config } from 'final-form'
 import { useCallback, useEffect, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
@@ -104,7 +104,6 @@ export const SettingsMembersInviteForm = () => {
                   className="ml-2 whitespace-nowrap"
                   disabled={hasValidationErrors || submitting}
                 >
-                  <UserPlusIcon className="mr-2 h-4 w-4" />
                   Invite member
                 </Button>
               </div>

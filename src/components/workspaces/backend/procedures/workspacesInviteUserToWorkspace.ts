@@ -1,10 +1,10 @@
+import { env } from '@/env.mjs'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
-import { env } from 'process'
 import { z } from 'zod'
 import { workspaceEditionFilter } from '../workspacesBackendUtils'
 
