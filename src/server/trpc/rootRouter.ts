@@ -1,6 +1,7 @@
 import { chatsRouter } from '@/components/chats/backend/chatsRouter'
 import { postsRouter } from '@/components/posts/backend/postsRouter'
-import { sidebarRouter } from '@/components/sidebar/backend/sidebarRouter'
+import { sidebarRouter } from '@/components/providers/backend/sidebarRouter'
+import { providersRouter } from '@/components/sidebar/backend/providersRouter'
 import { usersRouter } from '@/components/users/backend/usersRouter'
 import { workspacesRouter } from '@/components/workspaces/backend/workspacesRouter'
 import { createTRPCRouter } from '@/server/trpc/trpc'
@@ -17,6 +18,7 @@ export const rootRouter = createTRPCRouter({
   workspaces: workspacesRouter,
   posts: postsRouter,
   chats: chatsRouter,
+  providers: providersRouter,
 })
 
 // export type definition of API
