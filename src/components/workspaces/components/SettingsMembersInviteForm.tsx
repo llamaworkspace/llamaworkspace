@@ -77,13 +77,7 @@ export const SettingsMembersInviteForm = () => {
       <FinalForm<InviteUserFormValues>
         onSubmit={handleFormSubmit}
         validate={validateFormWithZod(zodInviteUserFormValues)}
-        render={({
-          handleSubmit,
-          submitting,
-          error,
-          submitFailed,
-          hasValidationErrors,
-        }) => {
+        render={({ handleSubmit, submitting, hasValidationErrors }) => {
           return (
             <form onSubmit={(ev) => void handleSubmit(ev)}>
               <div className="flex flex-row">
@@ -114,10 +108,6 @@ export const SettingsMembersInviteForm = () => {
                   Invite member
                 </Button>
               </div>
-
-              {error && submitFailed && (
-                <div className="mt-1 text-xs text-red-600">{error}</div>
-              )}
             </form>
           )
         }}
