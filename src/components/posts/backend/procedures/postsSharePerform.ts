@@ -130,7 +130,7 @@ const handleInvitedUserDoesNotExist = async ({
     ? `You have been invited to "${post.title}"`
     : 'You have been invited to join Joia'
 
-  const postUrl = `${env.FRONTEND_URL}/invite/${invite.token}`
+  const postUrl = `${env.NEXT_PUBLIC_FRONTEND_URL}/invite/${invite.token}`
   const invitingUserOrEmail = invitingUser.name! && invitingUser.email!
 
   await sendEmail({

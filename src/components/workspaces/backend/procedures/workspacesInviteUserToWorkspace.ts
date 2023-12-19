@@ -163,7 +163,7 @@ const sendEmailToInvitedUser = async (
 
   const subject = `Your invitation to the workspace "${workspaceName}"`
 
-  const workspaceUrl = `${env.FRONTEND_URL}/w/${workspaceId}`
+  const workspaceUrl = `${env.NEXT_PUBLIC_FRONTEND_URL}/w/${workspaceId}`
   const invitingUserOrEmail = invitingUser.name! && invitingUser.email!
 
   await sendEmail({
