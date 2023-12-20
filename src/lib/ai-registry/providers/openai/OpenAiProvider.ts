@@ -15,6 +15,7 @@ export const OpenAiProvider: OpenAiProviderType = {
     const openAiClientPayload: ClientOptions = {
       apiKey: payload.apiKey,
     }
+    hackedValidateModelExists(payload.model)
 
     if (options?.baseUrl) {
       openAiClientPayload.baseURL = options?.baseUrl
@@ -35,4 +36,10 @@ export const OpenAiProvider: OpenAiProviderType = {
 
     return stream
   },
+}
+
+const hackedValidateModelExists = (modelName: string) => {
+  if (!openAiModels.find((model) => model.slug === modelName)) {
+    throw new Error(`Model ${modelName} does not exist.`)
+  }
 }
