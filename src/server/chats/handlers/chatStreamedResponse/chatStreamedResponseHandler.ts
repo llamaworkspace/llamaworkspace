@@ -89,7 +89,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     // openai will come from the db, from postConfigVersion
     // Should "try" and fail gracefully if the provider does not exist: (eg: it was deprecated or uninstalled)
 
-    const provider = aiRegistry.getProvider('openai')
+    const provider = aiRegistry.getProvider('bedrock')
 
     const onCompletion = async (final: string) => {
       await updateMessage(openaiTargetMessage.id, final)
@@ -124,15 +124,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const stream = await provider.execute(
       {
+        apiKey: openAiKey,
         model,
         messages: allMessages,
       },
-      {
-        apiKey: openAiKey,
-        baseURL: env.OPTIONAL_OPENAI_BASE_URL,
-        onToken,
-        onCompletion,
-      },
+      // TODO: ProviderSpecific options
+      // {
+      //   apiKey: openAiKey,
+      //   baseURL: env.OPTIONAL_OPENAI_BASE_URL,
+      //   onToken,
+      //   onCompletion,
+      // },
     )
 
     streamToResponse(stream, res)
