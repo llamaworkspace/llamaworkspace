@@ -3,11 +3,11 @@ export interface IModel {
   readonly publicName: string
 }
 
-export interface IProvider {
+export interface IProvider<T, U> {
   readonly slug: string
   readonly publicName: string
   readonly models: IModel[]
-  execute(args: unknown): Promise<ReadableStream>
+  execute(payload: T, options: U): Promise<ReadableStream>
 }
 
 export abstract class AbstractModel {

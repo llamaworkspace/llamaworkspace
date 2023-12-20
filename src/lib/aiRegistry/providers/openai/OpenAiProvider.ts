@@ -1,5 +1,5 @@
 import { OpenAIStream } from 'ai'
-import OpenAI from 'openai'
+import OpenAI, { ClientOptions } from 'openai'
 import type { IProvider } from '../../core/AiRegistryBase'
 
 interface ExecuteOptions {
@@ -9,21 +9,35 @@ interface ExecuteOptions {
   onCompletion?: (final: string) => void
 }
 
-export const OpenAiProvider: IProvider = {
+type OpenAiChatCompletionParams = Omit<
+  OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming,
+  'stream'
+>
+type OpenAiProviderType = IProvider<OpenAiChatCompletionParams, ExecuteOptions>
+
+export const OpenAiProvider: OpenAiProviderType = {
   slug: 'openai',
   publicName: 'OpenAI',
   models: [{ slug: 'gpt-4', publicName: 'Chat GPT-4 special edition' }],
-  execute: async (options: ExecuteOptions) => {
-    const openai = new OpenAI({
+  execute: async (
+    payload: OpenAiChatCompletionParams,
+    options: ExecuteOptions,
+  ) => {
+    const openAiClientPayload: ClientOptions = {
       apiKey: options.apiKey,
-      baseURL: options?.baseUrl,
-    })
+    }
+
+    if (options?.baseUrl) {
+      openAiClientPayload.baseURL = options?.baseUrl
+    }
+
+    const openai = new OpenAI(openAiClientPayload)
 
     const aiResponse = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: 'say 3 random words in catalan' }],
+      ...payload,
       stream: true,
     })
+
     const stream = OpenAIStream(aiResponse, {
       onToken: options?.onToken,
 

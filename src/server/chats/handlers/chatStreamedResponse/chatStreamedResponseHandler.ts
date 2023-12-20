@@ -90,40 +90,91 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const provider = aiRegistry.getProvider('openai')
 
-    const stream = await provider.execute({
-      apiKey: openAiKey,
-      baseURL: env.OPTIONAL_OPENAI_BASE_URL,
-      onToken: (token: string) => {
-        tokenResponse += token
+    const stream = await provider.execute(
+      {
+        model,
+        messages: allMessages,
       },
+      {
+        apiKey: openAiKey,
+        baseURL: env.OPTIONAL_OPENAI_BASE_URL,
+        onToken: (token: string) => {
+          tokenResponse += token
+        },
 
-      onCompletion: async (final: string) => {
-        await updateMessage(openaiTargetMessage.id, final)
-        // Todo: Do async in a queue
-        const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
+        onCompletion: async (final: string) => {
+          await updateMessage(openaiTargetMessage.id, final)
+          // Todo: Do async in a queue
+          const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
 
-        if (hasOwnApiKey) return
-        if (
-          isNull(nextChatRun.requestTokensCostInNanoCents) ||
-          isNull(nextChatRun.responseTokensCostInNanoCents)
-        ) {
-          throw new Error(
-            'nextChatRun.requestTokensCostInNanoCents or nextChatRun.responseTokensCostInNanoCents is null',
+          if (hasOwnApiKey) return
+          if (
+            isNull(nextChatRun.requestTokensCostInNanoCents) ||
+            isNull(nextChatRun.responseTokensCostInNanoCents)
+          ) {
+            throw new Error(
+              'nextChatRun.requestTokensCostInNanoCents or nextChatRun.responseTokensCostInNanoCents is null',
+            )
+          }
+
+          const costInNanoCents =
+            nextChatRun.requestTokensCostInNanoCents +
+            nextChatRun.responseTokensCostInNanoCents
+          await registerTransaction(
+            prisma,
+            workspaceId,
+            userId,
+            nextChatRun.id,
+            costInNanoCents,
           )
-        }
-
-        const costInNanoCents =
-          nextChatRun.requestTokensCostInNanoCents +
-          nextChatRun.responseTokensCostInNanoCents
-        await registerTransaction(
-          prisma,
-          workspaceId,
-          userId,
-          nextChatRun.id,
-          costInNanoCents,
-        )
+        },
       },
-    })
+    )
+
+    // const openai = new OpenAI({
+    //   apiKey: openAiKey,
+    //   baseURL: env.OPTIONAL_OPENAI_BASE_URL,
+    // })
+
+    // const aiResponse = await openai.chat.completions.create({
+    //   model,
+    //   messages: allMessages,
+    // })
+
+    // // Callbacks
+    // // https://sdk.vercel.ai/docs/api-reference/langchain-stream#callbacks-aistreamcallbacks
+    // const stream = OpenAIStream(aiResponse, {
+    //   onToken: (token) => {
+    //     tokenResponse += token
+    //   },
+
+    //   onCompletion: async (final) => {
+    //     await updateMessage(openaiTargetMessage.id, final)
+    //     // Todo: Do async in a queue
+    //     const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
+
+    //     if (hasOwnApiKey) return
+    //     if (
+    //       isNull(nextChatRun.requestTokensCostInNanoCents) ||
+    //       isNull(nextChatRun.responseTokensCostInNanoCents)
+    //     ) {
+    //       throw new Error(
+    //         'nextChatRun.requestTokensCostInNanoCents or nextChatRun.responseTokensCostInNanoCents is null',
+    //       )
+    //     }
+
+    //     const costInNanoCents =
+    //       nextChatRun.requestTokensCostInNanoCents +
+    //       nextChatRun.responseTokensCostInNanoCents
+    //     await registerTransaction(
+    //       prisma,
+    //       workspaceId,
+    //       userId,
+    //       nextChatRun.id,
+    //       costInNanoCents,
+    //     )
+    //   },
+    // })
 
     streamToResponse(stream, res)
   } catch (error) {
