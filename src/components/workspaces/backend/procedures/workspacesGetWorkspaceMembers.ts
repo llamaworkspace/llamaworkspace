@@ -50,7 +50,17 @@ export const workspacesGetWorkspaceMembers = protectedProcedure
       },
     })
 
-    return workspaceWithMembers.users.map((userOfWorkspace) => ({
+    const invites = await ctx.prisma.workspaceInvite.findMany({
+      select: {
+        id: true,
+        email: true,
+      },
+      where: {
+        workspaceId: workspaceWithMembers.id,
+      },
+    })
+
+    const members = workspaceWithMembers.users.map((userOfWorkspace) => ({
       id: userOfWorkspace.user.id,
       name: userOfWorkspace.user.name,
       email: userOfWorkspace.user.email,
@@ -59,4 +69,13 @@ export const workspacesGetWorkspaceMembers = protectedProcedure
           ? WorkspaceMemberRole.Owner
           : WorkspaceMemberRole.Admin,
     }))
+
+    const invitedMembers = invites.map((invite) => ({
+      inviteId: invite.id,
+      name: null,
+      email: invite.email,
+      role: WorkspaceMemberRole.Admin,
+    }))
+
+    return [...members, ...invitedMembers]
   })
