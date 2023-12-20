@@ -19,7 +19,8 @@ export enum WorkspaceMemberRole {
 }
 
 export const zodWorkspaceMemberOutput = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  inviteId: z.string().optional(),
   name: z.string().nullable(),
   email: z.string().email().nullable(),
   role: z.nativeEnum(WorkspaceMemberRole),

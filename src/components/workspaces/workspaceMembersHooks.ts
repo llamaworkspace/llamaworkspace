@@ -49,3 +49,15 @@ export const useRevokeWorkspaceMemberAccess = () => {
     },
   })
 }
+
+export const useCancelWorkspaceInvite = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+
+  return api.workspaces.cancelInviteToWorkspace.useMutation({
+    onError: errorHandler(),
+    onSuccess: () => {
+      void utils.workspaces.getWorkspaceMembers.invalidate()
+    },
+  })
+}
