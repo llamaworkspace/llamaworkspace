@@ -3,7 +3,7 @@ import { addTransactionRepo } from '@/server/transactions/repositories/addTransa
 import { TrxAccount } from '@/server/transactions/transactionTypes'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import type { PrismaClient } from '@prisma/client'
-import OpenAI from 'openai'
+import OpenAI, { ClientOptions } from 'openai'
 import { getTokenCostInNanoCents } from '../../chatUtils'
 
 export const registerTransaction = async (
@@ -61,10 +61,15 @@ export const handleChatTitleCreate = async (
   // Todo: improve and search in case there are multiple user messages
   const firstUserMessage = userMessages[0]
 
-  const openai = new OpenAI({
+  const openAiPayload: ClientOptions = {
     apiKey: env.OPENAI_API_KEY,
-    baseURL: env.OPTIONAL_OPENAI_BASE_URL,
-  })
+  }
+
+  if (env.OPTIONAL_OPENAI_BASE_URL) {
+    openAiPayload.baseURL = env.OPTIONAL_OPENAI_BASE_URL
+  }
+
+  const openai = new OpenAI(openAiPayload)
 
   let content = data.post.title ? `MAIN TITLE: ${data.post.title}. ` : ''
   const instructions = systemMessage?.message?.slice(0, 500)

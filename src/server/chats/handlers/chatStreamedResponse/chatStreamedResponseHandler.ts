@@ -1,6 +1,7 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { env } from '@/env.mjs'
 import { getEnumByValue } from '@/lib/utils'
+import { aiRegistry } from '@/server/ai/aiRegistry'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
 import { nextApiSessionChecker } from '@/server/lib/apiUtils'
@@ -16,7 +17,7 @@ import {
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message, Workspace } from '@prisma/client'
-import { OpenAIStream, streamToResponse } from 'ai'
+import { streamToResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -80,56 +81,59 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       chatId,
       allUnprocessedMessages.map((m) => m.id),
     )
-
-    const openai = new OpenAI({
-      apiKey: openAiKey,
-      baseURL: env.OPTIONAL_OPENAI_BASE_URL,
-    })
+    void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
     const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
     const model = OpenaiInternalModelToApiModel[dbModel]
 
-    const aiResponse = await openai.chat.completions.create({
-      model,
-      messages: allMessages,
-      stream: true,
-    })
+    // openai will come from the db, from postConfigVersion
+    // Should "try" and fail gracefully if the provider does not exist: (eg: it was deprecated or uninstalled)
 
-    void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
-    // Callbacks
-    // https://sdk.vercel.ai/docs/api-reference/langchain-stream#callbacks-aistreamcallbacks
-    const stream = OpenAIStream(aiResponse, {
-      onToken: (token) => {
-        tokenResponse += token
-      },
+    const provider = aiRegistry.getProvider('openai')
 
-      onCompletion: async (final) => {
-        await updateMessage(openaiTargetMessage.id, final)
-        // Todo: Do async in a queue
-        const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
+    const onCompletion = async (final: string) => {
+      await updateMessage(openaiTargetMessage.id, final)
+      // Todo: Do async in a queue
+      const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
 
-        if (hasOwnApiKey) return
-        if (
-          isNull(nextChatRun.requestTokensCostInNanoCents) ||
-          isNull(nextChatRun.responseTokensCostInNanoCents)
-        ) {
-          throw new Error(
-            'nextChatRun.requestTokensCostInNanoCents or nextChatRun.responseTokensCostInNanoCents is null',
-          )
-        }
-
-        const costInNanoCents =
-          nextChatRun.requestTokensCostInNanoCents +
-          nextChatRun.responseTokensCostInNanoCents
-        await registerTransaction(
-          prisma,
-          workspaceId,
-          userId,
-          nextChatRun.id,
-          costInNanoCents,
+      if (hasOwnApiKey) return
+      if (
+        isNull(nextChatRun.requestTokensCostInNanoCents) ||
+        isNull(nextChatRun.responseTokensCostInNanoCents)
+      ) {
+        throw new Error(
+          'nextChatRun.requestTokensCostInNanoCents or nextChatRun.responseTokensCostInNanoCents is null',
         )
+      }
+
+      const costInNanoCents =
+        nextChatRun.requestTokensCostInNanoCents +
+        nextChatRun.responseTokensCostInNanoCents
+      await registerTransaction(
+        prisma,
+        workspaceId,
+        userId,
+        nextChatRun.id,
+        costInNanoCents,
+      )
+    }
+
+    const onToken = (token: string) => {
+      tokenResponse += token
+    }
+
+    const stream = await provider.execute(
+      {
+        model,
+        messages: allMessages,
       },
-    })
+      {
+        apiKey: openAiKey,
+        baseURL: env.OPTIONAL_OPENAI_BASE_URL,
+        onToken,
+        onCompletion,
+      },
+    )
 
     streamToResponse(stream, res)
   } catch (error) {
@@ -316,7 +320,7 @@ const transformMessageModelToChatGptPayload = (
 }
 
 const getParsedBody = (req: NextApiRequest) => {
-  return JSON.parse(req.body as string) as BodyPayload
+  return req.body as BodyPayload
 }
 
 export default withMiddleware()(handler)
