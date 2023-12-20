@@ -1,5 +1,13 @@
 import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { InputField } from '@/components/ui/forms/InputField'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
@@ -7,7 +15,6 @@ import { useEffect, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { isEqual } from 'underscore'
 import { useCurrentWorkspace, useUpdateWorkspace } from '../workspacesHooks'
-
 type FormValues = {
   openAiApiKey: string | null
 }
@@ -33,8 +40,38 @@ export const SettingsApiKeys = () => {
 
   return (
     <Section>
-      <SectionHeader title="OpenAI API keys" />
+      <SectionHeader title="AI Services" />
       <SectionBody>
+        <Card>
+          <CardHeader>
+            <CardTitle>Open AI</CardTitle>
+            <CardDescription>
+              Make changes to your account here. Click save when you're done.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="space-y-1">Pedro duarte</div>
+            <div className="space-y-1">Pedro duarte</div>
+          </CardContent>
+          <CardFooter>
+            <button>Save changes</button>
+          </CardFooter>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Amazon Bedrock</CardTitle>
+            <CardDescription>
+              Make changes to your account here. Click save when you're done.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="space-y-1">Pedro duarte</div>
+            <div className="space-y-1">Pedro duarte</div>
+          </CardContent>
+          <CardFooter>
+            <button>Save changes</button>
+          </CardFooter>
+        </Card>
         <FinalForm<FormValues>
           onSubmit={(values) => {
             if (!workspace?.id) return

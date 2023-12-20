@@ -6,6 +6,7 @@ export const SettingsMembers = () => {
   return (
     <Section>
       <SectionHeader title="Members" />
+
       <SectionBody>
         <SettingsMembersInviteForm />
         <SettingsMembersTable />
