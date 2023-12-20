@@ -1,5 +1,6 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { env } from '@/env.mjs'
+import { IMessage } from '@/lib/ai-registry/aiRegistryTypes'
 import { getEnumByValue } from '@/lib/utils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
 import { authOptions } from '@/server/auth/nextauth'
@@ -12,7 +13,6 @@ import {
   Author,
   OpenAiModelEnum,
   OpenaiInternalModelToApiModel,
-  type ChatGptMessage,
 } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
@@ -273,7 +273,7 @@ const getOpenAiApiKeys = (workspace: Workspace) => {
 }
 
 interface PreparedMessagesForPrompt {
-  messages: ChatGptMessage[]
+  messages: IMessage[]
   openaiTargetMessage: Message
 }
 
@@ -303,14 +303,12 @@ const prepareMessagesForPrompt = (
   })
 
   return {
-    messages: openaAiMessagesPayload.map(transformMessageModelToChatGptPayload),
+    messages: openaAiMessagesPayload.map(transformMessageModelToPayload),
     openaiTargetMessage,
   }
 }
 
-const transformMessageModelToChatGptPayload = (
-  message: Message,
-): ChatGptMessage => {
+const transformMessageModelToPayload = (message: Message): IMessage => {
   if (!message.message) throw new Error('Message should have a message')
 
   return {

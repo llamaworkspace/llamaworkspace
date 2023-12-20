@@ -10,6 +10,11 @@ export interface IProvider {
   execute(payload: IExecutePayload, options?: unknown): Promise<ReadableStream>
 }
 
+export interface IMessage {
+  content: string
+  role: 'system' | 'user' | 'assistant'
+}
+
 export interface IKnownProvider<T> extends IProvider {
   execute(payload: IExecutePayload, options?: T): Promise<ReadableStream>
 }
@@ -17,7 +22,7 @@ export interface IKnownProvider<T> extends IProvider {
 export interface IExecutePayload {
   apiKey: string
   model: string
-  messages: string[]
+  messages: IMessage[]
   onToken?: (token: string) => void
   onCompletion?: (final: string) => void
 }

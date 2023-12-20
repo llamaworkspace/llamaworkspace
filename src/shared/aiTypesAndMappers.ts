@@ -25,8 +25,3 @@ export const OpenaiInternalModelToApiModel: Record<OpenAiModelEnum, string> = {
   [OpenAiModelEnum.GPT3_5_TURBO]: 'gpt-3.5-turbo',
   [OpenAiModelEnum.GPT4]: 'gpt-4-1106-preview',
 }
-
-export interface ChatGptMessage {
-  role: 'user' | 'assistant' | 'system'
-  content: string
-}

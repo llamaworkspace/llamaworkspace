@@ -1,6 +1,6 @@
 import { OpenAIStream } from 'ai'
 import OpenAI, { type ClientOptions } from 'openai'
-import { IExecutePayload } from '../../aiRegistryTypes'
+import type { IExecutePayload } from '../../aiRegistryTypes'
 import { openAiModels } from './lib/openAiModels'
 import type {
   OpenAiExecuteOptions,
