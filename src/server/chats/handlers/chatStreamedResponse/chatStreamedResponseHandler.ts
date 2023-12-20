@@ -89,7 +89,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
     const provider = aiRegistry.getProvider('openai')
-
+    console.log('provider', provider)
     const stream = await provider.execute(
       {
         model,

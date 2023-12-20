@@ -1,5 +1,5 @@
 import { OpenAIStream } from 'ai'
-import OpenAI, { ClientOptions } from 'openai'
+import OpenAI, { type ClientOptions } from 'openai'
 import type { IProvider } from '../../core/AiRegistryBase'
 
 interface ExecuteOptions {
@@ -16,8 +16,8 @@ type OpenAiChatCompletionParams = Omit<
 type OpenAiProviderType = IProvider<OpenAiChatCompletionParams, ExecuteOptions>
 
 export const OpenAiProvider: OpenAiProviderType = {
-  slug: 'openai',
-  publicName: 'OpenAI',
+  slug: 'openai' as const,
+  publicName: 'OpenAI' as const,
   models: [{ slug: 'gpt-4', publicName: 'Chat GPT-4 special edition' }],
   execute: async (
     payload: OpenAiChatCompletionParams,
