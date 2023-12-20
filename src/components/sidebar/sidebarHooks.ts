@@ -6,8 +6,8 @@ import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
 export const useChatHistoryForSidebarPost = (postId?: string) => {
   const errorHandler = useErrorHandler()
-    const { data: providers } = api.providers.getProviders.useQuery()
-    console.log('providers', providers)
+  // const { data: providers } = api.providers.getProviders.useQuery()
+  // console.log('providers', providers)
   return api.sidebar.chatHistoryForSidebar.useQuery(
     { postId: postId! },
     {

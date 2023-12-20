@@ -7,7 +7,7 @@ export interface IProvider {
   readonly slug: string
   readonly publicName: string
   readonly models: IModel[]
-  execute(args: unknown): unknown
+  execute(args: unknown): Promise<ReadableStream>
 }
 
 export abstract class AbstractModel {

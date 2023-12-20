@@ -1,5 +1,6 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { env } from '@/env.mjs'
+import { aiRegistry } from '@/lib/aiRegistry/aiRegistry'
 import { getEnumByValue } from '@/lib/utils'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
@@ -16,7 +17,7 @@ import {
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message, Workspace } from '@prisma/client'
-import { OpenAIStream, streamToResponse } from 'ai'
+import { streamToResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -81,29 +82,22 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       allUnprocessedMessages.map((m) => m.id),
     )
 
-    const openai = new OpenAI({
-      apiKey: openAiKey,
-      baseURL: env.OPTIONAL_OPENAI_BASE_URL,
-    })
-
     const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
     const model = OpenaiInternalModelToApiModel[dbModel]
 
-    const aiResponse = await openai.chat.completions.create({
-      model,
-      messages: allMessages,
-      stream: true,
-    })
-
+    // Trigger title generation
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
-    // Callbacks
-    // https://sdk.vercel.ai/docs/api-reference/langchain-stream#callbacks-aistreamcallbacks
-    const stream = OpenAIStream(aiResponse, {
-      onToken: (token) => {
+
+    const provider = aiRegistry.getProvider('openai')
+
+    const stream = await provider.execute({
+      apiKey: openAiKey,
+      baseURL: env.OPTIONAL_OPENAI_BASE_URL,
+      onToken: (token: string) => {
         tokenResponse += token
       },
 
-      onCompletion: async (final) => {
+      onCompletion: async (final: string) => {
         await updateMessage(openaiTargetMessage.id, final)
         // Todo: Do async in a queue
         const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
