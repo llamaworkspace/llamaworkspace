@@ -252,3 +252,14 @@ model ChatRunMessage {
     messageId String
     message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
+
+model ProviderMeta {
+    id           String   @id @default(cuid())
+    provider     String
+    providerSlug String
+    workspaceId  String
+    key          String
+    value        String
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+}

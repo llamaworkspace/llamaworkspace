@@ -11,7 +11,7 @@ export function SidebarDesktopUserDropdownTriggerButton() {
   return (
     <DropdownMenuTrigger asChild>
       <Button
-        className="font-regular  flex w-full justify-between border-0 px-2 text-left shadow-none"
+        className="flex w-full justify-between border-0 px-2 text-left font-semibold shadow-none"
         variant="outline"
       >
         {user ? (
