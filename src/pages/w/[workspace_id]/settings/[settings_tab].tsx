@@ -6,11 +6,11 @@ export default function SettingsPage() {
   const navigation = useNavigation()
   const query = navigation.query
 
-  const postId = query.post_id as string | undefined
+  const tab = query.settings_tab as string
 
   return (
-    <MainLayout hideHeader postId={postId}>
-      <Settings />
+    <MainLayout hideHeader>
+      <Settings tab={tab} />
     </MainLayout>
   )
 }
