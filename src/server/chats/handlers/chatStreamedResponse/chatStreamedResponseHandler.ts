@@ -1,6 +1,6 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { env } from '@/env.mjs'
-import { IMessage } from '@/lib/ai-registry/aiRegistryTypes'
+import { AiRegistryMessage } from '@/lib/ai-registry/aiRegistryTypes'
 import { getEnumByValue } from '@/lib/utils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
 import { authOptions } from '@/server/auth/nextauth'
@@ -275,7 +275,7 @@ const getOpenAiApiKeys = (workspace: Workspace) => {
 }
 
 interface PreparedMessagesForPrompt {
-  messages: IMessage[]
+  messages: AiRegistryMessage[]
   openaiTargetMessage: Message
 }
 
@@ -310,7 +310,9 @@ const prepareMessagesForPrompt = (
   }
 }
 
-const transformMessageModelToPayload = (message: Message): IMessage => {
+const transformMessageModelToPayload = (
+  message: Message,
+): AiRegistryMessage => {
   if (!message.message) throw new Error('Message should have a message')
 
   return {

@@ -1,6 +1,6 @@
 import { OpenAIStream } from 'ai'
 import OpenAI, { type ClientOptions } from 'openai'
-import type { IExecutePayload } from '../../aiRegistryTypes'
+import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
 import { openAiModels } from './lib/openAiModels'
 import type {
   OpenAiExecuteOptions,
@@ -28,7 +28,10 @@ export const OpenAiProvider: OpenAiProviderType = {
       isOptional: true,
     },
   ],
-  execute: async (payload: IExecutePayload, options: OpenAiExecuteOptions) => {
+  execute: async (
+    payload: AiRegistryExecutePayload,
+    options: OpenAiExecuteOptions,
+  ) => {
     const openAiClientPayload: ClientOptions = {
       apiKey: payload.apiKey,
     }

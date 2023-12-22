@@ -4,7 +4,7 @@ import {
 } from '@aws-sdk/client-bedrock-runtime'
 import { AWSBedrockLlama2Stream } from 'ai'
 import { experimental_buildLlama2Prompt } from 'ai/prompts'
-import type { IExecutePayload } from '../../aiRegistryTypes'
+import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
 import { bedrockAiModels } from './lib/bedrockAiModels'
 import type { BedrockProviderType } from './lib/openAiProviderTypes'
 
@@ -12,7 +12,7 @@ export const BedrockProvider: BedrockProviderType = {
   slug: 'bedrock' as const,
   publicName: 'Amazon Bedrock' as const,
   models: bedrockAiModels,
-  execute: async (payload: IExecutePayload) => {
+  execute: async (payload: AiRegistryExecutePayload) => {
     // hackedValidateModelExists(payload.model)
 
     const bedrockClient = new BedrockRuntimeClient({
