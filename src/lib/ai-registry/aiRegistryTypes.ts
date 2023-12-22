@@ -3,9 +3,16 @@ export interface IModel {
   readonly publicName: string
 }
 
+export interface IField {
+  slug: string
+  publicName: string
+  isOptional: boolean
+}
+
 export interface IProvider {
   readonly slug: string
   readonly publicName: string
+  readonly fields: IField[]
   readonly models: IModel[]
   execute(payload: IExecutePayload, options?: unknown): Promise<ReadableStream>
 }

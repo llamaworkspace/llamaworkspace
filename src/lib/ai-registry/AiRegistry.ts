@@ -1,17 +1,20 @@
-import type { IProvider } from './aiRegistryTypes'
+import { omit } from 'underscore'
+import type { AiRegistryProvider } from './aiRegistryTypes'
+
+type ProviderMeta = Omit<AiRegistryProvider, 'execute'>
 
 export class AiRegistry {
-  constructor(public readonly providersCollection: IProvider[]) {
+  constructor(public readonly providersCollection: AiRegistryProvider[]) {
     providersCollection.forEach((providerItem) => {
       this.registerProvider(providerItem)
     })
   }
 
-  public register(provider: IProvider) {
+  public register(provider: AiRegistryProvider) {
     this.registerProvider(provider)
   }
 
-  public getProvider(slug: string): IProvider {
+  public getProvider(slug: string): AiRegistryProvider {
     const provider = this.providers.get(slug)
     if (!provider) {
       throw new Error(`Provider with slug "${slug}" not found.`)
@@ -19,9 +22,17 @@ export class AiRegistry {
     return provider
   }
 
-  private providers = new Map<string, IProvider>()
+  public getProvidersMeta() {
+    const result: ProviderMeta[] = []
+    this.providers.forEach((provider) => {
+      result.push(omit(provider, 'execute'))
+    })
+    return result
+  }
 
-  private registerProvider(provider: IProvider) {
+  private providers = new Map<string, AiRegistryProvider>()
+
+  private registerProvider(provider: AiRegistryProvider) {
     const { slug } = provider
     if (this.providers.has(slug)) {
       throw new Error(`Provider with slug "${slug}" already registered.`)

@@ -7,10 +7,27 @@ import type {
   OpenAiProviderType,
 } from './lib/openAiProviderTypes'
 
+// const fields = {
+//   apiKey: z.string().describe('lorem'),
+//   baseUrl: z.string().optional(),
+// }
+
 export const OpenAiProvider: OpenAiProviderType = {
   slug: 'openai' as const,
   publicName: 'OpenAI' as const,
   models: openAiModels,
+  fields: [
+    {
+      slug: 'apiKey',
+      publicName: 'API key',
+      isOptional: false,
+    },
+    {
+      slug: 'baseUrl',
+      publicName: 'Base URL',
+      isOptional: true,
+    },
+  ],
   execute: async (payload: IExecutePayload, options: OpenAiExecuteOptions) => {
     const openAiClientPayload: ClientOptions = {
       apiKey: payload.apiKey,

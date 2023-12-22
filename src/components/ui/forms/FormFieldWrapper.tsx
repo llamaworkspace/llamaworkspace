@@ -1,5 +1,5 @@
-import type { DefaultInputProps } from './formTypes'
 import type { PropsWithChildren } from 'react'
+import type { DefaultInputProps } from './formTypes'
 
 // Todo: use shadcn form instead of this component
 export const FormFieldWrapper = ({
@@ -21,7 +21,11 @@ const FormControl = ({ children }: PropsWithChildren) => {
 }
 
 const FormLabel = ({ children }: PropsWithChildren) => {
-  return <label className={`block text-sm font-semibold`}>{children}</label>
+  return (
+    <label className={`block text-sm font-semibold text-zinc-800`}>
+      {children}
+    </label>
+  )
 }
 
 const FormHelperText = ({ children }: PropsWithChildren) => {

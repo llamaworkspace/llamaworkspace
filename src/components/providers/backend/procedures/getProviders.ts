@@ -1,4 +1,5 @@
 import { workspaceEditionFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
+import { aiRegistry } from '@/server/ai/aiRegistry'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -22,5 +23,5 @@ export const getProviders = protectedProcedure
       return null
     }
 
-    return null
+    return aiRegistry.getProvidersMeta()
   })
