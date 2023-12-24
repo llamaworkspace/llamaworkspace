@@ -1,7 +1,7 @@
 import { omit } from 'underscore'
 import type { AiRegistryProvider } from './aiRegistryTypes'
 
-type ProviderMeta = Omit<AiRegistryProvider, 'execute'>
+export type ProviderMeta = Omit<AiRegistryProvider, 'executeAsStream'>
 
 export class AiRegistry {
   constructor(public readonly providersCollection: AiRegistryProvider[]) {
@@ -25,7 +25,7 @@ export class AiRegistry {
   public getProvidersMeta() {
     const result: ProviderMeta[] = []
     this.providers.forEach((provider) => {
-      result.push(omit(provider, 'execute'))
+      result.push(omit(provider, 'executeAsStream') as ProviderMeta)
     })
     return result
   }
