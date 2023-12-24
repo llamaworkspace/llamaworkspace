@@ -19,7 +19,6 @@ import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
-import { isEqual } from 'underscore'
 import { useCurrentWorkspace, useUpdateWorkspace } from '../workspacesHooks'
 
 type FormValues = Record<string, string>
@@ -42,32 +41,27 @@ export const SettingsApiKeys = () => {
     }
   }, [focusQueryStringEl])
 
-  // FIX: Null when empty value
-  const initialValues = {
-    openAiApiKey: workspace?.openAiApiKey ?? null,
-  }
-
   const handleFormSubmit = (providerSlug: string) => (values: FormValues) => {
     if (!workspace?.id) return
 
+    const provider = providers?.find((p) => p.slug === providerSlug)
+    const submitValues = provider?.fields.reduce((acc, field) => {
+      return {
+        ...acc,
+        [field.slug]: values[field.slug] ?? null,
+      }
+    }, {}) as Record<string, string>
+
     updateProvider(
-      { workspaceId: workspace.id, providerSlug, values },
+      { workspaceId: workspace.id, providerSlug, values: submitValues },
       {
         onSuccess: () => {
           successToast(undefined, 'Provider updated')
         },
       },
     )
-    const valueChangedIsOpenAiApiKey = !isEqual(
-      values.openAiApiKey,
-      initialValues.openAiApiKey,
-    )
 
-    // Prevent submitting if the OpenAI key is masked
-    if (valueChangedIsOpenAiApiKey && values.openAiApiKey?.includes('•')) {
-      return
-    }
-
+    // TODO: Fixme
     // We only send an update for the OpenAI key if
     // the billingStrategy is ApiKeys and the value is not masked
     const openAiApiKey = values.openAiApiKey?.includes('•')
