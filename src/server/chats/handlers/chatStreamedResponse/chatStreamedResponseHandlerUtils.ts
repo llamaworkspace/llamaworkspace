@@ -3,7 +3,7 @@ import { addTransactionRepo } from '@/server/transactions/repositories/addTransa
 import { TrxAccount } from '@/server/transactions/transactionTypes'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import type { PrismaClient } from '@prisma/client'
-import OpenAI from 'openai'
+import OpenAI, { ClientOptions } from 'openai'
 import { getTokenCostInNanoCents } from '../../chatUtils'
 
 export const registerTransaction = async (
@@ -61,10 +61,15 @@ export const handleChatTitleCreate = async (
   // Todo: improve and search in case there are multiple user messages
   const firstUserMessage = userMessages[0]
 
-  const openai = new OpenAI({
+  const openAiPayload: ClientOptions = {
     apiKey: env.OPENAI_API_KEY,
-    baseURL: env.OPTIONAL_OPENAI_BASE_URL,
-  })
+  }
+
+  if (env.OPTIONAL_OPENAI_BASE_URL) {
+    openAiPayload.baseURL = env.OPTIONAL_OPENAI_BASE_URL
+  }
+
+  const openai = new OpenAI(openAiPayload)
 
   let content = data.post.title ? `MAIN TITLE: ${data.post.title}. ` : ''
   const instructions = systemMessage?.message?.slice(0, 500)
@@ -74,23 +79,28 @@ export const handleChatTitleCreate = async (
   content += instructions && `INSTRUCTIONS: ${instructions}. `
   content += request && `REQUEST: ${request}. `
 
-  const messages = [
-    { role: 'system' as OpenAI.Chat.ChatCompletionRole, content: TITLE_PROMPT },
-    { role: 'user' as OpenAI.Chat.ChatCompletionRole, content },
-  ]
-
-  const params: OpenAI.Chat.ChatCompletionCreateParams = {
-    messages,
+  const params: OpenAI.Chat.ChatCompletionCreateParamsNonStreaming = {
+    messages: [
+      {
+        role: 'system',
+        content: TITLE_PROMPT,
+        name: 'system',
+      },
+      { role: 'user', content, name: 'user' },
+    ],
     model: OpenAiModelEnum.GPT4,
     temperature: 0.2,
   }
 
   const aiResponse = await openai.chat.completions.create(params)
+
   const message = aiResponse.choices[0]?.message
+
   if (!message) return
   const finalTitle = message.content?.replaceAll(`"`, ``)
 
   let costInNanoCents = 0
+
   if (aiResponse.usage) {
     const requestCost = getTokenCostInNanoCents(
       aiResponse.usage.prompt_tokens,
