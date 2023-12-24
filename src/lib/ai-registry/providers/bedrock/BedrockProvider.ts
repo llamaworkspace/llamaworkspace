@@ -12,6 +12,19 @@ export const BedrockProvider: BedrockProviderType = {
   slug: 'bedrock' as const,
   publicName: 'Amazon Bedrock' as const,
   models: bedrockAiModels,
+  fields: [
+    {
+      slug: 'apiKey',
+      publicName: 'API key',
+      isOptional: false,
+    },
+    {
+      slug: 'baseUrl',
+      publicName: 'Base URL',
+      isOptional: true,
+    },
+  ],
+
   execute: async (payload: AiRegistryExecutePayload) => {
     // hackedValidateModelExists(payload.model)
 
@@ -24,6 +37,8 @@ export const BedrockProvider: BedrockProviderType = {
       },
     })
 
+    // Inference parameters:
+    // https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html
     const bedrockResponse = await bedrockClient.send(
       new InvokeModelWithResponseStreamCommand({
         modelId: 'meta.llama2-13b-chat-v1',

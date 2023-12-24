@@ -1,19 +1,21 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { AiProviderKeyValue } from '@prisma/client'
+import type { AiProviderKeyValue } from '@prisma/client'
 import { z } from 'zod'
 
 const zInput = z.object({
   workspaceId: z.string(),
+  providerSlug: z.string(),
+  values: z.record(z.string()),
 })
 
-export const getProviders = protectedProcedure
+export const updateProvider = protectedProcedure
   .input(zInput)
-  .query(async ({ ctx, input }) => {
+  .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-
-    const workspace = await ctx.prisma.workspace.findFirst({
+    console.log('updateProvider', input)
+    const workspace = await ctx.prisma.workspace.findFirstOrThrow({
       where: {
         id: input.workspaceId,
         ...workspaceVisibilityFilter(userId),

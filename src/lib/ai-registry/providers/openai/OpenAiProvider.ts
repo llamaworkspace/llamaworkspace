@@ -7,11 +7,6 @@ import type {
   OpenAiProviderType,
 } from './lib/openAiProviderTypes'
 
-// const fields = {
-//   apiKey: z.string().describe('lorem'),
-//   baseUrl: z.string().optional(),
-// }
-
 export const OpenAiProvider: OpenAiProviderType = {
   slug: 'openai' as const,
   publicName: 'OpenAI' as const,

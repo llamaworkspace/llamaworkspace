@@ -65,22 +65,23 @@ model User {
     invites            Invite[]
     workspaces         UsersOnWorkspaces[]
     authoredChats      Chat[]
-    PostSort           PostSort[]
-    WorkspaceInvite    WorkspaceInvite[]
+    postSort           PostSort[]
+    workspaceInvite    WorkspaceInvite[]
 }
 
 model Workspace {
-    id                 String              @id @default(cuid())
-    name               String
-    openAiApiKey       String? /// @encrypted
-    balanceInNanoCents BigInt              @default(0)
-    createdAt          DateTime            @default(now())
-    updatedAt          DateTime            @updatedAt
-    users              UsersOnWorkspaces[]
-    posts              Post[]
-    transactions       Transaction[]
-    PostSort           PostSort[]
-    WorkspaceInvite    WorkspaceInvite[]
+    id                  String               @id @default(cuid())
+    name                String
+    openAiApiKey        String? /// @encrypted
+    balanceInNanoCents  BigInt               @default(0)
+    createdAt           DateTime             @default(now())
+    updatedAt           DateTime             @updatedAt
+    users               UsersOnWorkspaces[]
+    posts               Post[]
+    transactions        Transaction[]
+    postSorts           PostSort[]
+    workspaceInvites    WorkspaceInvite[]
+    aiProviderKeyValues AiProviderKeyValue[]
 }
 
 model UsersOnWorkspaces {
@@ -217,7 +218,7 @@ model Message {
     openaiTokens        Int?
     createdAt           DateTime           @default(now())
     updatedAt           DateTime           @updatedAt
-    ChatRunMessage      ChatRunMessage[]
+    chatRunMessage      ChatRunMessage[]
 }
 
 model PostConfigVersion {
@@ -253,13 +254,14 @@ model ChatRunMessage {
     message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 
-model ProviderMeta {
-    id           String   @id @default(cuid())
-    provider     String
-    providerSlug String
-    workspaceId  String
-    key          String
-    value        String
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+model AiProviderKeyValue {
+    id          String    @id @default(cuid())
+    name        String
+    slug        String
+    workspaceId String
+    key         String
+    value       String /// @encrypted
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
 }
