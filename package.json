@@ -48,7 +48,7 @@
     "@trpc/next": "^10.38.1",
     "@trpc/react-query": "^10.38.1",
     "@trpc/server": "^10.38.1",
-    "ai": "^2.2.29",
+    "ai": "^2.2.30",
     "bluebird": "^3.7.2",
     "chalk": "^5.3.0",
     "class-variance-authority": "^0.7.0",

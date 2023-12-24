@@ -1,10 +1,9 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
-import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
-import { AiRegistryMessage } from '@/lib/ai-registry/aiRegistryTypes'
 import { getEnumByValue } from '@/lib/utils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
+import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { nextApiSessionChecker } from '@/server/lib/apiUtils'
 import { withMiddleware } from '@/server/middlewares/withMiddleware'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -63,7 +62,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     })
 
     const providerKVs = await getAiProvidersKVs(prisma, workspaceId, userId)
-    console.log('Prov KVs', providerKVs)
+
     await validateUserPermissionsOrThrow(userId, chatId)
 
     const allUnprocessedMessages = [...postConfigVersion.messages, ...messages]
@@ -84,20 +83,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     )
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
-    const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
-    const model = OpenaiInternalModelToApiModel[dbModel]
-
-    // TODO: openai will come from the db, from postConfigVersion
-    // Should "try" and fail gracefully if the provider does not exist: (eg: it was deprecated or uninstalled)
-
     const provider = aiRegistry.getProvider('openai')
 
-    const onCompletion = async (final: string) => {
+    const onFinal = async (final: string) => {
       await updateMessage(openaiTargetMessage.id, final)
       // Todo: Do async in a queue
       const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
 
-      if (hasOwnApiKey) return
       if (
         isNull(nextChatRun.requestTokensCostInNanoCents) ||
         isNull(nextChatRun.responseTokensCostInNanoCents)
@@ -123,26 +115,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       tokenResponse += token
     }
 
+    const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
+    const model = OpenaiInternalModelToApiModel[dbModel]
+
     // Convert DB key/values to payload passable to the provider
     // Validate that the provider payload is valid, or discard unneeded fields
     // Run the thing
 
-    const stream = await provider.execute(
+    const stream = await provider.executeAsStream(
       {
         model,
         messages: allMessages,
-        // onToken, onCompletion, onOtherStuff
+        onToken,
+        onFinal,
       },
       {
         providerKVs,
       },
-      // TODO: ProviderSpecific options
-      // {
-      //   apiKey: openAiKey,
-      //   baseURL: env.OPTIONAL_OPENAI_BASE_URL,
-      //   onToken,
-      //   onCompletion,
-      // },
     )
 
     streamToResponse(stream, res)
@@ -250,17 +239,6 @@ const getRequestUserId = async (req: NextApiRequest, res: NextApiResponse) => {
   return session.user.id
 }
 
-const getProviderKVs = async (workspaceId: string, userId: string) => {
-  return await prisma.aiProviderKeyValue.findMany({
-    where: {
-      workspaceId,
-      workspace: {
-        ...workspaceVisibilityFilter(userId),
-      },
-    },
-  })
-}
-
 const createChatRun = async (chatId: string, messageIds: string[]) => {
   return await prisma.chatRun.create({
     data: {
@@ -284,14 +262,6 @@ const updateMessage = async (messageId: string, message: string) => {
     },
   })
 }
-
-// const getOpenAiApiKeys = (workspace: Workspace) => {
-//   if (workspace.openAiApiKey) {
-//     return { hasOwnApiKey: true, openAiKey: workspace.openAiApiKey }
-//   }
-
-//   return { hasOwnApiKey: false, openAiKey: env.OPENAI_API_KEY }
-// }
 
 interface PreparedMessagesForPrompt {
   messages: AiRegistryMessage[]
