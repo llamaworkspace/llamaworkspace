@@ -70,18 +70,18 @@ model User {
 }
 
 model Workspace {
-    id                  String               @id @default(cuid())
-    name                String
-    openAiApiKey        String? /// @encrypted
-    balanceInNanoCents  BigInt               @default(0)
-    createdAt           DateTime             @default(now())
-    updatedAt           DateTime             @updatedAt
-    users               UsersOnWorkspaces[]
-    posts               Post[]
-    transactions        Transaction[]
-    postSorts           PostSort[]
-    workspaceInvites    WorkspaceInvite[]
-    aiProviderKeyValues AiProviderKeyValue[]
+    id                 String              @id @default(cuid())
+    name               String
+    openAiApiKey       String? /// @encrypted
+    balanceInNanoCents BigInt              @default(0)
+    createdAt          DateTime            @default(now())
+    updatedAt          DateTime            @updatedAt
+    users              UsersOnWorkspaces[]
+    posts              Post[]
+    transactions       Transaction[]
+    postSorts          PostSort[]
+    workspaceInvites   WorkspaceInvite[]
+    aiProvider         AiProvider[]
 }
 
 model UsersOnWorkspaces {
@@ -254,13 +254,24 @@ model ChatRunMessage {
     message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 
-model AiProviderKeyValue {
-    id          String    @id @default(cuid())
-    slug        String
+model AiProvider {
+    id          String               @id @default(cuid())
+    name        String
     workspaceId String
-    key         String
-    value       String /// @encrypted
-    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+    createdAt   DateTime             @default(now())
+    updatedAt   DateTime             @updatedAt
+    keyValues   AiProviderKeyValue[]
+    workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model AiProviderKeyValue {
+    id           String     @id @default(cuid())
+    aiProviderId String
+    slug         String
+    key          String
+    value        String /// @encrypted
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+    aiProvider   AiProvider @relation(fields: [aiProviderId], references: [id], onDelete: Cascade)
+    workspaceId  String?
 }
