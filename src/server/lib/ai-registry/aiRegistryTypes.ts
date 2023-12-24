@@ -14,7 +14,7 @@ export interface AiRegistryProvider {
   readonly publicName: string
   readonly fields: AiRegistryField[]
   readonly models: AiRegistryModel[]
-  execute(
+  executeAsStream(
     payload: AiRegistryExecutePayload,
     options?: unknown,
   ): Promise<ReadableStream>
@@ -26,7 +26,7 @@ export interface AiRegistryMessage {
 }
 
 export interface IKnownProvider<T> extends AiRegistryProvider {
-  execute(
+  executeAsStream(
     payload: AiRegistryExecutePayload,
     options?: T,
   ): Promise<ReadableStream>
