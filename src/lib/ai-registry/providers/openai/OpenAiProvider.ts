@@ -27,15 +27,16 @@ export const OpenAiProvider: OpenAiProviderType = {
     payload: AiRegistryExecutePayload,
     options: OpenAiExecuteOptions,
   ) => {
-    const openAiClientPayload: ClientOptions = {
-      apiKey: payload.apiKey,
-    }
     hackedValidateModelExists(payload.model)
+
+    const openAiClientPayload: ClientOptions = {
+      apiKey: options.apiKey,
+    }
 
     if (options?.baseUrl) {
       openAiClientPayload.baseURL = options?.baseUrl
     }
-
+    console.log(2222, openAiClientPayload)
     const openai = new OpenAI(openAiClientPayload)
 
     const aiResponse = await openai.chat.completions.create({
@@ -45,8 +46,8 @@ export const OpenAiProvider: OpenAiProviderType = {
     })
 
     const stream = OpenAIStream(aiResponse, {
-      onToken: options?.onToken,
-      onCompletion: options?.onCompletion,
+      // onToken: options?.onToken,
+      // onCompletion: options?.onCompletion,
     })
 
     return stream

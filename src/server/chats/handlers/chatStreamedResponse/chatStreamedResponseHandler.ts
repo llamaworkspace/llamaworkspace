@@ -1,5 +1,5 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
-import { env } from '@/env.mjs'
+import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { AiRegistryMessage } from '@/lib/ai-registry/aiRegistryTypes'
 import { getEnumByValue } from '@/lib/utils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
@@ -9,6 +9,7 @@ import { nextApiSessionChecker } from '@/server/lib/apiUtils'
 import { withMiddleware } from '@/server/middlewares/withMiddleware'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { getPostConfigForChatIdService } from '@/server/posts/services/getPostConfigForChatId.service'
+import { getAiProvidersKVs } from '@/server/providers/services/getProvidersForWorkspace.service'
 import {
   Author,
   OpenAiModelEnum,
@@ -16,7 +17,7 @@ import {
 } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Message, Workspace } from '@prisma/client'
+import type { Message } from '@prisma/client'
 import { streamToResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
@@ -61,8 +62,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       where: { id: workspaceId },
     })
 
-    const { hasOwnApiKey, openAiKey } = getOpenAiApiKeys(workspace)
-
+    const providerKVs = await getAiProvidersKVs(prisma, workspaceId, userId)
+    console.log('Prov KVs', providerKVs)
     await validateUserPermissionsOrThrow(userId, chatId)
 
     const allUnprocessedMessages = [...postConfigVersion.messages, ...messages]
@@ -86,7 +87,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
     const model = OpenaiInternalModelToApiModel[dbModel]
 
-    // openai will come from the db, from postConfigVersion
+    // TODO: openai will come from the db, from postConfigVersion
     // Should "try" and fail gracefully if the provider does not exist: (eg: it was deprecated or uninstalled)
 
     const provider = aiRegistry.getProvider('openai')
@@ -128,9 +129,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const stream = await provider.execute(
       {
-        apiKey: openAiKey,
         model,
         messages: allMessages,
+        // onToken, onCompletion, onOtherStuff
+      },
+      {
+        providerKVs,
       },
       // TODO: ProviderSpecific options
       // {
@@ -246,6 +250,17 @@ const getRequestUserId = async (req: NextApiRequest, res: NextApiResponse) => {
   return session.user.id
 }
 
+const getProviderKVs = async (workspaceId: string, userId: string) => {
+  return await prisma.aiProviderKeyValue.findMany({
+    where: {
+      workspaceId,
+      workspace: {
+        ...workspaceVisibilityFilter(userId),
+      },
+    },
+  })
+}
+
 const createChatRun = async (chatId: string, messageIds: string[]) => {
   return await prisma.chatRun.create({
     data: {
@@ -270,13 +285,13 @@ const updateMessage = async (messageId: string, message: string) => {
   })
 }
 
-const getOpenAiApiKeys = (workspace: Workspace) => {
-  if (workspace.openAiApiKey) {
-    return { hasOwnApiKey: true, openAiKey: workspace.openAiApiKey }
-  }
+// const getOpenAiApiKeys = (workspace: Workspace) => {
+//   if (workspace.openAiApiKey) {
+//     return { hasOwnApiKey: true, openAiKey: workspace.openAiApiKey }
+//   }
 
-  return { hasOwnApiKey: false, openAiKey: env.OPENAI_API_KEY }
-}
+//   return { hasOwnApiKey: false, openAiKey: env.OPENAI_API_KEY }
+// }
 
 interface PreparedMessagesForPrompt {
   messages: AiRegistryMessage[]

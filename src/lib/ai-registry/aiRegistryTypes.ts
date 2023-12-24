@@ -33,7 +33,6 @@ export interface IKnownProvider<T> extends AiRegistryProvider {
 }
 
 export interface AiRegistryExecutePayload {
-  apiKey: string
   model: string
   messages: AiRegistryMessage[]
   onToken?: (token: string) => void

@@ -256,7 +256,6 @@ model ChatRunMessage {
 
 model AiProviderKeyValue {
     id          String    @id @default(cuid())
-    name        String
     slug        String
     workspaceId String
     key         String

@@ -22,9 +22,7 @@ import { Field, Form as FinalForm } from 'react-final-form'
 import { isEqual } from 'underscore'
 import { useCurrentWorkspace, useUpdateWorkspace } from '../workspacesHooks'
 
-type FormValues = {
-  openAiApiKey: string | null
-}
+type FormValues = Record<string, string>
 
 export const SettingsApiKeys = () => {
   const { mutate: updateWorkspace } = useUpdateWorkspace()
@@ -33,7 +31,7 @@ export const SettingsApiKeys = () => {
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
   const { data: providers } = useProviders()
-
+  console.log('FE Providers', providers)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const focusQueryStringEl = navigation.query?.focus
@@ -44,14 +42,14 @@ export const SettingsApiKeys = () => {
     }
   }, [focusQueryStringEl])
 
+  // FIX: Null when empty value
   const initialValues = {
     openAiApiKey: workspace?.openAiApiKey ?? null,
   }
 
   const handleFormSubmit = (providerSlug: string) => (values: FormValues) => {
-    console.log('values', values)
     if (!workspace?.id) return
-    if (isEqual(values, initialValues)) return
+
     updateProvider(
       { workspaceId: workspace.id, providerSlug, values },
       {
@@ -92,7 +90,7 @@ export const SettingsApiKeys = () => {
             <FinalForm<FormValues>
               key={provider.slug}
               onSubmit={handleFormSubmit(provider.slug)}
-              initialValues={initialValues}
+              initialValues={provider.fieldValues}
               render={({ handleSubmit }) => {
                 return (
                   <Card key={provider.slug}>
@@ -131,7 +129,6 @@ export const SettingsApiKeys = () => {
                                       ref={inputRef}
                                       label={field.publicName}
                                       isRequired={!field.isOptional}
-                                      onBlur={() => void handleSubmit()}
                                     />
                                   )
                                 }}
@@ -142,7 +139,9 @@ export const SettingsApiKeys = () => {
                       </div>
                     </CardContent>
                     <CardFooter>
-                      <Button type="submit">Save changes</Button>
+                      <Button onClick={() => void handleSubmit()}>
+                        Save changes
+                      </Button>
                     </CardFooter>
                   </Card>
                 )
