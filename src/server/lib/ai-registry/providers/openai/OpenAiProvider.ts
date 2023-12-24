@@ -49,7 +49,7 @@ export const OpenAiProvider: () => OpenAiProviderType = () => {
 
       const stream = OpenAIStream(aiResponse, {
         onToken: payload?.onToken,
-        onCompletion: payload?.onCompletion,
+        onFinal: payload?.onFinal,
       })
 
       return stream

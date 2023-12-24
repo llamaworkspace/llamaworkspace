@@ -4,6 +4,7 @@ import { getEnumByValue } from '@/lib/utils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
+import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { nextApiSessionChecker } from '@/server/lib/apiUtils'
 import { withMiddleware } from '@/server/middlewares/withMiddleware'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -12,7 +13,6 @@ import {
   Author,
   OpenAiModelEnum,
   OpenaiInternalModelToApiModel,
-  type ChatGptMessage,
 } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
@@ -86,7 +86,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const provider = aiRegistry.getProvider('openai')
 
-    const onCompletion = async (final: string) => {
+    const onFinal = async (final: string) => {
       await updateMessage(openaiTargetMessage.id, final)
       // Todo: Do async in a queue
       const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
@@ -125,7 +125,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         model,
         messages: allMessages,
         onToken,
-        onCompletion,
+        onFinal,
       },
       {
         apiKey: openAiKey,
@@ -271,7 +271,7 @@ const getOpenAiApiKeys = (workspace: Workspace) => {
 }
 
 interface PreparedMessagesForPrompt {
-  messages: ChatGptMessage[]
+  messages: AiRegistryMessage[]
   openaiTargetMessage: Message
 }
 
@@ -301,14 +301,14 @@ const prepareMessagesForPrompt = (
   })
 
   return {
-    messages: openaAiMessagesPayload.map(transformMessageModelToChatGptPayload),
+    messages: openaAiMessagesPayload.map(transformMessageModelToPayload),
     openaiTargetMessage,
   }
 }
 
-const transformMessageModelToChatGptPayload = (
+const transformMessageModelToPayload = (
   message: Message,
-): ChatGptMessage => {
+): AiRegistryMessage => {
   if (!message.message) throw new Error('Message should have a message')
 
   return {
@@ -318,7 +318,7 @@ const transformMessageModelToChatGptPayload = (
 }
 
 const getParsedBody = (req: NextApiRequest) => {
-  return JSON.parse(req.body as string) as BodyPayload
+  return req.body as BodyPayload
 }
 
 export default withMiddleware()(handler)
