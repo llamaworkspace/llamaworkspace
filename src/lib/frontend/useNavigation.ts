@@ -14,6 +14,7 @@ export type ApplicationPaths =
   | '/w/:workspaceId/empty'
   | '/w/:workspaceId/profile'
   | '/w/:workspaceId/settings'
+  | '/w/:workspaceId/settings/:tab'
   | '/p'
   | '/p/:postId'
   | '/p/:postId/history'
