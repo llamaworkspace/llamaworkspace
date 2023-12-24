@@ -1,3 +1,3 @@
-import { statusCheckerHandler } from '@/server/chats/handlers/statusChecker/statusCheckerHandler'
+import { statusCheckerHandler } from '@/server/global/handlers/statusChecker/statusCheckerHandler'
 
 export default statusCheckerHandler
