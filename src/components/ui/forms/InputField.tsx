@@ -3,11 +3,12 @@ import { Input } from '../input'
 import { FormFieldWrapper } from './FormFieldWrapper'
 import type { DefaultInputProps } from './formTypes'
 
-type MyProps = DefaultInputProps & React.InputHTMLAttributes<HTMLInputElement>
+type InputProps = DefaultInputProps &
+  React.InputHTMLAttributes<HTMLInputElement>
 
-export const InputField = forwardRef<HTMLInputElement, MyProps>(
+export const InputField = forwardRef<HTMLInputElement, InputProps>(
   function InputFieldFunc(
-    { label, placeholder, helperText, onValueChange, ...input },
+    { label, placeholder, helperText, onValueChange, isRequired, ...input },
     externalRef,
   ) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,7 +20,11 @@ export const InputField = forwardRef<HTMLInputElement, MyProps>(
       }
     }
     return (
-      <FormFieldWrapper label={label} helperText={helperText}>
+      <FormFieldWrapper
+        label={label}
+        helperText={helperText}
+        isRequired={isRequired}
+      >
         <Input
           ref={externalRef}
           {...input}
