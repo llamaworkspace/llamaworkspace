@@ -35,6 +35,6 @@ export interface IKnownProvider<T> extends AiRegistryProvider {
 export interface AiRegistryExecutePayload {
   model: string
   messages: AiRegistryMessage[]
-  onToken?: (token: string) => void
-  onCompletion?: (final: string) => void
+  onToken?: (token: string) => void | Promise<void>
+  onCompletion?: (final: string) => void | Promise<void>
 }
