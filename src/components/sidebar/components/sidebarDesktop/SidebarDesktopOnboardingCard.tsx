@@ -3,7 +3,7 @@ import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 
 export const SidebarDesktopOnboardingCard = () => {
   const { workspace } = useCurrentWorkspace()
-  const settingsUrl = `/w/${workspace?.id}/settings`
+  const settingsUrl = `/w/${workspace?.id}/settings/providers?focus=openai_api_key`
 
   return (
     <div className="m-2 flex flex-col">

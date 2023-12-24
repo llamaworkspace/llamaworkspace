@@ -3,7 +3,7 @@ import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 
 export const SidebarDesktopAddMembersCard = () => {
   const { workspace } = useCurrentWorkspace()
-  const settingsUrl = `/w/${workspace?.id}/settings?focus=add_members`
+  const settingsUrl = `/w/${workspace?.id}/settings/members?focus=add_members`
 
   return (
     <div className="m-2 flex flex-col">

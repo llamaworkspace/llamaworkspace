@@ -54,7 +54,7 @@ export function SidebarDesktopBody() {
     setSeeMore(!seeMore)
   }
 
-  const settingsUrl = `/w/${workspace?.id}/settings?focus=openai_api_key`
+  const settingsUrl = `/w/${workspace?.id}/settings/providers?focus=openai_api_key`
   const zeroSortedPosts = sortedPosts?.length === 0
   const onlyDefaultPost = !!(
     sortedPosts?.length === 1 && sortedPosts[0]?.isDemo
