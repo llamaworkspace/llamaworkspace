@@ -81,6 +81,7 @@ model Workspace {
     transactions       Transaction[]
     postSorts          PostSort[]
     workspaceInvites   WorkspaceInvite[]
+    aiProvider         AiProvider[]
 }
 
 model UsersOnWorkspaces {
@@ -251,4 +252,27 @@ model ChatRunMessage {
     chatRun   ChatRun @relation(fields: [chatRunId], references: [id], onDelete: Cascade)
     messageId String
     message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+model AiProvider {
+    id          String               @id @default(cuid())
+    slug        String
+    name        String
+    workspaceId String
+    createdAt   DateTime             @default(now())
+    updatedAt   DateTime             @updatedAt
+    keyValues   AiProviderKeyValue[]
+    workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model AiProviderKeyValue {
+    id           String     @id @default(cuid())
+    aiProviderId String
+    slug         String
+    key          String
+    value        String /// @encrypted
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+    aiProvider   AiProvider @relation(fields: [aiProviderId], references: [id], onDelete: Cascade)
+    workspaceId  String?
 }
