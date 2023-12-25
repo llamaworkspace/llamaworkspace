@@ -79,8 +79,8 @@ model Workspace {
     users              UsersOnWorkspaces[]
     posts              Post[]
     transactions       Transaction[]
-    PostSort           PostSort[]
-    WorkspaceInvite    WorkspaceInvite[]
+    postSorts          PostSort[]
+    workspaceInvites   WorkspaceInvite[]
 }
 
 model UsersOnWorkspaces {
@@ -217,7 +217,7 @@ model Message {
     openaiTokens        Int?
     createdAt           DateTime           @default(now())
     updatedAt           DateTime           @updatedAt
-    ChatRunMessage      ChatRunMessage[]
+    chatRunMessage      ChatRunMessage[]
 }
 
 model PostConfigVersion {
