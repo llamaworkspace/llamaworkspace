@@ -1,5 +1,7 @@
-// To run, go to the server and invoke: npx tsx <path_to_this_file>
-// NOTE: "tsx" (not "tsc")  !!
+// To run, go to the server and invoke:
+// npx env-cmd npx tsx src/scripts/mig_2023-12-25_openai_key_to_ai_provider.ts
+
+import { upsertAiProvider } from '@/server/ai/services/upsertProviderKVs.service'
 import { prisma } from '@/server/db'
 import Bluebird from 'bluebird'
 
@@ -19,15 +21,9 @@ async function main() {
   console.log(`Updating ${workspacesWithOpenAiKey.length} workspaces...`)
 
   await Bluebird.mapSeries(workspacesWithOpenAiKey, async (workspace) => {
-    // Service to persist a providerMeta
-    // await prisma.work.update({
-    //   where: {
-    //     id: chatWithoutAuthor.id,
-    //   },
-    //   data: {
-    //     authorId: chatWithoutAuthor.post.userId,
-    //   },
-    // })
+    await upsertAiProvider(prisma, workspace.id, 'openai', undefined, {
+      apiKey: workspace.openAiApiKey!,
+    })
   })
 }
 

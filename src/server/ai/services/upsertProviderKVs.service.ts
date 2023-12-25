@@ -1,4 +1,3 @@
-import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type {
@@ -7,10 +6,10 @@ import type {
 } from '@/shared/globalTypes'
 import type { AiProvider } from '@prisma/client'
 import { Promise } from 'bluebird'
-export const upsertProvider = async (
+
+export const upsertAiProvider = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
-  userId: string,
   slug: string,
   providerMeta?: Pick<AiProvider, 'name'>,
   values?: Record<string, string>,
@@ -19,7 +18,6 @@ export const upsertProvider = async (
     const aiProvider = await upsertProviderRaw(
       prisma,
       workspaceId,
-      userId,
       slug,
       providerMeta,
     )
@@ -30,7 +28,6 @@ export const upsertProvider = async (
 const upsertProviderRaw = async (
   prisma: PrismaTrxClient,
   workspaceId: string,
-  userId: string,
   slug: string,
   providerMeta?: Pick<AiProvider, 'name'>,
 ) => {
@@ -44,9 +41,6 @@ const upsertProviderRaw = async (
     where: {
       workspaceId,
       slug,
-      workspace: {
-        ...workspaceVisibilityFilter(userId),
-      },
     },
   })
 
