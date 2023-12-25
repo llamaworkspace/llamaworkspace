@@ -268,11 +268,9 @@ model AiProvider {
 model AiProviderKeyValue {
     id           String     @id @default(cuid())
     aiProviderId String
-    slug         String
     key          String
     value        String /// @encrypted
     createdAt    DateTime   @default(now())
     updatedAt    DateTime   @updatedAt
     aiProvider   AiProvider @relation(fields: [aiProviderId], references: [id], onDelete: Cascade)
-    workspaceId  String?
 }

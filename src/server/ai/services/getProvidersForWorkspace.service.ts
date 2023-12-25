@@ -23,6 +23,21 @@ export const getAiProvidersKVs = async (
   return aiProvidersDbPayloadToKeyValues(result)
 }
 
+export const getAiProviderKVs = async (
+  prisma: PrismaClientOrTrxClient,
+  workspaceId: string,
+  userId: string,
+  providerSlug: string,
+) => {
+  const result = await getAiProvidersKVs(prisma, workspaceId, userId, [
+    providerSlug,
+  ])
+  if (!result[providerSlug]) {
+    return {}
+  }
+  return result[providerSlug] ?? {}
+}
+
 const getAiProvidersIncludingKeyValues = async (
   prisma: PrismaTrxClient,
   workspaceId: string,
