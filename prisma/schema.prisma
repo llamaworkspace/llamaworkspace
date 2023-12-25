@@ -263,6 +263,8 @@ model AiProvider {
     updatedAt   DateTime             @updatedAt
     keyValues   AiProviderKeyValue[]
     workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+    @@unique([workspaceId, slug])
 }
 
 model AiProviderKeyValue {
@@ -273,4 +275,6 @@ model AiProviderKeyValue {
     createdAt    DateTime   @default(now())
     updatedAt    DateTime   @updatedAt
     aiProvider   AiProvider @relation(fields: [aiProviderId], references: [id], onDelete: Cascade)
+
+    @@unique([aiProviderId, key])
 }

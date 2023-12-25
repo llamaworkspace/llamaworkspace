@@ -22,6 +22,12 @@ CREATE TABLE "AiProviderKeyValue" (
     CONSTRAINT "AiProviderKeyValue_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "AiProvider_workspaceId_slug_key" ON "AiProvider"("workspaceId", "slug");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AiProviderKeyValue_aiProviderId_key_key" ON "AiProviderKeyValue"("aiProviderId", "key");
+
 -- AddForeignKey
 ALTER TABLE "AiProvider" ADD CONSTRAINT "AiProvider_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspace"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
