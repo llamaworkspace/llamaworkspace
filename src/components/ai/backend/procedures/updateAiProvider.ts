@@ -28,7 +28,7 @@ export const updateAiProvider = protectedProcedure
       'openai',
       undefined,
       {
-        apiKey: openAiApiKey,
+        apiKey: openAiApiKey ?? null,
       },
     )
   })

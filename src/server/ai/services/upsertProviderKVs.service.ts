@@ -13,7 +13,7 @@ export const upsertAiProvider = async (
   workspaceId: string,
   slug: string,
   providerMeta?: Pick<AiProvider, 'name'>,
-  values?: Record<string, string>,
+  values?: Record<string, string | null>,
 ) => {
   await prismaAsTrx(prisma, async (prisma) => {
     const aiProvider = await upsertProviderRaw(
@@ -61,7 +61,7 @@ const upsertProviderRaw = async (
 const upsertProviderKeyValues = async (
   prisma: PrismaTrxClient,
   aiProvider: AiProvider,
-  values?: Record<string, string>,
+  values?: Record<string, string | null>,
 ) => {
   await Promise.map(Object.entries(values ?? {}), async ([key, value]) => {
     const existingKV = await prisma.aiProviderKeyValue.findFirst({
@@ -71,25 +71,26 @@ const upsertProviderKeyValues = async (
       },
     })
 
-    if (existingKV) {
-      if (isNull(value)) {
+    if (isNull(value)) {
+      if (existingKV) {
         await prisma.aiProviderKeyValue.delete({
           where: {
             id: existingKV.id,
           },
         })
-        return
-      } else {
-        await prisma.aiProviderKeyValue.update({
-          where: {
-            id: existingKV.id,
-          },
-          data: {
-            value,
-          },
-        })
-        return
       }
+      return
+    }
+
+    if (existingKV) {
+      await prisma.aiProviderKeyValue.update({
+        where: {
+          id: existingKV.id,
+        },
+        data: {
+          value,
+        },
+      })
     } else {
       await prisma.aiProviderKeyValue.create({
         data: {
