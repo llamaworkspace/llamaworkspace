@@ -6,6 +6,7 @@ import type {
 } from '@/shared/globalTypes'
 import type { AiProvider } from '@prisma/client'
 import { Promise } from 'bluebird'
+import { isNull } from 'underscore'
 
 export const upsertAiProvider = async (
   prisma: PrismaClientOrTrxClient,
@@ -71,14 +72,24 @@ const upsertProviderKeyValues = async (
     })
 
     if (existingKV) {
-      await prisma.aiProviderKeyValue.update({
-        where: {
-          id: existingKV.id,
-        },
-        data: {
-          value,
-        },
-      })
+      if (isNull(value)) {
+        await prisma.aiProviderKeyValue.delete({
+          where: {
+            id: existingKV.id,
+          },
+        })
+        return
+      } else {
+        await prisma.aiProviderKeyValue.update({
+          where: {
+            id: existingKV.id,
+          },
+          data: {
+            value,
+          },
+        })
+        return
+      }
     } else {
       await prisma.aiProviderKeyValue.create({
         data: {
