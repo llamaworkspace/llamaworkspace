@@ -8,7 +8,7 @@ import {
 const zInput = z.object({
   workspaceId: z.string(),
   name: z.string().optional(),
-  openAiApiKey: z.string().optional().nullable(),
+  // openAiApiKey: z.string().optional().nullable(),
 })
 
 export const workspacesUpdateWorkspace = protectedProcedure

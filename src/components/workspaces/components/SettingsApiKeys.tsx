@@ -1,3 +1,4 @@
+import { useAiProviders, useUpdateAiProvider } from '@/components/ai/aiHooks'
 import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { InputField } from '@/components/ui/forms/InputField'
@@ -6,19 +7,21 @@ import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { isEqual } from 'underscore'
-import { useCurrentWorkspace, useUpdateWorkspace } from '../workspacesHooks'
+import { useCurrentWorkspace } from '../workspacesHooks'
 
 type FormValues = {
   openAiApiKey: string | null
 }
 
 export const SettingsApiKeys = () => {
-  const { mutate: updateWorkspace } = useUpdateWorkspace()
+  const { mutate: updateAiProvider } = useUpdateAiProvider()
+  const { data: aiProviders } = useAiProviders()
   const successToast = useSuccessToast()
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const openAiApiKey = aiProviders?.[0]?.values?.apiKey ?? null
   const focusQueryStringEl = navigation.query?.focus
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export const SettingsApiKeys = () => {
   }, [focusQueryStringEl])
 
   const initialValues = {
-    openAiApiKey: workspace?.openAiApiKey ?? null,
+    openAiApiKey,
   }
 
   return (
@@ -59,7 +62,7 @@ export const SettingsApiKeys = () => {
               ? undefined
               : values.openAiApiKey ?? null
 
-            updateWorkspace(
+            updateAiProvider(
               {
                 workspaceId: workspace.id,
                 openAiApiKey,
