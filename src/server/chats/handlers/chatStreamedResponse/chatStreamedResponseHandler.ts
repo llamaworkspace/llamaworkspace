@@ -2,6 +2,7 @@ import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { env } from '@/env.mjs'
 import { getEnumByValue } from '@/lib/utils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
+import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
@@ -61,9 +62,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       where: { id: workspaceId },
     })
 
-    const { hasOwnApiKey, openAiKey } = getOpenAiApiKeys(workspace)
-
     await validateUserPermissionsOrThrow(userId, chatId)
+
+    const { hasOwnApiKey, openAiKey } = getOpenAiApiKeys(workspace)
 
     const allUnprocessedMessages = [...postConfigVersion.messages, ...messages]
 
@@ -84,7 +85,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
-    const provider = aiRegistry.getProvider('openai')
+    const targetProviderSlug = 'openai'
+
+    const provider = aiRegistry.getProvider(targetProviderSlug)
+    const providerKVs = await getAiProviderKVs(
+      prisma,
+      workspaceId,
+      userId,
+      targetProviderSlug,
+    )
+
+    if (targetProviderSlug === 'openai') {
+      if (!providerKVs.apiKey && env.OPENAI_API_KEY) {
+        providerKVs.apiKey = env.OPENAI_API_KEY
+      }
+      if (!providerKVs.baseURL && env.OPTIONAL_OPENAI_BASE_URL) {
+        providerKVs.baseURL = env.OPTIONAL_OPENAI_BASE_URL
+      }
+    }
 
     const onFinal = async (final: string) => {
       await updateMessage(openaiTargetMessage.id, final)
@@ -119,7 +137,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
     const model = OpenaiInternalModelToApiModel[dbModel]
-
+    console.log('providerKVs', providerKVs)
     const stream = await provider.executeAsStream(
       {
         model,
@@ -127,10 +145,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         onToken,
         onFinal,
       },
-      {
-        apiKey: openAiKey,
-        baseURL: env.OPTIONAL_OPENAI_BASE_URL,
-      },
+      providerKVs,
     )
 
     streamToResponse(stream, res)

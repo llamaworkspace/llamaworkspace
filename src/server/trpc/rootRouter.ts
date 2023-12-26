@@ -1,3 +1,4 @@
+import { aiRouter } from '@/components/ai/backend/aiRouter'
 import { chatsRouter } from '@/components/chats/backend/chatsRouter'
 import { postsRouter } from '@/components/posts/backend/postsRouter'
 import { sidebarRouter } from '@/components/sidebar/backend/sidebarRouter'
@@ -17,6 +18,7 @@ export const rootRouter = createTRPCRouter({
   workspaces: workspacesRouter,
   posts: postsRouter,
   chats: chatsRouter,
+  ai: aiRouter,
 })
 
 // export type definition of API
