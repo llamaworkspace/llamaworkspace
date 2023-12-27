@@ -29,7 +29,13 @@ export const getAiProviders = protectedProcedure
       // Pick only Provider-registered fields
       const providerKV = _.chain(aiProvidersKVBySlug[providerSlug])
         .pick(...fieldSlugs)
-        .mapObject(maskValueWithBullets)
+        .mapObject((value: string, key) => {
+          const field = providerFields.find((field) => field.slug === key)
+          if (field?.encrypted) {
+            return maskValueWithBullets(value)
+          }
+          return value
+        })
         .value()
 
       return {

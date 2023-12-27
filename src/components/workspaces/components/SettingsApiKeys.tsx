@@ -26,7 +26,7 @@ export const SettingsApiKeys = () => {
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
   const { data: providers } = useAiProviders()
-  console.log('FE Providers', providers)
+
   const inputRef = useRef<HTMLInputElement>(null)
 
   const focusQueryStringEl = navigation.query?.focus
@@ -39,12 +39,20 @@ export const SettingsApiKeys = () => {
 
   const handleFormSubmit = (providerSlug: string) => (values: FormValues) => {
     if (!workspace?.id) return
-    console.log('subbmit', providerSlug, values)
+
     const provider = providers?.find((p) => p.slug === providerSlug)
     const submitValues = provider?.fields.reduce((acc, field) => {
+      let fieldValue: string | null | undefined = values[field.slug]
+
+      if (fieldValue?.includes('•') ?? fieldValue === undefined) {
+        return acc
+      }
+
+      fieldValue = fieldValue === '' || fieldValue === null ? null : fieldValue
+
       return {
         ...acc,
-        [field.slug]: values[field.slug] ?? null,
+        [field.slug]: fieldValue,
       }
     }, {}) as Record<string, string>
 
