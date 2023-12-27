@@ -85,7 +85,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
-    const targetProviderSlug = 'openai'
+    const targetProviderSlug = 'bedrock' as string
 
     const provider = aiRegistry.getProvider(targetProviderSlug)
     const providerKVs = await getAiProviderKVs(
@@ -137,7 +137,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
     const model = OpenaiInternalModelToApiModel[dbModel]
-    console.log('providerKVs', providerKVs)
+
     const stream = await provider.executeAsStream(
       {
         model,
