@@ -26,7 +26,7 @@ import { SidebarDesktopLineItemForSingleChat } from './SidebarDesktopLineItemFor
 const useShouldDisplayAddOpenAiKeysAlert = () => {
   const { workspace } = useCurrentWorkspace()
 
-  return workspace && !workspace.openAiApiKey && workspace.balanceInCents < 5
+  return workspace && workspace.balanceInCents < 5
 }
 
 export function SidebarDesktopBody() {

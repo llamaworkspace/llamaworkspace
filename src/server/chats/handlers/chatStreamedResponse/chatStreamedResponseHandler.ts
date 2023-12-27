@@ -17,7 +17,7 @@ import {
 } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Message, Workspace } from '@prisma/client'
+import type { Message } from '@prisma/client'
 import { streamToResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
@@ -64,8 +64,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     await validateUserPermissionsOrThrow(userId, chatId)
 
-    const { hasOwnApiKey, openAiKey } = getOpenAiApiKeys(workspace)
-
     const allUnprocessedMessages = [...postConfigVersion.messages, ...messages]
 
     const { messages: allMessages, openaiTargetMessage } =
@@ -95,7 +93,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       targetProviderSlug,
     )
 
+    let hasOwnApiKey = false
+
     if (targetProviderSlug === 'openai') {
+      if (providerKVs.apiKey) {
+        hasOwnApiKey = true
+      }
       if (!providerKVs.apiKey && env.OPENAI_API_KEY) {
         providerKVs.apiKey = env.OPENAI_API_KEY
       }
@@ -275,14 +278,6 @@ const updateMessage = async (messageId: string, message: string) => {
       message,
     },
   })
-}
-
-const getOpenAiApiKeys = (workspace: Workspace) => {
-  if (workspace.openAiApiKey) {
-    return { hasOwnApiKey: true, openAiKey: workspace.openAiApiKey }
-  }
-
-  return { hasOwnApiKey: false, openAiKey: env.OPENAI_API_KEY }
 }
 
 interface PreparedMessagesForPrompt {

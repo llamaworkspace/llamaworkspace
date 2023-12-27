@@ -13,7 +13,6 @@ export const workspacesGetWorkspaces = protectedProcedure
       select: {
         id: true,
         name: true,
-        openAiApiKey: true,
         balanceInNanoCents: true,
       },
       where: {

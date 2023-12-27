@@ -5,7 +5,6 @@ const generateDefaults = () => {
   return {
     id: faker.string.nanoid(),
     name: faker.person.firstName() + "'s workspace",
-    openAiApiKey: 'abc123',
   }
 }
 
