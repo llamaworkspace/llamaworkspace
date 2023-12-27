@@ -85,7 +85,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
-    const targetProviderSlug = 'bedrock' as string
+    const targetProviderSlug = 'openai'
 
     const provider = aiRegistry.getProvider(targetProviderSlug)
     const providerKVs = await getAiProviderKVs(
