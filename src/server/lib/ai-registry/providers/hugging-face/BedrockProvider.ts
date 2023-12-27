@@ -5,9 +5,11 @@ import {
 import { AWSBedrockLlama2Stream } from 'ai'
 import { experimental_buildLlama2Prompt } from 'ai/prompts'
 import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
+import type { BedrockExecuteOptions } from '../bedrock/lib/bedrockProviderTypes'
 import { bedrockAiModels } from './lib/bedrockAiModels'
+import type { BedrockProviderType } from './lib/openAiProviderTypes'
 
-export const HuggingFaceProvider = () => {
+export const BedrockProvider: () => BedrockProviderType = () => {
   return {
     slug: 'bedrock' as const,
     publicName: 'Amazon Bedrock' as const,
@@ -25,7 +27,10 @@ export const HuggingFaceProvider = () => {
       },
     ],
 
-    executeAsStream: async (payload: AiRegistryExecutePayload) => {
+    executeAsStream: async (
+      payload: AiRegistryExecutePayload,
+      options: BedrockExecuteOptions,
+    ) => {
       const bedrockClient = new BedrockRuntimeClient({
         region: 'us-east-1',
         // region: process.env.AWS_REGION ?? 'us-east-1',
