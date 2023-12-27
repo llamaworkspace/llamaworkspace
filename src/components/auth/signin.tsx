@@ -43,11 +43,9 @@ function getSanitizedCallbackUrl(
     return rawCallbackUrl
   }
 
-  try {
-    if (new URL(rawCallbackUrl).origin === window?.location.origin) {
-      return rawCallbackUrl
-    }
-  } catch {}
+  if (new URL(rawCallbackUrl).origin === window?.location.origin) {
+    return rawCallbackUrl
+  }
 
   return defaultUrl
 }
@@ -57,7 +55,7 @@ const ContinueWithGoogle = () => {
   const [, , clearLastWorkspaceId] = useLatestWorkspaceIdLocalStorage()
   const queryCallbackUrl = navigation.query?.callbackUrl as string | undefined
 
-  const callbackUrl = getSanitizedCallbackUrl(queryCallbackUrl, '/workspaces')
+  const callbackUrl = getSanitizedCallbackUrl(queryCallbackUrl, '/p')
 
   const handleSignIn = async () => {
     clearLastWorkspaceId()
