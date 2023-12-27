@@ -7,7 +7,7 @@ import { experimental_buildLlama2Prompt } from 'ai/prompts'
 import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
 import { bedrockAiModels } from './lib/bedrockAiModels'
 
-export const HuggingFaceProvider = () => {
+export const BedrockProvider = () => {
   return {
     slug: 'bedrock' as const,
     publicName: 'Amazon Bedrock' as const,
