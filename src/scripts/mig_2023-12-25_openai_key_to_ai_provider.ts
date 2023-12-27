@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 // To run, go to the server and invoke:
 // npx env-cmd npx tsx src/scripts/mig_2023-12-25_openai_key_to_ai_provider.ts
 
@@ -9,9 +11,13 @@ async function main() {
   const workspacesWithOpenAiKey = await prisma.workspace.findMany({
     select: {
       id: true,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       openAiApiKey: true,
     },
     where: {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       openAiApiKey: {
         not: null,
       },
@@ -22,7 +28,11 @@ async function main() {
 
   await Bluebird.mapSeries(workspacesWithOpenAiKey, async (workspace) => {
     await upsertAiProvider(prisma, workspace.id, 'openai', undefined, {
+      /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       apiKey: workspace.openAiApiKey!,
+      /* eslint-enable @typescript-eslint/no-unsafe-assignment */
     })
   })
 }

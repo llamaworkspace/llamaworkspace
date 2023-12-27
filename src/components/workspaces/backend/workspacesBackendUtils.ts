@@ -4,13 +4,6 @@ export const zodWorkspaceOutput = z.object({
   id: z.string(),
   name: z.string().nullable(),
   balanceInCents: z.number(),
-  openAiApiKey: z
-    .string()
-    .nullable()
-    .transform((val) => {
-      if (!val) return val
-      return val?.slice(0, 5) + '••••••••••••••••' + val?.slice(-4)
-    }),
 })
 
 export enum WorkspaceMemberRole {

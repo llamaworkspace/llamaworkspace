@@ -30,6 +30,7 @@ export const SettingsApiKeys = () => {
     }
   }, [focusQueryStringEl])
 
+  // This?
   const initialValues = {
     openAiApiKey,
   }
@@ -49,6 +50,7 @@ export const SettingsApiKeys = () => {
             )
 
             // Prevent submitting if the OpenAI key is masked
+            // HERE!!!
             if (
               valueChangedIsOpenAiApiKey &&
               values.openAiApiKey?.includes('•')
