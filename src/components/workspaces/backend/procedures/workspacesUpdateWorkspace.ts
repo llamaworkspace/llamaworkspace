@@ -35,7 +35,6 @@ export const workspacesUpdateWorkspace = protectedProcedure
     return {
       id: workspace.id,
       name: workspace.name,
-      openAiApiKey: workspace.openAiApiKey,
       balanceInCents: Number(workspace.balanceInNanoCents) / 10_000_000,
     }
   })

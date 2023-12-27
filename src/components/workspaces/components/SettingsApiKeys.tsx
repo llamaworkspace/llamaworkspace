@@ -34,46 +34,44 @@ export const SettingsApiKeys = () => {
     openAiApiKey,
   }
 
+  const handleSubmit = (values: FormValues) => {
+    if (!workspace?.id) return
+    if (isEqual(values, initialValues)) return
+
+    const valueChangedIsOpenAiApiKey = !isEqual(
+      values.openAiApiKey,
+      initialValues.openAiApiKey,
+    )
+
+    // Prevent submitting if the OpenAI key is masked
+    if (valueChangedIsOpenAiApiKey && values.openAiApiKey?.includes('•')) {
+      return
+    }
+
+    // We only send an update for the OpenAI key if the value is not masked
+    const openAiApiKey = values.openAiApiKey?.includes('•')
+      ? undefined
+      : values.openAiApiKey ?? null
+
+    updateAiProvider(
+      {
+        workspaceId: workspace.id,
+        openAiApiKey,
+      },
+      {
+        onSuccess: () => {
+          successToast(undefined, 'API keys updated')
+        },
+      },
+    )
+  }
+
   return (
     <Section>
       <SectionHeader title="OpenAI API keys" />
       <SectionBody>
         <FinalForm<FormValues>
-          onSubmit={(values) => {
-            if (!workspace?.id) return
-            if (isEqual(values, initialValues)) return
-
-            const valueChangedIsOpenAiApiKey = !isEqual(
-              values.openAiApiKey,
-              initialValues.openAiApiKey,
-            )
-
-            // Prevent submitting if the OpenAI key is masked
-            if (
-              valueChangedIsOpenAiApiKey &&
-              values.openAiApiKey?.includes('•')
-            ) {
-              return
-            }
-
-            // We only send an update for the OpenAI key if
-            // the billingStrategy is ApiKeys and the value is not masked
-            const openAiApiKey = values.openAiApiKey?.includes('•')
-              ? undefined
-              : values.openAiApiKey ?? null
-
-            updateAiProvider(
-              {
-                workspaceId: workspace.id,
-                openAiApiKey,
-              },
-              {
-                onSuccess: () => {
-                  successToast(undefined, 'API keys updated')
-                },
-              },
-            )
-          }}
+          onSubmit={handleSubmit}
           initialValues={initialValues}
           render={({ handleSubmit }) => {
             return (
