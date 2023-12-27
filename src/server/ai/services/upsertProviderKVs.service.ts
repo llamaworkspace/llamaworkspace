@@ -88,7 +88,7 @@ const upsertProviderKeyValues = async (
           id: existingKV.id,
         },
         data: {
-          value,
+          value: value.trim(),
         },
       })
     } else {
