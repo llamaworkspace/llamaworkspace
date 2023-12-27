@@ -8,7 +8,14 @@ type InputProps = DefaultInputProps &
 
 export const InputField = forwardRef<HTMLInputElement, InputProps>(
   function InputFieldFunc(
-    { label, placeholder, helperText, onValueChange, isRequired, ...input },
+    {
+      label,
+      placeholder,
+      helperText,
+      onValueChange,
+      required: isRequired,
+      ...input
+    },
     externalRef,
   ) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +30,7 @@ export const InputField = forwardRef<HTMLInputElement, InputProps>(
       <FormFieldWrapper
         label={label}
         helperText={helperText}
-        isRequired={isRequired}
+        required={isRequired}
       >
         <Input
           ref={externalRef}

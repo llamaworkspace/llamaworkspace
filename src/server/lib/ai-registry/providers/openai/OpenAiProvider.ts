@@ -16,12 +16,13 @@ export const OpenAiProvider: () => OpenAiProviderType = () => {
       {
         slug: 'apiKey',
         publicName: 'API key',
-        isOptional: false,
+        required: true,
+        encrypted: true,
       },
       {
         slug: 'baseUrl',
         publicName: 'Base URL',
-        isOptional: true,
+        required: false,
       },
     ],
     executeAsStream: async (

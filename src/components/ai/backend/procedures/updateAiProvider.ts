@@ -5,13 +5,14 @@ import { z } from 'zod'
 
 const zInput = z.object({
   workspaceId: z.string(),
-  openAiApiKey: z.string().optional().nullable(),
+  providerSlug: z.string(),
+  values: z.record(z.string().optional().nullable()),
 })
 
 export const updateAiProvider = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
-    const { openAiApiKey, workspaceId } = input
+    const { values, workspaceId, providerSlug } = input
 
     const userId = ctx.session.user.id
 
@@ -22,13 +23,13 @@ export const updateAiProvider = protectedProcedure
       },
     })
 
+    const coercedValues = values as Record<string, string | null>
+
     return await upsertAiProvider(
       ctx.prisma,
       workspaceId,
-      'openai',
+      providerSlug,
       undefined,
-      {
-        apiKey: openAiApiKey ?? null,
-      },
+      coercedValues,
     )
   })

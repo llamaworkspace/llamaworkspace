@@ -16,12 +16,12 @@ export const HuggingFaceProvider = () => {
       {
         slug: 'apiKey',
         publicName: 'API key',
-        isOptional: false,
+        required: false,
       },
       {
         slug: 'baseUrl',
         publicName: 'Base URL',
-        isOptional: true,
+        required: true,
       },
     ],
 
