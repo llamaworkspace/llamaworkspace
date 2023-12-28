@@ -6,7 +6,7 @@ import type { DefaultInputProps } from './formTypes'
 export const FormFieldWrapper = ({
   label,
   helperText,
-  isRequired,
+  required: isRequired,
   children,
 }: Omit<DefaultInputProps, 'name'> & PropsWithChildren) => {
   return (

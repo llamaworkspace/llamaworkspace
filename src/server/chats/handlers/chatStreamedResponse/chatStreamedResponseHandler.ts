@@ -140,7 +140,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
     const model = OpenaiInternalModelToApiModel[dbModel]
-    console.log('providerKVs', providerKVs)
+
     const stream = await provider.executeAsStream(
       {
         model,

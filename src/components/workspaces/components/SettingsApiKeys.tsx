@@ -1,27 +1,34 @@
 import { useAiProviders, useUpdateAiProvider } from '@/components/ai/aiHooks'
 import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { InputField } from '@/components/ui/forms/InputField'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
-import { isEqual } from 'underscore'
 import { useCurrentWorkspace } from '../workspacesHooks'
 
-type FormValues = {
-  openAiApiKey: string | null
-}
+type FormValues = Record<string, string>
 
 export const SettingsApiKeys = () => {
-  const { mutate: updateAiProvider } = useUpdateAiProvider()
-  const { data: aiProviders } = useAiProviders()
   const successToast = useSuccessToast()
+  const { mutate: updateAiProvider } = useUpdateAiProvider()
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
+  const { data: providers } = useAiProviders()
+
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const openAiApiKey = aiProviders?.[0]?.values?.apiKey ?? null
   const focusQueryStringEl = navigation.query?.focus
 
   useEffect(() => {
@@ -30,37 +37,30 @@ export const SettingsApiKeys = () => {
     }
   }, [focusQueryStringEl])
 
-  const initialValues = {
-    openAiApiKey,
-  }
-
-  const handleSubmit = (values: FormValues) => {
+  const handleFormSubmit = (providerSlug: string) => (values: FormValues) => {
     if (!workspace?.id) return
-    if (isEqual(values, initialValues)) return
 
-    const valueChangedIsOpenAiApiKey = !isEqual(
-      values.openAiApiKey,
-      initialValues.openAiApiKey,
-    )
+    const provider = providers?.find((p) => p.slug === providerSlug)
+    const submitValues = provider?.fields.reduce((acc, field) => {
+      let fieldValue: string | null | undefined = values[field.slug]
 
-    // Prevent submitting if the OpenAI key is masked
-    if (valueChangedIsOpenAiApiKey && values.openAiApiKey?.includes('•')) {
-      return
-    }
+      if (fieldValue?.includes('•') ?? fieldValue === undefined) {
+        return acc
+      }
 
-    // We only send an update for the OpenAI key if the value is not masked
-    const openAiApiKey = values.openAiApiKey?.includes('•')
-      ? undefined
-      : values.openAiApiKey ?? null
+      fieldValue = fieldValue === '' || fieldValue === null ? null : fieldValue
+
+      return {
+        ...acc,
+        [field.slug]: fieldValue,
+      }
+    }, {}) as Record<string, string>
 
     updateAiProvider(
-      {
-        workspaceId: workspace.id,
-        openAiApiKey,
-      },
+      { workspaceId: workspace.id, providerSlug, values: submitValues },
       {
         onSuccess: () => {
-          successToast(undefined, 'API keys updated')
+          successToast(undefined, 'Provider updated')
         },
       },
     )
@@ -68,45 +68,84 @@ export const SettingsApiKeys = () => {
 
   return (
     <Section>
-      <SectionHeader title="OpenAI API keys" />
+      <SectionHeader title="AI Service Providers" />
       <SectionBody>
-        <FinalForm<FormValues>
-          onSubmit={handleSubmit}
-          initialValues={initialValues}
-          render={({ handleSubmit }) => {
-            return (
-              <div className="space-y-2">
-                <div className="text-sm text-zinc-600">
-                  All the conversations will go through your OpenAI account, and
-                  you will be billed directly by them.
-                </div>
-                <div className="grid grid-cols-2 py-2">
-                  <Field
-                    name="openAiApiKey"
-                    render={({ input }) => {
-                      return (
-                        <InputField
-                          {...input}
-                          ref={inputRef}
-                          label="OpenAI API key"
-                          helperText={
-                            <StyledLink
-                              href="https://joiahq.notion.site/How-to-obtain-an-OpenAI-access-token-f29f71ba136145c9b84a43911c7d8709"
-                              target="_blank"
-                            >
-                              Get help obtaining your OpenAI API key
-                            </StyledLink>
-                          }
-                          onBlur={() => void handleSubmit()}
-                        />
-                      )
-                    }}
-                  />
-                </div>
-              </div>
-            )
-          }}
-        />
+        <div className="mb-12 space-y-4">
+          <div className="text-zinc-700">
+            Add AI service providers like OpenAI, Hugging Face or Amazon
+            Bedrock, to power the chats in your workspace. You can add multiple
+            providers and later choose which one to use on a case by case basis.
+          </div>
+          <div>
+            <Button>Add AI provider</Button>
+          </div>
+        </div>
+
+        {providers?.map((provider) => {
+          const isOpenAi = provider.slug === 'openai'
+          return (
+            <FinalForm<FormValues>
+              key={provider.slug}
+              onSubmit={handleFormSubmit(provider.slug)}
+              initialValues={provider.values}
+              render={({ handleSubmit }) => {
+                return (
+                  <Card key={provider.slug}>
+                    <CardHeader>
+                      <CardTitle className="text-xl">
+                        <div className="flex items-center gap-x-2">
+                          <div>{provider.publicName}</div>
+                          {isOpenAi && (
+                            <Badge variant="yellow" size="xs">
+                              Required
+                            </Badge>
+                          )}
+                        </div>
+                      </CardTitle>
+                      <CardDescription>
+                        <StyledLink
+                          href="https://joiahq.notion.site/How-to-obtain-an-OpenAI-access-token-f29f71ba136145c9b84a43911c7d8709"
+                          target="_blank"
+                        >
+                          Get help obtaining your OpenAI API key
+                        </StyledLink>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="space-y-2">
+                        <div className="space-y-4 py-2">
+                          {provider.fields.map((field) => {
+                            return (
+                              <Field
+                                key={field.slug}
+                                name={field.slug}
+                                render={({ input }) => {
+                                  return (
+                                    <InputField
+                                      {...input}
+                                      ref={inputRef}
+                                      label={field.publicName}
+                                      required={field.required}
+                                    />
+                                  )
+                                }}
+                              />
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button onClick={() => void handleSubmit()}>
+                        Save changes
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                )
+              }}
+            />
+          )
+        })}
       </SectionBody>
     </Section>
   )
