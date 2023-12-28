@@ -41,14 +41,15 @@ export const SettingsApiKeys = () => {
     if (!workspace?.id) return
 
     const provider = providers?.find((p) => p.slug === providerSlug)
+
     const submitValues = provider?.fields.reduce((acc, field) => {
       let fieldValue: string | null | undefined = values[field.slug]
 
-      if (fieldValue?.includes('•') ?? fieldValue === undefined) {
+      if (fieldValue?.includes('•')) {
         return acc
       }
 
-      fieldValue = fieldValue === '' || fieldValue === null ? null : fieldValue
+      fieldValue = fieldValue ?? null
 
       return {
         ...acc,
