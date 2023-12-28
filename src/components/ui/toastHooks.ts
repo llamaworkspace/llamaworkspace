@@ -2,6 +2,7 @@
 // along with dependencies: @chakra-ui/react @emotion/react @emotion/styled framer-motion
 
 import { useToast } from '@chakra-ui/react'
+import { useCallback } from 'react'
 
 const TOAST_DURATION = 3000
 
@@ -33,34 +34,40 @@ const getShouldTriggerByKey = (key: string) => {
 export const useErrorToast = () => {
   const toast = useToast()
 
-  return (message: string, options?: ToastOptions) => {
-    const description = message || 'Something went wrong. Please try again.'
+  return useCallback(
+    (message: string, options?: ToastOptions) => {
+      const description = message || 'Something went wrong. Please try again.'
 
-    if (!getShouldTriggerByKey(description)) {
-      return
-    }
+      if (!getShouldTriggerByKey(description)) {
+        return
+      }
 
-    toast({
-      title: 'Error',
-      description,
-      status: 'error',
-      duration: options?.duration ?? TOAST_DURATION,
-      isClosable: true,
-      position: 'top',
-    })
-  }
+      toast({
+        title: 'Error',
+        description,
+        status: 'error',
+        duration: options?.duration ?? TOAST_DURATION,
+        isClosable: true,
+        position: 'top',
+      })
+    },
+    [toast],
+  )
 }
 
 export const useSuccessToast = () => {
   const toast = useToast()
-  return (title = 'Success', description: string) => {
-    toast({
-      title,
-      description,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-      position: 'top',
-    })
-  }
+  return useCallback(
+    (title = 'Success', description: string) => {
+      toast({
+        title,
+        description,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      })
+    },
+    [toast],
+  )
 }

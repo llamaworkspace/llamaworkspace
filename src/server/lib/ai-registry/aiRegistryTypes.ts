@@ -39,5 +39,4 @@ export interface AiRegistryExecutePayload {
   onStart?: () => Promise<void> | void
   onToken?: (token: string) => void | Promise<void>
   onFinal?: (final: string) => void | Promise<void>
-  onError?: (error: Error) => void | Promise<void>
 }
