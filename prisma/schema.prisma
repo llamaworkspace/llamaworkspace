@@ -262,6 +262,7 @@ model AiProvider {
     updatedAt   DateTime             @updatedAt
     keyValues   AiProviderKeyValue[]
     workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    AiModel     AiModel[]
 
     @@unique([workspaceId, slug])
 }
@@ -276,4 +277,27 @@ model AiProviderKeyValue {
     aiProvider   AiProvider @relation(fields: [aiProviderId], references: [id], onDelete: Cascade)
 
     @@unique([aiProviderId, key])
+}
+
+model AiModel {
+    id            String          @id @default(cuid())
+    providerId    String
+    name          String
+    createdAt     DateTime        @default(now())
+    updatedAt     DateTime        @updatedAt
+    provider      AiProvider      @relation(fields: [providerId], references: [id], onDelete: Cascade)
+    AiModelFields AiModelFields[]
+}
+
+model AiModelFields {
+    id         String   @id @default(cuid())
+    aiModelId  String
+    name       String
+    type       String
+    isRequired Boolean
+    min        Int?
+    max        Int?
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    aiModel    AiModel  @relation(fields: [aiModelId], references: [id], onDelete: Cascade)
 }
