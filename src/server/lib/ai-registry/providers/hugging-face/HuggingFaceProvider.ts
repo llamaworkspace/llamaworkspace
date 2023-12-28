@@ -34,6 +34,7 @@ export const HuggingFaceProvider = () => {
         inputs: experimental_buildOpenAssistantPrompt(payload.messages),
         parameters: {
           max_new_tokens: 200,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore (this is a valid parameter specifically in OpenAssistant models)
           typical_p: 0.2,
           repetition_penalty: 1,
