@@ -43,7 +43,7 @@ interface BodyPayload {
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   let tokenResponse = ''
-  let openaiTargetMessageId: string | undefined = undefined
+  let assistantTargetMessageId: string | undefined = undefined
 
   try {
     await validateRequestOrThrow(req, res)
@@ -66,10 +66,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const allUnprocessedMessages = [...postConfigVersion.messages, ...messages]
 
-    const { messages: allMessages, openaiTargetMessage } =
-      prepareMessagesForPrompt(allUnprocessedMessages)
+    const {
+      messages: allMessages,
+      assistantTargetMessage: assistantTargetMessage,
+    } = prepareMessagesForPrompt(allUnprocessedMessages)
 
-    openaiTargetMessageId = openaiTargetMessage.id
+    assistantTargetMessageId = assistantTargetMessage.id
 
     if (!chat.postConfigVersionId) {
       await attachPostConfigVersionToChat(chatId, postConfigVersion.id)
@@ -108,7 +110,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const onFinal = async (final: string) => {
-      await updateMessage(openaiTargetMessage.id, final)
+      await updateMessage(assistantTargetMessage.id, final)
       // Todo: Do async in a queue
       const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
 
@@ -139,7 +141,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const onError = async (error: Error) => {
-      await deleteMessage(openaiTargetMessage.id)
+      await deleteMessage(assistantTargetMessage.id)
       errorLogger(error)
     }
 
@@ -159,10 +161,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     chatStreamToResponse(stream, res, undefined, onError)
   } catch (error) {
-    if (tokenResponse.length && openaiTargetMessageId) {
-      await updateMessage(openaiTargetMessageId, tokenResponse)
-    } else if (openaiTargetMessageId) {
-      await deleteMessage(openaiTargetMessageId)
+    if (tokenResponse.length && assistantTargetMessageId) {
+      await updateMessage(assistantTargetMessageId, tokenResponse)
+    } else if (assistantTargetMessageId) {
+      await deleteMessage(assistantTargetMessageId)
     }
 
     if (error instanceof OpenAI.APIError) {
@@ -298,7 +300,7 @@ const deleteMessage = async (messageId: string) => {
 
 interface PreparedMessagesForPrompt {
   messages: AiRegistryMessage[]
-  openaiTargetMessage: Message
+  assistantTargetMessage: Message
 }
 
 const prepareMessagesForPrompt = (
@@ -310,7 +312,7 @@ const prepareMessagesForPrompt = (
 
   // This last message should be maxCreatedAt where the author=OpenAi and should be empty
   // It shouldn't be sent to OpenAi
-  const openaiTargetMessage = chain(messages)
+  const assistantTargetMessage = chain(messages)
     .filter(
       (message) =>
         message.author === (Author.Assistant as string) &&
@@ -320,7 +322,7 @@ const prepareMessagesForPrompt = (
     .value() as Message
 
   const openaAiMessagesPayload = messages.filter((message) => {
-    if (openaiTargetMessage.id === message.id) {
+    if (assistantTargetMessage.id === message.id) {
       return false
     }
     return message.message !== null && message.message !== ''
@@ -328,7 +330,7 @@ const prepareMessagesForPrompt = (
 
   return {
     messages: openaAiMessagesPayload.map(transformMessageModelToPayload),
-    openaiTargetMessage,
+    assistantTargetMessage: assistantTargetMessage,
   }
 }
 
