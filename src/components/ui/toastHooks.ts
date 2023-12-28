@@ -5,6 +5,10 @@ import { useToast } from '@chakra-ui/react'
 
 const TOAST_DURATION = 3000
 
+interface ToastOptions {
+  duration?: number
+}
+
 const cache: Record<string, Date> = {}
 
 const getShouldTriggerByKey = (key: string) => {
@@ -29,7 +33,7 @@ const getShouldTriggerByKey = (key: string) => {
 export const useErrorToast = () => {
   const toast = useToast()
 
-  return (message: string) => {
+  return (message: string, options?: ToastOptions) => {
     const description = message || 'Something went wrong. Please try again.'
 
     if (!getShouldTriggerByKey(description)) {
@@ -40,7 +44,7 @@ export const useErrorToast = () => {
       title: 'Error',
       description,
       status: 'error',
-      duration: TOAST_DURATION,
+      duration: options?.duration ?? TOAST_DURATION,
       isClosable: true,
       position: 'top',
     })

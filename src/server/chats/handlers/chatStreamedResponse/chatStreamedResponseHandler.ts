@@ -18,7 +18,6 @@ import {
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message } from '@prisma/client'
-import { streamToResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -27,6 +26,7 @@ import OpenAI from 'openai'
 import { chain, isNull } from 'underscore'
 import { doTokenCountForChatRun } from '../../services/doTokenCountForChatRun.service'
 import {
+  chatStreamToResponse,
   handleChatTitleCreate,
   registerTransaction,
 } from './chatStreamedResponseHandlerUtils'
@@ -58,7 +58,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     ])
 
     const workspaceId = chat.post.workspaceId
-    const workspace = await prisma.workspace.findFirstOrThrow({
+    await prisma.workspace.findFirstOrThrow({
       where: { id: workspaceId },
     })
 
@@ -138,6 +138,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       tokenResponse += token
     }
 
+    const onError = async (error: Error) => {
+      await deleteMessage(openaiTargetMessage.id)
+      errorLogger(error)
+    }
+
     const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
     const model = OpenaiInternalModelToApiModel[dbModel]
 
@@ -147,14 +152,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         messages: allMessages,
         onToken,
         onFinal,
+        onError,
       },
       providerKVs,
     )
 
-    streamToResponse(stream, res)
+    chatStreamToResponse(stream, res, undefined, onError)
   } catch (error) {
     if (tokenResponse.length && openaiTargetMessageId) {
       await updateMessage(openaiTargetMessageId, tokenResponse)
+    } else if (openaiTargetMessageId) {
+      await deleteMessage(openaiTargetMessageId)
     }
 
     if (error instanceof OpenAI.APIError) {
@@ -276,6 +284,14 @@ const updateMessage = async (messageId: string, message: string) => {
     },
     data: {
       message,
+    },
+  })
+}
+
+const deleteMessage = async (messageId: string) => {
+  await prisma.message.delete({
+    where: {
+      id: messageId,
     },
   })
 }

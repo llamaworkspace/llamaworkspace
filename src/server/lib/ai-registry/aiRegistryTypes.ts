@@ -7,7 +7,7 @@ export interface AiRegistryField {
   slug: string
   publicName: string
   required: boolean
-  encrypted?: boolean
+  encrypted: boolean
 }
 
 export interface AiRegistryProvider {
@@ -39,4 +39,5 @@ export interface AiRegistryExecutePayload {
   onStart?: () => Promise<void> | void
   onToken?: (token: string) => void | Promise<void>
   onFinal?: (final: string) => void | Promise<void>
+  onError?: (error: Error) => void | Promise<void>
 }
