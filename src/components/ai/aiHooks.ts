@@ -34,3 +34,16 @@ export const useAiModels = (providerSlug?: string) => {
     },
   )
 }
+
+export const useEnabledAiModels = () => {
+  const { workspace } = useCurrentWorkspace()
+  const errorHandler = useErrorHandler()
+
+  return api.ai.getEnabledAiModels.useQuery(
+    { workspaceId: workspace?.id! },
+    {
+      enabled: !!workspace?.id,
+      onError: errorHandler(),
+    },
+  )
+}

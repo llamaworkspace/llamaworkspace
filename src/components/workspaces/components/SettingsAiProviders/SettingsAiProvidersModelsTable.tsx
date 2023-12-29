@@ -24,7 +24,6 @@ export const SettingsAiProvidersModelsTable = ({
             <TableRow>
               <TableHead className="w-[320px]">Name</TableHead>
               <TableHead>Slug</TableHead>
-              <TableHead className="text-right">Enabled</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
