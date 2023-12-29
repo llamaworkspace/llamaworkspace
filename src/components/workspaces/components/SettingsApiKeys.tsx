@@ -1,4 +1,8 @@
-import { useAiProviders, useUpdateAiProvider } from '@/components/ai/aiHooks'
+import {
+  useAiModels,
+  useAiProviders,
+  useUpdateAiProvider,
+} from '@/components/ai/aiHooks'
 import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { Badge } from '@/components/ui/badge'
@@ -84,6 +88,7 @@ export const SettingsApiKeys = () => {
 
         {providers?.map((provider) => {
           const isOpenAi = provider.slug === 'openai'
+
           return (
             <FinalForm<FormValues>
               key={provider.slug}
@@ -134,6 +139,10 @@ export const SettingsApiKeys = () => {
                             )
                           })}
                         </div>
+
+                        <SettingsAiProvidersModelsTable
+                          providerSlug={provider.slug}
+                        />
                       </div>
                     </CardContent>
                     <CardFooter>
@@ -151,3 +160,47 @@ export const SettingsApiKeys = () => {
     </Section>
   )
 }
+
+const TempContentForAiModels = ({ providerSlug }: { providerSlug: string }) => {
+  const { data: aiModels } = useAiModels(providerSlug)
+
+  return (
+    <div className="space-y-4">
+      <div className="text-xl font-bold">Models</div>
+      <ul>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[320px]">Name</TableHead>
+              <TableHead>Slug</TableHead>
+              <TableHead className="text-right">Enabled</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {aiModels?.map((model) => (
+              <TableRow key={model.slug}>
+                <TableCell>{model.publicName}</TableCell>{' '}
+                <TableCell>
+                  <span className="font-mono bg-zinc-100 px-0.5 text-pink-600">
+                    {model.slug}
+                  </span>
+                </TableCell>
+                <TableCell className="text-right">{model.isCustom}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </ul>
+    </div>
+  )
+}
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { SettingsAiProvidersModelsTable } from './SettingsApiKeys/SettingsAiProvidersModelsTable'

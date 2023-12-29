@@ -21,3 +21,16 @@ export const useUpdateAiProvider = () => {
     onError: errorHandler(),
   })
 }
+
+export const useAiModels = (providerSlug?: string) => {
+  const { workspace } = useCurrentWorkspace()
+  const errorHandler = useErrorHandler()
+
+  return api.ai.getAiModels.useQuery(
+    { providerSlug: providerSlug!, workspaceId: workspace?.id! },
+    {
+      enabled: !!providerSlug && !!workspace?.id,
+      onError: errorHandler(),
+    },
+  )
+}

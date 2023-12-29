@@ -200,6 +200,7 @@ export const usePrompt = (chatId?: string) => {
 
   useEffect(() => {
     if (!chatId || !targetMessage) return
+
     const errorValue = extractErrors(targetMessage)
     if (errorValue) {
       // Removes the assistant message
@@ -208,6 +209,7 @@ export const usePrompt = (chatId?: string) => {
       })
       return toast(errorValue, { duration: 10000 })
     }
+
     utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
       if (previous) {
         return produce(previous, (draft) => {

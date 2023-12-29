@@ -254,15 +254,16 @@ model ChatRunMessage {
 }
 
 model AiProvider {
-    id          String               @id @default(cuid())
-    slug        String
-    name        String
-    workspaceId String
-    createdAt   DateTime             @default(now())
-    updatedAt   DateTime             @updatedAt
-    keyValues   AiProviderKeyValue[]
-    workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    AiModel     AiModel[]
+    id           String               @id @default(cuid())
+    providerSlug String
+    slug         String
+    name         String
+    workspaceId  String
+    createdAt    DateTime             @default(now())
+    updatedAt    DateTime             @updatedAt
+    keyValues    AiProviderKeyValue[]
+    workspace    Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    AiModel      AiModel[]
 
     @@unique([workspaceId, slug])
 }
@@ -283,20 +284,24 @@ model AiModel {
     id            String          @id @default(cuid())
     providerId    String
     name          String
+    slug          String
+    isUserDefined Boolean
     createdAt     DateTime        @default(now())
     updatedAt     DateTime        @updatedAt
     provider      AiProvider      @relation(fields: [providerId], references: [id], onDelete: Cascade)
-    AiModelFields AiModelFields[]
+    fields        AiModelFields[]
 }
 
 model AiModelFields {
     id         String   @id @default(cuid())
     aiModelId  String
-    name       String
+    publicName String
+    slug       String
     type       String
     isRequired Boolean
     min        Int?
     max        Int?
+    value      String
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt
     aiModel    AiModel  @relation(fields: [aiModelId], references: [id], onDelete: Cascade)
