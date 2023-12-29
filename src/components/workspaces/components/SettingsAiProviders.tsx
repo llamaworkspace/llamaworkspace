@@ -203,4 +203,4 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { SettingsAiProvidersModelsTable } from './SettingsApiKeys/SettingsAiProvidersModelsTable'
+import { SettingsAiProvidersModelsTable } from './SettingsAiProviders/SettingsAiProvidersModelsTable'
