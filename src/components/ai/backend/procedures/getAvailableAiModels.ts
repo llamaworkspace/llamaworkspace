@@ -42,8 +42,9 @@ export const getAvailableAiModels = protectedProcedure
     })
 
     const registry = aiRegistry.getProvider(input.providerSlug)
+    const models = registry?.models ?? []
 
-    const registryFinalModels = registry.models.map((model) => {
+    const registryFinalModels = models.map((model) => {
       return { ...model, isCustom: false, fields: [] }
     })
 

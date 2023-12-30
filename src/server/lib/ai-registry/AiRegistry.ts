@@ -14,7 +14,7 @@ export class AiRegistry {
     this.registerProvider(provider)
   }
 
-  public getProvider(slug: string): AiRegistryProvider {
+  public getProvider(slug: string): AiRegistryProvider | undefined {
     return this.providers.get(slug)
   }
 
