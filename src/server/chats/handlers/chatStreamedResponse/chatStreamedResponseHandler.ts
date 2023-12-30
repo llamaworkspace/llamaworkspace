@@ -18,7 +18,6 @@ import {
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message } from '@prisma/client'
-import { streamToResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -27,6 +26,7 @@ import OpenAI from 'openai'
 import { chain, isNull } from 'underscore'
 import { doTokenCountForChatRun } from '../../services/doTokenCountForChatRun.service'
 import {
+  chatStreamToResponse,
   handleChatTitleCreate,
   registerTransaction,
 } from './chatStreamedResponseHandlerUtils'
@@ -43,7 +43,7 @@ interface BodyPayload {
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   let tokenResponse = ''
-  let openaiTargetMessageId: string | undefined = undefined
+  let assistantTargetMessageId: string | undefined = undefined
 
   try {
     await validateRequestOrThrow(req, res)
@@ -58,7 +58,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     ])
 
     const workspaceId = chat.post.workspaceId
-    const workspace = await prisma.workspace.findFirstOrThrow({
+    await prisma.workspace.findFirstOrThrow({
       where: { id: workspaceId },
     })
 
@@ -66,10 +66,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const allUnprocessedMessages = [...postConfigVersion.messages, ...messages]
 
-    const { messages: allMessages, openaiTargetMessage } =
-      prepareMessagesForPrompt(allUnprocessedMessages)
+    const {
+      messages: allMessages,
+      assistantTargetMessage: assistantTargetMessage,
+    } = prepareMessagesForPrompt(allUnprocessedMessages)
 
-    openaiTargetMessageId = openaiTargetMessage.id
+    assistantTargetMessageId = assistantTargetMessage.id
 
     if (!chat.postConfigVersionId) {
       await attachPostConfigVersionToChat(chatId, postConfigVersion.id)
@@ -86,11 +88,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const targetProviderSlug = 'openai'
 
     const provider = aiRegistry.getProvider(targetProviderSlug)
-
     if (!provider) {
-      throw new Error(`Provider not found: ${targetProviderSlug}`)
+      throw new Error(`Provider ${targetProviderSlug} not found`)
     }
-
     const providerKVs = await getAiProviderKVs(
       prisma,
       workspaceId,
@@ -113,7 +113,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const onFinal = async (final: string) => {
-      await updateMessage(openaiTargetMessage.id, final)
+      await updateMessage(assistantTargetMessage.id, final)
       // Todo: Do async in a queue
       const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
 
@@ -143,6 +143,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       tokenResponse += token
     }
 
+    const onError = async (error: Error) => {
+      await deleteMessage(assistantTargetMessage.id)
+      errorLogger(error)
+    }
+
     const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
     const model = OpenaiInternalModelToApiModel[dbModel]
 
@@ -156,10 +161,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       providerKVs,
     )
 
-    streamToResponse(stream, res)
+    chatStreamToResponse(stream, res, undefined, onError)
   } catch (error) {
-    if (tokenResponse.length && openaiTargetMessageId) {
-      await updateMessage(openaiTargetMessageId, tokenResponse)
+    if (tokenResponse.length && assistantTargetMessageId) {
+      await updateMessage(assistantTargetMessageId, tokenResponse)
+    } else if (assistantTargetMessageId) {
+      await deleteMessage(assistantTargetMessageId)
     }
 
     if (error instanceof OpenAI.APIError) {
@@ -285,9 +292,17 @@ const updateMessage = async (messageId: string, message: string) => {
   })
 }
 
+const deleteMessage = async (messageId: string) => {
+  await prisma.message.delete({
+    where: {
+      id: messageId,
+    },
+  })
+}
+
 interface PreparedMessagesForPrompt {
   messages: AiRegistryMessage[]
-  openaiTargetMessage: Message
+  assistantTargetMessage: Message
 }
 
 const prepareMessagesForPrompt = (
@@ -299,7 +314,7 @@ const prepareMessagesForPrompt = (
 
   // This last message should be maxCreatedAt where the author=OpenAi and should be empty
   // It shouldn't be sent to OpenAi
-  const openaiTargetMessage = chain(messages)
+  const assistantTargetMessage = chain(messages)
     .filter(
       (message) =>
         message.author === (Author.Assistant as string) &&
@@ -309,7 +324,7 @@ const prepareMessagesForPrompt = (
     .value() as Message
 
   const openaAiMessagesPayload = messages.filter((message) => {
-    if (openaiTargetMessage.id === message.id) {
+    if (assistantTargetMessage.id === message.id) {
       return false
     }
     return message.message !== null && message.message !== ''
@@ -317,7 +332,7 @@ const prepareMessagesForPrompt = (
 
   return {
     messages: openaAiMessagesPayload.map(transformMessageModelToPayload),
-    openaiTargetMessage,
+    assistantTargetMessage: assistantTargetMessage,
   }
 }
 

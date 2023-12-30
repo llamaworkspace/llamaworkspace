@@ -3,6 +3,7 @@ import { addTransactionRepo } from '@/server/transactions/repositories/addTransa
 import { TrxAccount } from '@/server/transactions/transactionTypes'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import type { PrismaClient } from '@prisma/client'
+import { NextApiResponse } from 'next'
 import OpenAI, { ClientOptions } from 'openai'
 import { getTokenCostInNanoCents } from '../../chatUtils'
 
@@ -154,3 +155,35 @@ If some of the inputs are not sent, then ignore them.
 If the Main title already gives some context, avoid giving it again. For example: "Joia's fun facts teller"; avoid a title like this "Fun Facts about the City of Lights" and return something this instead: "City of lights". Essentially, try to avoid repeating words from the title.
 
 Try to make the title less than 35 letters. Respond with just one title. Do not provide anything else different than the title.`
+
+export function chatStreamToResponse(
+  stream: ReadableStream,
+  response: NextApiResponse,
+  init?: { headers?: Record<string, string>; status?: number },
+  onError?: (error: Error) => void | Promise<void>,
+) {
+  response.writeHead(init?.status ?? 200, {
+    'Content-Type': 'text/plain; charset=utf-8',
+    ...init?.headers,
+  })
+
+  const reader = stream.getReader()
+  function read() {
+    void reader
+      .read()
+      .then(({ done, value }: { done: boolean; value?: unknown }) => {
+        if (done) {
+          response.end()
+          return
+        }
+        response.write(value)
+        read()
+      })
+      .catch((error: Error) => {
+        const message = `=====MID_STREAM_ERROR=====${error.message}=====END_MID_STREAM_ERROR=====`
+        response.end(message)
+        onError && void onError(error)
+      })
+  }
+  read()
+}
