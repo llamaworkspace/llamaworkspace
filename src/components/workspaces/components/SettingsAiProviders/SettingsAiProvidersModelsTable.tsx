@@ -1,4 +1,4 @@
-import { useAiModelsForProvider } from '@/components/ai/aiHooks'
+import { useAiModels } from '@/components/ai/aiHooks'
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ export const SettingsAiProvidersModelsTable = ({
 }: {
   providerSlug: string
 }) => {
-  const { data: aiModels } = useAiModelsForProvider(providerSlug)
+  const { data: aiModels } = useAiModels(providerSlug)
 
   return (
     <div className="space-y-4">
