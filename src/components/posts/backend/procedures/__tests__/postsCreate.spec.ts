@@ -1,8 +1,8 @@
-import { createInnerTRPCContext } from '@/server/trpc/trpc'
-import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
-import { rootRouter } from '@/server/trpc/rootRouter'
-import mockDb from '@/server/testing/mockDb'
 import type { RouterInputs } from '@/lib/api'
+import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
+import mockDb from '@/server/testing/mockDb'
+import { rootRouter } from '@/server/trpc/rootRouter'
+import { createInnerTRPCContext } from '@/server/trpc/trpc'
 
 type SubjectPayload = RouterInputs['posts']['create']
 type MockedPostCreateRepo = jest.MockedFunction<typeof postCreateRepo>

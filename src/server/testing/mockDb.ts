@@ -1,5 +1,5 @@
-import { mockDeep, mockReset } from 'jest-mock-extended'
 import type { prisma } from '@/server/db'
+import { mockDeep, mockReset } from 'jest-mock-extended'
 
 beforeEach(() => {
   mockReset(mockDb)

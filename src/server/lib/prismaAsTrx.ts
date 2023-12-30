@@ -1,8 +1,8 @@
-import type { PrismaClient } from '@prisma/client'
 import type {
   PrismaClientOrTrxClient,
   PrismaTrxClient,
 } from '@/shared/globalTypes'
+import type { PrismaClient } from '@prisma/client'
 
 export const prismaAsTrx = async <T>(
   prisma: PrismaClientOrTrxClient,

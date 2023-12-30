@@ -1,8 +1,8 @@
 import { Textarea } from '@/components/ui/textarea'
-import type { DefaultInputProps } from './formTypes'
-import { FormFieldWrapper } from './FormFieldWrapper'
-import React, { forwardRef } from 'react'
 import { cn } from '@/lib/utils'
+import { forwardRef } from 'react'
+import { FormFieldWrapper } from './FormFieldWrapper'
+import type { DefaultInputProps } from './formTypes'
 
 interface TextAreaProps extends DefaultInputProps {
   initialValue?: string

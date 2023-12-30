@@ -1,7 +1,6 @@
-import type { Prisma } from '@prisma/client'
-import type { inferRouterInputs } from '@trpc/server'
-import type { Post, PostSort } from '@prisma/client'
 import type { RootRouter } from '@/server/trpc/rootRouter'
+import type { Post, PostSort, Prisma } from '@prisma/client'
+import type { inferRouterInputs } from '@trpc/server'
 
 export type PostWithChatIds = Prisma.PostGetPayload<{
   include: {

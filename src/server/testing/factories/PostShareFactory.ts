@@ -1,5 +1,5 @@
-import type { PostShare, PrismaClient } from '@prisma/client'
 import { UserAccessLevel } from '@/shared/globalTypes'
+import type { PostShare, PrismaClient } from '@prisma/client'
 
 export type PostShareFactoryFields = {
   postId: string

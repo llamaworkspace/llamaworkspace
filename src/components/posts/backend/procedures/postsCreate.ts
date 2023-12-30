@@ -1,6 +1,6 @@
+import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
-import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
 
 const zCreateInput = z.object({
   workspaceId: z.string(),

@@ -1,13 +1,13 @@
-import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
-import createHttpError from 'http-errors'
-import { withMiddleware } from '../../middlewares/withMiddleware'
-import Joi from 'joi'
-import { getServerSession } from 'next-auth'
-import { joiPayloadValidateMiddleware } from '@/server/middlewares/custom/joiPayloadValidateMiddleware'
 import { authOptions } from '@/server/auth/nextauth'
-import { invitesFindByTokenService } from '@/server/invites/services/invitesFindByToken.service'
 import { prisma } from '@/server/db'
+import { invitesFindByTokenService } from '@/server/invites/services/invitesFindByToken.service'
 import { invitesMarkAsCompleted } from '@/server/invites/services/invitesMarkAsCompleted.service'
+import { joiPayloadValidateMiddleware } from '@/server/middlewares/custom/joiPayloadValidateMiddleware'
+import createHttpError from 'http-errors'
+import Joi from 'joi'
+import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
+import { getServerSession } from 'next-auth'
+import { withMiddleware } from '../../middlewares/withMiddleware'
 
 const schema = Joi.object({
   token: Joi.string(),
