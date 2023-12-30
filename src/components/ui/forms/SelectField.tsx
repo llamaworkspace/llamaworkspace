@@ -5,8 +5,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import type { DefaultInputProps } from './formTypes'
 import { FormFieldWrapper } from './FormFieldWrapper'
+import type { DefaultInputProps } from './formTypes'
 
 interface InputOptionProps {
   value: string
@@ -14,7 +14,7 @@ interface InputOptionProps {
 }
 
 // Keep value and onChange in here for compatibility with shadcnui Select
-interface SelectFieldProps extends DefaultInputProps {
+export interface SelectFieldProps extends DefaultInputProps {
   value?: string
   placeholder?: string
   disabled?: boolean

@@ -23,6 +23,7 @@ export const OpenAiProvider: () => OpenAiProviderType = () => {
         slug: 'baseUrl',
         publicName: 'Base URL',
         required: false,
+        encrypted: false,
       },
     ],
     executeAsStream: async (
