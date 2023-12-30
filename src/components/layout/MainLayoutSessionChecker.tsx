@@ -1,5 +1,5 @@
 import { signIn, useSession } from 'next-auth/react'
-import { type PropsWithChildren, useEffect } from 'react'
+import { useEffect, type PropsWithChildren } from 'react'
 
 export const MainLayoutSessionChecker = ({ children }: PropsWithChildren) => {
   const { status } = useSession()

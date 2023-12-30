@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useUpdatePost } from '@/components/posts/postsHooks'
+import { StyledLink } from '@/components/ui/StyledLink'
 import {
   Alert,
   AlertDescription,
@@ -6,9 +7,8 @@ import {
   AlertTitle,
 } from '@/components/ui/alert'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
-import { StyledLink } from '@/components/ui/StyledLink'
+import { useEffect, useState } from 'react'
 import { useShouldDisplayEmptySettingsAlert } from '../chatHooks'
-import { useUpdatePost } from '@/components/posts/postsHooks'
 
 interface ChatNoSettingsAlertProps {
   postId?: string

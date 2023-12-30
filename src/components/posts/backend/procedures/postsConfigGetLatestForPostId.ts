@@ -1,6 +1,6 @@
+import { getLatestPostConfigForPostId } from '@/server/posts/services/getLatestPostConfigForPostId.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
-import { getLatestPostConfigForPostId } from '@/server/posts/services/getLatestPostConfigForPostId.service'
 
 const zGetLatestByPostId = z.object({
   postId: z.string(),

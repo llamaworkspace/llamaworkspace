@@ -1,29 +1,28 @@
-import { Form as FinalForm } from 'react-final-form'
-import { Button } from '@/components/ui/button'
-import { Field, type FieldMetaState } from 'react-final-form'
-import type { FormApi } from 'final-form'
+import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
 import {
   usePostSharePerform,
   usePostShares,
 } from '@/components/posts/postsHooks'
 import type { ComponentWithPostId } from '@/components/posts/postsTypes'
-import type { UserAccessLevel } from '@/shared/globalTypes'
-import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { useSuccessToast } from '../../ui/toastHooks'
-import { cn } from '@/lib/utils'
-import {
-  composeValidators,
-  email,
-  stringOrNumberRequired,
-} from '@/lib/frontend/finalFormValidations'
-import { ChatHeaderShareAccessLevelPopover } from './ChatHeaderShareAccessLevelPopover'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Input } from '@/components/ui/input'
+import {
+  composeValidators,
+  email,
+  stringOrNumberRequired,
+} from '@/lib/frontend/finalFormValidations'
+import { cn } from '@/lib/utils'
+import type { UserAccessLevel } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import type { FormApi } from 'final-form'
+import { Field, Form as FinalForm, type FieldMetaState } from 'react-final-form'
+import { useSuccessToast } from '../../ui/toastHooks'
+import { ChatHeaderShareAccessLevelPopover } from './ChatHeaderShareAccessLevelPopover'
 
 interface FormShape {
   email: string

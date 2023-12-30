@@ -1,16 +1,16 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
+import { postsConfigGetForChatId } from './procedures/postsConfigGetForChatId'
+import { postsConfigGetLatestForPostId } from './procedures/postsConfigGetLatestForPostId'
+import { postsConfigUpdate } from './procedures/postsConfigUpdate'
 import { postsCreate } from './procedures/postsCreate'
-import { postsGetShares } from './procedures/postsGetShares'
-import { postsUpdate } from './procedures/postsUpdate'
 import { postsDelete } from './procedures/postsDelete'
 import { postsGetById } from './procedures/postsGetById'
-import { postsConfigUpdate } from './procedures/postsConfigUpdate'
-import { postsConfigGetLatestForPostId } from './procedures/postsConfigGetLatestForPostId'
-import { postsConfigGetForChatId } from './procedures/postsConfigGetForChatId'
+import { postsGetDefault } from './procedures/postsGetDefault'
+import { postsGetLatest } from './procedures/postsGetLatest'
+import { postsGetShares } from './procedures/postsGetShares'
 import { postsSharePerform } from './procedures/postsSharePerform'
 import { postsShareUpdateAccessLevel } from './procedures/postsShareUpdateAccessLevel'
-import { postsGetLatest } from './procedures/postsGetLatest'
-import { postsGetDefault } from './procedures/postsGetDefault'
+import { postsUpdate } from './procedures/postsUpdate'
 
 export const postsRouter = createTRPCRouter({
   getDefault: postsGetDefault,

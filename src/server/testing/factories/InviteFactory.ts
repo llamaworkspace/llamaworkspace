@@ -1,5 +1,5 @@
-import type { Invite, PrismaClient } from '@prisma/client'
 import { faker } from '@faker-js/faker'
+import type { Invite, PrismaClient } from '@prisma/client'
 
 type InviteFactoryFields = {
   invitedById: string
