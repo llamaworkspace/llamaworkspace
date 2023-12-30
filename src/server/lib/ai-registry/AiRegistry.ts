@@ -14,12 +14,8 @@ export class AiRegistry {
     this.registerProvider(provider)
   }
 
-  public getProvider(slug: string): AiRegistryProvider {
-    const provider = this.providers.get(slug)
-    if (!provider) {
-      throw new Error(`Provider with slug "${slug}" not found.`)
-    }
-    return provider
+  public getProvider(slug: string): AiRegistryProvider | undefined {
+    return this.providers.get(slug)
   }
 
   public getProvidersMeta() {

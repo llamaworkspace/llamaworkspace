@@ -86,6 +86,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const targetProviderSlug = 'openai'
 
     const provider = aiRegistry.getProvider(targetProviderSlug)
+
+    if (!provider) {
+      throw new Error(`Provider not found: ${targetProviderSlug}`)
+    }
+
     const providerKVs = await getAiProviderKVs(
       prisma,
       workspaceId,
