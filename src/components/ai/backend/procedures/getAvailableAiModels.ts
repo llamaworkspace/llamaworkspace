@@ -28,7 +28,7 @@ const zOutput = z.array(
   }),
 )
 
-export const getAiModels = protectedProcedure
+export const getAvailableAiModels = protectedProcedure
   .input(zInput)
   .output(zOutput)
   .query(async ({ ctx, input }) => {
@@ -41,49 +41,11 @@ export const getAiModels = protectedProcedure
       },
     })
 
-    const dbAiModels = await ctx.prisma.aiModel.findMany({
-      include: {
-        fields: true,
-      },
-      where: {
-        provider: {
-          slug: input.providerSlug,
-          workspaceId: input.workspaceId,
-        },
-      },
-    })
-
     const registry = aiRegistry.getProvider(input.providerSlug)
 
     const registryFinalModels = registry.models.map((model) => {
       return { ...model, isCustom: false, fields: [] }
     })
 
-    const finalDbAiModels = dbAiModels.map((dbAiModel) => {
-      const slug = `${input.providerSlug}/${dbAiModel.name
-        .replaceAll(' ', '-')
-        .toLocaleLowerCase()}`
-
-      const fields = dbAiModel.fields.map((dbAiModelField) => {
-        return {
-          id: dbAiModelField.id,
-          slug: dbAiModelField.slug,
-          publicName: dbAiModelField.publicName,
-          type: dbAiModelField.type,
-          isRequired: dbAiModelField.isRequired,
-          min: dbAiModelField.min,
-          max: dbAiModelField.max,
-          value: dbAiModelField.value,
-        }
-      })
-
-      return {
-        slug,
-        publicName: dbAiModel.name,
-        isCustom: true,
-        fields,
-      }
-    })
-
-    return [...registryFinalModels, ...finalDbAiModels]
+    return registryFinalModels
   })
