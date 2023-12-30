@@ -2,7 +2,7 @@ import { SectionWrapper, SectionWrapperTitle } from '@/components/ui/Section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useCurrentWorkspace } from '../workspacesHooks'
-import { SettingsApiKeys } from './SettingsApiKeys'
+import { SettingsApiKeys } from './SettingsAiProviders'
 import { SettingsMembers } from './SettingsMembers'
 import { SettingsName } from './SettingsName'
 

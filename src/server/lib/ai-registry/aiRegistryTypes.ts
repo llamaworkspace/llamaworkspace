@@ -7,7 +7,7 @@ export interface AiRegistryField {
   slug: string
   publicName: string
   required: boolean
-  encrypted?: boolean
+  encrypted: boolean
 }
 
 export interface AiRegistryProvider {

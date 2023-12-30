@@ -21,3 +21,29 @@ export const useUpdateAiProvider = () => {
     onError: errorHandler(),
   })
 }
+
+export const useAiModels = (providerSlug?: string) => {
+  const { workspace } = useCurrentWorkspace()
+  const errorHandler = useErrorHandler()
+
+  return api.ai.getAvailableAiModels.useQuery(
+    { providerSlug: providerSlug!, workspaceId: workspace?.id! },
+    {
+      enabled: !!providerSlug && !!workspace?.id,
+      onError: errorHandler(),
+    },
+  )
+}
+
+export const useWIPEnabledAiModels = () => {
+  const { workspace } = useCurrentWorkspace()
+  const errorHandler = useErrorHandler()
+
+  return api.ai.getWIPEnabledAiModels.useQuery(
+    { workspaceId: workspace?.id! },
+    {
+      enabled: !!workspace?.id,
+      onError: errorHandler(),
+    },
+  )
+}

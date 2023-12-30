@@ -5,8 +5,6 @@ import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
 import { huggingFaceAiModels } from './lib/huggingFaceAiModels'
 import type { HuggingFaceExecuteOptions } from './lib/huggingFaceProviderTypes'
 
-const Hf = new HfInference(process.env.HUGGINGFACE_API_KEY)
-
 export const HuggingFaceProvider = () => {
   return {
     slug: 'hugging_face' as const,
@@ -17,11 +15,7 @@ export const HuggingFaceProvider = () => {
         slug: 'apiKey',
         publicName: 'API key',
         required: false,
-      },
-      {
-        slug: 'baseUrl',
-        publicName: 'Base URL',
-        required: true,
+        encrypted: true,
       },
     ],
 
@@ -29,8 +23,11 @@ export const HuggingFaceProvider = () => {
       payload: AiRegistryExecutePayload,
       options: HuggingFaceExecuteOptions,
     ) => {
+      const Hf = new HfInference(options.apiKey)
+
       const response = Hf.textGenerationStream({
-        model: 'meta-llama/Llama-2-7b-chat-hf',
+        // model: 'meta-llama/Llama-2-7b-chat-hf',
+        model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
         inputs: experimental_buildOpenAssistantPrompt(payload.messages),
         parameters: {
           max_new_tokens: 200,
@@ -43,9 +40,12 @@ export const HuggingFaceProvider = () => {
           trust_remote_code: true,
         },
       })
-      console.log('response', response)
 
-      const stream = HuggingFaceStream(response)
+      const stream = HuggingFaceStream(response, {
+        onToken: payload?.onToken,
+        onFinal: payload?.onFinal,
+      })
+
       return await Promise.resolve(stream)
     },
   }

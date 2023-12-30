@@ -22,7 +22,9 @@ export const getProviders = protectedProcedure
 
     return providersMeta.map((providerMeta) => {
       const providerSlug = providerMeta.slug
-      const providerFields = aiRegistry.getProvider(providerSlug).fields
+      const provider = aiRegistry.getProvider(providerSlug)
+
+      const providerFields = provider?.fields ?? []
       const fieldSlugs = providerFields.map((field) => field.slug)
       // Pick only Provider-registered fields
       const providerKV = pick(aiProvidersKVBySlug[providerSlug], ...fieldSlugs)
