@@ -21,7 +21,7 @@ import { SettingsAiProvidersModelsTable } from './SettingsAiProviders/SettingsAi
 
 type FormValues = Record<string, string>
 
-export const SettingsApiKeys = () => {
+export const SettingsAiProviders = () => {
   const successToast = useSuccessToast()
   const { mutate: updateAiProvider } = useUpdateAiProvider()
   const navigation = useNavigation()

@@ -7,7 +7,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useDefaultPost, usePostById } from '../posts/postsHooks'
 import { useChatHistoryForSidebarPost } from '../sidebar/sidebarHooks'
+import { useErrorToast } from '../ui/toastHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
+import { extractErrors } from './utils/chatsUtils'
 
 const useCreateMessage = () => {
   const errorHandler = useErrorHandler()
@@ -171,6 +173,7 @@ export const usePostConfigForChat = (chatId?: string) => {
 
 export const usePrompt = (chatId?: string) => {
   const utils = api.useContext()
+  const toast = useErrorToast()
   const errorHandler = useErrorHandler()
   const [isLoading, setIsLoading] = useState(false)
   const {
@@ -179,11 +182,13 @@ export const usePrompt = (chatId?: string) => {
     setMessages: setVercelMessages,
   } = useVercelChat({
     api: '/api/chat',
-    onFinish: () => {
+    onFinish: (message) => {
       setIsLoading(false)
       setVercelMessages([])
+      // Expects the title to be generated
       void utils.sidebar.chatHistoryForSidebar.invalidate()
     },
+
     onError: (error) => {
       setIsLoading(false)
       setVercelMessages([])
@@ -196,6 +201,15 @@ export const usePrompt = (chatId?: string) => {
   useEffect(() => {
     if (!chatId || !targetMessage) return
 
+    const errorValue = extractErrors(targetMessage)
+    if (errorValue) {
+      // Removes the assistant message
+      void utils.chats.getMessagesByChatId.refetch({
+        chatId,
+      })
+      return toast(errorValue, { duration: 10000 })
+    }
+
     utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
       if (previous) {
         return produce(previous, (draft) => {
@@ -205,7 +219,7 @@ export const usePrompt = (chatId?: string) => {
       }
       return previous
     })
-  }, [targetMessage, chatId, utils])
+  }, [toast, targetMessage, chatId, utils])
 
   const { mutate: createMessage } = useCreateMessage()
   const mutate = useCallback(
