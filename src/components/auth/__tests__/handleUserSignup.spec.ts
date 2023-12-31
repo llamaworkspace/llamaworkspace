@@ -6,11 +6,13 @@ import { createDefaultsForNewUserService } from '@/server/users/services/createD
 import { createWorkspaceForUserService } from '@/server/users/services/createWorkspaceForUser.service'
 import { settlePostSharesForNewUserService } from '@/server/users/services/settlePostSharesForNewUser.service'
 import { settleWorkspaceInvitesForNewUserService } from '@/server/users/services/settleWorkspaceInvitesForNewUser.service'
+import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
 import { faker } from '@faker-js/faker'
 import type { Workspace } from '@prisma/client'
 import { handleUserSignup } from '../handleUserSignup'
 
 jest.mock('@/server/users/services/createWorkspaceForUser.service')
+jest.mock('@/server/workspaces/services/addUserToWorkspace.service')
 jest.mock('@/server/users/services/settlePostSharesForNewUser.service')
 jest.mock('@/server/users/services/settleWorkspaceInvitesForNewUser.service')
 jest.mock('@/server/onboarding/services/onboardingCreate.service')
@@ -18,6 +20,9 @@ jest.mock('@/server/users/services/createDefaultsForNewUser.service')
 
 type MockedCreateWorkspaceForUser = jest.MockedFunction<
   typeof createWorkspaceForUserService
+>
+type MockedAddUserToWorkspace = jest.MockedFunction<
+  typeof addUserToWorkspaceService
 >
 type MockedSettlePostSharesForNewUser = jest.MockedFunction<
   typeof settlePostSharesForNewUserService
@@ -35,6 +40,7 @@ type MockedCreateDefaultsForNewUser = jest.MockedFunction<
 describe('handleUserSignup', () => {
   beforeEach(() => {
     ;(createWorkspaceForUserService as MockedCreateWorkspaceForUser).mockClear()
+    ;(addUserToWorkspaceService as MockedAddUserToWorkspace).mockClear()
     ;(
       settlePostSharesForNewUserService as MockedSettlePostSharesForNewUser
     ).mockClear()
