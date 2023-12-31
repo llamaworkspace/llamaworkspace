@@ -7,10 +7,10 @@ type RouteParams<
 > = Paths extends `${Config['variableStart']}${infer Variable}${Config['variableEnd']}/${infer Rest}`
   ? [...Head, Variable, ...RouteParams<Rest, Config>]
   : Paths extends `${Config['variableStart']}${infer Variable}${Config['variableEnd']}`
-  ? [...Head, Variable]
-  : Paths extends `${string}/${infer Rest}`
-  ? [...Head, ...RouteParams<Rest, Config>]
-  : Head
+    ? [...Head, Variable]
+    : Paths extends `${string}/${infer Rest}`
+      ? [...Head, ...RouteParams<Rest, Config>]
+      : Head
 
 export type ParameterValues<
   Paths extends string,
