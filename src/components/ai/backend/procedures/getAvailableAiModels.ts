@@ -11,8 +11,12 @@ const zInput = z.object({
 
 
 
+ 
+
+
+
   const zOutput = z.array(
-  z.object({
+           z.object({
     slug: z.string(),
     publicName: z.string(),
     isCustom: z.boolean(),

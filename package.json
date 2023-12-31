@@ -127,7 +127,6 @@
     "node": ">=18.16.0"
   },
   "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
+    "src/*.{js,jsx,ts,tsx,mjs}": "eslint --cache --fix && prettier --write"
   }
 }
