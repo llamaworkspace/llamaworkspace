@@ -96,6 +96,8 @@ export class Editable extends React.Component<ContentEditableProps> {
           onPaste={this.handlePaste}
           tagName={tagName} // Use a custom HTML tag (uses a div by default)
           className={className}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           placeholder={this.props.placeholder}
         />
       </>
