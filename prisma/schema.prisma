@@ -54,7 +54,7 @@ model User {
     email              String?             @unique
     emailVerified      DateTime?
     image              String?
-    defaultOpenaiModel String              @default("gpt-3.5-turbo")
+    defaultOpenaiModel String?
     createdAt          DateTime            @default(now())
     updatedAt          DateTime            @updatedAt
     accounts           Account[]
