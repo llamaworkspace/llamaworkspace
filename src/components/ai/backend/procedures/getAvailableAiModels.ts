@@ -8,7 +8,10 @@ const zInput = z.object({
   providerSlug: z.string(),
 })
 
-const zOutput = z.array(
+
+
+
+  const zOutput = z.array(
   z.object({
     slug: z.string(),
     publicName: z.string(),
