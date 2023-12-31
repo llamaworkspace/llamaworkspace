@@ -13,7 +13,7 @@ export const SelectAiModelsFormField = ({
   const modelOptions = useMemo(() => {
     if (!aiModels) return []
     return aiModels.map((model) => ({
-      value: model.slug,
+      value: model.fullSlug,
       label: model.fullPublicName,
     }))
   }, [aiModels])
