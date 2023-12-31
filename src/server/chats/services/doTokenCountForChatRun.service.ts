@@ -67,18 +67,10 @@ export const doTokenCountForChatRun = async (
   }
   const model = chatRun.chat.postConfigVersion.model
 
-  const requestTokensCostInNanoCents = getTokenCostInNanoCents(
-    requestTokens,
-    'request',
-    'openai',
-    model,
-  )
-  const responseTokensCostInNanoCents = getTokenCostInNanoCents(
-    responseTokens,
-    'response',
-    'openai',
-    model,
-  )
+  const requestTokensCostInNanoCents =
+    getTokenCostInNanoCents(requestTokens, 'request', 'openai', model) ?? 0
+  const responseTokensCostInNanoCents =
+    getTokenCostInNanoCents(responseTokens, 'response', 'openai', model) ?? 0
 
   return await prisma.chatRun.update({
     where: { id: chatRun.id },
