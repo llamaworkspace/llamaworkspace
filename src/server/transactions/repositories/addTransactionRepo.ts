@@ -1,7 +1,7 @@
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
-import _ from 'underscore'
+import _, { isNumber } from 'underscore'
 import { TrxAccount, TrxType } from '../transactionTypes'
 
 interface TrxRecord {
@@ -35,7 +35,7 @@ function generatePayloadItem(
     })
   }
 
-  if (!amountInCents && !amountInNanoCents) {
+  if (!isNumber(amountInCents) && !isNumber(amountInNanoCents)) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'amountInCents or amountInNanoCents is required',

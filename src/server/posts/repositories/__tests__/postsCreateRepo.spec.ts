@@ -59,7 +59,7 @@ describe('postCreateRepo', () => {
     const weirdModel = 'a_weird_model'
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, {
-      defaultOpenaiModel: weirdModel,
+      defaultModel: weirdModel,
       workspaceId: workspace.id,
     })
 

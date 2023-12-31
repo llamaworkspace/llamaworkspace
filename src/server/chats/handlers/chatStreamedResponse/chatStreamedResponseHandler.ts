@@ -1,7 +1,7 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { env } from '@/env.mjs'
-import { getEnumByValue } from '@/lib/utils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
+import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
@@ -10,11 +10,7 @@ import { nextApiSessionChecker } from '@/server/lib/apiUtils'
 import { withMiddleware } from '@/server/middlewares/withMiddleware'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { getPostConfigForChatIdService } from '@/server/posts/services/getPostConfigForChatId.service'
-import {
-  Author,
-  OpenAiModelEnum,
-  OpenaiInternalModelToApiModel,
-} from '@/shared/aiTypesAndMappers'
+import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message } from '@prisma/client'
@@ -85,22 +81,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
-    const targetProviderSlug = 'openai'
+    // Method to extract provider from model
+    const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
+      postConfigVersion.model,
+    )
 
-    const provider = aiRegistry.getProvider(targetProviderSlug)
-    if (!provider) {
-      throw new Error(`Provider ${targetProviderSlug} not found`)
-    }
     const providerKVs = await getAiProviderKVs(
       prisma,
       workspaceId,
       userId,
-      targetProviderSlug,
+      providerSlug,
     )
 
     let hasOwnApiKey = false
 
-    if (targetProviderSlug === 'openai') {
+    if (providerSlug === 'openai') {
       if (providerKVs.apiKey) {
         hasOwnApiKey = true
       }
@@ -148,8 +143,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       errorLogger(error)
     }
 
-    const dbModel = getEnumByValue(OpenAiModelEnum, postConfigVersion.model)
-    const model = OpenaiInternalModelToApiModel[dbModel]
+    const provider = aiRegistry.getProvider(providerSlug)
+    if (!provider) {
+      throw new Error(`Provider ${providerSlug} not found`)
+    }
 
     const stream = await provider.executeAsStream(
       {
