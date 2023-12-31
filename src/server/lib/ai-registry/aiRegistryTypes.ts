@@ -1,6 +1,11 @@
 export interface AiRegistryModel {
   readonly slug: string
   readonly publicName: string
+  readonly default?: boolean
+  readonly costPerMille?: {
+    readonly request: number
+    readonly response: number
+  }
 }
 
 export interface AiRegistryField {

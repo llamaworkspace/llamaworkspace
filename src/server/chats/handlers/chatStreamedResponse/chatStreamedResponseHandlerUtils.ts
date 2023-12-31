@@ -3,8 +3,8 @@ import { addTransactionRepo } from '@/server/transactions/repositories/addTransa
 import { TrxAccount } from '@/server/transactions/transactionTypes'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import type { PrismaClient } from '@prisma/client'
-import { NextApiResponse } from 'next'
-import OpenAI, { ClientOptions } from 'openai'
+import type { NextApiResponse } from 'next'
+import OpenAI, { type ClientOptions } from 'openai'
 import { getTokenCostInNanoCents } from '../../chatUtils'
 
 export const registerTransaction = async (
@@ -103,17 +103,22 @@ export const handleChatTitleCreate = async (
   let costInNanoCents = 0
 
   if (aiResponse.usage) {
-    const requestCost = getTokenCostInNanoCents(
-      aiResponse.usage.prompt_tokens,
-      'request',
-      OpenAiModelEnum.GPT4,
-    )
+    const requestCost =
+      getTokenCostInNanoCents(
+        aiResponse.usage.prompt_tokens,
+        'request',
+        'openai',
+        OpenAiModelEnum.GPT4,
+      ) ?? 0
 
-    const responseCost = getTokenCostInNanoCents(
-      aiResponse.usage.completion_tokens,
-      'response',
-      OpenAiModelEnum.GPT4,
-    )
+    const responseCost =
+      getTokenCostInNanoCents(
+        aiResponse.usage.completion_tokens,
+        'response',
+        'openai',
+        OpenAiModelEnum.GPT4,
+      ) ?? 0
+
     costInNanoCents = requestCost + responseCost
   }
 
