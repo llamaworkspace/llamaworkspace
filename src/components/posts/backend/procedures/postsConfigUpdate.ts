@@ -1,18 +1,16 @@
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { Author, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
+import { Author } from '@/shared/aiTypesAndMappers'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { isUndefined, omit } from 'underscore'
 import { z } from 'zod'
 import { postEditionFilter } from '../postsBackendUtils'
 
-const zOpenAiModelEnum = z.nativeEnum(OpenAiModelEnum)
-
 const zUpdate = z.object({
   id: z.string(),
   initialMessage: z.string().nullish(),
   systemMessage: z.string().nullish(),
-  model: z.optional(zOpenAiModelEnum),
+  model: z.string().optional(),
 })
 
 export const postsConfigUpdate = protectedProcedure

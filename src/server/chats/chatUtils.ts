@@ -1,14 +1,27 @@
-import type { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
-import { BASE_TOKEN_CPM } from './tokenPricing'
+import _ from 'underscore'
+import { aiRegistry } from '../ai/aiRegistry'
 
 export const getTokenCostInNanoCents = (
   tokens: number,
   type: 'request' | 'response',
-  model: OpenAiModelEnum,
+  providerName: string,
+  modelName: string,
 ) => {
-  const tokenCost = BASE_TOKEN_CPM[`${model}_${type}`] / 1000
-  if (!tokenCost) {
-    throw new Error(`No price found for model: ${model} and type: ${type}`)
+  const provider = aiRegistry.getProvider(providerName)
+
+  if (!provider) {
+    return null
   }
-  return Math.round(tokens * tokenCost * 1_000_000_000)
+
+  const model = provider.models.find((model) => model.slug === modelName)
+  if (!model) {
+    return null
+  }
+
+  const costPerMille = model.costPerMille?.[type]
+  if (_.isUndefined(costPerMille)) {
+    return null
+  }
+
+  return Math.round(tokens * costPerMille * 1_000_000)
 }

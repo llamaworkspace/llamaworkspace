@@ -21,8 +21,8 @@ type ValidatePathNoEmptyVariables<
 > = Paths extends `${string}${Config['variableStart']}${Config['variableEnd']}/${string}`
   ? `Path '${Paths}' contains empty variables`
   : Paths extends `${string}${Config['variableStart']}${Config['variableEnd']}`
-  ? `Path '${Paths}' contains empty variables`
-  : true
+    ? `Path '${Paths}' contains empty variables`
+    : true
 
 /* TODO: Implement this
 type ValidatePathVariablesMustBeRightAfterSlash<

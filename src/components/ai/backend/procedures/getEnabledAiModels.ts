@@ -14,7 +14,7 @@ type AiRegistryModelWithFullNamePaths = AiRegistryModel & {
   fullPublicName: string
 }
 
-export const getWIPEnabledAiModels = protectedProcedure
+export const getEnabledAiModels = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id

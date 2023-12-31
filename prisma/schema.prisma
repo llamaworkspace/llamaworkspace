@@ -54,7 +54,7 @@ model User {
     email              String?             @unique
     emailVerified      DateTime?
     image              String?
-    defaultOpenaiModel String              @default("gpt-3.5-turbo")
+    defaultModel       String?
     createdAt          DateTime            @default(now())
     updatedAt          DateTime            @updatedAt
     accounts           Account[]
@@ -214,7 +214,7 @@ model Message {
     postConfigVersion   PostConfigVersion? @relation(fields: [postConfigVersionId], references: [id], onDelete: Cascade)
     message             String?
     author              String
-    openaiTokens        Int?
+    tokens              Int?
     createdAt           DateTime           @default(now())
     updatedAt           DateTime           @updatedAt
     chatRunMessage      ChatRunMessage[]

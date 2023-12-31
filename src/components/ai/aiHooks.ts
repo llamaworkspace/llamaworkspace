@@ -39,7 +39,7 @@ export const useWIPEnabledAiModels = () => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
-  return api.ai.getWIPEnabledAiModels.useQuery(
+  return api.ai.getEnabledAiModels.useQuery(
     { workspaceId: workspace?.id! },
     {
       enabled: !!workspace?.id,

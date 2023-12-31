@@ -1,4 +1,4 @@
-import { Author, type OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
+import { Author } from '@/shared/aiTypesAndMappers'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import Promise from 'bluebird'
 import { encode } from 'gpt-tokenizer'
@@ -42,14 +42,14 @@ export const doTokenCountForChatRun = async (
       ) {
         count = 0
       } else {
-        count = message.openaiTokens ?? (await chunkedCount(message.message))
+        count = message.tokens ?? (await chunkedCount(message.message))
       }
 
-      if (isNull(message.openaiTokens)) {
+      if (isNull(message.tokens)) {
         await prisma.message.update({
           where: { id: message.id },
           data: {
-            openaiTokens: count,
+            tokens: count,
           },
         })
       }
@@ -66,16 +66,11 @@ export const doTokenCountForChatRun = async (
     throw new Error('ChatRun should have a postConfigVersion')
   }
   const model = chatRun.chat.postConfigVersion.model
-  const requestTokensCostInNanoCents = getTokenCostInNanoCents(
-    requestTokens,
-    'request',
-    model as OpenAiModelEnum,
-  )
-  const responseTokensCostInNanoCents = getTokenCostInNanoCents(
-    responseTokens,
-    'response',
-    model as OpenAiModelEnum,
-  )
+
+  const requestTokensCostInNanoCents =
+    getTokenCostInNanoCents(requestTokens, 'request', 'openai', model) ?? 0
+  const responseTokensCostInNanoCents =
+    getTokenCostInNanoCents(responseTokens, 'response', 'openai', model) ?? 0
 
   return await prisma.chatRun.update({
     where: { id: chatRun.id },

@@ -31,7 +31,7 @@ export const createStandaloneChat = protectedProcedure
       const postConfigVersion = await prisma.postConfigVersion.create({
         data: {
           postId,
-          model: user.defaultOpenaiModel ?? OpenAiModelEnum.GPT3_5_TURBO,
+          model: user.defaultModel ?? OpenAiModelEnum.GPT3_5_TURBO,
           messages: {
             create: [
               {
