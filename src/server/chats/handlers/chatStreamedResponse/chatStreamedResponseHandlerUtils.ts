@@ -1,7 +1,9 @@
 import { env } from '@/env.mjs'
+import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { addTransactionRepo } from '@/server/transactions/repositories/addTransactionRepo'
 import { TrxAccount } from '@/server/transactions/transactionTypes'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
+import { PrismaTrxClient } from '@/shared/globalTypes'
 import type { PrismaClient } from '@prisma/client'
 import type { NextApiResponse } from 'next'
 import OpenAI, { type ClientOptions } from 'openai'
@@ -35,28 +37,11 @@ export const handleChatTitleCreate = async (
   chargeableUserId: string,
   chatId: string,
 ) => {
-  const data = await prisma.chat.findFirstOrThrow({
-    where: {
-      id: chatId,
-    },
-    include: {
-      messages: true,
-      post: {
-        select: {
-          title: true,
-        },
-      },
-      postConfigVersion: {
-        include: {
-          messages: true,
-        },
-      },
-    },
-  })
-  if (data.title) return
+  const chat = await getChat(prisma, chatId)
+  if (chat.title) return
 
-  const systemMessage = data.postConfigVersion?.messages[0]
-  const userMessages = data.messages.filter(
+  const systemMessage = chat.postConfigVersion?.messages[0]
+  const userMessages = chat.messages.filter(
     (message) => message.author === (ChatAuthor.User as string),
   )
   // Todo: improve and search in case there are multiple user messages
@@ -72,13 +57,15 @@ export const handleChatTitleCreate = async (
 
   const openai = new OpenAI(openAiPayload)
 
-  let content = data.post.title ? `MAIN TITLE: ${data.post.title}. ` : ''
+  let content = chat.post.title ? `MAIN TITLE: ${chat.post.title}. ` : ''
   const instructions = systemMessage?.message?.slice(0, 500)
 
   const request = firstUserMessage?.message?.slice(0, 500)
 
   content += instructions && `INSTRUCTIONS: ${instructions}. `
   content += request && `REQUEST: ${request}. `
+
+  const { model } = getProviderAndModelFromFullSlug(OpenAiModelEnum.GPT4)
 
   const params: OpenAI.Chat.ChatCompletionCreateParamsNonStreaming = {
     messages: [
@@ -89,7 +76,7 @@ export const handleChatTitleCreate = async (
       },
       { role: 'user', content, name: 'user' },
     ],
-    model: OpenAiModelEnum.GPT4,
+    model,
     temperature: 0.2,
   }
 
@@ -108,7 +95,7 @@ export const handleChatTitleCreate = async (
         aiResponse.usage.prompt_tokens,
         'request',
         'openai',
-        OpenAiModelEnum.GPT4,
+        model,
       ) ?? 0
 
     const responseCost =
@@ -116,7 +103,7 @@ export const handleChatTitleCreate = async (
         aiResponse.usage.completion_tokens,
         'response',
         'openai',
-        OpenAiModelEnum.GPT4,
+        model,
       ) ?? 0
 
     costInNanoCents = requestCost + responseCost
@@ -191,4 +178,25 @@ export function chatStreamToResponse(
       })
   }
   read()
+}
+
+const getChat = async (prisma: PrismaTrxClient, chatId: string) => {
+  return await prisma.chat.findFirstOrThrow({
+    where: {
+      id: chatId,
+    },
+    include: {
+      messages: true,
+      post: {
+        select: {
+          title: true,
+        },
+      },
+      postConfigVersion: {
+        include: {
+          messages: true,
+        },
+      },
+    },
+  })
 }

@@ -12,7 +12,7 @@ const generateDefaults = () => {
     username: faker.internet.userName(),
     email: faker.string.nanoid() + faker.internet.email(),
     emailVerified: faker.date.past(),
-    defaultOpenaiModel: OpenAiModelEnum.GPT3_5_TURBO,
+    defaultModel: OpenAiModelEnum.GPT3_5_TURBO,
   }
 }
 

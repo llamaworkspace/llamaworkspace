@@ -52,7 +52,7 @@ export const postCreateRepo = async (
         postConfigVersions: {
           create: [
             {
-              model: user.defaultOpenaiModel as OpenAiModelEnum,
+              model: user.defaultModel as OpenAiModelEnum,
               messages: {
                 create: [
                   {

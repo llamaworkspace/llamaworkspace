@@ -35,12 +35,12 @@ export function Profile() {
                 },
               })
             }}
-            initialValues={{ defaultOpenaiModel: user?.defaultOpenaiModel }}
+            initialValues={{ defaultModel: user?.defaultModel }}
             render={({ handleSubmit }) => {
               return (
                 <div className="grid md:grid-cols-3">
                   <Field
-                    name="defaultOpenaiModel"
+                    name="defaultModel"
                     render={({ input }) => {
                       return (
                         <SelectField

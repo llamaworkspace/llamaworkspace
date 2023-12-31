@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { zodUserOutput } from '../usersBackendUtils'
 
 const zInput = z.object({
-  defaultOpenaiModel: z.string().optional(),
+  defaultModel: z.string().optional(),
 })
 
 export const userUpdateSelf = protectedProcedure
@@ -23,6 +23,6 @@ export const userUpdateSelf = protectedProcedure
       id: res.id,
       email: res.email,
       name: res.name,
-      defaultOpenaiModel: res.defaultOpenaiModel,
+      defaultModel: res.defaultModel,
     }
   })

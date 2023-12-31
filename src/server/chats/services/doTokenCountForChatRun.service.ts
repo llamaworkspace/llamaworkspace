@@ -42,14 +42,14 @@ export const doTokenCountForChatRun = async (
       ) {
         count = 0
       } else {
-        count = message.openaiTokens ?? (await chunkedCount(message.message))
+        count = message.tokens ?? (await chunkedCount(message.message))
       }
 
-      if (isNull(message.openaiTokens)) {
+      if (isNull(message.tokens)) {
         await prisma.message.update({
           where: { id: message.id },
           data: {
-            openaiTokens: count,
+            tokens: count,
           },
         })
       }

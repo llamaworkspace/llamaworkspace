@@ -24,7 +24,7 @@ const setDefaultModelForUser = async (
       id: userId,
     },
     data: {
-      defaultOpenaiModel: DEFAULT_AI_MODEL,
+      defaultModel: DEFAULT_AI_MODEL,
     },
   })
 }

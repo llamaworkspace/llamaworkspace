@@ -14,6 +14,6 @@ export const userGetSelf = protectedProcedure
       id: res.id,
       email: res.email,
       name: res.name,
-      defaultOpenaiModel: res.defaultOpenaiModel,
+      defaultModel: res.defaultModel,
     }
   })
