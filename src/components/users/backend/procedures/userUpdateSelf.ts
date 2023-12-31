@@ -23,6 +23,6 @@ export const userUpdateSelf = protectedProcedure
       id: res.id,
       email: res.email,
       name: res.name,
-      defaultModel: res.defaultModel,
+      defaultModel: res.defaultModel!,
     }
   })
