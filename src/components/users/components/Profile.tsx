@@ -1,10 +1,10 @@
+import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
 import {
   Section,
   SectionBody,
   SectionWrapper,
   SectionWrapperTitle,
 } from '@/components/ui/Section'
-import { SelectField } from '@/components/ui/forms/SelectField'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { OpenaiModelToHuman } from '@/shared/aiTypesAndMappers'
 import { Field, Form as FinalForm } from 'react-final-form'
@@ -43,9 +43,8 @@ export function Profile() {
                     name="defaultModel"
                     render={({ input }) => {
                       return (
-                        <SelectField
+                        <SelectAiModelsFormField
                           {...input}
-                          options={MODEL_OPTIONS}
                           placeholder="Select a model"
                           label="Default AI model"
                           helperText="AI model to be used by default when creating new chats."
