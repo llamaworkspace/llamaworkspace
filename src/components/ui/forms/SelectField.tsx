@@ -3,6 +3,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectTriggerVariantProps,
   SelectValue,
 } from '@/components/ui/select'
 import { FormFieldWrapper } from './FormFieldWrapper'
@@ -15,12 +16,13 @@ interface InputOptionProps {
 
 // Keep value and onChange in here for compatibility with shadcnui Select
 export interface SelectFieldProps extends DefaultInputProps {
+  options: InputOptionProps[]
+  onChange: (value: string) => void
+  onValueChange?: (value: string) => void
   value?: string
   placeholder?: string
   disabled?: boolean
-  onChange: (value: string) => void
-  onValueChange?: (value: string) => void
-  options: InputOptionProps[]
+  variant?: SelectTriggerVariantProps['variant']
 }
 
 export const SelectField = ({
@@ -32,6 +34,7 @@ export const SelectField = ({
   label,
   helperText,
   disabled,
+  variant,
   ...selectProps
 }: SelectFieldProps) => {
   // Necessary as otherwise the placeholder does not work
@@ -54,7 +57,7 @@ export const SelectField = ({
         disabled={disabled}
         {...selectProps}
       >
-        <SelectTrigger>
+        <SelectTrigger variant={variant}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
