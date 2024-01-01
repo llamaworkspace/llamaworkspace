@@ -1,4 +1,6 @@
+import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
 import { cn } from '@/lib/utils'
+import { Field, Form as FinalForm } from 'react-final-form'
 import { ChatHeaderPostLinks } from '../chats/components/ChatHeaderPostLinks'
 import { ChatHeaderPostTitle } from '../chats/components/ChatHeaderPostTitle'
 import { useGlobalState } from '../global/globalState'
@@ -54,10 +56,11 @@ export function MainLayoutHeader({
           <span className="sr-only">Open sidebar</span>
           <SidebarToggleIcon />
         </button>
-        {!hidden && (
-          <div className="flex w-full justify-between px-6">
+        {true && (
+          <div className="flex w-full justify-between  px-6">
             <div id="header-left" className="flex grow items-center text-sm">
-              <ChatHeaderPostTitle postId={postId} />
+              {/* <ChatHeaderPostTitle postId={postId} /> */}
+              <Thing />
             </div>
             <div id="header-left" className="items-center text-sm">
               <ChatHeaderPostLinks />
@@ -66,5 +69,36 @@ export function MainLayoutHeader({
         )}
       </div>
     </header>
+  )
+}
+const Thing = () => {
+  return (
+    <FinalForm
+      onSubmit={(values) => {
+        console.log('submit')
+      }}
+      initialValues={{ defaultModel: 'openai/gpt-4-1106-preview' }}
+      render={({ handleSubmit }) => {
+        return (
+          <div className="grid md:grid-cols-3">
+            <Field
+              name="defaultModel"
+              render={({ input }) => {
+                return (
+                  <SelectAiModelsFormField
+                    {...input}
+                    placeholder="Select a model"
+                    label="Default AI model"
+                    helperText="AI model to be used by default when creating new chats."
+                    onValueChange={() => void handleSubmit()}
+                    variant="chatHeader"
+                  />
+                )
+              }}
+            />
+          </div>
+        )
+      }}
+    />
   )
 }
