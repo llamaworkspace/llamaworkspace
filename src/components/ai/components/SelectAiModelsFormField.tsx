@@ -1,4 +1,4 @@
-import { useWIPEnabledAiModels } from '@/components/ai/aiHooks'
+import { useEnabledAiModels } from '@/components/ai/aiHooks'
 import {
   SelectField,
   type SelectFieldProps,
@@ -8,7 +8,7 @@ import { useMemo } from 'react'
 export const SelectAiModelsFormField = ({
   ...selectProps
 }: Omit<SelectFieldProps, 'options'>) => {
-  const { data: aiModels } = useWIPEnabledAiModels()
+  const { data: aiModels } = useEnabledAiModels()
 
   const modelOptions = useMemo(() => {
     if (!aiModels) return []
