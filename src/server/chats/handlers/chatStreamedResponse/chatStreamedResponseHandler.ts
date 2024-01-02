@@ -18,7 +18,6 @@ import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
-import OpenAI from 'openai'
 import { chain, isNull } from 'underscore'
 import { doTokenCountForChatRun } from '../../services/doTokenCountForChatRun.service'
 import {
@@ -95,6 +94,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     let hasOwnApiKey = false
 
+    // FIXME! This is a hack to allow users to use their own API keys
     if (providerSlug === 'openai') {
       if (providerKVs.apiKey) {
         hasOwnApiKey = true
@@ -157,22 +157,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
       providerKVs,
     )
-
     chatStreamToResponse(stream, res, undefined, onError)
-  } catch (error) {
+  } catch (_error) {
+    const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {
       await updateMessage(assistantTargetMessageId, tokenResponse)
     } else if (assistantTargetMessageId) {
       await deleteMessage(assistantTargetMessageId)
     }
 
-    if (error instanceof OpenAI.APIError) {
-      // Log to understand the different error types,
-      // and the responses that the client sees.
-      errorLogger(error)
-      throw createHttpError(403, error.message)
-    }
-    throw error
+    errorLogger(error)
+    throw createHttpError(403, error.message)
   }
 }
 
@@ -346,6 +341,20 @@ const transformMessageModelToPayload = (
 
 const getParsedBody = (req: NextApiRequest) => {
   return req.body as BodyPayload
+}
+// Utility function to ensure we're working with a proper Error object
+const ensureError = (err: unknown): Error => {
+  if (err instanceof Error) {
+    return err
+  }
+
+  // If the thrown value isn't an Error but has an error-like structure
+  if (typeof err === 'object' && err && 'message' in err) {
+    return Object.assign(new Error((err as { message: string }).message), err)
+  }
+
+  // For other cases, such as when a string or number is thrown
+  return new Error(String(err))
 }
 
 export default withMiddleware()(handler)

@@ -70,7 +70,11 @@ interface FormValues {
 }
 
 const AiModelSelector = ({ chatId }: { chatId?: string }) => {
-  const { data: postConfig, refetch } = usePostConfigForChat(chatId)
+  const {
+    data: postConfig,
+    isLoading: postConfigIsLoading,
+    refetch,
+  } = usePostConfigForChat(chatId)
   const { mutate: updatePostConfigVersion } =
     useUpdatePostConfigForStandaloneChat()
 
@@ -93,12 +97,17 @@ const AiModelSelector = ({ chatId }: { chatId?: string }) => {
             <Field
               name="defaultModel"
               render={({ input }) => {
+                if (postConfigIsLoading) {
+                  return <Skeleton className="h-5 w-72" />
+                }
+
                 return (
                   <SelectAiModelsFormField
                     {...input}
                     placeholder="Select a model"
                     onValueChange={() => void handleSubmit()}
                     variant="chatHeader"
+                    loadingEl={<Skeleton className="h-5 w-72" />}
                   />
                 )
               }}

@@ -6,16 +6,8 @@ import {
   SectionWrapperTitle,
 } from '@/components/ui/Section'
 import { useSuccessToast } from '@/components/ui/toastHooks'
-import { OpenaiModelToHuman } from '@/shared/aiTypesAndMappers'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { useSelf, useUpdateSelf } from '../usersHooks'
-
-const MODEL_OPTIONS = Object.entries(OpenaiModelToHuman).map(([key, value]) => {
-  return {
-    label: value,
-    value: key,
-  }
-})
 
 export function Profile() {
   const { mutate: updateSelf } = useUpdateSelf()
@@ -38,7 +30,7 @@ export function Profile() {
             initialValues={{ defaultModel: user?.defaultModel }}
             render={({ handleSubmit }) => {
               return (
-                <div className="grid md:grid-cols-3">
+                <div className="grid md:grid-cols-2">
                   <Field
                     name="defaultModel"
                     render={({ input }) => {
