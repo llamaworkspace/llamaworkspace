@@ -1,5 +1,4 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
-import { postsConfigGetForChatId } from './procedures/postsConfigGetForChatId'
 import { postsConfigGetLatestForPostId } from './procedures/postsConfigGetLatestForPostId'
 import { postsConfigUpdate } from './procedures/postsConfigUpdate'
 import { postsCreate } from './procedures/postsCreate'
@@ -23,6 +22,5 @@ export const postsRouter = createTRPCRouter({
   updateShareAccessLevel: postsShareUpdateAccessLevel,
   updateConfig: postsConfigUpdate,
   getLatestConfig: postsConfigGetLatestForPostId,
-  getConfigForChatId: postsConfigGetForChatId,
   getLatestPost: postsGetLatest,
 })
