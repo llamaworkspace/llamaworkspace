@@ -1,5 +1,6 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { aiRegistry } from '@/server/ai/aiRegistry'
+import { getAiProvidersWithKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
 import type { AiRegistryModel } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
@@ -29,7 +30,17 @@ export const getEnabledAiModels = protectedProcedure
     const registry = aiRegistry.getProvidersMeta()
     const registryFinalModels: AiRegistryModelWithFullNamePaths[] = []
 
+    const thing = await getAiProvidersWithKVs(
+      ctx.prisma,
+      input.workspaceId,
+      userId,
+    )
+
     registry.map((provider) => {
+      const item = thing.find((item) => item.slug === provider.slug)
+      if (item?.missingFields && item.missingFields.length > 0) {
+        return
+      }
       provider.models.map((model) => {
         registryFinalModels.push({
           ...model,
