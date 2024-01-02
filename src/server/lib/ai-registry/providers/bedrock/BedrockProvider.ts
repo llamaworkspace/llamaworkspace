@@ -58,17 +58,20 @@ export const BedrockProvider: () => AiRegistryProvider = () => {
       // https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html
       const bedrockResponse = await bedrockClient.send(
         new InvokeModelWithResponseStreamCommand({
-          modelId: 'meta.llama2-13b-chat-v1',
+          modelId: payload.model,
           contentType: 'application/json',
           accept: 'application/json',
           body: JSON.stringify({
             prompt: experimental_buildLlama2Prompt(payload.messages),
-            max_gen_len: 300,
+            // max_gen_len: 300,
           }),
         }),
       )
 
-      const stream = AWSBedrockLlama2Stream(bedrockResponse)
+      const stream = AWSBedrockLlama2Stream(bedrockResponse, {
+        onToken: payload?.onToken,
+        onFinal: payload?.onFinal,
+      })
       return stream
     },
   }

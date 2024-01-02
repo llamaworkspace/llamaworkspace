@@ -136,7 +136,7 @@ export function SidebarDesktopBody() {
                   <div className=" text-xs font-semibold uppercase text-zinc-400">
                     Shared Chatbots{' '}
                   </div>
-                  <Tooltip delayDuration={300}>
+                  <Tooltip delayDuration={100}>
                     <TooltipTrigger asChild disabled={!standaloneChats}>
                       <div className="flex">
                         <InformationCircleIcon className="ml-1 inline h-4 w-4 text-zinc-400" />
