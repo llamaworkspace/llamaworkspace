@@ -5,19 +5,19 @@ import { useGlobalState } from '../global/globalState'
 import { EMPTY_POST_NAME } from '../posts/postsConstants'
 import { usePostById } from '../posts/postsHooks'
 import { Sidebar } from '../sidebar/Sidebar'
-import { MainLayoutHeader } from './MainLayoutHeader'
+import {
+  MainLayoutHeader,
+  type HeaderVariants,
+} from './MainLayout/MainLayoutHeader'
 import { MainLayoutSessionChecker } from './MainLayoutSessionChecker'
 
 interface MainLayoutProps extends PropsWithChildren {
   postId?: string
   hideHeader?: boolean
+  variant: HeaderVariants
 }
 
-export function MainLayout({
-  postId,
-  children,
-  hideHeader = false,
-}: MainLayoutProps) {
+export function MainLayout({ postId, children, variant }: MainLayoutProps) {
   const { data: post } = usePostById(postId)
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
@@ -40,7 +40,7 @@ export function MainLayout({
         )}
       >
         <div className="flex h-full w-full min-w-[300px] flex-1 flex-col overflow-hidden">
-          <MainLayoutHeader postId={postId} hidden={hideHeader} />
+          <MainLayoutHeader postId={postId} variant={variant} />
 
           {children}
         </div>

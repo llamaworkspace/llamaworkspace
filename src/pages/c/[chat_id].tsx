@@ -1,6 +1,7 @@
 import { Chat } from '@/components/chats/Chat'
 import { useChatById } from '@/components/chats/chatHooks'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
 import { PostError } from '@/components/posts/components/PostError'
 import { useDefaultPost } from '@/components/posts/postsHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
@@ -21,7 +22,7 @@ export default function ChatPage() {
   }
 
   return (
-    <MainLayout postId={post?.id} hideHeader={true}>
+    <MainLayout postId={post?.id} variant={HeaderVariants.Chat}>
       {!isPostOrChatInvalid && <Chat postId={post?.id} chatId={chatId} />}
       {isPostOrChatInvalid && <PostError />}
     </MainLayout>
