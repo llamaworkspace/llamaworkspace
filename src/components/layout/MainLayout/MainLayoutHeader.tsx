@@ -4,8 +4,8 @@ import { MainLayoutHeaderForChatbot } from './MainLayoutHeaderForChatbot'
 import { MainLayoutHeaderForStandaloneChat } from './MainLayoutHeaderForStandaloneChat'
 
 export enum HeaderVariants {
-  Chat,
   Chatbot,
+  Chat,
   Hidden,
 }
 

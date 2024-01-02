@@ -3,6 +3,7 @@ import {
   usePostConfigForChat,
   useUpdatePostConfigForStandaloneChat,
 } from '@/components/chats/chatHooks'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { useGlobalState } from '../../global/globalState'
@@ -29,7 +30,11 @@ export function MainLayoutHeaderForStandaloneChat({
         </button>
         <div className="flex w-full justify-between px-2 md:px-6">
           <div id="header-left" className="flex grow items-center text-sm">
-            <AiModelSelector chatId={chatId} />
+            {chatId ? (
+              <AiModelSelector chatId={chatId} />
+            ) : (
+              <Skeleton className="h-5 w-48" />
+            )}
           </div>
         </div>
       </div>
@@ -48,7 +53,11 @@ export function MainLayoutHeaderForStandaloneChat({
         </button>
         <div className="flex w-full justify-between px-6">
           <div id="header-left" className="flex grow items-center text-sm">
-            <AiModelSelector chatId={chatId} />
+            {chatId ? (
+              <AiModelSelector chatId={chatId} />
+            ) : (
+              <Skeleton className="h-5 w-72" />
+            )}
           </div>
         </div>
       </div>

@@ -73,14 +73,14 @@ export const SettingsAiProviders = () => {
       <SectionHeader title="AI Service Providers" />
       <SectionBody>
         <div className="mb-12 space-y-4">
-          <div className="text-zinc-700">
+          {/* <div className="text-zinc-700">
             Add AI service providers like OpenAI, Hugging Face or Amazon
             Bedrock, to power the chats in your workspace. You can add multiple
             providers and later choose which one to use on a case by case basis.
           </div>
           <div>
             <Button>Add AI provider</Button>
-          </div>
+          </div> */}
         </div>
 
         {providers?.map((provider) => {
