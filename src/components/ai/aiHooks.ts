@@ -35,7 +35,7 @@ export const useAiModels = (providerSlug?: string) => {
   )
 }
 
-export const useWIPEnabledAiModels = () => {
+export const useEnabledAiModels = () => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 

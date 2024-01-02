@@ -1,6 +1,7 @@
 import { Chat } from '@/components/chats/Chat'
 import { useCreateChat } from '@/components/chats/chatHooks'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 
 import { useEffect, useRef } from 'react'
@@ -25,7 +26,7 @@ export default function NewChatPage() {
   }, [createChat, postId])
 
   return (
-    <MainLayout postId={postId}>
+    <MainLayout postId={postId} variant={HeaderVariants.Chatbot}>
       <Chat postId={postId} chatId={undefined} />
     </MainLayout>
   )

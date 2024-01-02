@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/MainLayout'
 import { PostError } from '@/components/posts/components/PostError'
 import { usePostById } from '@/components/posts/postsHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
+import { HeaderVariants } from '../../../../../components/layout/MainLayout/MainLayoutHeader'
 
 export default function ChatPage() {
   const navigation = useNavigation()
@@ -21,7 +22,7 @@ export default function ChatPage() {
   }
 
   return (
-    <MainLayout postId={postId} hideHeader={isPostOrChatInvalid}>
+    <MainLayout postId={postId} variant={HeaderVariants.Chatbot}>
       {!isPostOrChatInvalid && <Chat postId={postId} chatId={chatId} />}
       {isPostOrChatInvalid && <PostError />}
     </MainLayout>

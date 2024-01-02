@@ -1,15 +1,12 @@
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
 import { chatVisibilityFilter } from '../chatsBackendUtils'
 
-const zOpenAiModelEnum = z.nativeEnum(OpenAiModelEnum)
-
 const zInput = z.object({
   chatId: z.string(),
-  model: z.optional(zOpenAiModelEnum),
+  model: z.string().optional(),
 })
 
 export const updatePostConfigForStandaloneChat = protectedProcedure

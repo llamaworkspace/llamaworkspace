@@ -1,21 +1,11 @@
 import { cn } from '@/lib/utils'
-import {
-  ChatAuthor,
-  OpenAiModelEnum,
-  OpenaiModelToHuman,
-} from '@/shared/aiTypesAndMappers'
-import { useCallback, useEffect, useState } from 'react'
+import { ChatAuthor } from '@/shared/aiTypesAndMappers'
+import { useCallback, useState } from 'react'
 import { useGlobalState } from '../global/globalState'
-import { useDefaultPost } from '../posts/postsHooks'
-import {
-  useMessages,
-  usePostConfigForChat,
-  useUpdatePostConfigForStandaloneChat,
-} from './chatHooks'
+import { useMessages } from './chatHooks'
 import { ChatMessage } from './components/ChatMessage'
 import { ChatMessageInitial } from './components/ChatMessageInitial'
 import { ChatNoSettingsAlert } from './components/ChatNoSettingsAlert'
-import { ChatStandaloneModelSelector } from './components/ChatStandaloneModelSelector'
 import { Chatbox } from './components/Chatbox'
 
 interface ChatProps {
@@ -30,13 +20,9 @@ export function Chat({ postId, chatId }: ChatProps) {
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
   const { data: messages } = useMessages(chatId)
-  const { data: postConfig, refetch } = usePostConfigForChat(chatId)
-  const { data: defaultPost } = useDefaultPost()
-  const [lastBlockHeight, setLastBlockHeight] = useState(LAST_BLOCK_MIN_HEIGHT)
-  const [displayModelSelector, setDisplayModelSelector] = useState(false)
 
-  const { mutate: updatePostConfigVersion } =
-    useUpdatePostConfigForStandaloneChat()
+  const [lastBlockHeight, setLastBlockHeight] = useState(LAST_BLOCK_MIN_HEIGHT)
+
   const handleChatboxHeightChangeStable = useCallback((height: number) => {
     const lines = height / 24 ?? 1
     const nextHeight = (function () {
@@ -51,50 +37,6 @@ export function Chat({ postId, chatId }: ChatProps) {
     setLastBlockHeight(nextHeight)
   }, [])
 
-  const [standaloneModel, setStandaloneModel] = useState<OpenAiModelEnum>()
-
-  useEffect(() => {
-    if (postConfig?.model) {
-      setStandaloneModel(postConfig.model as OpenAiModelEnum)
-    }
-  }, [postConfig?.model])
-
-  const isStandaloneChat =
-    !!postId && !!defaultPost && postId === defaultPost.id
-  const shouldShowModelSelector =
-    !!standaloneModel && isStandaloneChat && messages?.length === 0
-
-  useEffect(() => {
-    if (shouldShowModelSelector) {
-      setDisplayModelSelector(true)
-    }
-    if (!shouldShowModelSelector && displayModelSelector) {
-      setTimeout(() => {
-        setDisplayModelSelector(false)
-      }, 500)
-    }
-  }, [shouldShowModelSelector, displayModelSelector])
-
-  const handleStandaloneModelChange = () => {
-    if (!chatId) return
-
-    updatePostConfigVersion(
-      {
-        chatId,
-        model:
-          standaloneModel === OpenAiModelEnum.GPT3_5_TURBO
-            ? OpenAiModelEnum.GPT4
-            : OpenAiModelEnum.GPT3_5_TURBO,
-      },
-      { onSuccess: () => void refetch() },
-    )
-
-    if (standaloneModel === OpenAiModelEnum.GPT3_5_TURBO) {
-      return setStandaloneModel(OpenAiModelEnum.GPT4)
-    }
-    setStandaloneModel(OpenAiModelEnum.GPT3_5_TURBO)
-  }
-
   const refreshKey = `${postId}-${chatId}`
 
   return (
@@ -105,22 +47,6 @@ export function Chat({ postId, chatId }: ChatProps) {
       className="relative flex h-full w-full flex-1 flex-col-reverse overflow-y-auto overflow-x-hidden bg-white p-4"
     >
       <div className="mx-auto flex w-full max-w-4xl grow flex-col gap-y-2 pb-4">
-        {displayModelSelector && (
-          <div
-            className={cn(
-              'mx-auto mt-6 transition',
-              shouldShowModelSelector
-                ? 'translate-y-4 opacity-100'
-                : 'translate-y-0  opacity-0',
-            )}
-          >
-            <ChatStandaloneModelSelector
-              activeModel={standaloneModel!}
-              onChange={handleStandaloneModelChange}
-            />
-          </div>
-        )}
-
         <div className="grow">
           <ChatNoSettingsAlert postId={postId} chatId={chatId} />
         </div>
@@ -133,7 +59,7 @@ export function Chat({ postId, chatId }: ChatProps) {
                 variant={getVariant(message.author)}
                 key={message.id}
                 message={message.message ?? ''}
-                author={getAuthor(message.author, postConfig?.model) ?? ''}
+                author={getAuthor(message.author) ?? ''}
               />
             )
           })
@@ -159,10 +85,9 @@ export function Chat({ postId, chatId }: ChatProps) {
   )
 }
 
-function getAuthor(author: string, model?: string) {
+function getAuthor(author: string) {
   if (author === (ChatAuthor.Assistant as string)) {
-    if (!model) return null
-    return OpenaiModelToHuman[model as OpenAiModelEnum]
+    return 'Assistant'
   } else if (author === (ChatAuthor.Wizard as string)) {
     return 'Prompt Wizard'
   }

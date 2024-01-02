@@ -1,5 +1,6 @@
 import { useDefaultPageRedirection } from '@/components/global/redirectionHooks'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
 import { useEffect } from 'react'
 
 export default function AppIndexPage() {
@@ -9,5 +10,5 @@ export default function AppIndexPage() {
     redirect?.()
   }, [redirect])
 
-  return <MainLayout hideHeader={true} />
+  return <MainLayout variant={HeaderVariants.Hidden} />
 }
