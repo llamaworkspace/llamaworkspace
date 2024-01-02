@@ -53,8 +53,7 @@ export const useCreateStandaloneChat = () => {
     onError: errorHandler(),
     onSuccess: (chat) => {
       void utils.sidebar.chatHistoryForSidebar.invalidate()
-      void navigation.push(`/p/:postId/c/:chatId`, {
-        postId: chat.postId,
+      void navigation.push(`/c/:chatId`, {
         chatId: chat.id,
       })
     },

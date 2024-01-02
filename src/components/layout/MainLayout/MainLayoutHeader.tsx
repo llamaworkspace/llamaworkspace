@@ -18,7 +18,6 @@ export function MainLayoutHeader({
   chatId?: string
   variant: HeaderVariants
 }) {
-  console.log('variant', variant)
   return (
     <header
       key={`${postId}-${chatId}`}
