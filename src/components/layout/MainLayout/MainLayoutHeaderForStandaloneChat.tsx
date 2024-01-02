@@ -56,9 +56,6 @@ export function MainLayoutHeaderForStandaloneChat({
           <div id="header-left" className="flex grow items-center text-sm">
             <AiModelSelector chatId={chatId} />
           </div>
-          <div id="header-left" className="items-center text-sm">
-            <ChatHeaderPostLinks />
-          </div>
         </div>
       </div>
     </>
@@ -97,8 +94,6 @@ const AiModelSelector = ({ chatId }: { chatId?: string }) => {
                   <SelectAiModelsFormField
                     {...input}
                     placeholder="Select a model"
-                    label="Default AI model"
-                    helperText="AI model to be used by default when creating new chats."
                     onValueChange={() => void handleSubmit()}
                     variant="chatHeader"
                   />

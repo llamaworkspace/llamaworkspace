@@ -18,11 +18,13 @@ export function MainLayoutHeader({
   chatId?: string
   variant: HeaderVariants
 }) {
+  console.log('variant', variant)
   return (
     <header
+      key={`${postId}-${chatId}`}
       className={cn(
         'flex h-12 max-h-12 flex-row items-center justify-between border-zinc-200/50 py-2.5 lg:px-0',
-        variant !== HeaderVariants.Hidden && 'border-b',
+        variant === HeaderVariants.Chatbot && 'border-b',
       )}
     >
       {variant === HeaderVariants.Chatbot && (

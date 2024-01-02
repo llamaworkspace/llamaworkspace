@@ -21,12 +21,8 @@ export default function ChatPage() {
     }
   }
 
-  const variant = isPostOrChatInvalid
-    ? HeaderVariants.Hidden
-    : HeaderVariants.Chat
-
   return (
-    <MainLayout postId={postId} variant={variant}>
+    <MainLayout postId={postId} variant={HeaderVariants.Chatbot}>
       {!isPostOrChatInvalid && <Chat postId={postId} chatId={chatId} />}
       {isPostOrChatInvalid && <PostError />}
     </MainLayout>
