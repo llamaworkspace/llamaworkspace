@@ -26,6 +26,9 @@ export const OpenAiProvider: () => OpenAiProviderType = () => {
         encrypted: false,
       },
     ],
+    modelPublicNameResolver: (modelName: string) => {
+      return 'Chat GPT'
+    },
     executeAsStream: async (
       payload: AiRegistryExecutePayload,
       options: OpenAiExecuteOptions,

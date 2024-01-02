@@ -1,12 +1,8 @@
 import { cn } from '@/lib/utils'
-import {
-  ChatAuthor,
-  type OpenAiModelEnum,
-  type OpenaiModelToHuman,
-} from '@/shared/aiTypesAndMappers'
+import { ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useCallback, useState } from 'react'
 import { useGlobalState } from '../global/globalState'
-import { useMessages, usePostConfigForChat } from './chatHooks'
+import { useMessages } from './chatHooks'
 import { ChatMessage } from './components/ChatMessage'
 import { ChatMessageInitial } from './components/ChatMessageInitial'
 import { ChatNoSettingsAlert } from './components/ChatNoSettingsAlert'
@@ -24,7 +20,6 @@ export function Chat({ postId, chatId }: ChatProps) {
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
   const { data: messages } = useMessages(chatId)
-  const { data: postConfig } = usePostConfigForChat(chatId)
 
   const [lastBlockHeight, setLastBlockHeight] = useState(LAST_BLOCK_MIN_HEIGHT)
 
@@ -64,7 +59,7 @@ export function Chat({ postId, chatId }: ChatProps) {
                 variant={getVariant(message.author)}
                 key={message.id}
                 message={message.message ?? ''}
-                author={getAuthor(message.author, postConfig?.model) ?? ''}
+                author={getAuthor(message.author) ?? ''}
               />
             )
           })
@@ -90,10 +85,9 @@ export function Chat({ postId, chatId }: ChatProps) {
   )
 }
 
-function getAuthor(author: string, model?: string) {
+function getAuthor(author: string) {
   if (author === (ChatAuthor.Assistant as string)) {
-    if (!model) return null
-    return OpenaiModelToHuman[model as OpenAiModelEnum]
+    return 'Assistant'
   } else if (author === (ChatAuthor.Wizard as string)) {
     return 'Prompt Wizard'
   }
