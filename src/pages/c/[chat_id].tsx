@@ -22,7 +22,7 @@ export default function ChatPage() {
   }
 
   return (
-    <MainLayout postId={post?.id} variant={HeaderVariants.Chat}>
+    <MainLayout postId={post?.id} chatId={chatId} variant={HeaderVariants.Chat}>
       {!isPostOrChatInvalid && <Chat postId={post?.id} chatId={chatId} />}
       {isPostOrChatInvalid && <PostError />}
     </MainLayout>

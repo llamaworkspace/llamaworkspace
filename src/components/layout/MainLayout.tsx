@@ -13,11 +13,17 @@ import { MainLayoutSessionChecker } from './MainLayoutSessionChecker'
 
 interface MainLayoutProps extends PropsWithChildren {
   postId?: string
+  chatId?: string
   hideHeader?: boolean
   variant: HeaderVariants
 }
 
-export function MainLayout({ postId, children, variant }: MainLayoutProps) {
+export function MainLayout({
+  postId,
+  chatId,
+  children,
+  variant,
+}: MainLayoutProps) {
   const { data: post } = usePostById(postId)
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
@@ -40,7 +46,7 @@ export function MainLayout({ postId, children, variant }: MainLayoutProps) {
         )}
       >
         <div className="flex h-full w-full min-w-[300px] flex-1 flex-col overflow-hidden">
-          <MainLayoutHeader postId={postId} variant={variant} />
+          <MainLayoutHeader postId={postId} chatId={chatId} variant={variant} />
 
           {children}
         </div>

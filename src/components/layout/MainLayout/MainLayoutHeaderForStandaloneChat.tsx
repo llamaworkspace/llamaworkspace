@@ -1,13 +1,18 @@
+import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
+import {
+  usePostConfigForChat,
+  useUpdatePostConfigForStandaloneChat,
+} from '@/components/chats/chatHooks'
 import { cn } from '@/lib/utils'
+import { Field, Form as FinalForm } from 'react-final-form'
 import { ChatHeaderPostLinks } from '../../chats/components/ChatHeaderPostLinks'
-import { ChatHeaderPostTitle } from '../../chats/components/ChatHeaderPostTitle'
 import { useGlobalState } from '../../global/globalState'
 import { SidebarToggleIcon } from '../../sidebar/SidebarToggleIcon'
 
 export function MainLayoutHeaderForStandaloneChat({
-  postId,
+  chatId,
 }: {
-  postId?: string
+  chatId?: string
 }) {
   const { toggleMobileSidebar, toggleDesktopSidebar, state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
@@ -25,7 +30,9 @@ export function MainLayoutHeaderForStandaloneChat({
         </button>
         <div className="flex w-full justify-between px-2 md:px-6">
           <div id="header-left" className="flex grow items-center text-sm">
-            <ChatHeaderPostTitle postId={postId} />
+            {/* Fixme, mobile! */}
+            {/* <ChatHeaderPostTitle postId={postId} /> */}
+            <AiModelSelector chatId={chatId} />
           </div>
           <div id="header-left" className="items-center text-sm">
             <ChatHeaderPostLinks />
@@ -47,7 +54,7 @@ export function MainLayoutHeaderForStandaloneChat({
         </button>
         <div className="flex w-full justify-between px-6">
           <div id="header-left" className="flex grow items-center text-sm">
-            <ChatHeaderPostTitle postId={postId} />
+            <AiModelSelector chatId={chatId} />
           </div>
           <div id="header-left" className="items-center text-sm">
             <ChatHeaderPostLinks />
@@ -55,5 +62,52 @@ export function MainLayoutHeaderForStandaloneChat({
         </div>
       </div>
     </>
+  )
+}
+
+interface FormValues {
+  defaultModel: string
+}
+
+const AiModelSelector = ({ chatId }: { chatId?: string }) => {
+  const { data: postConfig, refetch } = usePostConfigForChat(chatId)
+  const { mutate: updatePostConfigVersion } =
+    useUpdatePostConfigForStandaloneChat()
+
+  return (
+    <FinalForm<FormValues>
+      onSubmit={(values) => {
+        if (!chatId) return
+        updatePostConfigVersion(
+          {
+            chatId,
+            model: values.defaultModel,
+          },
+          { onSuccess: () => void refetch() },
+        )
+      }}
+      initialValues={{ defaultModel: postConfig?.model }}
+      render={({ handleSubmit }) => {
+        return (
+          <div className="grid md:grid-cols-3">
+            <Field
+              name="defaultModel"
+              render={({ input }) => {
+                return (
+                  <SelectAiModelsFormField
+                    {...input}
+                    placeholder="Select a model"
+                    label="Default AI model"
+                    helperText="AI model to be used by default when creating new chats."
+                    onValueChange={() => void handleSubmit()}
+                    variant="chatHeader"
+                  />
+                )
+              }}
+            />
+          </div>
+        )
+      }}
+    />
   )
 }
