@@ -212,18 +212,6 @@ export const useLatestPostConfigVersionForPost = (
   )
 }
 
-export const usePostConfigForChat = (chatId?: string) => {
-  const errorHandler = useErrorHandler()
-
-  return api.posts.getConfigForChatId.useQuery(
-    { chatId: chatId! },
-    {
-      onError: errorHandler(),
-      enabled: !!chatId,
-    },
-  )
-}
-
 export const usePostConfigUpdate = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
