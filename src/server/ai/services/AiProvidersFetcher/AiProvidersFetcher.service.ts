@@ -1,7 +1,10 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { maskValueWithBullets } from '@/lib/appUtils'
 import type { AiRegistry } from '@/server/lib/ai-registry/AiRegistry'
-import type { AiRegistryProviderMeta } from '@/server/lib/ai-registry/aiRegistryTypes'
+import type {
+  AiRegistryField,
+  AiRegistryProviderMeta,
+} from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { PrismaClient } from '@prisma/client'
 
 type ProviderKVs = Record<string, string>
@@ -42,7 +45,7 @@ export class AiProvidersFetcherService {
     const providersMeta = this.registry.getProvidersMeta()
     const providerKvs = await this.getProviderKVs(workspaceId, userId)
 
-    const merged = this.mergeProvidersAndKVs(
+    const merged = this.buildProviderWithKvsTree(
       providersMeta,
       providerKvs,
       maskEncryptedValues,
@@ -87,44 +90,72 @@ export class AiProvidersFetcherService {
     return providers
   }
 
-  private mergeProvidersAndKVs(
+  private buildProviderWithKvsTree(
     providersMeta: AiRegistryProviderMeta[],
     providerKvsCollection: ProvidersKvsCollection,
-    maskEncryptedValues = true,
+    maskEncryptedValues?: boolean,
   ) {
     return providersMeta.map((providerMeta) => {
       const providerSlug = providerMeta.slug
       const providerKvs = providerKvsCollection[providerSlug] ?? {}
 
-      const providerValues: Record<string, string> = {}
+      const { providerValues, fields, hasMissingFields } =
+        this.mergeProvidersAndKVs(
+          providerKvs,
+          providerMeta.fields,
+          maskEncryptedValues,
+        )
 
-      let hasMissingFields = false
-      const fields = providerMeta.fields.map((field) => {
-        const dbValue = providerKvs[field.slug]
-
-        if (field.required && !dbValue) {
-          hasMissingFields = true
-        }
-
-        if (dbValue) {
-          providerValues[field.slug] =
-            field.encrypted && maskEncryptedValues
-              ? maskValueWithBullets(dbValue)
-              : dbValue
-        }
-
-        return {
-          ...field,
-          value: dbValue ?? null,
-          missing: field.required && !dbValue,
-        }
-      })
+      const models = this.buildModelsPayload(providerMeta)
 
       return {
         ...providerMeta,
         fields,
         hasMissingFields,
         providerValues,
+        models,
+      }
+    })
+  }
+
+  private mergeProvidersAndKVs(
+    providerKvs: Record<string, string>,
+    aiRegistryFields: AiRegistryField[],
+    maskEncryptedValues = true,
+  ) {
+    const providerValues: Record<string, string> = {}
+
+    let hasMissingFields = false
+    const fields = aiRegistryFields.map((field) => {
+      const dbValue = providerKvs[field.slug]
+
+      if (field.required && !dbValue) {
+        hasMissingFields = true
+      }
+
+      if (dbValue) {
+        providerValues[field.slug] =
+          field.encrypted && maskEncryptedValues
+            ? maskValueWithBullets(dbValue)
+            : dbValue
+      }
+
+      return {
+        ...field,
+        value: dbValue ?? null,
+        missing: field.required && !dbValue,
+      }
+    })
+
+    return { fields, hasMissingFields, providerValues }
+  }
+
+  private buildModelsPayload(provider: AiRegistryProviderMeta) {
+    return provider.models.map((model) => {
+      return {
+        ...model,
+        fullSlug: `${provider.slug}/${model.slug}`,
+        fullPublicName: `${provider.publicName} > ${model.publicName}`,
       }
     })
   }

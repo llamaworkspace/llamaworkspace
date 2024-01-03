@@ -31,7 +31,7 @@ export const SettingsAiProviders = () => {
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
   const { data: providers } = useWIPNextAiProviderMaster()
-
+  console.log('providers2', providers)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const focusQueryStringEl = navigation.query?.focus

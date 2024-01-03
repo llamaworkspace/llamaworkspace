@@ -1,18 +1,11 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { aiProvidersFetcher } from '@/server/ai/services/aiProvidersFetcher.service'
-import type { AiRegistryModel } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
 const zInput = z.object({
   workspaceId: z.string(),
 })
-
-type AiRegistryModelWithFullNamePaths = AiRegistryModel & {
-  providerSlug: string
-  fullSlug: string
-  fullPublicName: string
-}
 
 export const getWIPEnabledAiModels = protectedProcedure
   .input(zInput)
@@ -26,24 +19,10 @@ export const getWIPEnabledAiModels = protectedProcedure
       },
     })
 
-    const thing = await aiProvidersFetcher.getFullAiProvidersMeta(
+    const providers = await aiProvidersFetcher.getFullAiProvidersMeta(
       input.workspaceId,
       userId,
     )
 
-    const registry = aiProvidersFetcher.DEPRECATED_getProvidersMeta()
-    const registryFinalModels: AiRegistryModelWithFullNamePaths[] = []
-
-    registry.map((provider) => {
-      provider.models.map((model) => {
-        registryFinalModels.push({
-          ...model,
-          providerSlug: provider.slug,
-          fullSlug: `${provider.slug}/${model.slug}`,
-          fullPublicName: `${provider.publicName} > ${model.publicName}`,
-        })
-      })
-    })
-
-    return registryFinalModels
+    return providers.flatMap((provider) => provider.models)
   })
