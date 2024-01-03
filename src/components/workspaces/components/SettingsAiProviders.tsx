@@ -1,6 +1,6 @@
 import {
-  useAiProvidersWithDBFields,
   useUpdateAiProvider,
+  useWIPNextAiProviderMaster,
 } from '@/components/ai/aiHooks'
 import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
@@ -29,7 +29,7 @@ export const SettingsAiProviders = () => {
   const { mutate: updateAiProvider } = useUpdateAiProvider()
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
-  const { data: providers } = useAiProvidersWithDBFields()
+  const { data: providers } = useWIPNextAiProviderMaster()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -93,7 +93,7 @@ export const SettingsAiProviders = () => {
             <FinalForm<FormValues>
               key={provider.slug}
               onSubmit={handleFormSubmit(provider.slug)}
-              initialValues={provider.values}
+              initialValues={provider.providerValues}
               render={({ handleSubmit }) => {
                 return (
                   <Card key={provider.slug}>

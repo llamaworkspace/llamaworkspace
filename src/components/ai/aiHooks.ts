@@ -2,24 +2,11 @@ import { api } from '@/lib/api'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
-export const useNextAiProviderMaster = () => {
+export const useWIPNextAiProviderMaster = () => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
-  return api.ai.getNextAiProvidersMaster.useQuery(
-    { workspaceId: workspace?.id! },
-    {
-      enabled: !!workspace?.id,
-      onError: errorHandler(),
-    },
-  )
-}
-
-export const useAiProvidersWithDBFields = () => {
-  const { workspace } = useCurrentWorkspace()
-  const errorHandler = useErrorHandler()
-
-  return api.ai.getAiProvidersWithDBEntries.useQuery(
+  return api.ai.getWIPNextAiProvidersMaster.useQuery(
     { workspaceId: workspace?.id! },
     {
       enabled: !!workspace?.id,

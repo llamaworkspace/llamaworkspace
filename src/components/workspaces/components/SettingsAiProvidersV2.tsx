@@ -1,6 +1,6 @@
 import {
-  useNextAiProviderMaster,
   useUpdateAiProvider,
+  useWIPNextAiProviderMaster,
 } from '@/components/ai/aiHooks'
 import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
@@ -29,7 +29,7 @@ export const SettingsAiProvidersV2 = () => {
 
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
-  const { data: providers } = useNextAiProviderMaster()
+  const { data: providers } = useWIPNextAiProviderMaster()
   console.log('providers2', providers)
   const inputRef = useRef<HTMLInputElement>(null)
 
