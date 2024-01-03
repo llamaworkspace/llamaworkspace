@@ -3,8 +3,8 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectTriggerVariantProps,
   SelectValue,
+  type SelectTriggerVariantProps,
 } from '@/components/ui/select'
 import { FormFieldWrapper } from './FormFieldWrapper'
 import type { DefaultInputProps } from './formTypes'
