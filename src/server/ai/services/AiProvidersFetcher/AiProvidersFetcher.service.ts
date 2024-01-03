@@ -1,9 +1,7 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { maskValueWithBullets } from '@/lib/appUtils'
-import type {
-  AiRegistry,
-  ProviderMeta,
-} from '@/server/lib/ai-registry/AiRegistry'
+import type { AiRegistry } from '@/server/lib/ai-registry/AiRegistry'
+import type { AiRegistryProviderMeta } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { PrismaClient } from '@prisma/client'
 
 type ProviderKVs = Record<string, string>
@@ -90,7 +88,7 @@ export class AiProvidersFetcherService {
   }
 
   private mergeProvidersAndKVs(
-    providersMeta: ProviderMeta[],
+    providersMeta: AiRegistryProviderMeta[],
     providerKvsCollection: ProvidersKvsCollection,
     maskEncryptedValues = true,
   ) {

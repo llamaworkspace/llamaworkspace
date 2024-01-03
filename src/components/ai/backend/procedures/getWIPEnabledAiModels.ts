@@ -26,6 +26,11 @@ export const getWIPEnabledAiModels = protectedProcedure
       },
     })
 
+    const thing = await aiProvidersFetcher.getFullAiProvidersMeta(
+      input.workspaceId,
+      userId,
+    )
+
     const registry = aiProvidersFetcher.DEPRECATED_getProvidersMeta()
     const registryFinalModels: AiRegistryModelWithFullNamePaths[] = []
 
