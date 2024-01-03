@@ -24,5 +24,16 @@ export const getWIPEnabledAiModels = protectedProcedure
       userId,
     )
 
-    return providers.flatMap((provider) => provider.models)
+    type Model = Awaited<
+      ReturnType<typeof aiProvidersFetcher.getFullAiProvidersMeta>
+    >[number]['models']
+
+    return providers.reduce<Model>((acc, provider) => {
+      provider.models.forEach((model) => {
+        if (model.isEnabled) {
+          acc.push(model)
+        }
+      })
+      return acc
+    }, [])
   })

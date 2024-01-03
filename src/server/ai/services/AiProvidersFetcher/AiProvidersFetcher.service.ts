@@ -1,15 +1,14 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { maskValueWithBullets } from '@/lib/appUtils'
 import type { AiRegistry } from '@/server/lib/ai-registry/AiRegistry'
-import type {
-  AiRegistryField,
-  AiRegistryProviderMeta,
-} from '@/server/lib/ai-registry/aiRegistryTypes'
+import type { AiRegistryProviderMeta } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { PrismaClient } from '@prisma/client'
+import { cloneDeep } from 'lodash'
 
 type ProviderKVs = Record<string, string>
 type ProviderName = string
 type ProvidersKvsCollection = Record<ProviderName, ProviderKVs>
+type MergedProviderAndKVs = ReturnType<typeof _mergeProvidersAndKVs>
 
 export class AiProvidersFetcherService {
   constructor(
@@ -99,20 +98,17 @@ export class AiProvidersFetcherService {
       const providerSlug = providerMeta.slug
       const providerKvs = providerKvsCollection[providerSlug] ?? {}
 
-      const { providerValues, fields, hasMissingFields } =
-        this.mergeProvidersAndKVs(
-          providerKvs,
-          providerMeta.fields,
-          maskEncryptedValues,
-        )
+      const mergedProviderWithKVs = this.mergeProvidersAndKVs(
+        providerKvs,
+        providerMeta,
+        maskEncryptedValues,
+      )
 
-      const models = this.buildModelsPayload(providerMeta)
+      const { providerValues, fields, hasMissingFields } = mergedProviderWithKVs
+      const models = this.buildModelsPayload(mergedProviderWithKVs)
 
       return {
-        ...providerMeta,
-        fields,
-        hasMissingFields,
-        providerValues,
+        ...mergedProviderWithKVs,
         models,
       }
     })
@@ -120,43 +116,68 @@ export class AiProvidersFetcherService {
 
   private mergeProvidersAndKVs(
     providerKvs: Record<string, string>,
-    aiRegistryFields: AiRegistryField[],
+    aiRegistryProviderMeta: AiRegistryProviderMeta,
     maskEncryptedValues = true,
   ) {
-    const providerValues: Record<string, string> = {}
-
-    let hasMissingFields = false
-    const fields = aiRegistryFields.map((field) => {
-      const dbValue = providerKvs[field.slug]
-
-      if (field.required && !dbValue) {
-        hasMissingFields = true
-      }
-
-      if (dbValue) {
-        providerValues[field.slug] =
-          field.encrypted && maskEncryptedValues
-            ? maskValueWithBullets(dbValue)
-            : dbValue
-      }
-
-      return {
-        ...field,
-        value: dbValue ?? null,
-        missing: field.required && !dbValue,
-      }
-    })
-
-    return { fields, hasMissingFields, providerValues }
+    return _mergeProvidersAndKVs(
+      providerKvs,
+      aiRegistryProviderMeta,
+      maskEncryptedValues,
+    )
   }
 
-  private buildModelsPayload(provider: AiRegistryProviderMeta) {
+  private buildModelsPayload(provider: MergedProviderAndKVs) {
+    const isEnabled = this.isProviderEnabled(provider)
     return provider.models.map((model) => {
       return {
         ...model,
         fullSlug: `${provider.slug}/${model.slug}`,
         fullPublicName: `${provider.publicName} > ${model.publicName}`,
+        isEnabled,
       }
     })
   }
+
+  private isProviderEnabled(provider: MergedProviderAndKVs) {
+    // TODO: Extract from DB those models that are disabled
+    return !provider.hasMissingFields
+  }
+}
+
+// Actual implementation outside of the class to infer the return type
+const _mergeProvidersAndKVs = (
+  providerKvs: Record<string, string>,
+  aiRegistryProviderMeta: AiRegistryProviderMeta,
+  maskEncryptedValues = true,
+) => {
+  const providerValues: Record<string, string> = {}
+
+  let hasMissingFields = false
+  const fields = aiRegistryProviderMeta.fields.map((field) => {
+    const dbValue = providerKvs[field.slug]
+
+    if (field.required && !dbValue) {
+      hasMissingFields = true
+    }
+
+    if (dbValue) {
+      providerValues[field.slug] =
+        field.encrypted && maskEncryptedValues
+          ? maskValueWithBullets(dbValue)
+          : dbValue
+    }
+
+    return {
+      ...field,
+      value: dbValue ?? null,
+      missing: field.required && !dbValue,
+    }
+  })
+
+  return cloneDeep({
+    ...aiRegistryProviderMeta,
+    fields,
+    hasMissingFields,
+    providerValues,
+  })
 }
