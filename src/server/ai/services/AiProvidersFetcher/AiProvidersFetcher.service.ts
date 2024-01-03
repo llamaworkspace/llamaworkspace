@@ -1,4 +1,5 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
+import { maskValueWithBullets } from '@/lib/appUtils'
 import type {
   AiRegistry,
   ProviderMeta,
@@ -23,15 +24,31 @@ export class AiProvidersFetcherService {
     return this.registry.getProvidersMeta()
   }
 
-  public async getFullAiProvidersMeta(workspaceId: string, userId: string) {
-    return await this.getProvidersWithKVs(workspaceId, userId)
+  public async getFullAiProvidersMeta(
+    workspaceId: string,
+    userId: string,
+    maskEncryptedValues?: boolean,
+  ) {
+    return await this.getProvidersWithKVs(
+      workspaceId,
+      userId,
+      maskEncryptedValues,
+    )
   }
 
-  private async getProvidersWithKVs(workspaceId: string, userId: string) {
+  private async getProvidersWithKVs(
+    workspaceId: string,
+    userId: string,
+    maskEncryptedValues?: boolean,
+  ) {
     const providersMeta = this.registry.getProvidersMeta()
     const providerKvs = await this.getProviderKVs(workspaceId, userId)
 
-    const merged = this.mergeProvidersAndKVs(providersMeta, providerKvs)
+    const merged = this.mergeProvidersAndKVs(
+      providersMeta,
+      providerKvs,
+      maskEncryptedValues,
+    )
     return merged
   }
 
@@ -75,17 +92,29 @@ export class AiProvidersFetcherService {
   private mergeProvidersAndKVs(
     providersMeta: ProviderMeta[],
     providerKvsCollection: ProvidersKvsCollection,
+    maskEncryptedValues = true,
   ) {
     return providersMeta.map((providerMeta) => {
       const providerSlug = providerMeta.slug
       const providerKvs = providerKvsCollection[providerSlug] ?? {}
 
+      const providerValues: Record<string, string> = {}
+
       let hasMissingFields = false
       const fields = providerMeta.fields.map((field) => {
         const dbValue = providerKvs[field.slug]
+
         if (field.required && !dbValue) {
           hasMissingFields = true
         }
+
+        if (dbValue) {
+          providerValues[field.slug] =
+            field.encrypted && maskEncryptedValues
+              ? maskValueWithBullets(dbValue)
+              : dbValue
+        }
+
         return {
           ...field,
           value: dbValue ?? null,
@@ -97,6 +126,7 @@ export class AiProvidersFetcherService {
         ...providerMeta,
         fields,
         hasMissingFields,
+        providerValues,
       }
     })
   }

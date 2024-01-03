@@ -8,15 +8,17 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { InputField } from '@/components/ui/forms/InputField'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, useRef } from 'react'
-import { Form as FinalForm } from 'react-final-form'
+import { Field, Form as FinalForm } from 'react-final-form'
 import { useCurrentWorkspace } from '../workspacesHooks'
 
 type FormValues = Record<string, string>
@@ -91,7 +93,7 @@ export const SettingsAiProvidersV2 = () => {
             <FinalForm<FormValues>
               key={provider.slug}
               onSubmit={handleFormSubmit(provider.slug)}
-              // initialValues={provider.values}
+              initialValues={provider.providerValues}
               render={({ handleSubmit }) => {
                 return (
                   <Card key={provider.slug}>
@@ -115,7 +117,7 @@ export const SettingsAiProvidersV2 = () => {
                         </StyledLink>
                       </CardDescription>
                     </CardHeader>
-                    {/* <CardContent className="space-y-2">
+                    <CardContent className="space-y-2">
                       <div className="space-y-2">
                         <div className="space-y-4 py-2">
                           {provider.fields.map((field) => {
@@ -138,11 +140,11 @@ export const SettingsAiProvidersV2 = () => {
                           })}
                         </div>
 
-                        <SettingsAiProvidersModelsTable
+                        {/* <SettingsAiProvidersModelsTable
                           providerSlug={provider.slug}
-                        />
+                        /> */}
                       </div>
-                    </CardContent> */}
+                    </CardContent>
                     <CardFooter>
                       <Button onClick={() => void handleSubmit()}>
                         Save changes
