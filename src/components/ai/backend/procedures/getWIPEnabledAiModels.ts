@@ -26,7 +26,7 @@ export const getWIPEnabledAiModels = protectedProcedure
       },
     })
 
-    const registry = aiProvidersFetcher.getProvidersMeta()
+    const registry = aiProvidersFetcher.DEPRECATED_getProvidersMeta()
     const registryFinalModels: AiRegistryModelWithFullNamePaths[] = []
 
     registry.map((provider) => {

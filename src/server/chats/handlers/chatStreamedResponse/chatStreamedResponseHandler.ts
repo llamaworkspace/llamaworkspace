@@ -143,7 +143,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       errorLogger(error)
     }
 
-    const provider = aiProvidersFetcher.getProvider(providerSlug)
+    const provider = aiProvidersFetcher
+
     if (!provider) {
       throw new Error(`Provider ${providerSlug} not found`)
     }

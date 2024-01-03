@@ -25,7 +25,7 @@ export const getAiProvidersWithKVs = async (
   const aiProvidersKVBySlug =
     aiProvidersDbPayloadToKeyValues(aiProvidersWithKVs)
 
-  const providersMeta = aiProvidersFetcher.getProvidersMeta()
+  const providersMeta = aiProvidersFetcher.DEPRECATED_getProvidersMeta()
 
   return providersMeta.map((providerMeta) => {
     const providerSlug = providerMeta.slug
