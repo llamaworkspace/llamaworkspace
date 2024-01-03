@@ -39,4 +39,19 @@ describe('AiProvidersFetcherService', () => {
       expect(mockGetProvider).toHaveBeenCalledWith('openai')
     })
   })
+
+  describe('getFullAiProvidersMeta', () => {
+    const subject = () => {
+      return new AiProvidersFetcherService(
+        mockDb,
+        aiRegistry,
+      ).getFullAiProvidersMeta()
+    }
+
+    it('returns the provider with the given slug', () => {
+      const result = subject()
+      expect(result).toEqual(fakeOpenAiProviderInstance)
+      expect(mockGetProvider).toHaveBeenCalledWith('openai')
+    })
+  })
 })
