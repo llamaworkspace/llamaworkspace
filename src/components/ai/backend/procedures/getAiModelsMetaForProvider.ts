@@ -28,7 +28,7 @@ const zOutput = z.array(
   }),
 )
 
-export const getAvailableAiModels = protectedProcedure
+export const getAiModelsMetaForProvider = protectedProcedure
   .input(zInput)
   .output(zOutput)
   .query(async ({ ctx, input }) => {

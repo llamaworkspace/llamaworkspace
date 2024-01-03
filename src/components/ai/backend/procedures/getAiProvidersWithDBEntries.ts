@@ -6,7 +6,7 @@ const zInput = z.object({
   workspaceId: z.string(),
 })
 
-export const getAiProviders = protectedProcedure
+export const getAiProvidersWithDBEntries = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id

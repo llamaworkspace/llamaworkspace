@@ -6,7 +6,7 @@ export const useAiProviders = () => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
-  return api.ai.getAiProviders.useQuery(
+  return api.ai.getAiProvidersWithDBEntries.useQuery(
     { workspaceId: workspace?.id! },
     {
       enabled: !!workspace?.id,
@@ -22,11 +22,11 @@ export const useUpdateAiProvider = () => {
   })
 }
 
-export const useAiModels = (providerSlug?: string) => {
+export const useAiModelsMetaForProvider = (providerSlug?: string) => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
-  return api.ai.getAvailableAiModels.useQuery(
+  return api.ai.getAiModelsMetaForProvider.useQuery(
     { providerSlug: providerSlug!, workspaceId: workspace?.id! },
     {
       enabled: !!providerSlug && !!workspace?.id,
@@ -39,7 +39,7 @@ export const useEnabledAiModels = () => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
-  return api.ai.getEnabledAiModels.useQuery(
+  return api.ai.getWIPEnabledAiModels.useQuery(
     { workspaceId: workspace?.id! },
     {
       enabled: !!workspace?.id,
