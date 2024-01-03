@@ -1,10 +1,10 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
-import { getWIPEnabledAiModels } from './procedures/getWIPEnabledAiModels'
-import { getWIPNextAiProvidersMaster } from './procedures/getWIPNextAiProvidersMaster'
+import { getAiProviders } from './procedures/getAiProviders'
+import { getEnabledAiModels } from './procedures/getEnabledAiModels'
 import { updateAiProvider } from './procedures/updateAiProvider'
 
 export const aiRouter = createTRPCRouter({
-  getWIPNextAiProvidersMaster,
+  getAiProviders,
   updateAiProvider,
-  getWIPEnabledAiModels,
+  getEnabledAiModels,
 })

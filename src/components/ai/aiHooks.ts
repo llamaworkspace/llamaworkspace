@@ -6,7 +6,7 @@ export const useWIPNextAiProviderMaster = () => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
-  return api.ai.getWIPNextAiProvidersMaster.useQuery(
+  return api.ai.getAiProviders.useQuery(
     { workspaceId: workspace?.id! },
     {
       enabled: !!workspace?.id,
@@ -26,7 +26,7 @@ export const useEnabledAiModels = () => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
-  return api.ai.getWIPEnabledAiModels.useQuery(
+  return api.ai.getEnabledAiModels.useQuery(
     { workspaceId: workspace?.id! },
     {
       enabled: !!workspace?.id,
