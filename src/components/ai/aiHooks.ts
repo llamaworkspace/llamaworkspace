@@ -2,7 +2,7 @@ import { api } from '@/lib/api'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
-export const useAiProviders = () => {
+export const useAiProvidersWithDBFields = () => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 

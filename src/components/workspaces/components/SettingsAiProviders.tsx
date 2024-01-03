@@ -1,4 +1,7 @@
-import { useAiProviders, useUpdateAiProvider } from '@/components/ai/aiHooks'
+import {
+  useAiProvidersWithDBFields,
+  useUpdateAiProvider,
+} from '@/components/ai/aiHooks'
 import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { Badge } from '@/components/ui/badge'
@@ -26,8 +29,7 @@ export const SettingsAiProviders = () => {
   const { mutate: updateAiProvider } = useUpdateAiProvider()
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
-  // here
-  const { data: providers } = useAiProviders()
+  const { data: providers } = useAiProvidersWithDBFields()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
