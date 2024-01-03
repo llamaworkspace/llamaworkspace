@@ -1,4 +1,3 @@
-import { useAiModelsMetaForProvider } from '@/components/ai/aiHooks'
 import {
   Table,
   TableBody,
@@ -7,15 +6,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import type { AiRegistryModel } from '@/server/lib/ai-registry/aiRegistryTypes'
 
 export const SettingsAiProvidersModelsTable = ({
-  providerSlug,
+  models,
 }: {
-  providerSlug: string
+  models: AiRegistryModel[]
 }) => {
-  // here
-  const { data: aiModels } = useAiModelsMetaForProvider(providerSlug)
-
   return (
     <div className="space-y-4">
       <div className="text-xl font-bold">Models</div>
@@ -28,15 +25,14 @@ export const SettingsAiProvidersModelsTable = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {aiModels?.map((model) => (
+            {models?.map((model) => (
               <TableRow key={model.slug}>
-                <TableCell>{model.publicName}</TableCell>{' '}
+                <TableCell>{model.publicName}</TableCell>
                 <TableCell>
                   <span className="font-mono bg-zinc-100 px-0.5 text-pink-600">
                     {model.slug}
                   </span>
                 </TableCell>
-                <TableCell className="text-right">{model.isCustom}</TableCell>
               </TableRow>
             ))}
           </TableBody>

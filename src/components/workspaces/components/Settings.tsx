@@ -6,7 +6,6 @@ import { useNavigation } from '@/lib/frontend/useNavigation'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { useCurrentWorkspace } from '../workspacesHooks'
 import { SettingsAiProviders } from './SettingsAiProviders'
-import { SettingsAiProvidersV2 } from './SettingsAiProvidersV2'
 import { SettingsMembers } from './SettingsMembers'
 import { SettingsName } from './SettingsName'
 
@@ -40,7 +39,6 @@ export function Settings({ tab }: { tab: string }) {
         <TabsContent value="providers">
           <AiModelSelector />
           <div className="py-4">---</div>
-          <SettingsAiProvidersV2 />
           <SettingsAiProviders />
         </TabsContent>
       </Tabs>

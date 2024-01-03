@@ -27,6 +27,7 @@ type FormValues = Record<string, string>
 export const SettingsAiProviders = () => {
   const successToast = useSuccessToast()
   const { mutate: updateAiProvider } = useUpdateAiProvider()
+
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
   const { data: providers } = useWIPNextAiProviderMaster()
@@ -141,7 +142,7 @@ export const SettingsAiProviders = () => {
                         </div>
 
                         <SettingsAiProvidersModelsTable
-                          providerSlug={provider.slug}
+                          models={provider.models}
                         />
                       </div>
                     </CardContent>
