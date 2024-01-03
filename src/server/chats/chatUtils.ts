@@ -1,5 +1,5 @@
 import _ from 'underscore'
-import { aiRegistry } from '../ai/aiRegistry'
+import { aiProvidersFetcher } from '../ai/services/aiProvidersFetcher.service'
 
 export const getTokenCostInNanoCents = (
   tokens: number,
@@ -7,7 +7,7 @@ export const getTokenCostInNanoCents = (
   providerName: string,
   modelName: string,
 ) => {
-  const provider = aiRegistry.getProvider(providerName)
+  const provider = aiProvidersFetcher.getProvider(providerName)
 
   if (!provider) {
     return null

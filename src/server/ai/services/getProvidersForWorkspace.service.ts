@@ -6,7 +6,7 @@ import type {
   PrismaTrxClient,
 } from '@/shared/globalTypes'
 import _ from 'underscore'
-import { aiRegistry } from '../aiRegistry'
+import { aiProvidersFetcher } from './aiProvidersFetcher.service'
 
 export const getAiProvidersWithKVs = async (
   prisma: PrismaClientOrTrxClient,
@@ -25,11 +25,11 @@ export const getAiProvidersWithKVs = async (
   const aiProvidersKVBySlug =
     aiProvidersDbPayloadToKeyValues(aiProvidersWithKVs)
 
-  const providersMeta = aiRegistry.getProvidersMeta()
+  const providersMeta = aiProvidersFetcher.getProvidersMeta()
 
   return providersMeta.map((providerMeta) => {
     const providerSlug = providerMeta.slug
-    const provider = aiRegistry.getProvider(providerSlug)
+    const provider = aiProvidersFetcher.getProvider(providerSlug)
     const providerFields = provider?.fields ?? []
 
     const fieldSlugs = providerFields.map((field) => field.slug)

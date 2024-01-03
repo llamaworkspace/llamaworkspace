@@ -1,5 +1,5 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
-import { aiRegistry } from '@/server/ai/aiRegistry'
+import { aiProvidersFetcher } from '@/server/ai/services/aiProvidersFetcher.service'
 import type { AiRegistryModel } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
@@ -26,7 +26,7 @@ export const getWIPEnabledAiModels = protectedProcedure
       },
     })
 
-    const registry = aiRegistry.getProvidersMeta()
+    const registry = aiProvidersFetcher.getProvidersMeta()
     const registryFinalModels: AiRegistryModelWithFullNamePaths[] = []
 
     registry.map((provider) => {

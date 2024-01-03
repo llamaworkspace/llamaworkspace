@@ -1,5 +1,5 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
-import { aiRegistry } from '@/server/ai/aiRegistry'
+import { aiProvidersFetcher } from '@/server/ai/services/aiProvidersFetcher.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -41,7 +41,7 @@ export const getAiModelsMetaForProvider = protectedProcedure
       },
     })
 
-    const registry = aiRegistry.getProvider(input.providerSlug)
+    const registry = aiProvidersFetcher.getProvider(input.providerSlug)
     const models = registry?.models ?? []
 
     const registryFinalModels = models.map((model) => {

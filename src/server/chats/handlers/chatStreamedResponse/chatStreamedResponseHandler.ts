@@ -1,7 +1,7 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { env } from '@/env.mjs'
-import { aiRegistry } from '@/server/ai/aiRegistry'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
+import { aiProvidersFetcher } from '@/server/ai/services/aiProvidersFetcher.service'
 import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
@@ -143,7 +143,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       errorLogger(error)
     }
 
-    const provider = aiRegistry.getProvider(providerSlug)
+    const provider = aiProvidersFetcher.getProvider(providerSlug)
     if (!provider) {
       throw new Error(`Provider ${providerSlug} not found`)
     }
