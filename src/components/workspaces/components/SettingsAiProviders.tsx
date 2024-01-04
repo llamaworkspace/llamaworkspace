@@ -1,7 +1,4 @@
-import {
-  useUpdateAiProvider,
-  useWIPNextAiProviderMaster,
-} from '@/components/ai/aiHooks'
+import { useAiProviders, useUpdateAiProvider } from '@/components/ai/aiHooks'
 import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { Badge } from '@/components/ui/badge'
@@ -30,8 +27,8 @@ export const SettingsAiProviders = () => {
 
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
-  const { data: providers } = useWIPNextAiProviderMaster()
-  console.log('providers2', providers)
+  const { data: providers } = useAiProviders()
+  // console.log('providers2', providers)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const focusQueryStringEl = navigation.query?.focus

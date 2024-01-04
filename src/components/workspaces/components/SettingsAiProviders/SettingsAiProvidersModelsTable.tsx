@@ -1,3 +1,4 @@
+import { CheckboxField } from '@/components/ui/forms/CheckboxField'
 import {
   Table,
   TableBody,
@@ -7,6 +8,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import type { AiRegistryModel } from '@/server/lib/ai-registry/aiRegistryTypes'
+import { Field } from 'react-final-form'
 
 export const SettingsAiProvidersModelsTable = ({
   models,
@@ -27,14 +29,27 @@ export const SettingsAiProvidersModelsTable = ({
           </TableHeader>
           <TableBody>
             {models?.map((model) => (
-              <TableRow key={model.slug}>
+              <TableRow key={model.slug} className="h-10">
                 <TableCell>{model.publicName}</TableCell>
                 <TableCell>
                   <span className="font-mono bg-zinc-100 px-0.5 text-pink-600">
                     {model.slug}
                   </span>
                 </TableCell>
-                <TableCell>x</TableCell>
+                <TableCell>
+                  <Field
+                    name={`models.${model.slug}.enabled`}
+                    render={({ input }) => {
+                      const handleCheckToggle = (checked: boolean) => {
+                        input.onChange(checked)
+                      }
+                      return (
+                        <CheckboxField onCheckedChange={handleCheckToggle} />
+                      )
+                    }}
+                  />
+                  {/* <Checkbox /> */}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
