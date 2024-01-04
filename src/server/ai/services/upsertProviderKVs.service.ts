@@ -8,21 +8,22 @@ import type { AiProvider } from '@prisma/client'
 import { Promise } from 'bluebird'
 import { isNull } from 'underscore'
 
+interface ModelParams {
+  slug: string
+  enabled: boolean
+}
+
 export const upsertAiProvider = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
   slug: string,
-  providerMeta?: Pick<AiProvider, 'name'>,
-  values?: Record<string, string | null>,
+  keyValues?: Record<string, string | null>,
+  modelParams: ModelParams[] = [],
 ) => {
   await prismaAsTrx(prisma, async (prisma) => {
-    const aiProvider = await upsertProviderRaw(
-      prisma,
-      workspaceId,
-      slug,
-      providerMeta,
-    )
-    await upsertProviderKeyValues(prisma, aiProvider, values)
+    const aiProvider = await upsertProviderRaw(prisma, workspaceId, slug)
+    await upsertProviderKeyValues(prisma, aiProvider, keyValues)
+    await upsertModels(prisma, aiProvider, modelParams)
   })
 }
 
@@ -30,7 +31,6 @@ const upsertProviderRaw = async (
   prisma: PrismaTrxClient,
   workspaceId: string,
   slug: string,
-  providerMeta?: Pick<AiProvider, 'name'>,
 ) => {
   const provider = aiProvidersFetcher.getProvider(slug)
 
@@ -51,7 +51,6 @@ const upsertProviderRaw = async (
         workspaceId,
         slug,
         name: provider.publicName,
-        ...providerMeta,
       },
     })
   }
@@ -61,9 +60,9 @@ const upsertProviderRaw = async (
 const upsertProviderKeyValues = async (
   prisma: PrismaTrxClient,
   aiProvider: AiProvider,
-  values?: Record<string, string | null>,
+  keyValues?: Record<string, string | null>,
 ) => {
-  await Promise.map(Object.entries(values ?? {}), async ([key, value]) => {
+  await Promise.map(Object.entries(keyValues ?? {}), async ([key, value]) => {
     const existingKV = await prisma.aiProviderKeyValue.findFirst({
       where: {
         aiProviderId: aiProvider.id,
@@ -97,6 +96,39 @@ const upsertProviderKeyValues = async (
           aiProviderId: aiProvider.id,
           key,
           value,
+        },
+      })
+    }
+  })
+}
+const upsertModels = async (
+  prisma: PrismaTrxClient,
+  aiProvider: AiProvider,
+  modelParamsColl: ModelParams[],
+) => {
+  await Promise.map(modelParamsColl, async (modelParams) => {
+    const existingModel = await prisma.aiProviderModel.findFirst({
+      where: {
+        aiProviderId: aiProvider.id,
+        slug: modelParams.slug,
+      },
+    })
+
+    if (existingModel) {
+      await prisma.aiProviderModel.update({
+        where: {
+          id: existingModel.id,
+        },
+        data: {
+          isEnabled: modelParams.enabled,
+        },
+      })
+    } else {
+      await prisma.aiProviderModel.create({
+        data: {
+          aiProviderId: aiProvider.id,
+          slug: modelParams.slug,
+          isEnabled: modelParams.enabled,
         },
       })
     }

@@ -27,7 +27,7 @@ async function main() {
   console.log(`Updating ${workspacesWithOpenAiKey.length} workspaces...`)
 
   await Bluebird.mapSeries(workspacesWithOpenAiKey, async (workspace) => {
-    await upsertAiProvider(prisma, workspace.id, 'openai', undefined, {
+    await upsertAiProvider(prisma, workspace.id, 'openai', {
       /* eslint-disable @typescript-eslint/no-unsafe-assignment */
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

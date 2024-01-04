@@ -17,8 +17,12 @@ export const useAiProviders = () => {
 
 export const useUpdateAiProvider = () => {
   const errorHandler = useErrorHandler()
+  const utils = api.useContext()
   return api.ai.updateAiProvider.useMutation({
     onError: errorHandler(),
+    onSuccess: () => {
+      void utils.ai.getAiProviders.invalidate()
+    },
   })
 }
 

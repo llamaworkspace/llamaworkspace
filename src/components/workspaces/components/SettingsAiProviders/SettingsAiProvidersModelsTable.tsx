@@ -38,13 +38,17 @@ export const SettingsAiProvidersModelsTable = ({
                 </TableCell>
                 <TableCell>
                   <Field
-                    name={`models.${model.slug}.enabled`}
+                    name={`models.${model.slug.replaceAll('.', '^')}.enabled`}
                     render={({ input }) => {
                       const handleCheckToggle = (checked: boolean) => {
                         input.onChange(checked)
                       }
+
                       return (
-                        <CheckboxField onCheckedChange={handleCheckToggle} />
+                        <CheckboxField
+                          checked={!!input.value}
+                          onCheckedChange={handleCheckToggle}
+                        />
                       )
                     }}
                   />
