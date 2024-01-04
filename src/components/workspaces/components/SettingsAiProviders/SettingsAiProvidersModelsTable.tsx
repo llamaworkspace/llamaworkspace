@@ -22,6 +22,7 @@ export const SettingsAiProvidersModelsTable = ({
             <TableRow>
               <TableHead className="w-[320px]">Name</TableHead>
               <TableHead>Slug</TableHead>
+              <TableHead>Enabled</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -33,6 +34,7 @@ export const SettingsAiProvidersModelsTable = ({
                     {model.slug}
                   </span>
                 </TableCell>
+                <TableCell>x</TableCell>
               </TableRow>
             ))}
           </TableBody>

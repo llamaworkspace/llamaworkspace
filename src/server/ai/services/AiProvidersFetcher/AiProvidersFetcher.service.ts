@@ -3,11 +3,13 @@ import { maskValueWithBullets } from '@/lib/appUtils'
 import type { AiRegistry } from '@/server/lib/ai-registry/AiRegistry'
 import type { AiRegistryProviderMeta } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { PrismaClient } from '@prisma/client'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, groupBy } from 'lodash'
 
 type ProviderKVs = Record<string, string>
 type ProviderName = string
 type ProvidersKvsCollection = Record<ProviderName, ProviderKVs>
+
+type ModelsDataFromDb = Awaited<ReturnType<typeof _fetchModelsFromDb>>
 type MergedProviderAndKVs = ReturnType<typeof _mergeProvidersAndKVs>
 
 export class AiProvidersFetcherService {
@@ -29,35 +31,31 @@ export class AiProvidersFetcherService {
     userId: string,
     maskEncryptedValues?: boolean,
   ) {
-    return await this.getProvidersWithKVs(
+    const providersMeta = this.registry.getProvidersMeta()
+    const providerDbKvs = await this.fetchProvidersKVsFromDb(
       workspaceId,
       userId,
-      maskEncryptedValues,
     )
-  }
+    const modelsDbData = await _fetchModelsFromDb(
+      this.prisma,
+      workspaceId,
+      userId,
+    )
 
-  private async getProvidersWithKVs(
-    workspaceId: string,
-    userId: string,
-    maskEncryptedValues?: boolean,
-  ) {
-    const providersMeta = this.registry.getProvidersMeta()
-    const providerKvs = await this.getProviderKVs(workspaceId, userId)
-
-    const merged = this.buildProviderWithKvsTree(
+    return this.buildProviderWithKvsTree(
       providersMeta,
-      providerKvs,
+      providerDbKvs,
+      modelsDbData,
       maskEncryptedValues,
     )
-    return merged
   }
 
-  private async getProviderKVs(
+  private async fetchProvidersKVsFromDb(
     workspaceId: string,
     userId: string,
     providerSlugs?: string[],
   ): Promise<ProvidersKvsCollection> {
-    const dbResponse = await this.prisma.aiProvider.findMany({
+    const aiProviders = await this.prisma.aiProvider.findMany({
       where: {
         workspaceId,
         ...(providerSlugs
@@ -77,7 +75,7 @@ export class AiProvidersFetcherService {
     })
     const providers: Record<string, Record<string, string>> = {}
 
-    dbResponse.forEach((aiProvider) => {
+    aiProviders.forEach((aiProvider) => {
       if (!providers[aiProvider.slug]) {
         providers[aiProvider.slug] = {}
       }
@@ -92,20 +90,25 @@ export class AiProvidersFetcherService {
   private buildProviderWithKvsTree(
     providersMeta: AiRegistryProviderMeta[],
     providerKvsCollection: ProvidersKvsCollection,
+    modelsDbData: ModelsDataFromDb,
     maskEncryptedValues?: boolean,
   ) {
     return providersMeta.map((providerMeta) => {
       const providerSlug = providerMeta.slug
       const providerKvs = providerKvsCollection[providerSlug] ?? {}
 
-      const mergedProviderWithKVs = this.mergeProvidersAndKVs(
+      const mergedProviderWithKVs = this.buildProvidersResponse(
         providerKvs,
         providerMeta,
         maskEncryptedValues,
       )
 
-      const { providerValues, fields, hasMissingFields } = mergedProviderWithKVs
-      const models = this.buildModelsPayload(mergedProviderWithKVs)
+      const modelDbData = modelsDbData[providerSlug] ?? []
+
+      const models = this.buildModelsResponse(
+        mergedProviderWithKVs,
+        modelDbData,
+      )
 
       return {
         ...mergedProviderWithKVs,
@@ -114,7 +117,7 @@ export class AiProvidersFetcherService {
     })
   }
 
-  private mergeProvidersAndKVs(
+  private buildProvidersResponse(
     providerKvs: Record<string, string>,
     aiRegistryProviderMeta: AiRegistryProviderMeta,
     maskEncryptedValues = true,
@@ -126,20 +129,26 @@ export class AiProvidersFetcherService {
     )
   }
 
-  private buildModelsPayload(provider: MergedProviderAndKVs) {
-    const isEnabled = this.isProviderEnabled(provider)
+  private buildModelsResponse(
+    provider: MergedProviderAndKVs,
+    providerDbData: ModelsDataFromDb['0'],
+  ) {
+    const providerIsCorrectlySetup = this.isProviderCorrectlySetup(provider)
+
     return provider.models.map((model) => {
+      const dbModelData = providerDbData.find(
+        (dbModel) => dbModel.slug === model.slug,
+      )
       return {
         ...model,
         fullSlug: `${provider.slug}/${model.slug}`,
         fullPublicName: `${provider.publicName} > ${model.publicName}`,
-        isEnabled,
+        isEnabled: providerIsCorrectlySetup && !!dbModelData?.isEnabled,
       }
     })
   }
 
-  private isProviderEnabled(provider: MergedProviderAndKVs) {
-    // TODO: Extract from DB those models that are disabled
+  private isProviderCorrectlySetup(provider: MergedProviderAndKVs) {
     return !provider.hasMissingFields
   }
 }
@@ -180,4 +189,34 @@ const _mergeProvidersAndKVs = (
     hasMissingFields,
     providerValues,
   })
+}
+
+const _fetchModelsFromDb = async (
+  prisma: PrismaClient,
+  workspaceId: string,
+  userId: string,
+  providerSlugs?: string[],
+) => {
+  const aiModels = await prisma.aiProviderModel.findMany({
+    where: {
+      aiProvider: {
+        workspaceId,
+        ...(providerSlugs
+          ? {
+              slug: {
+                in: providerSlugs,
+              },
+            }
+          : {}),
+        workspace: {
+          ...workspaceVisibilityFilter(userId),
+        },
+      },
+    },
+    include: {
+      aiProvider: true,
+    },
+  })
+
+  return groupBy(aiModels, (aiModel) => aiModel.aiProvider.slug)
 }
