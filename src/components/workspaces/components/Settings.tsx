@@ -1,9 +1,6 @@
-import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
-import { usePostConfigForChat } from '@/components/chats/chatHooks'
 import { SectionWrapper, SectionWrapperTitle } from '@/components/ui/Section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { Field, Form as FinalForm } from 'react-final-form'
 import { useCurrentWorkspace } from '../workspacesHooks'
 import { SettingsAiProviders } from './SettingsAiProviders'
 import { SettingsMembers } from './SettingsMembers'
@@ -37,47 +34,9 @@ export function Settings({ tab }: { tab: string }) {
           <SettingsMembers />
         </TabsContent>
         <TabsContent value="providers">
-          <AiModelSelector />
-          <div className="py-4">---</div>
           <SettingsAiProviders />
         </TabsContent>
       </Tabs>
     </SectionWrapper>
-  )
-}
-
-interface FormValues {
-  defaultModel: string
-}
-
-const AiModelSelector = ({ chatId }: { chatId?: string }) => {
-  const { data: postConfig } = usePostConfigForChat(chatId)
-
-  return (
-    <FinalForm<FormValues>
-      onSubmit={(values) => {
-        console.log(values)
-      }}
-      initialValues={{ defaultModel: postConfig?.model }}
-      render={({ handleSubmit }) => {
-        return (
-          <div className="grid md:grid-cols-3">
-            <Field
-              name="defaultModel"
-              render={({ input }) => {
-                return (
-                  <SelectAiModelsFormField
-                    {...input}
-                    placeholder="Select a model"
-                    onValueChange={() => void handleSubmit()}
-                    variant="chatHeader"
-                  />
-                )
-              }}
-            />
-          </div>
-        )
-      }}
-    />
   )
 }

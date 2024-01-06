@@ -14,9 +14,9 @@ import {
 import { InputField } from '@/components/ui/forms/InputField'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
-import _ from 'underscore'
+import _, { groupBy, mapObject } from 'underscore'
 import { useCurrentWorkspace } from '../workspacesHooks'
 import { SettingsAiProvidersModelsTable } from './SettingsAiProviders/SettingsAiProvidersModelsTable'
 
@@ -91,6 +91,30 @@ export const SettingsAiProviders = () => {
     )
   }
 
+  const initialValues = useMemo(() => {
+    if (!providers) return
+
+    const groupedProviders = groupBy(providers, 'slug')
+
+    return mapObject(groupedProviders, (provider) => {
+      return provider.reduce((acc, provider) => {
+        const modelsInitialValues = provider.models.reduce((acc, model) => {
+          return {
+            ...acc,
+            [model.slug.replaceAll('.', '^')]: {
+              enabled: model.isEnabled,
+            },
+          }
+        }, {})
+
+        return {
+          ...provider.providerValues,
+          models: modelsInitialValues,
+        }
+      }, {}) as Record<string, FormValues>
+    })
+  }, [providers])
+
   return (
     <Section>
       <SectionHeader title="AI Service Providers" />
@@ -109,25 +133,11 @@ export const SettingsAiProviders = () => {
         {providers?.map((provider) => {
           const isOpenAi = provider.slug === 'openai'
 
-          const modelsInitialValues = provider.models.reduce((acc, model) => {
-            return {
-              ...acc,
-              [model.slug.replaceAll('.', '^')]: {
-                enabled: model.isEnabled,
-              },
-            }
-          }, {})
-
-          const initialValues = {
-            ...provider.providerValues,
-            models: modelsInitialValues,
-          }
-
           return (
             <FinalForm<FormValues>
               key={provider.slug}
               onSubmit={handleFormSubmit(provider.slug)}
-              initialValues={initialValues}
+              initialValues={initialValues?.[provider.slug]}
               render={({ handleSubmit }) => {
                 return (
                   <Card key={provider.slug}>

@@ -16,7 +16,7 @@ export const updateAiProvider = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const { keyValues, workspaceId, providerSlug, models } = input
-    console.log(models)
+
     const userId = ctx.session.user.id
 
     await ctx.prisma.workspace.findFirstOrThrow({

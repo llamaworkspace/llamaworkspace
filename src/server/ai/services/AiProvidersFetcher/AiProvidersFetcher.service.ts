@@ -143,7 +143,8 @@ export class AiProvidersFetcherService {
         ...model,
         fullSlug: `${provider.slug}/${model.slug}`,
         fullPublicName: `${provider.publicName} > ${model.publicName}`,
-        isEnabled: providerIsCorrectlySetup && !!dbModelData?.isEnabled,
+        isSetupOk: providerIsCorrectlySetup && !!dbModelData?.isEnabled,
+        isEnabled: !!dbModelData?.isEnabled,
       }
     })
   }

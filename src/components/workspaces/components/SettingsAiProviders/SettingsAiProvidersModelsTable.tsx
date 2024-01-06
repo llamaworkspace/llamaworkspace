@@ -52,7 +52,6 @@ export const SettingsAiProvidersModelsTable = ({
                       )
                     }}
                   />
-                  {/* <Checkbox /> */}
                 </TableCell>
               </TableRow>
             ))}

@@ -30,7 +30,7 @@ export const getEnabledAiModels = protectedProcedure
 
     return providers.reduce<Model>((acc, provider) => {
       provider.models.forEach((model) => {
-        if (model.isEnabled) {
+        if (model.isSetupOk) {
           acc.push(model)
         }
       })
