@@ -10,8 +10,7 @@ const triggerVariants = cva(
     variants: {
       variant: {
         default: 'shadow-sm border px-3 text-sm focus:ring-1',
-        chatHeader:
-          'text-base font-semibold tracking-tighter px-2 border border-zinc-100',
+        chatHeader: 'text-base font-semibold tracking-tighter px-2',
       },
     },
     defaultVariants: { variant: 'default' },
