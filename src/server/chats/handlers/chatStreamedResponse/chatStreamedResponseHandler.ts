@@ -1,5 +1,4 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
-import { env } from '@/env.mjs'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { aiProvidersFetcher } from '@/server/ai/services/aiProvidersFetcher.service'
 import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
@@ -18,7 +17,7 @@ import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
-import { chain, isNull } from 'underscore'
+import { chain } from 'underscore'
 import { doTokenCountForChatRun } from '../../services/doTokenCountForChatRun.service'
 import {
   chatStreamToResponse,
@@ -92,39 +91,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       providerSlug,
     )
 
-    let hasOwnApiKey = false
-
-    // FIXME! This is a hack to allow users to use their own API keys
-    if (providerSlug === 'openai') {
-      if (providerKVs.apiKey) {
-        hasOwnApiKey = true
-      }
-      if (!providerKVs.apiKey && env.OPENAI_API_KEY) {
-        providerKVs.apiKey = env.OPENAI_API_KEY
-      }
-      if (!providerKVs.baseURL && env.OPTIONAL_OPENAI_BASE_URL) {
-        providerKVs.baseURL = env.OPTIONAL_OPENAI_BASE_URL
-      }
-    }
-
     const onFinal = async (final: string) => {
       await updateMessage(assistantTargetMessage.id, final)
-      // Todo: Do async in a queue
+
       const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
 
-      if (hasOwnApiKey) return
-      if (
-        isNull(nextChatRun.requestTokensCostInNanoCents) ||
-        isNull(nextChatRun.responseTokensCostInNanoCents)
-      ) {
-        throw new Error(
-          'nextChatRun.requestTokensCostInNanoCents or nextChatRun.responseTokensCostInNanoCents is null',
-        )
-      }
+      const requestTokensCostInNanoCents =
+        nextChatRun.requestTokensCostInNanoCents ?? 0
+      const responseTokensCostInNanoCents =
+        nextChatRun.responseTokensCostInNanoCents ?? 0
 
       const costInNanoCents =
-        nextChatRun.requestTokensCostInNanoCents +
-        nextChatRun.responseTokensCostInNanoCents
+        requestTokensCostInNanoCents + responseTokensCostInNanoCents
+
       await registerTransaction(
         prisma,
         workspaceId,
