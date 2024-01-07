@@ -1,4 +1,5 @@
 import { api } from '@/lib/api'
+import { useMemo } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
@@ -26,15 +27,40 @@ export const useUpdateAiProvider = () => {
   })
 }
 
-export const useEnabledAiModels = () => {
+export interface UseAiModelsOptions {
+  isSetupOk?: boolean
+  fullSlugs?: string[]
+}
+
+export const useAiModels = (options?: UseAiModelsOptions) => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
-  return api.ai.getEnabledAiModels.useQuery(
+  const queryResponse = api.ai.getAiProviders.useQuery(
     { workspaceId: workspace?.id! },
     {
       enabled: !!workspace?.id,
       onError: errorHandler(),
     },
   )
+  const data = useMemo(() => {
+    return queryResponse.data?.flatMap((provider) => {
+      let models = provider.models
+      if (options?.isSetupOk) {
+        models = models.filter((model) => model.isSetupOk)
+      }
+      if (options?.fullSlugs?.length) {
+        models = models.filter(
+          (model) =>
+            model.fullSlug && options.fullSlugs!.includes(model.fullSlug),
+        )
+      }
+      return models
+    })
+  }, [queryResponse.data, options?.isSetupOk, options?.fullSlugs])
+
+  return {
+    ...queryResponse,
+    data,
+  }
 }

@@ -23,6 +23,7 @@ export interface SelectFieldProps extends DefaultInputProps {
   placeholder?: string
   disabled?: boolean
   variant?: SelectTriggerVariantProps['variant']
+  emptyStateContent?: React.FC
 }
 
 export const SelectField = ({
@@ -35,6 +36,7 @@ export const SelectField = ({
   helperText,
   disabled,
   variant,
+  emptyStateContent,
   ...selectProps
 }: SelectFieldProps) => {
   // Necessary as otherwise the placeholder does not work
@@ -49,6 +51,8 @@ export const SelectField = ({
     }, 0)
   }
 
+  const EmptyStateContent = emptyStateContent ?? (() => null)
+
   return (
     <FormFieldWrapper label={label} helperText={helperText}>
       <Select
@@ -61,6 +65,7 @@ export const SelectField = ({
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
+          {options.length === 0 && <EmptyStateContent />}
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
