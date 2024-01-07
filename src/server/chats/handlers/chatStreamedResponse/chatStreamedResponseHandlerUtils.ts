@@ -1,9 +1,9 @@
-import { env } from '@/env.mjs'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
+import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { addTransactionRepo } from '@/server/transactions/repositories/addTransactionRepo'
 import { TrxAccount } from '@/server/transactions/transactionTypes'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
-import { PrismaTrxClient } from '@/shared/globalTypes'
+import type { PrismaTrxClient } from '@/shared/globalTypes'
 import type { PrismaClient } from '@prisma/client'
 import type { NextApiResponse } from 'next'
 import OpenAI, { type ClientOptions } from 'openai'
@@ -12,13 +12,13 @@ import { getTokenCostInNanoCents } from '../../chatUtils'
 export const registerTransaction = async (
   prisma: PrismaClient,
   workspaceId: string,
-  chargeableUserId: string,
+  userId: string,
   chatRunId: string,
   costInNanoCents: number,
 ) => {
   await addTransactionRepo(prisma, {
     workspaceId,
-    userId: chargeableUserId,
+    userId,
     from: {
       account: TrxAccount.WorkspaceBalance,
       amountInNanoCents: costInNanoCents,
@@ -34,7 +34,7 @@ export const registerTransaction = async (
 export const handleChatTitleCreate = async (
   prisma: PrismaClient,
   workspaceId: string,
-  chargeableUserId: string,
+  userId: string,
   chatId: string,
 ) => {
   const chat = await getChat(prisma, chatId)
@@ -47,12 +47,26 @@ export const handleChatTitleCreate = async (
   // Todo: improve and search in case there are multiple user messages
   const firstUserMessage = userMessages[0]
 
-  const openAiPayload: ClientOptions = {
-    apiKey: env.OPENAI_API_KEY,
+  const openaiProviderKVs = await getAiProviderKVs(
+    prisma,
+    workspaceId,
+    userId,
+    'openai',
+  )
+
+  const apiKey = openaiProviderKVs.apiKey
+  const baseURL = openaiProviderKVs.baseURL
+
+  if (!apiKey) {
+    return
   }
 
-  if (env.OPTIONAL_OPENAI_BASE_URL) {
-    openAiPayload.baseURL = env.OPTIONAL_OPENAI_BASE_URL
+  const openAiPayload: ClientOptions = {
+    apiKey,
+  }
+
+  if (baseURL) {
+    openAiPayload.baseURL = baseURL
   }
 
   const openai = new OpenAI(openAiPayload)
@@ -111,7 +125,7 @@ export const handleChatTitleCreate = async (
 
   await addTransactionRepo(prisma, {
     workspaceId,
-    userId: chargeableUserId,
+    userId,
     from: {
       account: TrxAccount.WorkspaceBalance,
       amountInNanoCents: costInNanoCents,
