@@ -22,6 +22,7 @@ export const workspacesGetWorkspaceIdForChat = protectedProcedure
                 id: true,
                 name: true,
                 balanceInNanoCents: true,
+                isOnboardingCompleted: true,
               },
             },
           },

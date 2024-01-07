@@ -1,6 +1,6 @@
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, type PropsWithChildren } from 'react'
-import { useGlobalState } from './globalState'
+import { useGlobalState } from '../globalState'
 
 export const RouterEventListenerProvider = ({
   children,

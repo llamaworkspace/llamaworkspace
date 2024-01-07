@@ -8,6 +8,7 @@ import { workspacesGetWorkspaceMembers } from './procedures/workspacesGetWorkspa
 import { workspacesGetWorkspaces } from './procedures/workspacesGetWorkspaces'
 import { workspacesInviteUserToWorkspace } from './procedures/workspacesInviteUserToWorkspace'
 import { workspacesRevokeWorkspaceMemberAccess } from './procedures/workspacesRevokeWorkspaceMemberAccess'
+import { workspacesUpdateForOnboarding } from './procedures/workspacesUpdateForOnboarding'
 import { workspacesUpdateWorkspace } from './procedures/workspacesUpdateWorkspace'
 
 export const workspacesRouter = createTRPCRouter({
@@ -18,6 +19,7 @@ export const workspacesRouter = createTRPCRouter({
   getWorkspaceMembers: workspacesGetWorkspaceMembers,
   createWorkspace: workspacesCreateWorkspace,
   updateWorkspace: workspacesUpdateWorkspace,
+  updateWorkspaceForOnboarding: workspacesUpdateForOnboarding,
   inviteUserToWorkspace: workspacesInviteUserToWorkspace,
   cancelInviteToWorkspace: workspacesCancelInvite,
   revokeWorkspaceMemberAccess: workspacesRevokeWorkspaceMemberAccess,

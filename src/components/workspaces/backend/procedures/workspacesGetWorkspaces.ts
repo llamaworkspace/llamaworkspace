@@ -14,6 +14,7 @@ export const workspacesGetWorkspaces = protectedProcedure
         id: true,
         name: true,
         balanceInNanoCents: true,
+        isOnboardingCompleted: true,
       },
       where: {
         ...workspaceVisibilityFilter(userId),

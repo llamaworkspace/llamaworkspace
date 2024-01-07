@@ -1,4 +1,4 @@
-import { RouterEventListenerProvider } from '@/components/global/RouterEventListenerProvider'
+import { RouterEventListenerProvider } from '@/components/global/components/RouterEventListenerProvider'
 import { GlobalStateProvider } from '@/components/global/globalState'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { api } from '@/lib/api'
