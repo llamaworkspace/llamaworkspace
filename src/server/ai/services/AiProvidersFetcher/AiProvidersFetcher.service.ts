@@ -22,10 +22,6 @@ export class AiProvidersFetcherService {
     return this.registry.getProvider(slug)
   }
 
-  public DEPRECATED_getProvidersMeta() {
-    return this.registry.getProvidersMeta()
-  }
-
   public async getFullAiProvidersMeta(
     workspaceId: string,
     userId: string,
