@@ -26,6 +26,8 @@ export interface AiRegistryProvider {
   ): Promise<ReadableStream>
 }
 
+export type AiRegistryProviderMeta = Omit<AiRegistryProvider, 'executeAsStream'>
+
 export interface AiRegistryMessage {
   content: string
   role: 'system' | 'user' | 'assistant'

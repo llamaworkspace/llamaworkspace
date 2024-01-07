@@ -5,13 +5,12 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 const triggerVariants = cva(
-  'flex h-9 w-full items-center gap-x-4 rounded-md border-zinc-200 bg-transparent py-2 ring-offset-white placeholder:text-zinc-500 focus:outline-none focus:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:ring-offset-zinc-950 dark:placeholder:text-zinc-400 dark:focus:ring-zinc-300',
+  'flex h-9 w-full items-center gap-x-4 rounded-md border-zinc-200 bg-transparent py-2 ring-offset-white placeholder:text-zinc-500 focus:outline-none focus:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:ring-offset-zinc-950 dark:placeholder:text-zinc-400 dark:focus:ring-zinc-300 justify-between',
   {
     variants: {
       variant: {
-        default: 'shadow-sm border px-3 text-sm focus:ring-1 justify-between',
-        chatHeader:
-          'text-base font-semibold tracking-tighter active:bg-zinc-100 px-2',
+        default: 'shadow-sm border px-3 text-sm focus:ring-1',
+        chatHeader: 'text-base font-semibold tracking-tighter px-2',
       },
     },
     defaultVariants: { variant: 'default' },

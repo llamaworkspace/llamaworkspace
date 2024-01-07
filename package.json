@@ -61,6 +61,7 @@
     "immer": "^10.0.2",
     "jest-mock-extended": "^3.0.5",
     "joi": "^17.10.2",
+    "lodash": "^4.17.21",
     "micro": "^10.0.1",
     "next": "13.4.19",
     "next-api-middleware": "^2.0.1",

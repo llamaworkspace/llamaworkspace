@@ -5,6 +5,7 @@ import {
 } from '@/components/chats/chatHooks'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
+import { useMemo } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { useGlobalState } from '../../global/globalState'
 import { SidebarToggleIcon } from '../../sidebar/SidebarToggleIcon'
@@ -66,7 +67,7 @@ export function MainLayoutHeaderForStandaloneChat({
 }
 
 interface FormValues {
-  defaultModel: string
+  model: string
 }
 
 const AiModelSelector = ({ chatId }: { chatId?: string }) => {
@@ -78,6 +79,12 @@ const AiModelSelector = ({ chatId }: { chatId?: string }) => {
   const { mutate: updatePostConfigVersion } =
     useUpdatePostConfigForStandaloneChat()
 
+  const initialValues = useMemo(() => {
+    return {
+      model: postConfig?.model,
+    }
+  }, [postConfig])
+
   return (
     <FinalForm<FormValues>
       onSubmit={(values) => {
@@ -85,17 +92,17 @@ const AiModelSelector = ({ chatId }: { chatId?: string }) => {
         updatePostConfigVersion(
           {
             chatId,
-            model: values.defaultModel,
+            model: values.model,
           },
           { onSuccess: () => void refetch() },
         )
       }}
-      initialValues={{ defaultModel: postConfig?.model }}
+      initialValues={initialValues}
       render={({ handleSubmit }) => {
         return (
           <div className="grid md:grid-cols-3">
             <Field
-              name="defaultModel"
+              name="model"
               render={({ input }) => {
                 if (postConfigIsLoading) {
                   return <Skeleton className="h-5 w-72" />

@@ -6,13 +6,16 @@ import { z } from 'zod'
 const zInput = z.object({
   workspaceId: z.string(),
   providerSlug: z.string(),
-  values: z.record(z.string().optional().nullable()),
+  keyValues: z.record(z.string().nullable()).optional(),
+  models: z
+    .array(z.object({ slug: z.string(), enabled: z.boolean() }))
+    .optional(),
 })
 
 export const updateAiProvider = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
-    const { values, workspaceId, providerSlug } = input
+    const { keyValues, workspaceId, providerSlug, models } = input
 
     const userId = ctx.session.user.id
 
@@ -23,13 +26,11 @@ export const updateAiProvider = protectedProcedure
       },
     })
 
-    const coercedValues = values as Record<string, string | null>
-
     return await upsertAiProvider(
       ctx.prisma,
       workspaceId,
       providerSlug,
-      undefined,
-      coercedValues,
+      keyValues,
+      models,
     )
   })

@@ -1,4 +1,4 @@
-import { useAiModels } from '@/components/ai/aiHooks'
+import { CheckboxField } from '@/components/ui/forms/CheckboxField'
 import {
   Table,
   TableBody,
@@ -7,14 +7,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import type { AiRegistryModel } from '@/server/lib/ai-registry/aiRegistryTypes'
+import { Field } from 'react-final-form'
 
 export const SettingsAiProvidersModelsTable = ({
-  providerSlug,
+  models,
 }: {
-  providerSlug: string
+  models: AiRegistryModel[]
 }) => {
-  const { data: aiModels } = useAiModels(providerSlug)
-
   return (
     <div className="space-y-4">
       <div className="text-xl font-bold">Models</div>
@@ -24,18 +24,35 @@ export const SettingsAiProvidersModelsTable = ({
             <TableRow>
               <TableHead className="w-[320px]">Name</TableHead>
               <TableHead>Slug</TableHead>
+              <TableHead>Enabled</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {aiModels?.map((model) => (
-              <TableRow key={model.slug}>
-                <TableCell>{model.publicName}</TableCell>{' '}
+            {models?.map((model) => (
+              <TableRow key={model.slug} className="h-10">
+                <TableCell>{model.publicName}</TableCell>
                 <TableCell>
                   <span className="font-mono bg-zinc-100 px-0.5 text-pink-600">
                     {model.slug}
                   </span>
                 </TableCell>
-                <TableCell className="text-right">{model.isCustom}</TableCell>
+                <TableCell>
+                  <Field
+                    name={`models.${model.slug.replaceAll('.', '^')}.enabled`}
+                    render={({ input }) => {
+                      const handleCheckToggle = (checked: boolean) => {
+                        input.onChange(checked)
+                      }
+
+                      return (
+                        <CheckboxField
+                          checked={!!input.value}
+                          onCheckedChange={handleCheckToggle}
+                        />
+                      )
+                    }}
+                  />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

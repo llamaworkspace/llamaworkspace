@@ -3,15 +3,18 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectTriggerVariantProps,
   SelectValue,
+  type SelectTriggerVariantProps,
 } from '@/components/ui/select'
+import { cn } from '@/lib/utils'
+import { useMemo, useState } from 'react'
 import { FormFieldWrapper } from './FormFieldWrapper'
 import type { DefaultInputProps } from './formTypes'
 
 interface InputOptionProps {
   value: string
   label: string
+  disabled?: boolean
 }
 
 // Keep value and onChange in here for compatibility with shadcnui Select
@@ -23,6 +26,7 @@ export interface SelectFieldProps extends DefaultInputProps {
   placeholder?: string
   disabled?: boolean
   variant?: SelectTriggerVariantProps['variant']
+  emptyStateContent?: React.FC
 }
 
 export const SelectField = ({
@@ -35,6 +39,7 @@ export const SelectField = ({
   helperText,
   disabled,
   variant,
+  emptyStateContent,
   ...selectProps
 }: SelectFieldProps) => {
   // Necessary as otherwise the placeholder does not work
@@ -49,20 +54,44 @@ export const SelectField = ({
     }, 0)
   }
 
+  const [isOpen, setIsOpen] = useState(false)
+
+  const EmptyStateContent = emptyStateContent ?? (() => null)
+
+  const selectedOption = useMemo(() => {
+    return options.find((option) => option.value === value)
+  }, [options, value])
+
+  const selectedIsDisabled = selectedOption?.disabled
+
   return (
     <FormFieldWrapper label={label} helperText={helperText}>
       <Select
+        open={isOpen}
+        onOpenChange={() => setIsOpen(!isOpen)}
         value={value}
         onValueChange={handleValueChange}
         disabled={disabled}
         {...selectProps}
       >
-        <SelectTrigger variant={variant}>
+        <SelectTrigger
+          variant={variant}
+          className={cn(
+            'min-w-[300px]',
+            selectedIsDisabled && 'text-zinc-400',
+            isOpen && 'bg-zinc-100',
+          )}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
+          {options.length === 0 && <EmptyStateContent />}
           {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              disabled={option.disabled}
+            >
               {option.label}
             </SelectItem>
           ))}

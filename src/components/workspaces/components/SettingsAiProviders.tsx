@@ -14,16 +14,22 @@ import {
 import { InputField } from '@/components/ui/forms/InputField'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
+import _, { groupBy, mapObject } from 'underscore'
 import { useCurrentWorkspace } from '../workspacesHooks'
 import { SettingsAiProvidersModelsTable } from './SettingsAiProviders/SettingsAiProvidersModelsTable'
 
-type FormValues = Record<string, string>
+type PartialFormValuesForModels = Record<
+  'models',
+  Record<string, { enabled: boolean }>
+>
+type FormValues = Record<string, string> | PartialFormValuesForModels
 
 export const SettingsAiProviders = () => {
   const successToast = useSuccessToast()
   const { mutate: updateAiProvider } = useUpdateAiProvider()
+
   const navigation = useNavigation()
   const { workspace } = useCurrentWorkspace()
   const { data: providers } = useAiProviders()
@@ -43,8 +49,10 @@ export const SettingsAiProviders = () => {
 
     const provider = providers?.find((p) => p.slug === providerSlug)
 
-    const submitValues = provider?.fields.reduce((acc, field) => {
-      let fieldValue: string | null | undefined = values[field.slug]
+    const aiProviderValues = provider?.fields.reduce((acc, field) => {
+      const coercedValues = values as Record<string, string>
+
+      let fieldValue: string | null | undefined = coercedValues[field.slug]
 
       if (fieldValue?.includes('•')) {
         return acc
@@ -58,8 +66,23 @@ export const SettingsAiProviders = () => {
       }
     }, {}) as Record<string, string>
 
+    const modelValues = (values?.models ??
+      {}) as PartialFormValuesForModels['models']
+
+    const modelsValues = _.map(modelValues, (model, slug) => {
+      return {
+        slug: slug.replaceAll('^', '.'),
+        enabled: model.enabled,
+      }
+    })
+
     updateAiProvider(
-      { workspaceId: workspace.id, providerSlug, values: submitValues },
+      {
+        workspaceId: workspace.id,
+        providerSlug,
+        keyValues: aiProviderValues,
+        models: modelsValues,
+      },
       {
         onSuccess: () => {
           successToast(undefined, 'Provider updated')
@@ -67,6 +90,30 @@ export const SettingsAiProviders = () => {
       },
     )
   }
+
+  const initialValues = useMemo(() => {
+    if (!providers) return
+
+    const groupedProviders = groupBy(providers, 'slug')
+
+    return mapObject(groupedProviders, (provider) => {
+      return provider.reduce((acc, provider) => {
+        const modelsInitialValues = provider.models.reduce((acc, model) => {
+          return {
+            ...acc,
+            [model.slug.replaceAll('.', '^')]: {
+              enabled: model.isEnabled,
+            },
+          }
+        }, {})
+
+        return {
+          ...provider.providerValues,
+          models: modelsInitialValues,
+        }
+      }, {}) as Record<string, FormValues>
+    })
+  }, [providers])
 
   return (
     <Section>
@@ -90,7 +137,7 @@ export const SettingsAiProviders = () => {
             <FinalForm<FormValues>
               key={provider.slug}
               onSubmit={handleFormSubmit(provider.slug)}
-              initialValues={provider.values}
+              initialValues={initialValues?.[provider.slug]}
               render={({ handleSubmit }) => {
                 return (
                   <Card key={provider.slug}>
@@ -138,7 +185,7 @@ export const SettingsAiProviders = () => {
                         </div>
 
                         <SettingsAiProvidersModelsTable
-                          providerSlug={provider.slug}
+                          models={provider.models}
                         />
                       </div>
                     </CardContent>
