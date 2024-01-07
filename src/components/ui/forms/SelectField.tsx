@@ -6,12 +6,15 @@ import {
   SelectValue,
   type SelectTriggerVariantProps,
 } from '@/components/ui/select'
+import { cn } from '@/lib/utils'
+import { useMemo } from 'react'
 import { FormFieldWrapper } from './FormFieldWrapper'
 import type { DefaultInputProps } from './formTypes'
 
 interface InputOptionProps {
   value: string
   label: string
+  disabled?: boolean
 }
 
 // Keep value and onChange in here for compatibility with shadcnui Select
@@ -53,6 +56,12 @@ export const SelectField = ({
 
   const EmptyStateContent = emptyStateContent ?? (() => null)
 
+  const selectedOption = useMemo(() => {
+    return options.find((option) => option.value === value)
+  }, [options, value])
+
+  const selectedIsDisabled = selectedOption?.disabled
+
   return (
     <FormFieldWrapper label={label} helperText={helperText}>
       <Select
@@ -61,13 +70,20 @@ export const SelectField = ({
         disabled={disabled}
         {...selectProps}
       >
-        <SelectTrigger variant={variant}>
+        <SelectTrigger
+          variant={variant}
+          className={cn(selectedIsDisabled && 'text-zinc-400')}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           {options.length === 0 && <EmptyStateContent />}
           {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              disabled={option.disabled}
+            >
               {option.label}
             </SelectItem>
           ))}
