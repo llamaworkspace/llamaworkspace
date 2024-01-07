@@ -16,7 +16,7 @@ export const createWorkspaceForUserService = async (
       },
     })
 
-    const workspace = await prisma.workspace.create({
+    return await prisma.workspace.create({
       data: {
         name: buildName(user?.name),
         users: {
@@ -28,7 +28,5 @@ export const createWorkspaceForUserService = async (
         },
       },
     })
-
-    return workspace
   })
 }

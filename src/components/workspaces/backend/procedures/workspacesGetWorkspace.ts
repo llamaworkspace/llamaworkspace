@@ -20,6 +20,7 @@ export const workspacesGetWorkspace = protectedProcedure
         id: true,
         name: true,
         balanceInNanoCents: true,
+        isOnboardingCompleted: true,
       },
       where: {
         id: input.workspaceId,

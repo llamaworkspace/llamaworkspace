@@ -8,7 +8,6 @@ import {
 const zInput = z.object({
   workspaceId: z.string(),
   name: z.string().optional(),
-  // openAiApiKey: z.string().optional().nullable(),
 })
 
 export const workspacesUpdateWorkspace = protectedProcedure
@@ -35,6 +34,7 @@ export const workspacesUpdateWorkspace = protectedProcedure
     return {
       id: workspace.id,
       name: workspace.name,
+      isOnboardingCompleted: workspace.isOnboardingCompleted,
       balanceInCents: Number(workspace.balanceInNanoCents) / 10_000_000,
     }
   })

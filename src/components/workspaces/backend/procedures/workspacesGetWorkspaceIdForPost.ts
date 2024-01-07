@@ -20,6 +20,7 @@ export const workspacesGetWorkspaceIdForPost = protectedProcedure
             id: true,
             name: true,
             balanceInNanoCents: true,
+            isOnboardingCompleted: true,
           },
         },
       },

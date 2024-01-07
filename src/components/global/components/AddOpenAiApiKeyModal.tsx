@@ -1,4 +1,3 @@
-import { useUpdateAiProvider } from '@/components/ai/aiHooks'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,26 +16,26 @@ import {
 } from '@/lib/frontend/finalFormValidations'
 import { useState } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
+import { useAddOpenAiApiKeyForOnboarding } from '../globalHooks'
 
 interface FormValues {
   apiKey: string
 }
 
-export const AddOpenAiApiKeyModal = () => {
+const AddOpenAiApiKeyModal = () => {
   const { workspace } = useCurrentWorkspace()
-  const { mutate: updateAiProvider } = useUpdateAiProvider()
+
+  const { mutate: addOpenAiKeyForOnboarding } =
+    useAddOpenAiApiKeyForOnboarding()
   const [open, setOpen] = useState(true)
   const toast = useSuccessToast()
   const handleSubmit = (values: FormValues) => {
     if (!workspace?.id) return
     if (!values.apiKey) return
-    updateAiProvider(
+    addOpenAiKeyForOnboarding(
       {
         workspaceId: workspace.id,
-        providerSlug: 'openai',
-        keyValues: {
-          apiKey: values.apiKey,
-        },
+        openAiApiKey: values.apiKey,
       },
       {
         onSuccess: () => {
@@ -50,21 +49,22 @@ export const AddOpenAiApiKeyModal = () => {
   return (
     <FinalForm<FormValues>
       onSubmit={handleSubmit}
-      render={({ handleSubmit, submitting, hasValidationErrors, ...rest }) => {
+      render={({ handleSubmit, submitting, hasValidationErrors }) => {
         const handleOpenChange = () => {
           if (hasValidationErrors) {
             return
           }
           setOpen(!open)
         }
-        console.log(2, hasValidationErrors, rest)
+
         return (
           <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent hideCloseButton={true}>
               <DialogHeader>
                 <DialogTitle>Add an OpenAI API key</DialogTitle>
                 <DialogDescription>
-                  Joia needs an OpenAI API key to work.{' '}
+                  At the moment Joia needs at least an OpenAI API key to work.
+                  <br />{' '}
                   <StyledLink
                     href="https://joiahq.notion.site/How-to-obtain-an-OpenAI-access-token-f29f71ba136145c9b84a43911c7d8709"
                     target="_blank"
@@ -84,7 +84,6 @@ export const AddOpenAiApiKeyModal = () => {
                               {...input}
                               placeholder="Your OpenAI API key"
                               label="API key"
-                              required
                             />
                           )
                         }}
@@ -108,4 +107,12 @@ export const AddOpenAiApiKeyModal = () => {
       }}
     />
   )
+}
+
+export const AddOpenAiApiKeyTakeover = () => {
+  const { workspace } = useCurrentWorkspace()
+
+  if (!workspace) return null
+  if (workspace.isOnboardingCompleted) return null
+  return <AddOpenAiApiKeyModal />
 }
