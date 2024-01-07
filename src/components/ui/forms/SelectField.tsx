@@ -7,7 +7,7 @@ import {
   type SelectTriggerVariantProps,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { FormFieldWrapper } from './FormFieldWrapper'
 import type { DefaultInputProps } from './formTypes'
 
@@ -54,6 +54,8 @@ export const SelectField = ({
     }, 0)
   }
 
+  const [isOpen, setIsOpen] = useState(false)
+
   const EmptyStateContent = emptyStateContent ?? (() => null)
 
   const selectedOption = useMemo(() => {
@@ -65,6 +67,8 @@ export const SelectField = ({
   return (
     <FormFieldWrapper label={label} helperText={helperText}>
       <Select
+        open={isOpen}
+        onOpenChange={() => setIsOpen(!isOpen)}
         value={value}
         onValueChange={handleValueChange}
         disabled={disabled}
@@ -72,7 +76,11 @@ export const SelectField = ({
       >
         <SelectTrigger
           variant={variant}
-          className={cn(selectedIsDisabled && 'text-zinc-400')}
+          className={cn(
+            'min-w-[300px]',
+            selectedIsDisabled && 'text-zinc-400',
+            isOpen && 'bg-zinc-100',
+          )}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

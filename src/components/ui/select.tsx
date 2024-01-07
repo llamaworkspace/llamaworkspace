@@ -5,13 +5,13 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 const triggerVariants = cva(
-  'flex h-9 w-full items-center gap-x-4 rounded-md border-zinc-200 bg-transparent py-2 ring-offset-white placeholder:text-zinc-500 focus:outline-none focus:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:ring-offset-zinc-950 dark:placeholder:text-zinc-400 dark:focus:ring-zinc-300',
+  'flex h-9 w-full items-center gap-x-4 rounded-md border-zinc-200 bg-transparent py-2 ring-offset-white placeholder:text-zinc-500 focus:outline-none focus:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:ring-offset-zinc-950 dark:placeholder:text-zinc-400 dark:focus:ring-zinc-300 justify-between',
   {
     variants: {
       variant: {
-        default: 'shadow-sm border px-3 text-sm focus:ring-1 justify-between',
+        default: 'shadow-sm border px-3 text-sm focus:ring-1',
         chatHeader:
-          'text-base font-semibold tracking-tighter active:bg-zinc-100 px-2',
+          'text-base font-semibold tracking-tighter px-2 border border-zinc-100',
       },
     },
     defaultVariants: { variant: 'default' },
@@ -97,7 +97,6 @@ const SelectItem = React.forwardRef<
     ref={ref}
     className={cn(
       'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-zinc-100 focus:text-zinc-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-zinc-800 dark:focus:text-zinc-50',
-      props.disabled && 'opacity-50',
       className,
     )}
     {...props}
