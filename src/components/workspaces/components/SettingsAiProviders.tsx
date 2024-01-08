@@ -31,7 +31,7 @@ export const SettingsAiProviders = () => {
   const { mutate: updateAiProvider } = useUpdateAiProvider()
 
   const navigation = useNavigation()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const { data: providers } = useAiProviders()
 
   const inputRef = useRef<HTMLInputElement>(null)

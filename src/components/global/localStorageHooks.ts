@@ -1,8 +1,8 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 
-export const useLatestWorkspaceIdLocalStorage = () => {
-  const parent = useLocalStorage<string | undefined>(
+export const useWorkspaceIdFromLocalStorage = () => {
+  const [get, set] = useLocalStorage<string | undefined>(
     'latestWorkspaceId',
     undefined,
   )
@@ -11,5 +11,7 @@ export const useLatestWorkspaceIdLocalStorage = () => {
     window.localStorage.removeItem('latestWorkspaceId')
   }, [])
 
-  return [...parent, remove] as const
+  return useMemo(() => {
+    return [get, set, remove] as const
+  }, [get, set, remove])
 }

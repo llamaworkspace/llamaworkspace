@@ -7,7 +7,7 @@ import { CaretDownIcon } from '@radix-ui/react-icons'
 
 export function SidebarDesktopUserDropdownTriggerButton() {
   const { data: user } = useSelf()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   return (
     <DropdownMenuTrigger asChild>
       <Button

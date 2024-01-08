@@ -23,7 +23,7 @@ interface FormValues {
 }
 
 const AddOpenAiApiKeyModal = () => {
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   const { mutate: addOpenAiKeyForOnboarding } =
     useAddOpenAiApiKeyForOnboarding()
@@ -110,7 +110,7 @@ const AddOpenAiApiKeyModal = () => {
 }
 
 export const AddOpenAiApiKeyTakeover = () => {
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   if (!workspace) return null
   if (workspace.isOnboardingCompleted) return null

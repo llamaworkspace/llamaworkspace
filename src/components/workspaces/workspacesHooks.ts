@@ -1,134 +1,93 @@
 import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
-import { useLatestWorkspaceIdLocalStorage } from '../global/localStorageHooks'
+import { useWorkspaceIdFromLocalStorage } from '../global/localStorageHooks'
 
-const useWorkspaceFromPathWorkspace = () => {
+const useFirstWorkspaceForUser = (enabled?: boolean) => {
   const errorHandler = useErrorHandler()
-  const navigation = useNavigation()
-  const { workspace_id } = navigation.query
 
-  const enabled = !!workspace_id
+  return api.workspaces.getFirstWorkspaceForUser.useQuery(undefined, {
+    onError: errorHandler(),
+    enabled: enabled ?? true,
+  })
+}
 
-  const { data: workspace, isLoading } = api.workspaces.getWorkspace.useQuery(
-    { workspaceId: workspace_id as string },
+const useWorkspace = (workspaceId?: string) => {
+  const errorHandler = useErrorHandler()
+
+  return api.workspaces.getWorkspace.useQuery(
+    { workspaceId: workspaceId! },
     {
       onError: errorHandler(),
-      enabled,
+      enabled: !!workspaceId,
     },
   )
-
-  return {
-    workspace: enabled ? workspace : undefined,
-    isLoading: isLoading && enabled,
-  }
 }
 
-const useWorkspaceFromPathPost = () => {
+const useWorkspaceForPostId = (postId?: string) => {
   const errorHandler = useErrorHandler()
-  const navigation = useNavigation()
-  const { post_id } = navigation.query
 
-  const { workspace: workspaceWithPriority, isLoading: isLoadingWithPriority } =
-    useWorkspaceFromPathWorkspace()
-
-  const enabled = !!post_id && !workspaceWithPriority && !isLoadingWithPriority
-
-  const { data: fetchedWorkspace, isLoading } =
-    api.workspaces.getWorkspaceIdForPost.useQuery(
-      { postId: post_id as string },
-      {
-        onError: errorHandler(),
-        enabled,
-      },
-    )
-
-  const workspace = enabled ? fetchedWorkspace : undefined
-
-  return {
-    workspace: workspaceWithPriority ?? workspace,
-    isLoading: isLoadingWithPriority || (isLoading && enabled),
-  }
-}
-
-const useWorkspaceFromPathChat = () => {
-  const errorHandler = useErrorHandler()
-  const navigation = useNavigation()
-  const { chat_id } = navigation.query
-
-  const { workspace: workspaceWithPriority, isLoading: isLoadingWithPriority } =
-    useWorkspaceFromPathPost()
-
-  const enabled = !!chat_id && !workspaceWithPriority && !isLoadingWithPriority
-
-  const { data: fetchedWorkspace, isLoading } =
-    api.workspaces.getWorkspaceIdForChat.useQuery(
-      { chatId: chat_id as string },
-      {
-        onError: errorHandler(),
-        enabled,
-      },
-    )
-  const workspace = enabled ? fetchedWorkspace : undefined
-  return {
-    workspace: workspaceWithPriority ?? workspace,
-    isLoading: isLoadingWithPriority || (isLoading && enabled),
-  }
-}
-
-const useLocalStorageWorkspace = () => {
-  const errorHandler = useErrorHandler()
-  const [lastWorkspaceId, setLastWorkspaceId] =
-    useLatestWorkspaceIdLocalStorage()
-
-  const { workspace: workspaceWithPriority, isLoading: isLoadingWithPriority } =
-    useWorkspaceFromPathChat()
-
-  const enabled = !workspaceWithPriority && !isLoadingWithPriority
-
-  const {
-    data: fetchedWorkspace,
-    isLoading,
-    isError,
-  } = api.workspaces.getWorkspace.useQuery(
-    { workspaceId: lastWorkspaceId },
+  return api.workspaces.getWorkspaceIdForPost.useQuery(
+    { postId: postId! },
     {
       onError: errorHandler(),
-      enabled: enabled,
+      enabled: !!postId,
     },
   )
-  const workspace = enabled ? fetchedWorkspace : undefined
+}
 
-  // If the workspace in local storage was removed or is corrupt,
-  // try again by cleaning it to get the default instead
-  const [retried, setRetried] = useState(false)
-  useEffect(() => {
-    if (!retried && isError) {
-      setRetried(true)
-      setLastWorkspaceId(undefined)
-    }
-  }, [retried, isError, setLastWorkspaceId])
+const useWorkspaceForChatId = (chatId?: string) => {
+  const errorHandler = useErrorHandler()
 
-  useEffect(() => {
-    const currentWorkspace = workspaceWithPriority ?? workspace
-
-    if (currentWorkspace) {
-      // This will send an extra query when using the default workspace strategy.
-      // However, it's not a big deal since it will just run once per client.
-      setLastWorkspaceId(currentWorkspace.id)
-    }
-  }, [workspaceWithPriority, workspace, setLastWorkspaceId])
-
-  return {
-    workspace: workspaceWithPriority ?? fetchedWorkspace,
-    isLoading: isLoadingWithPriority || (isLoading && enabled),
-  }
+  return api.workspaces.getWorkspaceIdForChat.useQuery(
+    { chatId: chatId! },
+    {
+      onError: errorHandler(),
+      enabled: !!chatId,
+    },
+  )
 }
 
 export const useCurrentWorkspace = () => {
-  // First strategy of the chain
-  return useLocalStorageWorkspace()
+  const [lsWorkspaceId, setLastWorkspaceId] = useWorkspaceIdFromLocalStorage()
+  const navigation = useNavigation()
+  const { workspace_id, post_id, chat_id } = navigation.query
+
+  const workspaceId = lsWorkspaceId ?? (workspace_id as string | undefined)
+  const chatId = chat_id as string | undefined
+  const postId = post_id as string | undefined
+
+  const workspaceFirstFromUser = useFirstWorkspaceForUser(!workspaceId)
+  const workspaceFromWsId = useWorkspace(workspaceId)
+  const workspaceFromChatId = useWorkspaceForChatId(
+    workspaceId ? undefined : chatId,
+  )
+  const workspaceFromPostId = useWorkspaceForPostId(
+    workspaceId ?? chatId ? undefined : postId,
+  )
+
+  const targetWorkspaceId =
+    workspaceFirstFromUser.data?.id ??
+    workspaceFromWsId.data?.id ??
+    workspaceFromChatId.data?.id ??
+    workspaceFromPostId.data?.id
+
+  useEffect(() => {
+    if (targetWorkspaceId) {
+      console.log('Setting ws id', targetWorkspaceId)
+      setLastWorkspaceId(targetWorkspaceId)
+    }
+  }, [targetWorkspaceId, setLastWorkspaceId])
+
+  if (workspaceId) {
+    return workspaceFromWsId
+  } else if (chatId) {
+    return workspaceFromChatId
+  } else if (postId) {
+    return workspaceFromPostId
+  }
+  return workspaceFirstFromUser
 }
 
 export const useWorkspaces = () => {

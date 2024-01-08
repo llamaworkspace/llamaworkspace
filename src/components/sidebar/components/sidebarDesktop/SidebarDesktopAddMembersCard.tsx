@@ -2,7 +2,7 @@ import { StyledLink } from '@/components/ui/StyledLink'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 
 export const SidebarDesktopAddMembersCard = () => {
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const settingsUrl = `/w/${workspace?.id}/settings/members?focus=add_members`
 
   return (

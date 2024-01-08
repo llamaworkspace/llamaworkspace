@@ -2,7 +2,7 @@ import { StyledLink } from '@/components/ui/StyledLink'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 
 export const SidebarDesktopOnboardingCard = () => {
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const settingsUrl = `/w/${workspace?.id}/settings/providers?focus=openai_api_key`
 
   return (

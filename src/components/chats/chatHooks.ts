@@ -79,7 +79,7 @@ export const useDeleteChat = () => {
   const routerPostId = navigation.query.post_id as string | undefined
   const routerChatId = navigation.query.chat_id as string | undefined
 
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const { data: chatHistory } = useChatHistoryForSidebarPost(routerPostId)
 
   const { isSuccess, reset, mutate, ...rest } =
