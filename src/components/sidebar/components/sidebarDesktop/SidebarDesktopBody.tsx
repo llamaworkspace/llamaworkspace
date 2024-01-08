@@ -18,16 +18,14 @@ import {
   InformationCircleIcon,
 } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import { usePostsForSidebar, useStandaloneChats } from '../../sidebarHooks'
+import {
+  usePostsForSidebar,
+  useShouldDisplayAddOpenAiKeysAlert,
+  useStandaloneChats,
+} from '../../sidebarHooks'
 import { SidebarDesktopInfoCards } from './SidebarDesktopInfoCards'
 import { SidebarDesktopLineItemForChatApp } from './SidebarDesktopLineItemForChatApp'
 import { SidebarDesktopLineItemForSingleChat } from './SidebarDesktopLineItemForSingleChat'
-
-const useShouldDisplayAddOpenAiKeysAlert = () => {
-  const { workspace } = useCurrentWorkspace()
-
-  return workspace && workspace.balanceInCents < 5
-}
 
 export function SidebarDesktopBody() {
   const { mutate: createPost } = useCreatePost()
