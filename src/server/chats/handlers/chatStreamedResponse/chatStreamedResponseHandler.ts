@@ -284,8 +284,8 @@ const prepareMessagesForPrompt = (
     throw new Error('Message length should be at least 2')
   }
 
-  // This last message should be maxCreatedAt where the author=OpenAi and should be empty
-  // It shouldn't be sent to OpenAi
+  // This last message should be maxCreatedAt where the author=assistant and should be empty
+  // It shouldn't be sent over
   const assistantTargetMessage = chain(messages)
     .filter(
       (message) =>
@@ -295,7 +295,7 @@ const prepareMessagesForPrompt = (
     .max((message) => message.createdAt.getTime())
     .value() as Message
 
-  const openaAiMessagesPayload = messages.filter((message) => {
+  const llmMessagesPayload = messages.filter((message) => {
     if (assistantTargetMessage.id === message.id) {
       return false
     }
@@ -303,7 +303,7 @@ const prepareMessagesForPrompt = (
   })
 
   return {
-    messages: openaAiMessagesPayload.map(transformMessageModelToPayload),
+    messages: llmMessagesPayload.map(transformMessageModelToPayload),
     assistantTargetMessage: assistantTargetMessage,
   }
 }
