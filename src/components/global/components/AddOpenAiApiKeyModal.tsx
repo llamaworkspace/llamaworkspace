@@ -63,7 +63,7 @@ const AddOpenAiApiKeyModal = () => {
               <DialogHeader>
                 <DialogTitle>Add an OpenAI API key</DialogTitle>
                 <DialogDescription>
-                  At the moment Joia needs at least an OpenAI API key to work.
+                  At the moment Joia needs an OpenAI API key to work.
                   <br />{' '}
                   <StyledLink
                     href="https://joiahq.notion.site/How-to-obtain-an-OpenAI-access-token-f29f71ba136145c9b84a43911c7d8709"
