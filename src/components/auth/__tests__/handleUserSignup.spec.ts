@@ -7,6 +7,7 @@ import { createWorkspaceForUserService } from '@/server/users/services/createWor
 import { settlePostSharesForNewUserService } from '@/server/users/services/settlePostSharesForNewUser.service'
 import { settleWorkspaceInvitesForNewUserService } from '@/server/users/services/settleWorkspaceInvitesForNewUser.service'
 import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
+import { setDefaultsForWorkspace } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import { faker } from '@faker-js/faker'
 import type { Workspace } from '@prisma/client'
 import { handleUserSignup } from '../handleUserSignup'
@@ -17,6 +18,7 @@ jest.mock('@/server/users/services/settlePostSharesForNewUser.service')
 jest.mock('@/server/users/services/settleWorkspaceInvitesForNewUser.service')
 jest.mock('@/server/onboarding/services/onboardingCreate.service')
 jest.mock('@/server/users/services/createDefaultsForNewUser.service')
+jest.mock('@/server/workspaces/services/setDefaultsForWorkspace.service')
 
 type MockedCreateWorkspaceForUser = jest.MockedFunction<
   typeof createWorkspaceForUserService
@@ -37,6 +39,10 @@ type MockedCreateDefaultsForNewUser = jest.MockedFunction<
   typeof createDefaultsForNewUserService
 >
 
+type MockedSetDefaultsForWorkspace = jest.MockedFunction<
+  typeof setDefaultsForWorkspace
+>
+
 describe('handleUserSignup', () => {
   beforeEach(() => {
     ;(createWorkspaceForUserService as MockedCreateWorkspaceForUser).mockClear()
@@ -51,6 +57,7 @@ describe('handleUserSignup', () => {
     ;(
       settleWorkspaceInvitesForNewUserService as MockedSettleWorkspaceInvitesForUser
     ).mockClear()
+    ;(setDefaultsForWorkspace as MockedSetDefaultsForWorkspace).mockClear()
   })
 
   const subject = async () => {
@@ -86,5 +93,10 @@ describe('handleUserSignup', () => {
   it('executes createDefaultsForNewUser service', async () => {
     await subject()
     expect(createDefaultsForNewUserService).toHaveBeenCalled()
+  })
+
+  it('executes setDefaultsForWorkspace service', async () => {
+    await subject()
+    expect(setDefaultsForWorkspace).toHaveBeenCalled()
   })
 })
