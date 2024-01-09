@@ -18,6 +18,8 @@ export interface AiRegistryField {
 export interface AiRegistryProvider {
   readonly slug: string
   readonly publicName: string
+  readonly docsLink?: string
+  readonly docsLinkText?: string
   readonly fields: AiRegistryField[]
   readonly models: AiRegistryModel[]
   executeAsStream(
