@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import Head from 'next/head'
 import { type PropsWithChildren } from 'react'
-import { AddOpenAiApiKeyTakeover } from '../global/components/AddOpenAiApiKeyModal'
+import { AddOpenAiApiKeyTakeover } from '../global/components/AddOpenAiApiKeyTakeover'
 import { useGlobalState } from '../global/globalState'
 import { EMPTY_POST_NAME } from '../posts/postsConstants'
 import { usePostById } from '../posts/postsHooks'
