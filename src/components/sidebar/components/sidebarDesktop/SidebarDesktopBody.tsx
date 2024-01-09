@@ -67,7 +67,7 @@ export function SidebarDesktopBody() {
               <li>
                 <Alert variant="fuchsia">
                   <AlertDescription className="space-y-1 text-xs">
-                    <p>Add the OpenAI API key to continue using Joia.</p>
+                    <p>Add an OpenAI API key to continue using Joia.</p>
                     <p>
                       <StyledLink href={settingsUrl}>Add key</StyledLink>
                     </p>

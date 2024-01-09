@@ -12,7 +12,7 @@ export const SidebarDesktopOnboardingCard = () => {
           ✨ Use Joia without limits
         </div>
         <div className="text-xs">
-          Add the OpenAI API keys to continue using us.
+          Add an OpenAI API keys to continue using us.
         </div>
 
         <div className="text-xs">
