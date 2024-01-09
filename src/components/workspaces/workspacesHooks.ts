@@ -134,14 +134,9 @@ export const useCurrentWorkspace = () => {
 export const useWorkspaces = () => {
   const errorHandler = useErrorHandler()
 
-  const { data: workspaces, isLoading } = api.workspaces.getWorkspaces.useQuery(
-    undefined,
-    {
-      onError: errorHandler(),
-    },
-  )
-
-  return { workspaces, isLoading }
+  return api.workspaces.getWorkspaces.useQuery(undefined, {
+    onError: errorHandler(),
+  })
 }
 
 export const useCreateWorkspace = () => {

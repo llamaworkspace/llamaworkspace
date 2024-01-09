@@ -20,12 +20,15 @@ import { CheckIcon } from '@heroicons/react/20/solid'
 function SidebarDesktopHeaderWorkspacesDropdownSub() {
   const navigation = useNavigation()
   const { workspace: currentWorkspace } = useCurrentWorkspace()
-  const { workspaces } = useWorkspaces()
+  const { data: workspaces } = useWorkspaces()
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger>Switch workspace</DropdownMenuSubTrigger>
-      <DropdownMenuSubContent>
+      <DropdownMenuSubTrigger className="italic">
+        Switch workspace
+      </DropdownMenuSubTrigger>
+
+      <DropdownMenuSubContent className="min-w-[250px]">
         {workspaces?.map((workspace) =>
           workspace.id === currentWorkspace?.id ? (
             <DropdownMenuLabel key={workspace.id}>
@@ -42,7 +45,7 @@ function SidebarDesktopHeaderWorkspacesDropdownSub() {
               href={navigation.buildPath('/w/:workspaceId', {
                 workspaceId: workspace.id,
               })}
-              className="ml-5"
+              className="pl-7"
             >
               {workspace.name}
             </DropdownMenuItemLink>
@@ -56,6 +59,8 @@ function SidebarDesktopHeaderWorkspacesDropdownSub() {
 export function SidebarDesktopHeaderDropdownBody() {
   const navigation = useNavigation()
   const signOut = useSignOut()
+  const { data: workspaces } = useWorkspaces()
+  const numberOfWorkspaces = workspaces?.length ?? 0
 
   const { workspace } = useCurrentWorkspace()
   const profileLink = workspace?.id
@@ -63,9 +68,22 @@ export function SidebarDesktopHeaderDropdownBody() {
         workspaceId: workspace.id,
       })
     : '#'
-  const settingsLink = workspace?.id
-    ? navigation.buildPath('/w/:workspaceId/settings', {
+  const workspaceSettingsLink = workspace?.id
+    ? navigation.buildPath('/w/:workspaceId/settings/:tab', {
         workspaceId: workspace.id,
+        tab: 'general',
+      })
+    : '#'
+  const workspaceMembersLink = workspace?.id
+    ? navigation.buildPath('/w/:workspaceId/settings/:tab', {
+        workspaceId: workspace.id,
+        tab: 'members',
+      })
+    : '#'
+  const workspaceProvidersLink = workspace?.id
+    ? navigation.buildPath('/w/:workspaceId/settings/:tab', {
+        workspaceId: workspace.id,
+        tab: 'providers',
       })
     : '#'
 
@@ -73,9 +91,25 @@ export function SidebarDesktopHeaderDropdownBody() {
     <DropdownMenuContent className="ml-4 w-56">
       <DropdownMenuGroup>
         <DropdownMenuLabel>Workspace</DropdownMenuLabel>
-        <SidebarDesktopHeaderWorkspacesDropdownSub />
-        <DropdownMenuItemLink href={settingsLink} disabled={!workspace?.id}>
-          Workspace settings
+
+        {numberOfWorkspaces && <SidebarDesktopHeaderWorkspacesDropdownSub />}
+        <DropdownMenuItemLink
+          href={workspaceSettingsLink}
+          disabled={!workspace?.id}
+        >
+          General settings
+        </DropdownMenuItemLink>
+        <DropdownMenuItemLink
+          href={workspaceMembersLink}
+          disabled={!workspace?.id}
+        >
+          Members
+        </DropdownMenuItemLink>
+        <DropdownMenuItemLink
+          href={workspaceProvidersLink}
+          disabled={!workspace?.id}
+        >
+          AI providers
         </DropdownMenuItemLink>
       </DropdownMenuGroup>
 
