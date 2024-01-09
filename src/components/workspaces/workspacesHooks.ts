@@ -50,42 +50,48 @@ const useWorkspaceForChatId = (chatId?: string) => {
 }
 
 export const useCurrentWorkspace = () => {
-  const [lsWorkspaceId, setLastWorkspaceId] = useWorkspaceIdFromLocalStorage()
+  const [localStorageWorkspaceId, setLocalStorageWorkspaceId] =
+    useWorkspaceIdFromLocalStorage()
   const navigation = useNavigation()
   const { workspace_id, post_id, chat_id } = navigation.query
 
-  const workspaceId = lsWorkspaceId ?? (workspace_id as string | undefined)
-  const chatId = chat_id as string | undefined
-  const postId = post_id as string | undefined
+  const workspaceId =
+    localStorageWorkspaceId ?? (workspace_id as string | undefined)
 
-  const workspaceFirstFromUser = useFirstWorkspaceForUser(!workspaceId)
-  const workspaceFromWsId = useWorkspace(workspaceId)
-  const workspaceFromChatId = useWorkspaceForChatId(
-    workspaceId ? undefined : chatId,
+  const workspaceIdFromUrl = workspace_id as string | undefined
+  const chatIdFromUrl = chat_id as string | undefined
+  const postIdFromUrl = post_id as string | undefined
+  const loadWorkspaceFromFirstUser =
+    !workspaceIdFromUrl && !chatIdFromUrl && !postIdFromUrl
+
+  const workspaceFirstFromUser = useFirstWorkspaceForUser(
+    loadWorkspaceFromFirstUser,
   )
+  const workspaceFromWsId = useWorkspace(workspaceIdFromUrl)
+  const workspaceFromChatId = useWorkspaceForChatId(chatIdFromUrl)
   const workspaceFromPostId = useWorkspaceForPostId(
-    workspaceId ?? chatId ? undefined : postId,
+    chatIdFromUrl ? undefined : postIdFromUrl,
   )
 
+  // Order matters here
   const targetWorkspaceId =
-    workspaceFirstFromUser.data?.id ??
-    workspaceFromWsId.data?.id ??
+    workspaceFromPostId.data?.id ??
     workspaceFromChatId.data?.id ??
-    workspaceFromPostId.data?.id
+    workspaceFromWsId.data?.id ??
+    workspaceFirstFromUser.data?.id
 
   useEffect(() => {
     if (targetWorkspaceId) {
-      console.log('Setting ws id', targetWorkspaceId)
-      setLastWorkspaceId(targetWorkspaceId)
+      setLocalStorageWorkspaceId(targetWorkspaceId)
     }
-  }, [targetWorkspaceId, setLastWorkspaceId])
+  }, [targetWorkspaceId, setLocalStorageWorkspaceId])
 
-  if (workspaceId) {
-    return workspaceFromWsId
-  } else if (chatId) {
-    return workspaceFromChatId
-  } else if (postId) {
+  if (workspaceFromPostId.data?.id) {
     return workspaceFromPostId
+  } else if (workspaceFromChatId.data?.id) {
+    return workspaceFromChatId
+  } else if (workspaceFromWsId.data?.id) {
+    return workspaceFromWsId
   }
   return workspaceFirstFromUser
 }
