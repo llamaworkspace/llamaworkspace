@@ -52,11 +52,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     ])
 
     const workspaceId = chat.post.workspaceId
-    await prisma.workspace.findFirstOrThrow({
-      where: { id: workspaceId },
-    })
 
     await validateUserPermissionsOrThrow(userId, chatId)
+    await validateModelIsEnabledOrThrow(
+      workspaceId,
+      userId,
+      postConfigVersion.model,
+    )
 
     const allUnprocessedMessages = [...postConfigVersion.messages, ...messages]
 
@@ -183,6 +185,49 @@ const validateUserPermissionsOrThrow = async (
     chat.postId,
   )
 
+  return true
+}
+
+const validateModelIsEnabledOrThrow = async (
+  workspaceId: string,
+  userId: string,
+  fullSlug: string,
+) => {
+  const providersMeta = await aiProvidersFetcher.getFullAiProvidersMeta(
+    workspaceId,
+    userId,
+  )
+  const [providerSlug, ...rest] = fullSlug.split('/')
+  const modelName = rest.join('/')
+  const provider = providersMeta.find(
+    (providerMeta) => providerMeta.slug === providerSlug,
+  )
+  if (!provider) throw new Error('Provider not found')
+  const targetModel = provider.models.find((model) => model.slug === modelName)
+
+  if (!targetModel) {
+    throw createHttpError(
+      403,
+      `The model ${modelName} no longer exists. Please select another one.`,
+    )
+  }
+
+  if (!targetModel.isEnabled) {
+    throw createHttpError(
+      403,
+      `The model "${targetModel.fullPublicName}" is currently not enabled. Please select another one.`,
+    )
+  }
+
+  if (!targetModel.isSetupOk) {
+    throw createHttpError(
+      403,
+      `The model "${targetModel.fullPublicName}" is not setup correctly. Please select another one.`,
+    )
+  }
+
+  console.log('thing', targetModel)
+  throw new Error('Not implemented')
   return true
 }
 
