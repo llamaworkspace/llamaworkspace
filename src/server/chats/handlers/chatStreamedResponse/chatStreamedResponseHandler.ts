@@ -226,8 +226,6 @@ const validateModelIsEnabledOrThrow = async (
     )
   }
 
-  console.log('thing', targetModel)
-  throw new Error('Not implemented')
   return true
 }
 

@@ -1,7 +1,6 @@
 import { useAiProviders, useUpdateAiProvider } from '@/components/ai/aiHooks'
 import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -131,8 +130,6 @@ export const SettingsAiProviders = () => {
         </div>
 
         {providers?.map((provider) => {
-          const isOpenAi = provider.slug === 'openai'
-
           return (
             <FinalForm<FormValues>
               key={provider.slug}
@@ -145,26 +142,24 @@ export const SettingsAiProviders = () => {
                       <CardTitle className="text-xl">
                         <div className="flex items-center gap-x-2">
                           <div>{provider.publicName}</div>
-                          {isOpenAi && (
-                            <Badge variant="yellow" size="xs">
-                              Required
-                            </Badge>
-                          )}
                         </div>
                       </CardTitle>
-                      <CardDescription>
-                        <StyledLink
-                          href="https://joiahq.notion.site/How-to-obtain-an-OpenAI-access-token-f29f71ba136145c9b84a43911c7d8709"
-                          target="_blank"
-                        >
-                          Get help obtaining your OpenAI API key
-                        </StyledLink>
-                      </CardDescription>
+                      {provider.docsLink && (
+                        <CardDescription>
+                          <StyledLink href={provider.docsLink} target="_blank">
+                            {provider.docsLinkText ?? 'Documentation'}
+                          </StyledLink>
+                        </CardDescription>
+                      )}
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <div className="space-y-2">
                         <div className="space-y-4 py-2">
                           {provider.fields.map((field) => {
+                            const addRef =
+                              provider.slug === 'openai' &&
+                              field.slug === 'apiKey'
+
                             return (
                               <Field
                                 key={field.slug}
@@ -173,7 +168,7 @@ export const SettingsAiProviders = () => {
                                   return (
                                     <InputField
                                       {...input}
-                                      ref={inputRef}
+                                      ref={addRef ? inputRef : null}
                                       label={field.publicName}
                                       required={field.required}
                                     />
