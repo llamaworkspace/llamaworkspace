@@ -281,13 +281,27 @@ model AiProviderKeyValue {
 }
 
 model AiModel {
-    id           String     @id @default(cuid())
+    id           String            @id @default(cuid())
     aiProviderId String
     slug         String
-    isEnabled    Boolean    @default(false)
-    createdAt    DateTime   @default(now())
-    updatedAt    DateTime   @updatedAt
-    aiProvider   AiProvider @relation(fields: [aiProviderId], references: [id], onDelete: Cascade)
+    isEnabled    Boolean           @default(false)
+    createdAt    DateTime          @default(now())
+    updatedAt    DateTime          @updatedAt
+    aiProvider   AiProvider        @relation(fields: [aiProviderId], references: [id], onDelete: Cascade)
+    keyValues    AiModelKeyValue[]
 
     @@unique([aiProviderId, slug])
+}
+
+model AiModelKeyValue {
+    id        String   @id @default(cuid())
+    aiModelId String
+    key       String
+    value     String
+    type      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    aiModel   AiModel  @relation(fields: [aiModelId], references: [id], onDelete: Cascade)
+
+    @@unique([aiModelId, key])
 }

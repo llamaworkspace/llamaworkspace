@@ -20,10 +20,11 @@ export const upsertAiProvider = async (
   keyValues?: Record<string, string | null>,
   modelParams: ModelParams[] = [],
 ) => {
-  await prismaAsTrx(prisma, async (prisma) => {
+  return await prismaAsTrx(prisma, async (prisma) => {
     const aiProvider = await upsertProviderRaw(prisma, workspaceId, slug)
     await upsertProviderKeyValues(prisma, aiProvider, keyValues)
     await upsertModels(prisma, aiProvider, modelParams)
+    return aiProvider
   })
 }
 

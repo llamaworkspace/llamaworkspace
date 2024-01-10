@@ -3,12 +3,12 @@ import { useMemo } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
-export const useAiProviders = () => {
+export const useAiProviders = (providerSlugs?: string[]) => {
   const { workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
   return api.ai.getAiProviders.useQuery(
-    { workspaceId: workspace?.id! },
+    { workspaceId: workspace?.id!, providerSlugs: providerSlugs },
     {
       enabled: !!workspace?.id,
       onError: errorHandler(),
@@ -63,4 +63,15 @@ export const useAiModels = (options?: UseAiModelsOptions) => {
     ...queryResponse,
     data,
   }
+}
+
+export const useUpdateAiModel = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+  return api.ai.updateAiModel.useMutation({
+    onError: errorHandler(),
+    onSuccess: () => {
+      void utils.ai.getAiProviders.invalidate()
+    },
+  })
 }

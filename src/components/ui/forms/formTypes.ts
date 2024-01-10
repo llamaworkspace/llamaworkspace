@@ -1,5 +1,5 @@
 export interface DefaultInputProps {
-  label?: string
+  label?: string | JSX.Element
   placeholder?: string
   helperText?: string | JSX.Element
   required?: boolean

@@ -3,7 +3,7 @@
 // To run, go to the server and invoke:
 // npx env-cmd npx tsx src/scripts/<path_to_file_including_ts_extension>
 
-import { upsertAiProvider } from '@/server/ai/services/upsertProviderKVs.service'
+import { upsertAiProvider } from '@/server/ai/services/upsertProvider.service'
 import { prisma } from '@/server/db'
 import Bluebird from 'bluebird'
 

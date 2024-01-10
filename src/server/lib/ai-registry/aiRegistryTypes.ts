@@ -1,14 +1,25 @@
+export interface AiModelField {
+  slug: string
+  publicName: string
+  type: 'string' | 'number' | 'boolean'
+  description?: string
+  defaultValue?: string
+  minValue?: number
+  maxValue?: number
+}
+
 export interface AiRegistryModel {
   readonly slug: string
   readonly publicName: string
-  readonly default?: boolean
+  readonly defaultForProvider?: boolean
+  readonly fields: AiModelField[]
   readonly costPerMille?: {
     readonly request: number
     readonly response: number
   }
 }
 
-export interface AiRegistryField {
+export interface AiProviderField {
   slug: string
   publicName: string
   required: boolean
@@ -20,7 +31,7 @@ export interface AiRegistryProvider {
   readonly publicName: string
   readonly docsLink?: string
   readonly docsLinkText?: string
-  readonly fields: AiRegistryField[]
+  readonly fields: AiProviderField[]
   readonly models: AiRegistryModel[]
   executeAsStream(
     payload: AiRegistryExecutePayload,

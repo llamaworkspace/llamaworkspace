@@ -1,11 +1,21 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
+import { UpsertAiModelKeyValues } from '@/components/ai/components/UpsertAiModelKeyValues'
 import {
   usePostConfigForChat,
   useUpdatePostConfigForStandaloneChat,
 } from '@/components/chats/chatHooks'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { useGlobalState } from '../../global/globalState'
 import { SidebarToggleIcon } from '../../sidebar/SidebarToggleIcon'
@@ -119,9 +129,32 @@ const AiModelSelector = ({ chatId }: { chatId?: string }) => {
                 )
               }}
             />
+            <div>
+              <Thing />
+            </div>
           </div>
         )
       }}
     />
+  )
+}
+
+const Thing = () => {
+  const [isOpen, setIsOpen] = useState(true)
+  return (
+    <div>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline">Models</Button>
+        </DialogTrigger>
+        <DialogContent hideCloseButton={true}>
+          <DialogHeader>
+            <DialogTitle>Parameters</DialogTitle>
+            <DialogDescription>Thingy thingy thingy</DialogDescription>
+            <UpsertAiModelKeyValues />
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </div>
   )
 }

@@ -1,4 +1,4 @@
-import { upsertAiProvider } from '@/server/ai/services/upsertProviderKVs.service'
+import { upsertAiProvider } from '@/server/ai/services/upsertProvider.service'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import {
   PrismaTrxClient,

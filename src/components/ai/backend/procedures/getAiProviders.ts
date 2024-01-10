@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 const zInput = z.object({
   workspaceId: z.string(),
+  providerSlugs: z.array(z.string()).optional(),
 })
 
 export const getAiProviders = protectedProcedure
@@ -13,5 +14,7 @@ export const getAiProviders = protectedProcedure
     return await aiProvidersFetcher.getFullAiProvidersMeta(
       input.workspaceId,
       userId,
+      undefined,
+      input.providerSlugs,
     )
   })
