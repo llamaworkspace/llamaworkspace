@@ -194,7 +194,7 @@ const _fetchModelsFromDb = async (
   userId: string,
   providerSlugs?: string[],
 ) => {
-  const aiModels = await prisma.aiProviderModel.findMany({
+  const aiModels = await prisma.aiModel.findMany({
     where: {
       aiProvider: {
         workspaceId,

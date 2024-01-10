@@ -107,7 +107,7 @@ const upsertModels = async (
   modelParamsColl: ModelParams[],
 ) => {
   await Promise.map(modelParamsColl, async (modelParams) => {
-    const existingModel = await prisma.aiProviderModel.findFirst({
+    const existingModel = await prisma.aiModel.findFirst({
       where: {
         aiProviderId: aiProvider.id,
         slug: modelParams.slug,
@@ -115,7 +115,7 @@ const upsertModels = async (
     })
 
     if (existingModel) {
-      await prisma.aiProviderModel.update({
+      await prisma.aiModel.update({
         where: {
           id: existingModel.id,
         },
@@ -124,7 +124,7 @@ const upsertModels = async (
         },
       })
     } else {
-      await prisma.aiProviderModel.create({
+      await prisma.aiModel.create({
         data: {
           aiProviderId: aiProvider.id,
           slug: modelParams.slug,
