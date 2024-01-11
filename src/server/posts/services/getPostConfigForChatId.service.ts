@@ -2,12 +2,10 @@ import { chatVisibilityFilter } from '@/components/chats/backend/chatsBackendUti
 import { postVisibilityFilter } from '@/components/posts/backend/postsBackendUtils'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
-// Todo: Remove hideEmptyMessages dependency
 export const getPostConfigForChatIdService = async function (
   prisma: PrismaClientOrTrxClient,
   chatId: string,
   userId: string,
-  hideEmptyMessages = false,
 ) {
   const chat = await prisma.chat.findFirstOrThrow({
     where: {
@@ -17,25 +15,15 @@ export const getPostConfigForChatIdService = async function (
   })
 
   if (chat.postConfigVersionId) {
-    return await getAssignedPostConfigVersion(
-      prisma,
-      chat.postConfigVersionId,
-      hideEmptyMessages,
-    )
+    return await getAssignedPostConfigVersion(prisma, chat.postConfigVersionId)
   } else {
-    return await getPostConfigVersionInProgress(
-      prisma,
-      userId,
-      chat.postId,
-      hideEmptyMessages,
-    )
+    return await getPostConfigVersionInProgress(prisma, userId, chat.postId)
   }
 }
 
 const getAssignedPostConfigVersion = async (
   prisma: PrismaClientOrTrxClient,
   postConfigVersionId: string,
-  hideEmptyMessages = false,
 ) => {
   const postConfig = await prisma.postConfigVersion.findFirstOrThrow({
     where: {
@@ -43,16 +31,6 @@ const getAssignedPostConfigVersion = async (
     },
     include: {
       messages: {
-        where: {
-          AND: [
-            {
-              message: hideEmptyMessages ? { not: '' } : undefined,
-            },
-            {
-              message: hideEmptyMessages ? { not: null } : undefined,
-            },
-          ],
-        },
         orderBy: {
           createdAt: 'asc',
         },
@@ -71,7 +49,6 @@ const getPostConfigVersionInProgress = async (
   prisma: PrismaClientOrTrxClient,
   userId: string,
   postId: string,
-  hideEmptyMessages = false,
 ) => {
   const postConfig = await prisma.postConfigVersion.findFirstOrThrow({
     where: {
@@ -85,16 +62,6 @@ const getPostConfigVersionInProgress = async (
     },
     include: {
       messages: {
-        where: {
-          AND: [
-            {
-              message: hideEmptyMessages ? { not: '' } : undefined,
-            },
-            {
-              message: hideEmptyMessages ? { not: null } : undefined,
-            },
-          ],
-        },
         orderBy: {
           createdAt: 'asc',
         },
