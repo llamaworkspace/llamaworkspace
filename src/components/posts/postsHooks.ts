@@ -193,18 +193,11 @@ export const usePostShares = (postId?: string) => {
   )
 }
 
-interface PostConfigVersionByPostIdOptions {
-  hideEmptyMessages?: boolean
-}
-
-export const useLatestPostConfigVersionForPost = (
-  postId?: string,
-  options?: PostConfigVersionByPostIdOptions,
-) => {
+export const useLatestPostConfigVersionForPost = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
   return api.posts.getLatestConfig.useQuery(
-    { postId: postId!, options },
+    { postId: postId! },
     {
       onError: errorHandler(),
       enabled: !!postId,

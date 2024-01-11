@@ -4,11 +4,6 @@ import { z } from 'zod'
 
 const zGetLatestByPostId = z.object({
   postId: z.string(),
-  options: z.optional(
-    z.object({
-      hideEmptyMessages: z.optional(z.boolean()),
-    }),
-  ),
 })
 
 export const postsConfigGetLatestForPostId = protectedProcedure
