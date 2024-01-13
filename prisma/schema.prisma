@@ -222,15 +222,16 @@ model Message {
 }
 
 model PostConfigVersion {
-    id             String    @id @default(cuid())
-    postId         String
-    post           Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-    initialMessage String?
-    model          String
-    createdAt      DateTime  @default(now())
-    updatedAt      DateTime  @updatedAt
-    chats          Chat[]
-    messages       Message[]
+    id              String            @id @default(cuid())
+    postId          String
+    post            Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+    initialMessage  String?
+    model           String
+    createdAt       DateTime          @default(now())
+    updatedAt       DateTime          @updatedAt
+    chats           Chat[]
+    messages        Message[]
+    AiModelKeyValue AiModelKeyValue[]
 }
 
 model ChatRun {
@@ -294,14 +295,16 @@ model AiModel {
 }
 
 model AiModelKeyValue {
-    id        String   @id @default(cuid())
-    aiModelId String
-    key       String
-    value     String
-    type      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    aiModel   AiModel  @relation(fields: [aiModelId], references: [id], onDelete: Cascade)
+    id                  String            @id @default(cuid())
+    aiModelId           String
+    postConfigVersionId String
+    key                 String
+    value               String
+    type                String
+    createdAt           DateTime          @default(now())
+    updatedAt           DateTime          @updatedAt
+    aiModel             AiModel           @relation(fields: [aiModelId], references: [id], onDelete: Cascade)
+    postConfigVersion   PostConfigVersion @relation(fields: [postConfigVersionId], references: [id], onDelete: Cascade)
 
-    @@unique([aiModelId, key])
+    @@unique([aiModelId, postConfigVersionId, key])
 }

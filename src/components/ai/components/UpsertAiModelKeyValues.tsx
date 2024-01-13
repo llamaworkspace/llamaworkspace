@@ -15,6 +15,9 @@ export const UpsertAiModelKeyValues = () => {
   const { mutate: updateAiModel } = useUpdateAiModel()
   const { workspace } = useCurrentWorkspace()
   const toast = useSuccessToast()
+
+  // We need a list of model params, merged with their values in postConfigVersion
+
   // TEMP, fixme
   const { data: providers } = useAiProviders(['openai'])
   const TEMP_MODEL_TO_USE = 'gpt-4-1106-preview'
