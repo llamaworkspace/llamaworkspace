@@ -12,7 +12,7 @@ export const SignIn = () => {
         <title>Sign In | Joia</title>
       </Head>
       <div className="flex min-h-full flex-1 flex-col bg-zinc-100 py-12 sm:px-6 lg:px-8">
-        <div className="mt-16 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="mb-9 mt-16 sm:mx-auto sm:w-full sm:max-w-md">
           <Image
             className="mx-auto h-10 w-auto"
             src="/images/joia_logo_red.svg"
@@ -20,9 +20,6 @@ export const SignIn = () => {
             width="47"
             height="40"
           />
-          <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-zinc-900">
-            Let&apos;s get started by identifying yourself
-          </h2>
         </div>
 
         <ContinueWithGoogle />
@@ -63,17 +60,22 @@ const ContinueWithGoogle = () => {
   }
 
   return (
-    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-      <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-        <button
-          onClick={() => void handleSignIn()}
-          className="focus-visible:button-focus-outline relative flex w-full min-w-[60px] flex-row items-center justify-center space-x-1  rounded-lg bg-white px-3 py-4 text-sm font-medium text-zinc-700 shadow ring-1 ring-black/5 transition hover:bg-zinc-50 focus:outline-none disabled:cursor-not-allowed disabled:text-zinc-400 disabled:hover:bg-white"
-        >
-          <GoogleSvg />
-          <span className="relative whitespace-nowrap text-zinc-800">
-            Continue with Google
-          </span>
-        </button>
+    <div className="sm:mx-auto sm:w-full sm:max-w-[480px]">
+      <div className="bg-white p-12 shadow sm:rounded-lg sm:px-12">
+        <h2 className="mb-4 text-center text-2xl font-bold leading-9 tracking-tight text-zinc-900">
+          Log in to continue
+        </h2>
+        <div>
+          <button
+            onClick={() => void handleSignIn()}
+            className="focus-visible:button-focus-outline relative flex w-full min-w-[60px] flex-row items-center justify-center space-x-1  rounded-lg bg-white px-3 py-4 text-sm font-medium text-zinc-700 shadow ring-1 ring-black/5 transition hover:bg-zinc-50 focus:outline-none disabled:cursor-not-allowed disabled:text-zinc-400 disabled:hover:bg-white"
+          >
+            <GoogleSvg />
+            <span className="relative whitespace-nowrap text-zinc-800">
+              Continue with Google
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   )
