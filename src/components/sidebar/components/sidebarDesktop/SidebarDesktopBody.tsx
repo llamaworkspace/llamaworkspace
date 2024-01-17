@@ -158,8 +158,7 @@ export function SidebarDesktopBody() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs">
-                      Creates a new shared chatbot that everyone in your
-                      workspace can use
+                      Create a chatbot that everyone in your workspace can use
                     </TooltipContent>
                   </Tooltip>
                 </div>
