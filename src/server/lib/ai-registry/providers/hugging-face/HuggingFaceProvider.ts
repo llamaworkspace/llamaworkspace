@@ -24,10 +24,10 @@ export const HuggingFaceProvider = () => {
       options: HuggingFaceExecuteOptions,
     ) => {
       const Hf = new HfInference(options.apiKey)
-
+      console.log('been here')
       const response = Hf.textGenerationStream({
-        // model: 'meta-llama/Llama-2-7b-chat-hf',
-        model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
+        model: 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO',
+        // model: 'microsoft/phi-2',
         inputs: experimental_buildOpenAssistantPrompt(payload.messages),
         parameters: {
           max_new_tokens: 200,

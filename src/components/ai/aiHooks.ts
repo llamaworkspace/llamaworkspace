@@ -16,6 +16,19 @@ export const useAiProviders = () => {
   )
 }
 
+export const useAiProvidersV2 = () => {
+  const { workspace } = useCurrentWorkspace()
+  const errorHandler = useErrorHandler()
+
+  return api.ai.getAiProvidersV2.useQuery(
+    { workspaceId: workspace?.id! },
+    {
+      enabled: !!workspace?.id,
+      onError: errorHandler(),
+    },
+  )
+}
+
 export const useUpdateAiProvider = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
