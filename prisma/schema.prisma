@@ -48,25 +48,24 @@ model VerificationToken {
 }
 
 model User {
-    id                 String              @id @default(cuid())
-    name               String?
-    username           String?             @unique
-    email              String?             @unique
-    emailVerified      DateTime?
-    image              String?
-    defaultModel       String?
-    createdAt          DateTime            @default(now())
-    updatedAt          DateTime            @updatedAt
-    accounts           Account[]
-    posts              Post[]
-    sessions           Session[]
-    postShares         PostShare[]
-    transactionEntries TransactionEntry[]
-    invites            Invite[]
-    workspaces         UsersOnWorkspaces[]
-    authoredChats      Chat[]
-    PostSort           PostSort[]
-    WorkspaceInvite    WorkspaceInvite[]
+    id              String              @id @default(cuid())
+    name            String?
+    username        String?             @unique
+    email           String?             @unique
+    emailVerified   DateTime?
+    image           String?
+    defaultModel    String?
+    createdAt       DateTime            @default(now())
+    updatedAt       DateTime            @updatedAt
+    accounts        Account[]
+    posts           Post[]
+    sessions        Session[]
+    postShares      PostShare[]
+    invites         Invite[]
+    workspaces      UsersOnWorkspaces[]
+    authoredChats   Chat[]
+    PostSort        PostSort[]
+    WorkspaceInvite WorkspaceInvite[]
 }
 
 model Workspace {
@@ -78,7 +77,6 @@ model Workspace {
     updatedAt             DateTime            @updatedAt
     users                 UsersOnWorkspaces[]
     posts                 Post[]
-    transactions          Transaction[]
     postSorts             PostSort[]
     workspaceInvites      WorkspaceInvite[]
     aiProvider            AiProvider[]
@@ -107,30 +105,6 @@ model WorkspaceInvite {
     updatedAt   DateTime  @updatedAt
 
     @@unique([email, workspaceId])
-}
-
-model Transaction {
-    id                 String             @id @default(cuid())
-    trxDate            DateTime
-    workspaceId        String?
-    description        String?
-    createdAt          DateTime           @default(now())
-    updatedAt          DateTime           @updatedAt
-    transactionEntries TransactionEntry[]
-    workspace          Workspace?         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-}
-
-model TransactionEntry {
-    id                String      @id @default(cuid())
-    transactionId     String
-    account           String
-    type              String
-    amountInNanoCents BigInt
-    userId            String?
-    createdAt         DateTime    @default(now())
-    updatedAt         DateTime    @updatedAt
-    user              User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
-    transaction       Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 }
 
 model Post {
