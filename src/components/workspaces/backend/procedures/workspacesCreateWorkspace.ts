@@ -13,6 +13,5 @@ export const workspacesCreateWorkspace = protectedProcedure
       id: workspace.id,
       name: workspace.name,
       isOnboardingCompleted: workspace.isOnboardingCompleted,
-      balanceInCents: Number(workspace.balanceInNanoCents) / 10_000_000,
     }
   })

@@ -19,7 +19,6 @@ export const workspacesGetWorkspace = protectedProcedure
       select: {
         id: true,
         name: true,
-        balanceInNanoCents: true,
         isOnboardingCompleted: true,
       },
       where: {
@@ -30,7 +29,5 @@ export const workspacesGetWorkspace = protectedProcedure
 
     return {
       ...workspace,
-      balanceInCents: Number(workspace.balanceInNanoCents) / 10_000_000,
-      balanceInNanoCents: undefined,
     }
   })

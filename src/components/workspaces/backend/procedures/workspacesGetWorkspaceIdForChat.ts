@@ -21,7 +21,6 @@ export const workspacesGetWorkspaceIdForChat = protectedProcedure
               select: {
                 id: true,
                 name: true,
-                balanceInNanoCents: true,
                 isOnboardingCompleted: true,
               },
             },
@@ -43,9 +42,5 @@ export const workspacesGetWorkspaceIdForChat = protectedProcedure
       )
     }
 
-    return {
-      ...workspace,
-      balanceInCents: Number(workspace.balanceInNanoCents) / 10_000_000,
-      balanceInNanoCents: undefined,
-    }
+    return workspace
   })

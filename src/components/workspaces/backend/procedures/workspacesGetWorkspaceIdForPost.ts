@@ -19,7 +19,6 @@ export const workspacesGetWorkspaceIdForPost = protectedProcedure
           select: {
             id: true,
             name: true,
-            balanceInNanoCents: true,
             isOnboardingCompleted: true,
           },
         },
@@ -30,9 +29,5 @@ export const workspacesGetWorkspaceIdForPost = protectedProcedure
       },
     })
 
-    return {
-      ...post.workspace,
-      balanceInCents: Number(post.workspace.balanceInNanoCents) / 10_000_000,
-      balanceInNanoCents: undefined,
-    }
+    return post.workspace
   })
