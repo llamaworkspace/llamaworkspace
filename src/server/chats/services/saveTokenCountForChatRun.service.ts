@@ -5,7 +5,7 @@ import { encode } from 'gpt-tokenizer'
 import { chunk, isNull } from 'underscore'
 import { getTokenCostInNanoCents } from '../chatUtils'
 
-export const doTokenCountForChatRun = async (
+export const saveTokenCountForChatRun = async (
   prisma: PrismaClientOrTrxClient,
   chatRunId: string,
 ) => {

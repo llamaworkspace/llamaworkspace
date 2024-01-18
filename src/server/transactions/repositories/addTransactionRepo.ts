@@ -113,7 +113,7 @@ interface AddTransactionRepoInput {
   description?: string
 }
 
-export const addTransactionRepo = async (
+export const DELME_addTransactionRepo = async (
   prisma: PrismaClientOrTrxClient,
   input: AddTransactionRepoInput,
 ) => {

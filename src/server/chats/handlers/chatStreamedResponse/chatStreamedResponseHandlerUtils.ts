@@ -1,35 +1,10 @@
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
-import { addTransactionRepo } from '@/server/transactions/repositories/addTransactionRepo'
-import { TrxAccount } from '@/server/transactions/transactionTypes'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import type { PrismaTrxClient } from '@/shared/globalTypes'
 import type { PrismaClient } from '@prisma/client'
 import type { NextApiResponse } from 'next'
 import OpenAI, { type ClientOptions } from 'openai'
-import { getTokenCostInNanoCents } from '../../chatUtils'
-
-export const registerTransaction = async (
-  prisma: PrismaClient,
-  workspaceId: string,
-  userId: string,
-  chatRunId: string,
-  costInNanoCents: number,
-) => {
-  await addTransactionRepo(prisma, {
-    workspaceId,
-    userId,
-    from: {
-      account: TrxAccount.WorkspaceBalance,
-      amountInNanoCents: costInNanoCents,
-    },
-    to: {
-      account: TrxAccount.UserCreditsUse,
-      amountInNanoCents: costInNanoCents,
-    },
-    description: `chatRunId ${chatRunId}`,
-  })
-}
 
 export const handleChatTitleCreate = async (
   prisma: PrismaClient,
@@ -100,42 +75,6 @@ export const handleChatTitleCreate = async (
 
   if (!message) return
   const finalTitle = message.content?.replaceAll(`"`, ``)
-
-  let costInNanoCents = 0
-
-  if (aiResponse.usage) {
-    const requestCost =
-      getTokenCostInNanoCents(
-        aiResponse.usage.prompt_tokens,
-        'request',
-        'openai',
-        model,
-      ) ?? 0
-
-    const responseCost =
-      getTokenCostInNanoCents(
-        aiResponse.usage.completion_tokens,
-        'response',
-        'openai',
-        model,
-      ) ?? 0
-
-    costInNanoCents = requestCost + responseCost
-  }
-
-  await addTransactionRepo(prisma, {
-    workspaceId,
-    userId,
-    from: {
-      account: TrxAccount.WorkspaceBalance,
-      amountInNanoCents: costInNanoCents,
-    },
-    to: {
-      account: TrxAccount.UserCreditsUse,
-      amountInNanoCents: costInNanoCents,
-    },
-    description: `Title for chatId ${chatId}`,
-  })
 
   if (content) {
     await prisma.chat.update({
