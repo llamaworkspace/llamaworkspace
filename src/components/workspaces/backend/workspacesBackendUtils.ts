@@ -4,7 +4,6 @@ export const zodWorkspaceOutput = z.object({
   id: z.string(),
   name: z.string().nullable(),
   isOnboardingCompleted: z.boolean(),
-  balanceInCents: z.number(),
 })
 
 export enum WorkspaceMemberRole {

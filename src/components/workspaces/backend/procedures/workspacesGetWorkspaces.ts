@@ -9,21 +9,14 @@ export const workspacesGetWorkspaces = protectedProcedure
   .query(async ({ ctx }) => {
     const userId = ctx.session.user.id
 
-    const workspaces = await ctx.prisma.workspace.findMany({
+    return await ctx.prisma.workspace.findMany({
       select: {
         id: true,
         name: true,
-        balanceInNanoCents: true,
         isOnboardingCompleted: true,
       },
       where: {
         ...workspaceVisibilityFilter(userId),
       },
     })
-
-    return workspaces.map((workspace) => ({
-      ...workspace,
-      balanceInCents: Number(workspace.balanceInNanoCents) / 10_000_000,
-      balanceInNanoCents: undefined,
-    }))
   })

@@ -18,11 +18,10 @@ import createHttpError from 'http-errors'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { chain } from 'underscore'
-import { doTokenCountForChatRun } from '../../services/doTokenCountForChatRun.service'
+import { saveTokenCountForChatRun } from '../../services/saveTokenCountForChatRun.service'
 import {
   chatStreamToResponse,
   handleChatTitleCreate,
-  registerTransaction,
 } from './chatStreamedResponseHandlerUtils'
 
 interface VoidIncomingMessage {
@@ -95,24 +94,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const onFinal = async (final: string) => {
       await updateMessage(assistantTargetMessage.id, final)
-
-      const nextChatRun = await doTokenCountForChatRun(prisma, chatRun.id)
-
-      const requestTokensCostInNanoCents =
-        nextChatRun.requestTokensCostInNanoCents ?? 0
-      const responseTokensCostInNanoCents =
-        nextChatRun.responseTokensCostInNanoCents ?? 0
-
-      const costInNanoCents =
-        requestTokensCostInNanoCents + responseTokensCostInNanoCents
-
-      await registerTransaction(
-        prisma,
-        workspaceId,
-        userId,
-        nextChatRun.id,
-        costInNanoCents,
-      )
+      await saveTokenCountForChatRun(prisma, chatRun.id)
     }
 
     const onToken = (token: string) => {
