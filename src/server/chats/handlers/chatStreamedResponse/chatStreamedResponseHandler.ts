@@ -179,10 +179,10 @@ const validateModelIsEnabledOrThrow = async (
     workspaceId,
     userId,
   )
-  const [providerSlug, ...rest] = fullSlug.split('/')
-  const modelName = rest.join('/')
+  const { provider: providerName, model: modelName } =
+    getProviderAndModelFromFullSlug(fullSlug)
   const provider = providersMeta.find(
-    (providerMeta) => providerMeta.slug === providerSlug,
+    (providerMeta) => providerMeta.slug === providerName,
   )
   if (!provider) throw new Error('Provider not found')
   const targetModel = provider.models.find((model) => model.slug === modelName)

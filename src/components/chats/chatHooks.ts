@@ -285,7 +285,7 @@ export const useShouldDisplayEmptySettingsAlert = (
   const hasMessages = messages && messages.length > 0
   const isDismissed = post && post.hideEmptySettingsAlert
 
-  if (postConfig) {
+  if (postConfig && post) {
     if (
       !postConfig.initialMessage &&
       !postConfig.systemMessage &&
