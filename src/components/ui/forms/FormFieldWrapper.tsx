@@ -31,7 +31,7 @@ const FormLabel = ({
       {children}
       {isRequired && (
         <Badge
-          variant="yellow"
+          variant="secondary"
           size="xs"
           className="ml-1 px-1 py-0 text-[11px]"
         >

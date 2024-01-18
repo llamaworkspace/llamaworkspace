@@ -25,7 +25,7 @@ export function Settings({ tab }: { tab: string }) {
         <TabsList className="max-w-[400px]x mb-12 grid w-full grid-cols-3">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="members">Members</TabsTrigger>
-          <TabsTrigger value="providers">AI Providers</TabsTrigger>
+          <TabsTrigger value="models">AI Models</TabsTrigger>
         </TabsList>
         <TabsContent value="general">
           <SettingsName />
@@ -33,7 +33,7 @@ export function Settings({ tab }: { tab: string }) {
         <TabsContent value="members">
           <SettingsMembers />
         </TabsContent>
-        <TabsContent value="providers">
+        <TabsContent value="models">
           <SettingsAiProviders />
         </TabsContent>
       </Tabs>

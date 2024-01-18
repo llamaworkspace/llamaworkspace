@@ -3,7 +3,6 @@ import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import Promise from 'bluebird'
 import { encode } from 'gpt-tokenizer'
 import { chunk, isNull } from 'underscore'
-import { getTokenCostInNanoCents } from '../chatUtils'
 
 export const saveTokenCountForChatRun = async (
   prisma: PrismaClientOrTrxClient,
@@ -65,20 +64,14 @@ export const saveTokenCountForChatRun = async (
   if (!chatRun.chat.postConfigVersion) {
     throw new Error('ChatRun should have a postConfigVersion')
   }
-  const model = chatRun.chat.postConfigVersion.model
-
-  const requestTokensCostInNanoCents =
-    getTokenCostInNanoCents(requestTokens, 'request', 'openai', model) ?? 0
-  const responseTokensCostInNanoCents =
-    getTokenCostInNanoCents(responseTokens, 'response', 'openai', model) ?? 0
 
   return await prisma.chatRun.update({
     where: { id: chatRun.id },
     data: {
       requestTokens,
       responseTokens,
-      requestTokensCostInNanoCents,
-      responseTokensCostInNanoCents,
+      requestTokensCostInNanoCents: 0,
+      responseTokensCostInNanoCents: 0,
     },
   })
 }

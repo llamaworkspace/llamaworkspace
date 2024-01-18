@@ -7,7 +7,6 @@ import {
   AlertTitle,
 } from '@/components/ui/alert'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
-import { useEffect, useState } from 'react'
 import { useShouldDisplayEmptySettingsAlert } from '../chatHooks'
 
 interface ChatNoSettingsAlertProps {
@@ -22,19 +21,13 @@ export const ChatNoSettingsAlert = ({
   const href = `/p/${postId}/c/${chatId}/configuration?focus=system_message`
   const shouldDisplay = useShouldDisplayEmptySettingsAlert(postId, chatId)
   const { mutate: updatePost } = useUpdatePost()
-  const [isVisible, setIsVisible] = useState(shouldDisplay)
-
-  useEffect(() => {
-    setIsVisible(shouldDisplay)
-  }, [shouldDisplay])
 
   const handleDismiss = () => {
     if (!postId) return
     updatePost({ id: postId, hideEmptySettingsAlert: true })
-    setIsVisible(false)
   }
 
-  if (!isVisible) return null
+  if (!shouldDisplay) return null
 
   return (
     <div className="space-y-4">

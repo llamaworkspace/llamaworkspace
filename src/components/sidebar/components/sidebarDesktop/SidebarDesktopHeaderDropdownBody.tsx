@@ -80,10 +80,10 @@ export function SidebarDesktopHeaderDropdownBody() {
         tab: 'members',
       })
     : '#'
-  const workspaceProvidersLink = workspace?.id
+  const workspaceModelsLink = workspace?.id
     ? navigation.buildPath('/w/:workspaceId/settings/:tab', {
         workspaceId: workspace.id,
-        tab: 'providers',
+        tab: 'models',
       })
     : '#'
 
@@ -106,10 +106,10 @@ export function SidebarDesktopHeaderDropdownBody() {
           Members
         </DropdownMenuItemLink>
         <DropdownMenuItemLink
-          href={workspaceProvidersLink}
+          href={workspaceModelsLink}
           disabled={!workspace?.id}
         >
-          AI providers
+          AI models
         </DropdownMenuItemLink>
       </DropdownMenuGroup>
 
