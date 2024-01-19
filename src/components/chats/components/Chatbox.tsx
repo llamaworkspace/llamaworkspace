@@ -5,7 +5,7 @@ import { useEnterSubmit } from '@/lib/frontend/useEnterSubmit'
 import { cn } from '@/lib/utils'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { ArrowRightCircleIcon, DocumentIcon } from '@heroicons/react/24/outline'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import _ from 'underscore'
 import { useCreateChat, useMessages, usePrompt } from '../chatHooks'
 
@@ -30,18 +30,10 @@ export function Chatbox({
   const { formRef, onKeyDown } = useEnterSubmit()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const divRef = useRef<HTMLDivElement>(null)
-  const [height, __setHeight] = useState(24) // __setHeight do not use directly
+  const [height, setHeight] = useState(24)
   const [value, setValue] = useState('')
   const { data: messages } = useMessages(chatId)
   const { mutate: runPrompt, isLoading } = usePrompt(chatId)
-
-  const setHeight = useCallback(
-    (height: number) => {
-      stableOnChatboxHeightChange?.(height)
-      __setHeight(height)
-    },
-    [stableOnChatboxHeightChange],
-  )
 
   const { mutate: createChat } = useCreateChat()
   const canCreateChat = useCanCreateChat(postId, chatId)
@@ -100,11 +92,8 @@ export function Chatbox({
     return 'Continue chatting...'
   })()
 
-  let trackingDivValue = value.replace(/\n/g, '<br />')
+  const trackingDivValue = value.replace(/\n$/, '\n\u00A0')
 
-  if (trackingDivValue.endsWith('<br />') || trackingDivValue === '') {
-    trackingDivValue += '&nbsp;'
-  }
   const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault()
     if (!chatId) return
@@ -157,7 +146,7 @@ export function Chatbox({
                 className={cn(
                   'm-0 h-auto w-full resize-none overflow-y-auto p-0 text-zinc-900 outline-none focus:ring-0 focus-visible:ring-0',
                   canUse === false && 'cursor-not-allowed bg-zinc-100',
-                  _.isNull(canUse) && 'cursor-not-allowed bg-white',
+                  _.isNull(canUse) && 'cursor-not-allowed bg-blue-200',
                 )}
                 style={{ maxHeight: height, height }}
                 onChange={handleChange}
@@ -166,14 +155,15 @@ export function Chatbox({
               />
               <div
                 ref={divRef}
-                // Todo: Check for possible XSS
-                dangerouslySetInnerHTML={{
-                  __html: trackingDivValue,
-                }}
                 // Keep this and use for debugging the shadow textarea
-                // className="t-[90px] l-0 r-0 absolute w-full bg-pink-50"
+                // className="absolute left-0 right-0 top-[-220px] overflow-hidden bg-pink-50"
                 className="absolute h-0 max-h-0 overflow-hidden"
-              ></div>
+                style={{
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {trackingDivValue}
+              </div>
             </div>
             <div className="self-end">
               <Button
