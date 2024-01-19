@@ -146,7 +146,7 @@ export function Chatbox({
                 className={cn(
                   'm-0 h-auto w-full resize-none overflow-y-auto p-0 text-zinc-900 outline-none focus:ring-0 focus-visible:ring-0',
                   canUse === false && 'cursor-not-allowed bg-zinc-100',
-                  _.isNull(canUse) && 'cursor-not-allowed bg-blue-200',
+                  _.isNull(canUse) && 'cursor-not-allowed bg-white',
                 )}
                 style={{ maxHeight: height, height }}
                 onChange={handleChange}
