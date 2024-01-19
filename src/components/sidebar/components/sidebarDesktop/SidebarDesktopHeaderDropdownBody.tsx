@@ -22,6 +22,8 @@ function SidebarDesktopHeaderWorkspacesDropdownSub() {
   const { workspace: currentWorkspace } = useCurrentWorkspace()
   const { data: workspaces } = useWorkspaces()
 
+  if (!workspaces || workspaces.length < 2) return null
+
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger className="italic">
