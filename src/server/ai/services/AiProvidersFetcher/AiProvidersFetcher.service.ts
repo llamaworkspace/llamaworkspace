@@ -129,7 +129,7 @@ export class AiProvidersFetcherService {
     provider: MergedProviderAndKVs,
     providerDbData: ModelsDataFromDb['0'],
   ) {
-    const providerIsCorrectlySetup = this.isProviderCorrectlySetup(provider)
+    const isProviderCorrectlySetup = this.isProviderCorrectlySetup(provider)
 
     return provider.models.map((model) => {
       const dbModelData = providerDbData.find(
@@ -139,7 +139,7 @@ export class AiProvidersFetcherService {
         ...model,
         fullSlug: `${provider.slug}/${model.slug}`,
         fullPublicName: `${provider.publicName} > ${model.publicName}`,
-        isSetupOk: providerIsCorrectlySetup && !!dbModelData?.isEnabled,
+        isSetupOk: isProviderCorrectlySetup && !!dbModelData?.isEnabled,
         isEnabled: !!dbModelData?.isEnabled,
       }
     })
