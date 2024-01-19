@@ -138,7 +138,7 @@ export class AiProvidersFetcherService {
       return {
         ...model,
         fullSlug: `${provider.slug}/${model.slug}`,
-        fullPublicName: `${provider.publicName} > ${model.publicName}`,
+        fullPublicName: model.publicName,
         isSetupOk: providerIsCorrectlySetup && !!dbModelData?.isEnabled,
         isEnabled: !!dbModelData?.isEnabled,
       }
