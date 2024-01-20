@@ -20,6 +20,7 @@ export interface AiRegistryProvider {
   readonly publicName: string
   readonly docsLink?: string
   readonly docsLinkText?: string
+  readonly hasFallbackCredentials?: boolean
   readonly fields: AiRegistryField[]
   readonly models: AiRegistryModel[]
   executeAsStream(

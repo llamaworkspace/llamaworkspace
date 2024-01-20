@@ -7,7 +7,14 @@ import type {
   OpenAiProviderType,
 } from './lib/openAiProviderTypes'
 
-export const OpenAiProvider: () => OpenAiProviderType = () => {
+interface OpenaAiProviderParams {
+  fallbackApiKey?: string
+  fallbackBaseUrl?: string
+}
+
+export const OpenAiProvider = (
+  params?: OpenaAiProviderParams,
+): OpenAiProviderType => {
   return {
     slug: 'openai' as const,
     publicName: 'OpenAI' as const,
@@ -37,11 +44,15 @@ export const OpenAiProvider: () => OpenAiProviderType = () => {
       hackedValidateModelExists(payload.model)
 
       const openAiClientPayload: ClientOptions = {
-        apiKey: options.apiKey,
+        apiKey: options.apiKey || params?.fallbackApiKey,
       }
 
       if (options?.baseUrl) {
         openAiClientPayload.baseURL = options?.baseUrl
+      }
+
+      if (params?.fallbackBaseUrl && !openAiClientPayload.baseURL) {
+        openAiClientPayload.baseURL = params?.fallbackBaseUrl
       }
 
       const openai = new OpenAI(openAiClientPayload)
@@ -59,6 +70,7 @@ export const OpenAiProvider: () => OpenAiProviderType = () => {
 
       return stream
     },
+    hasFallbackCredentials: !!params?.fallbackApiKey,
   }
 }
 const hackedValidateModelExists = (modelName: string) => {

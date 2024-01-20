@@ -146,7 +146,7 @@ export class AiProvidersFetcherService {
   }
 
   private isProviderCorrectlySetup(provider: MergedProviderAndKVs) {
-    return !provider.hasMissingFields
+    return !provider.hasMissingFields || provider.hasFallbackCredentials
   }
 }
 
