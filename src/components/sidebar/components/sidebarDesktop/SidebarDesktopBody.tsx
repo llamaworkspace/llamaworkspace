@@ -1,8 +1,6 @@
 import { useCreateStandaloneChat } from '@/components/chats/chatHooks'
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { useCreatePost } from '@/components/posts/postsHooks'
-import { StyledLink } from '@/components/ui/StyledLink'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -18,11 +16,7 @@ import {
   InformationCircleIcon,
 } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import {
-  usePostsForSidebar,
-  useShouldDisplayAddOpenAiKeysAlert,
-  useStandaloneChats,
-} from '../../sidebarHooks'
+import { usePostsForSidebar, useStandaloneChats } from '../../sidebarHooks'
 import { SidebarDesktopInfoCards } from './SidebarDesktopInfoCards'
 import { SidebarDesktopLineItemForChatApp } from './SidebarDesktopLineItemForChatApp'
 import { SidebarDesktopLineItemForSingleChat } from './SidebarDesktopLineItemForSingleChat'
@@ -36,7 +30,6 @@ export function SidebarDesktopBody() {
   // maybe an ad-hoc query!
   const { sortedPosts } = usePostsForSidebar(workspace?.id)
   const navigation = useNavigation()
-  const shouldDisplayAddOpenAiKeysAlert = useShouldDisplayAddOpenAiKeysAlert()
 
   const [seeMore, setSeeMore] = useState(false)
 
@@ -52,7 +45,6 @@ export function SidebarDesktopBody() {
     setSeeMore(!seeMore)
   }
 
-  const settingsUrl = `/w/${workspace?.id}/settings/providers?focus=openai_api_key`
   const zeroSortedPosts = sortedPosts?.length === 0
   const onlyDefaultPost = !!(
     sortedPosts?.length === 1 && sortedPosts[0]?.isDemo
@@ -63,18 +55,6 @@ export function SidebarDesktopBody() {
       <div className="relative flex grow overflow-y-auto">
         <nav className="absolute bottom-0 left-0 right-0 top-0 flex grow flex-col overflow-y-auto px-4 py-6">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
-            {shouldDisplayAddOpenAiKeysAlert && (
-              <li>
-                <Alert variant="fuchsia">
-                  <AlertDescription className="space-y-1 text-xs">
-                    <p>Add an OpenAI API key to continue using Joia.</p>
-                    <p>
-                      <StyledLink href={settingsUrl}>Add key</StyledLink>
-                    </p>
-                  </AlertDescription>
-                </Alert>
-              </li>
-            )}
             <li>
               <div className="flex items-center justify-between">
                 <div className="text-xs font-semibold uppercase leading-6 text-zinc-400">

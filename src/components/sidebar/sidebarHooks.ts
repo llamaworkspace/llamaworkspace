@@ -1,6 +1,5 @@
 import { api } from '@/lib/api'
-import { useCallback, useMemo } from 'react'
-import { useAiProviders } from '../ai/aiHooks'
+import { useCallback } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useDefaultPost } from '../posts/postsHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
@@ -107,18 +106,4 @@ export const useInfoCardForSidebar = () => {
 export const useStandaloneChats = () => {
   const { data: post } = useDefaultPost()
   return useChatHistoryForSidebarPost(post?.id)
-}
-
-export const useShouldDisplayAddOpenAiKeysAlert = () => {
-  const { data: providers } = useAiProviders()
-  const displayAlert = useMemo(() => {
-    if (!providers) return false
-
-    const openai = providers.find((provider) => provider.slug === 'openai')
-    if (!openai) return false
-
-    return !openai.providerValues.apiKey
-  }, [providers])
-
-  return displayAlert
 }
