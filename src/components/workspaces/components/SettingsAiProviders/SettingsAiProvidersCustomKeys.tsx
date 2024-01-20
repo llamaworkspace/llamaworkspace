@@ -1,5 +1,6 @@
 import { useAiProviders, useUpdateAiProvider } from '@/components/ai/aiHooks'
 import { StyledLink } from '@/components/ui/StyledLink'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -16,7 +17,6 @@ import { Field, Form as FinalForm } from 'react-final-form'
 import _, { groupBy, mapObject } from 'underscore'
 import { useCurrentWorkspace } from '../../workspacesHooks'
 import { SettingsAiProvidersModelsTable } from './SettingsAiProvidersModelsTable'
-
 type PartialFormValuesForModels = Record<
   'models',
   Record<string, { enabled: boolean }>
@@ -115,6 +115,12 @@ export const SettingsAiProvidersCustomKeys = () => {
             onSubmit={handleFormSubmit(provider.slug)}
             initialValues={initialValues?.[provider.slug]}
             render={({ handleSubmit }) => {
+              const isOpenAi = provider.slug === 'openai'
+              const showOpenAiDefaultKeysAlert =
+                isOpenAi &&
+                provider.hasFallbackCredentials &&
+                provider.hasMissingFields
+
               return (
                 <Card key={provider.slug}>
                   <CardHeader>
@@ -132,26 +138,25 @@ export const SettingsAiProvidersCustomKeys = () => {
                     )}
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <div className="space-y-2">
-                      <div className="space-y-4 py-2">
-                        {provider.fields.map((field) => {
-                          return (
-                            <Field
-                              key={field.slug}
-                              name={field.slug}
-                              render={({ input }) => {
-                                return (
-                                  <InputField
-                                    {...input}
-                                    label={field.publicName}
-                                    required={field.required}
-                                  />
-                                )
-                              }}
-                            />
-                          )
-                        })}
-                      </div>
+                    {showOpenAiDefaultKeysAlert && <DefaultOpenAiKeyAlert />}
+                    <div className="space-y-4 py-2">
+                      {provider.fields.map((field) => {
+                        return (
+                          <Field
+                            key={field.slug}
+                            name={field.slug}
+                            render={({ input }) => {
+                              return (
+                                <InputField
+                                  {...input}
+                                  label={field.publicName}
+                                  required={field.required}
+                                />
+                              )
+                            }}
+                          />
+                        )
+                      })}
 
                       <SettingsAiProvidersModelsTable
                         models={provider.models}
@@ -170,5 +175,17 @@ export const SettingsAiProvidersCustomKeys = () => {
         )
       })}
     </div>
+  )
+}
+
+const DefaultOpenAiKeyAlert = () => {
+  return (
+    <Alert variant="fuchsia">
+      <AlertTitle>Default OpenAI keys being used</AlertTitle>
+      <AlertDescription>
+        Since you haven&apos;t set up the OpenAI API credentials here, Joia will
+        use the OpenAI API keys defined in the environment variables.
+      </AlertDescription>
+    </Alert>
   )
 }
