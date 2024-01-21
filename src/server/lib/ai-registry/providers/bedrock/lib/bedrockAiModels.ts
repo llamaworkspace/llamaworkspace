@@ -38,16 +38,8 @@ export const bedrockAiModels: AiRegistryModel[] = [
       max_tokens_to_sample: 4096,
     },
   },
-  // {
-  //   slug: 'cohere.command-text-v14' as const,
-  //   publicName: 'Cohere Command' as const,
-  // },
-  // {
-  //   slug: 'cohere.command-light-text-v14' as const,
-  //   publicName: 'Cohere Command Light' as const,
-  // },
-  // {
-  //   slug: 'amazon.titan-text-express-v1' as const,
-  //   publicName: 'Amazon Tital Text G1 - Express' as const,
-  // },
+  {
+    slug: 'cohere.command-text-v14' as const,
+    publicName: 'Cohere Command' as const,
+  },
 ]

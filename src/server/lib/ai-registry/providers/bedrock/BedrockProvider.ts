@@ -3,10 +3,15 @@ import {
   InvokeModelWithResponseStreamCommand,
   type InvokeModelWithResponseStreamCommandOutput,
 } from '@aws-sdk/client-bedrock-runtime'
-import { AWSBedrockAnthropicStream, AWSBedrockLlama2Stream } from 'ai'
+import {
+  AWSBedrockAnthropicStream,
+  AWSBedrockCohereStream,
+  AWSBedrockLlama2Stream,
+} from 'ai'
 import {
   experimental_buildAnthropicPrompt,
   experimental_buildLlama2Prompt,
+  experimental_buildOpenAssistantPrompt,
 } from 'ai/prompts'
 import type {
   AiRegistryExecutePayload,
@@ -85,8 +90,9 @@ export const BedrockProvider: () => AiRegistryProvider = () => {
 
 const getAiModel = (modelSlug: string) => {
   const aiModel = bedrockAiModels.find((model) => model.slug === modelSlug)
+  console.log(1, bedrockAiModels, aiModel)
   if (!aiModel) {
-    throw new Error(`Unknown model slug: ${modelSlug}`)
+    throw new Error(`Could not get AiModel. Unknown slug: ${modelSlug}`)
   }
   return aiModel
 }
@@ -98,7 +104,10 @@ const getLLMProviderFromBedrockModelSlug = (modelSlug: string) => {
   if (modelSlug.includes('anthropic')) {
     return 'anthropic'
   }
-  throw new Error(`Unknown model slug: ${modelSlug}`)
+  if (modelSlug.includes('cohere')) {
+    return 'cohere'
+  }
+  throw new Error(`Cannot recognize this model name: ${modelSlug}`)
 }
 
 type LlmProvider = ReturnType<typeof getLLMProviderFromBedrockModelSlug>
@@ -113,6 +122,10 @@ const buildPrompt = (
 
   if (llmProvider === 'llama2') {
     return experimental_buildLlama2Prompt(messages)
+  }
+
+  if (llmProvider === 'cohere') {
+    return experimental_buildOpenAssistantPrompt(messages)
   }
 }
 
@@ -130,6 +143,13 @@ const getStream = (
 
   if (llmProvider === 'llama2') {
     return AWSBedrockLlama2Stream(bedrockResponse, {
+      onToken: payload?.onToken,
+      onFinal: payload?.onFinal,
+    })
+  }
+
+  if (llmProvider === 'cohere') {
+    return AWSBedrockCohereStream(bedrockResponse, {
       onToken: payload?.onToken,
       onFinal: payload?.onFinal,
     })
