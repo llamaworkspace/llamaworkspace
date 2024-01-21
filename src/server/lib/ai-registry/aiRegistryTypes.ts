@@ -6,6 +6,7 @@ export interface AiRegistryModel {
     readonly request: number
     readonly response: number
   }
+  readonly defaultPayload?: Record<string, string | number>
 }
 
 export interface AiRegistryField {

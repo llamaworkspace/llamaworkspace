@@ -1,11 +1,21 @@
 import {
   BedrockRuntimeClient,
   InvokeModelWithResponseStreamCommand,
+  type InvokeModelWithResponseStreamCommandOutput,
 } from '@aws-sdk/client-bedrock-runtime'
-import { AWSBedrockLlama2Stream } from 'ai'
-import { experimental_buildLlama2Prompt } from 'ai/prompts'
+import {
+  AWSBedrockAnthropicStream,
+  AWSBedrockCohereStream,
+  AWSBedrockLlama2Stream,
+} from 'ai'
+import {
+  experimental_buildAnthropicPrompt,
+  experimental_buildLlama2Prompt,
+  experimental_buildOpenAssistantPrompt,
+} from 'ai/prompts'
 import type {
   AiRegistryExecutePayload,
+  AiRegistryMessage,
   AiRegistryProvider,
 } from '../../aiRegistryTypes'
 import { bedrockAiModels } from './lib/bedrockAiModels'
@@ -16,7 +26,7 @@ interface BedrockExecuteOptions {
   awsRegion?: string
 }
 
-export const BedrockProvider: () => AiRegistryProvider = () => {
+export const BedrockProvider = (): AiRegistryProvider => {
   return {
     slug: 'bedrock' as const,
     publicName: 'Amazon Bedrock' as const,
@@ -54,6 +64,11 @@ export const BedrockProvider: () => AiRegistryProvider = () => {
         },
       })
 
+      const aiModel = getAiModel(payload.model)
+      const defaultPayload = aiModel.defaultPayload ?? {}
+
+      const llmProvider = getLLMProviderFromBedrockModelSlug(payload.model)
+
       // Inference parameters:
       // https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html
       const bedrockResponse = await bedrockClient.send(
@@ -62,17 +77,83 @@ export const BedrockProvider: () => AiRegistryProvider = () => {
           contentType: 'application/json',
           accept: 'application/json',
           body: JSON.stringify({
-            prompt: experimental_buildLlama2Prompt(payload.messages),
-            // max_gen_len: 300,
+            prompt: buildPrompt(llmProvider, payload.messages),
+            ...defaultPayload,
           }),
         }),
       )
 
-      const stream = AWSBedrockLlama2Stream(bedrockResponse, {
-        onToken: payload?.onToken,
-        onFinal: payload?.onFinal,
-      })
-      return stream
+      return getStream(llmProvider, bedrockResponse, payload)
     },
   }
+}
+
+const getAiModel = (modelSlug: string) => {
+  const aiModel = bedrockAiModels.find((model) => model.slug === modelSlug)
+
+  if (!aiModel) {
+    throw new Error(`Could not get AiModel. Unknown slug: ${modelSlug}`)
+  }
+  return aiModel
+}
+
+const getLLMProviderFromBedrockModelSlug = (modelSlug: string) => {
+  if (modelSlug.includes('llama2')) {
+    return 'llama2'
+  }
+  if (modelSlug.includes('anthropic')) {
+    return 'anthropic'
+  }
+  if (modelSlug.includes('cohere')) {
+    return 'cohere'
+  }
+  throw new Error(`Cannot recognize this model name: ${modelSlug}`)
+}
+
+type LlmProvider = ReturnType<typeof getLLMProviderFromBedrockModelSlug>
+
+const buildPrompt = (
+  llmProvider: LlmProvider,
+  messages: AiRegistryMessage[],
+) => {
+  if (llmProvider === 'anthropic') {
+    return experimental_buildAnthropicPrompt(messages)
+  }
+
+  if (llmProvider === 'llama2') {
+    return experimental_buildLlama2Prompt(messages)
+  }
+
+  if (llmProvider === 'cohere') {
+    return experimental_buildOpenAssistantPrompt(messages)
+  }
+}
+
+const getStream = (
+  llmProvider: LlmProvider,
+  bedrockResponse: InvokeModelWithResponseStreamCommandOutput,
+  payload: AiRegistryExecutePayload,
+) => {
+  if (llmProvider === 'anthropic') {
+    return AWSBedrockAnthropicStream(bedrockResponse, {
+      onToken: payload?.onToken,
+      onFinal: payload?.onFinal,
+    })
+  }
+
+  if (llmProvider === 'llama2') {
+    return AWSBedrockLlama2Stream(bedrockResponse, {
+      onToken: payload?.onToken,
+      onFinal: payload?.onFinal,
+    })
+  }
+
+  if (llmProvider === 'cohere') {
+    return AWSBedrockCohereStream(bedrockResponse, {
+      onToken: payload?.onToken,
+      onFinal: payload?.onFinal,
+    })
+  }
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  throw new Error(`Cannot recognize this model name: ${llmProvider}`)
 }

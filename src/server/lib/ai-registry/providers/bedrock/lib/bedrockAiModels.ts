@@ -9,24 +9,37 @@ export const bedrockAiModels: AiRegistryModel[] = [
     slug: 'meta.llama2-70b-chat-v1' as const,
     publicName: 'LLama 2 70B Chat' as const,
   },
-  // {
-  //   slug: 'anthropic.claude-v2:1' as const,
-  //   publicName: 'Antrophic Claude v2.1' as const,
-  // },
-  // {
-  //   slug: 'anthropic.claude-instant-v1' as const,
-  //   publicName: 'Antrophic Claude Instant v1' as const,
-  // },
-  // {
-  //   slug: 'cohere.command-text-v14' as const,
-  //   publicName: 'Cohere Command' as const,
-  // },
-  // {
-  //   slug: 'cohere.command-light-text-v14' as const,
-  //   publicName: 'Cohere Command Light' as const,
-  // },
-  // {
-  //   slug: 'amazon.titan-text-express-v1' as const,
-  //   publicName: 'Amazon Tital Text G1 - Express' as const,
-  // },
+  {
+    slug: 'anthropic.claude-v2:1' as const,
+    publicName: 'Antrophic Claude v2.1' as const,
+    defaultPayload: {
+      max_tokens_to_sample: 4096,
+    },
+  },
+  {
+    slug: 'anthropic.claude-v2' as const,
+    publicName: 'Antrophic Claude v2' as const,
+    defaultPayload: {
+      max_tokens_to_sample: 4096,
+    },
+  },
+  {
+    slug: 'anthropic.claude-v1' as const,
+    publicName: 'Antrophic Claude v1.3' as const,
+    defaultPayload: {
+      max_tokens_to_sample: 4096,
+    },
+  },
+
+  {
+    slug: 'anthropic.claude-instant-v1' as const,
+    publicName: 'Antrophic Claude Instant v1.2' as const,
+    defaultPayload: {
+      max_tokens_to_sample: 4096,
+    },
+  },
+  {
+    slug: 'cohere.command-text-v14' as const,
+    publicName: 'Cohere Command' as const,
+  },
 ]
