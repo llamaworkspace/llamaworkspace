@@ -26,7 +26,7 @@ interface BedrockExecuteOptions {
   awsRegion?: string
 }
 
-export const BedrockProvider: () => AiRegistryProvider = () => {
+export const BedrockProvider = (): AiRegistryProvider => {
   return {
     slug: 'bedrock' as const,
     publicName: 'Amazon Bedrock' as const,
@@ -90,7 +90,7 @@ export const BedrockProvider: () => AiRegistryProvider = () => {
 
 const getAiModel = (modelSlug: string) => {
   const aiModel = bedrockAiModels.find((model) => model.slug === modelSlug)
-  console.log(1, bedrockAiModels, aiModel)
+
   if (!aiModel) {
     throw new Error(`Could not get AiModel. Unknown slug: ${modelSlug}`)
   }
@@ -154,4 +154,6 @@ const getStream = (
       onFinal: payload?.onFinal,
     })
   }
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  throw new Error(`Cannot recognize this model name: ${llmProvider}`)
 }
