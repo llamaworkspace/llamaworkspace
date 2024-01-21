@@ -114,6 +114,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const stream = await provider.executeAsStream(
       {
+        provider,
         model,
         messages: allMessages,
         onToken,

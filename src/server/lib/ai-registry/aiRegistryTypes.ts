@@ -44,6 +44,7 @@ export interface IKnownProvider<T> extends AiRegistryProvider {
 }
 
 export interface AiRegistryExecutePayload {
+  provider: string
   model: string
   messages: AiRegistryMessage[]
   onStart?: () => Promise<void> | void
