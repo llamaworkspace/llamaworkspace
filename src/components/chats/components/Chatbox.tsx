@@ -5,7 +5,7 @@ import { useEnterSubmit } from '@/lib/frontend/useEnterSubmit'
 import { cn } from '@/lib/utils'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { ArrowRightCircleIcon, DocumentIcon } from '@heroicons/react/24/outline'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import _ from 'underscore'
 import { useCreateChat, useMessages, usePrompt } from '../chatHooks'
 
@@ -30,10 +30,18 @@ export function Chatbox({
   const { formRef, onKeyDown } = useEnterSubmit()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const divRef = useRef<HTMLDivElement>(null)
-  const [height, setHeight] = useState(24)
+  const [height, __setHeight] = useState(24) // __setHeight do not use directly
   const [value, setValue] = useState('')
   const { data: messages } = useMessages(chatId)
   const { mutate: runPrompt, isLoading } = usePrompt(chatId)
+
+  const setHeight = useCallback(
+    (height: number) => {
+      stableOnChatboxHeightChange?.(height)
+      __setHeight(height)
+    },
+    [stableOnChatboxHeightChange],
+  )
 
   const { mutate: createChat } = useCreateChat()
   const canCreateChat = useCanCreateChat(postId, chatId)
@@ -92,8 +100,11 @@ export function Chatbox({
     return 'Continue chatting...'
   })()
 
-  const trackingDivValue = value.replace(/\n$/, '\n\u00A0')
+  let trackingDivValue = value.replace(/\n/g, '<br />')
 
+  if (trackingDivValue.endsWith('<br />') || trackingDivValue === '') {
+    trackingDivValue += '&nbsp;'
+  }
   const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault()
     if (!chatId) return
@@ -155,15 +166,14 @@ export function Chatbox({
               />
               <div
                 ref={divRef}
-                // Keep this and use for debugging the shadow textarea
-                // className="absolute left-0 right-0 top-[-220px] overflow-hidden bg-pink-50"
-                className="absolute h-0 max-h-0 overflow-hidden"
-                style={{
-                  whiteSpace: 'pre-wrap',
+                // Todo: Check for possible XSS
+                dangerouslySetInnerHTML={{
+                  __html: trackingDivValue,
                 }}
-              >
-                {trackingDivValue}
-              </div>
+                // Keep this and use for debugging the shadow textarea
+                // className="t-[90px] l-0 r-0 absolute w-full bg-pink-50"
+                className="absolute h-0 max-h-0 overflow-hidden"
+              ></div>
             </div>
             <div className="self-end">
               <Button
