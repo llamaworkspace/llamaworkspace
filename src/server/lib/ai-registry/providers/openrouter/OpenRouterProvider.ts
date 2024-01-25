@@ -5,10 +5,10 @@ import type {
   AiRegistryProvider,
 } from '../../aiRegistryTypes'
 import { openRouterAiModels } from './lib/openRouterAiModels'
-
-const OPENROUTER_REFERRER_URL = 'joia.so'
-const OPENROUTER_REFERRER_TITLE =
-  'Joia.so - The open source "ChatGPT Team" alternative'
+import {
+  OPENROUTER_REFERRER_TITLE,
+  OPENROUTER_REFERRER_URL,
+} from './openRouterConstants'
 
 interface OpenRouterExecuteOptions {
   apiKey: string
