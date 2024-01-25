@@ -8,7 +8,7 @@ import type {
 import type { ChatRun } from '@prisma/client'
 import BBPromise from 'bluebird'
 import { encode as gptTokenizer } from 'gpt-tokenizer'
-import { chunk, isNull } from 'underscore'
+import { chunk, isNull, omit } from 'underscore'
 
 export const saveTokenCountForChatRun = async (
   prisma: PrismaClientOrTrxClient,
@@ -30,6 +30,8 @@ export const saveTokenCountForChatRun = async (
       case 'openai':
         return await saveTokenCountForOpenaiProvider(prisma, chatRun)
     }
+
+    return omit(chatRun, 'chat', 'chatRunMessages')
   })
 }
 
