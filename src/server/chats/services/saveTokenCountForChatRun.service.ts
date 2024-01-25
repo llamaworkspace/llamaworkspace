@@ -1,14 +1,67 @@
+import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
+import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { Author } from '@/shared/aiTypesAndMappers'
-import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import Promise from 'bluebird'
-import { encode } from 'gpt-tokenizer'
+import type {
+  PrismaClientOrTrxClient,
+  PrismaTrxClient,
+} from '@/shared/globalTypes'
+import type { ChatRun } from '@prisma/client'
+import BBPromise from 'bluebird'
+import { encode as gptTokenizer } from 'gpt-tokenizer'
 import { chunk, isNull } from 'underscore'
 
 export const saveTokenCountForChatRun = async (
   prisma: PrismaClientOrTrxClient,
   chatRunId: string,
+): Promise<ChatRun> => {
+  return await prismaAsTrx(prisma, async (prisma) => {
+    const chatRun = await getChatRunWithExtras(prisma, chatRunId)
+
+    if (!chatRun.chat.postConfigVersion) {
+      throw new Error('ChatRun should have a postConfigVersion')
+    }
+
+    const fullModelSlug = chatRun.chat.postConfigVersion.model
+
+    const { provider: providerSlug } =
+      getProviderAndModelFromFullSlug(fullModelSlug)
+
+    switch (providerSlug) {
+      case 'openai':
+        return await saveTokenCountForOpenaiProvider(prisma, chatRun)
+    }
+  })
+}
+
+const chunkedCountForGptTokenizer = async (message: string | null) => {
+  if (!message) return 0
+
+  const chunked = chunk(message.split(' '), 200)
+  return await BBPromise.reduce(
+    chunked,
+    async (acc, chunk) => {
+      return new Promise((resolve, reject) => {
+        try {
+          setImmediate(() => {
+            const tokens = gptTokenizer(chunk.join(' ')).length
+            setImmediate(() => {
+              resolve(acc + tokens)
+            })
+          })
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+    0,
+  )
+}
+
+const getChatRunWithExtras = async (
+  prisma: PrismaTrxClient,
+  chatRunId: string,
 ) => {
-  const chatRun = await prisma.chatRun.findUniqueOrThrow({
+  return await prisma.chatRun.findUniqueOrThrow({
     where: {
       id: chatRunId,
     },
@@ -25,12 +78,19 @@ export const saveTokenCountForChatRun = async (
       },
     },
   })
+}
 
+type ChatRunWithExtras = Awaited<ReturnType<typeof getChatRunWithExtras>>
+
+const saveTokenCountForOpenaiProvider = async (
+  prisma: PrismaTrxClient,
+  chatRun: ChatRunWithExtras,
+) => {
   let requestTokens = 0
   let responseTokens = 0
   const messagesLength = chatRun.chatRunMessages.length
 
-  await Promise.mapSeries(
+  await BBPromise.mapSeries(
     chatRun.chatRunMessages,
     async (chatRunMessage, index) => {
       const message = chatRunMessage.message
@@ -41,7 +101,8 @@ export const saveTokenCountForChatRun = async (
       ) {
         count = 0
       } else {
-        count = message.tokens ?? (await chunkedCount(message.message))
+        count =
+          message.tokens ?? (await chunkedCountForGptTokenizer(message.message))
       }
 
       if (isNull(message.tokens)) {
@@ -61,41 +122,11 @@ export const saveTokenCountForChatRun = async (
     },
   )
 
-  if (!chatRun.chat.postConfigVersion) {
-    throw new Error('ChatRun should have a postConfigVersion')
-  }
-
   return await prisma.chatRun.update({
     where: { id: chatRun.id },
     data: {
       requestTokens,
       responseTokens,
-      requestTokensCostInNanoCents: 0,
-      responseTokensCostInNanoCents: 0,
     },
   })
-}
-
-const chunkedCount = async (message: string | null) => {
-  if (!message) return 0
-
-  const chunked = chunk(message.split(' '), 200)
-  return await Promise.reduce(
-    chunked,
-    async (acc, chunk) => {
-      return new Promise((resolve, reject) => {
-        try {
-          setImmediate(() => {
-            const tokens = encode(chunk.join(' ')).length
-            setImmediate(() => {
-              resolve(acc + tokens)
-            })
-          })
-        } catch (error) {
-          reject(error)
-        }
-      })
-    },
-    0,
-  )
 }
