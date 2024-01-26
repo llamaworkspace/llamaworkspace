@@ -143,7 +143,7 @@ export function SidebarDesktopBody() {
                   </Tooltip>
                 </div>
               </div>
-              <ul role="list" className="-mx-2 mt-1">
+              <ul className="-mx-2 mt-1">
                 {sortedPosts?.map((post, index) => {
                   const href = post.firstChatId
                     ? `/p/${post.id}/c/${post.firstChatId}`

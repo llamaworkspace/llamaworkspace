@@ -28,7 +28,7 @@ export function SidebarDesktopLineItemForChatApp({
 }: SidebarDesktopLineItemForChatAppProps) {
   const [isHovered, setIsHovered] = useState(false)
   const { movePostBefore, movePostAfter } = useUpdatePostSorting(workspaceId)
-  const [{}, dragRef] = useDrag(
+  const [_, dragRef] = useDrag(
     () => ({
       type: 'card',
       item: { postId },
