@@ -30,6 +30,7 @@ export const useCreateChat = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
   const navigation = useNavigation()
+
   return api.chats.createChat.useMutation({
     onError: errorHandler(),
     onSuccess: (chat) => {
@@ -106,8 +107,6 @@ export const useDeleteChat = () => {
         const chatIndex = chatHistory?.findIndex(
           (item) => item.id === params.id,
         )
-
-        console.log({ chatIndex })
 
         if (chatHistory && chatIndex && chatIndex !== -1) {
           const siblingChat =

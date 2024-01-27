@@ -41,6 +41,7 @@ export const createStandaloneChat = protectedProcedure
           },
         },
       })
+
       return await prisma.chat.create({
         data: {
           ...input,
