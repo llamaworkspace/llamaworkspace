@@ -9,10 +9,6 @@
 
 # Joia
 
-> We are actively working to make Joia open-source. We aim to launch it before in late December 2023.
->
-> In the meantime, you can use it for free in our website [joia.so](https://joia.so).
-
 ### Main features
 
 **Collaborative chatbots:** We make it easy for teams to create and iterate chatbots for specific use cases. Think of "GPTs", but shareable by default and more steerable.
@@ -25,4 +21,4 @@
 
 **Privacy:** By using OpenAI API, your data is not used for model training purposes.
 
-**Coming soon: Support for multiple LLMs** We are in the process of adding support for a variety of large language models (LLMs), including Claude, Llama, and others hosted on platforms like Amazon Bedrock and Replicate.
+**Support for multiple LLMs** We are in the process of adding support for a variety of large language models (LLMs), including Claude, Llama, and others hosted on platforms like Amazon Bedrock and Replicate.
