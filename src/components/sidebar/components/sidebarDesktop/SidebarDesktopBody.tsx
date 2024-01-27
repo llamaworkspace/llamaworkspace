@@ -84,6 +84,7 @@ export function SidebarDesktopBody() {
                       href={`/c/${chat.id}`}
                       title={chat.title ?? 'Untitled chat'}
                       key={chat.id}
+                      id={chat.id}
                       isCurrent={navigation.query.chat_id === chat.id}
                     />
                   )
@@ -207,6 +208,7 @@ export function SidebarDesktopBody() {
                 {standaloneChats?.map((chat) => {
                   return (
                     <SidebarDesktopLineItemForSingleChat
+                      id={chat.id}
                       href={`/c/${chat.id}`}
                       title={chat.title ?? 'Untitled chat'}
                       key={chat.id}

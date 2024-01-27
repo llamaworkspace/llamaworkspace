@@ -1,13 +1,16 @@
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import { SidebarDesktopLineItemChatDropdown } from './SidebarDesktopLineItemChatDropdown'
 
 interface SidebarDesktopLineItemForSingleChatProps {
+  id: string
   title: string
   href: string
   isCurrent: boolean
 }
 
 export function SidebarDesktopLineItemForSingleChat({
+  id,
   title,
   isCurrent = false,
   href,
@@ -41,6 +44,12 @@ export function SidebarDesktopLineItemForSingleChat({
                 >
                   {title}
                 </div>
+                <SidebarDesktopLineItemChatDropdown
+                  allowLastChatDeletion
+                  chatId={id}
+                  isHovered={true}
+                  isLastChat={false}
+                />
               </div>
             </div>
           </div>

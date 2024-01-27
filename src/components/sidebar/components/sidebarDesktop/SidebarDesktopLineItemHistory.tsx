@@ -84,8 +84,8 @@ function HistoryItem({
   const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <div
-      className={cn('flex justify-between gap-2')}
+    <button
+      className={cn('flex w-full justify-between gap-2 text-left')}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -106,6 +106,6 @@ function HistoryItem({
         isHovered={isHovered}
         isLastChat={isLastChat}
       />
-    </div>
+    </button>
   )
 }

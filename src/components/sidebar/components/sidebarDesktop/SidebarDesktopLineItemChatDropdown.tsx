@@ -19,18 +19,20 @@ interface SidebarDesktopLineItemChatDropdownProps {
   chatId: string
   isHovered: boolean
   isLastChat: boolean
+  allowLastChatDeletion?: boolean
 }
 
 export function SidebarDesktopLineItemChatDropdown({
   chatId,
   isHovered,
   isLastChat,
+  allowLastChatDeletion,
 }: SidebarDesktopLineItemChatDropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { mutate: deleteChat } = useDeleteChat()
 
   const handleDelete = () => {
-    void deleteChat({ id: chatId })
+    void deleteChat({ id: chatId, allowLastChatDeletion })
   }
 
   return (

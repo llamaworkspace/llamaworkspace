@@ -7,6 +7,7 @@ import { chatEditionFilter } from '../chatsBackendUtils'
 
 const zInput = z.object({
   id: z.string(),
+  allowLastChatDeletion: z.optional(z.boolean()),
 })
 
 export const deleteChat = protectedProcedure
@@ -14,7 +15,7 @@ export const deleteChat = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
-    const { id } = input
+    const { id, allowLastChatDeletion } = input
 
     const chat = await ctx.prisma.chat.findFirstOrThrow({
       where: {
@@ -43,7 +44,7 @@ export const deleteChat = protectedProcedure
     })
 
     return await ctx.prisma.$transaction(async (prisma) => {
-      if (!anotherChatInPost) {
+      if (!anotherChatInPost && !allowLastChatDeletion) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'You cannot delete the last chat of a post',
