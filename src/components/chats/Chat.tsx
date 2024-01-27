@@ -24,7 +24,6 @@ export function Chat({ postId, chatId }: ChatProps) {
   const [lastBlockHeight, setLastBlockHeight] = useState(LAST_BLOCK_MIN_HEIGHT)
 
   const handleChatboxHeightChangeStable = useCallback((height: number) => {
-    console.log('stable', height)
     const lines = height / 24 ?? 1
     const nextHeight = (function () {
       if (lines === 1) return LAST_BLOCK_MIN_HEIGHT
