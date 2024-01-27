@@ -100,11 +100,12 @@ export function Chatbox({
     return 'Continue chatting...'
   })()
 
-  let trackingDivValue = value.replace(/\n/g, '<br />')
+  let trackingDivValue = value || ' '
+  // Adds a non-breaking space to the end of the string to make sure the
+  // tracking div has the same height as the textarea when a new line is added
+  // to the textarea.
+  trackingDivValue = trackingDivValue.replace(/\n$/, '\n\u00A0')
 
-  if (trackingDivValue.endsWith('<br />') || trackingDivValue === '') {
-    trackingDivValue += '&nbsp;'
-  }
   const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault()
     if (!chatId) return
@@ -164,16 +165,18 @@ export function Chatbox({
                 onKeyDown={onKeyDown}
                 value={value}
               />
+              {/* Shadow textarea */}
               <div
                 ref={divRef}
-                // Todo: Check for possible XSS
-                dangerouslySetInnerHTML={{
-                  __html: trackingDivValue,
-                }}
-                // Keep this and use for debugging the shadow textarea
-                // className="t-[90px] l-0 r-0 absolute w-full bg-pink-50"
+                // Keep this and uncomment in dev to debugging the shadow textarea
+                // className="absolute left-0 right-0 top-[-220px] overflow-hidden bg-pink-200"
                 className="absolute h-0 max-h-0 overflow-hidden"
-              ></div>
+                style={{
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {trackingDivValue}
+              </div>
             </div>
             <div className="self-end">
               <Button
