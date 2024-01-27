@@ -107,8 +107,6 @@ export const useDeleteChat = () => {
           (item) => item.id === params.id,
         )
 
-        console.log({ chatIndex })
-
         if (chatHistory && chatIndex && chatIndex !== -1) {
           const siblingChat =
             chatIndex === 0 ? chatHistory[1] : chatHistory[chatIndex - 1]
