@@ -34,6 +34,6 @@
     "**/*.cjs",
     "**/*.mjs",
     ".next/types/**/*.ts"
-  ],
+, "src/components/sidebar/components/sidebarDesktop/SidebarDesktopDeleteChat/DeleteChatbotChattsx"  ],
   "exclude": ["node_modules"]
 }

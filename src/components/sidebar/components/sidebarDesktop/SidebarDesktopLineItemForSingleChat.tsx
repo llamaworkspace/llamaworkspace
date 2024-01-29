@@ -45,7 +45,7 @@ export function SidebarDesktopLineItemForSingleChat({
                   {title}
                 </div>
                 <SidebarDesktopLineItemChatDropdown
-                  allowLastChatDeletion
+                  isPrivate
                   chatId={id}
                   isHovered={true}
                   isLastChat={false}
