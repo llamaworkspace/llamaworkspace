@@ -80,8 +80,6 @@ export function SidebarDesktopLineItemForChatApp({
       )}
       <div
         ref={dragRef}
-        onMouseEnter={handleHover(true)}
-        onMouseLeave={handleHover(false)}
         className={cn(
           isCurrent
             ? 'bg-zinc-100'
@@ -89,7 +87,11 @@ export function SidebarDesktopLineItemForChatApp({
           'rounded-md p-1 text-sm',
         )}
       >
-        <Link href={href}>
+        <Link
+          onMouseEnter={handleHover(true)}
+          onMouseLeave={handleHover(false)}
+          href={href}
+        >
           <div
             className={cn(
               'group ml-1 flex items-center gap-x-2 rounded-md leading-6',

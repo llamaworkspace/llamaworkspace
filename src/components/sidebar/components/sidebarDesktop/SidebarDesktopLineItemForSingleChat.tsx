@@ -18,12 +18,19 @@ export function SidebarDesktopLineItemForSingleChat({
   isCurrent = false,
   href,
 }: SidebarDesktopLineItemForSingleChatProps) {
-  const [value, setValue] = React.useState(title)
+  const [isHovered, setIsHovered] = React.useState(false)
+
+  const [value, setValue] = React.useState<string>(title)
   const { mutate } = useUpdateChatTitle()
 
   React.useEffect(() => {
-    mutate({ id: id, title: value })
-  }, [value])
+    if (value && id) mutate({ id: id, title: value })
+
+    // Clean on unmount
+    return () => {
+      mutate.cancel()
+    }
+  }, [value, id])
 
   return (
     <li>
@@ -35,7 +42,11 @@ export function SidebarDesktopLineItemForSingleChat({
           'rounded-md p-1 text-sm',
         )}
       >
-        <Link href={href}>
+        <Link
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          href={href}
+        >
           <div>
             <div
               className={cn(
@@ -66,7 +77,7 @@ export function SidebarDesktopLineItemForSingleChat({
                 <SidebarDesktopLineItemChatDropdown
                   isPrivate
                   chatId={id}
-                  isHovered={true}
+                  isHovered={isHovered}
                   isLastChat={false}
                 />
               </div>
