@@ -1,8 +1,10 @@
+import { Editable } from '@/components/ui/Editable'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { useChatHistoryForSidebarPost } from '../../sidebarHooks'
+import { useEditChatTitle } from '../../useEditChatTitle'
 import { SidebarDesktopLineItemChatDropdown } from './SidebarDesktopLineItemChatDropdown'
 
 export const SidebarDesktopLineItemHistory = ({
@@ -82,23 +84,25 @@ function HistoryItem({
   isLastChat,
 }: HistoryItemProps) {
   const [isHovered, setIsHovered] = useState(false)
-
+  const { value, onChange } = useEditChatTitle(chatId, title)
   return (
-    <button
+    <div
       className={cn('flex w-full justify-between gap-2 text-left')}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <Link href={`/p/${postId}/c/${chatId}`} className={cn('flex-grow')}>
-        <div
+        <Editable
+          onChange={onChange}
+          tagName="span"
+          placeholder="Untitled chat"
+          initialValue={value}
           className={cn(
             'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
             isCurrent &&
               'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
           )}
-        >
-          {title}
-        </div>
+        />
       </Link>
 
       <SidebarDesktopLineItemChatDropdown
@@ -106,6 +110,14 @@ function HistoryItem({
         isHovered={isHovered}
         isLastChat={isLastChat}
       />
-    </button>
+    </div>
   )
 }
+
+/**
+ *  className={cn(
+            'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
+            isCurrent &&
+              'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
+          )}
+ */
