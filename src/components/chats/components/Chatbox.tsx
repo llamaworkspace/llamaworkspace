@@ -30,25 +30,22 @@ export function Chatbox({
   const { formRef, onKeyDown } = useEnterSubmit()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const divRef = useRef<HTMLDivElement>(null)
-  const [height, __setHeight] = useState(24) // __setHeight do not use directly
+  const [textAreaExpectedHeight, __setTextAreaExpectedHeight] = useState(24) // do not use __setTextAreaExpectedHeight directly
   const [value, setValue] = useState('')
   const { data: messages } = useMessages(chatId)
   const { mutate: runPrompt, isLoading } = usePrompt(chatId)
 
-  const setHeight = useCallback(
+  const setTextAreaExpectedHeight = useCallback(
     (height: number) => {
+      if (height === textAreaExpectedHeight) return
       stableOnChatboxHeightChange?.(height)
-      __setHeight(height)
+      __setTextAreaExpectedHeight(height)
     },
-    [stableOnChatboxHeightChange],
+    [textAreaExpectedHeight, stableOnChatboxHeightChange],
   )
 
   const { mutate: createChat } = useCreateChat()
   const canCreateChat = useCanCreateChat(postId, chatId)
-
-  useEffect(() => {
-    stableOnChatboxHeightChange?.(height)
-  }, [stableOnChatboxHeightChange, height])
 
   const { can: canUse } = useCanExecuteActionForPost(
     PermissionAction.Use,
@@ -61,6 +58,10 @@ export function Chatbox({
     }
   }, [canUse, chatId])
 
+  // Effect to evaluate the height of the textarea and notify changes
+  // when value changes.
+  // useEffect runs after the render is committed to the screen, so we can
+  // safely read the height of the shadow textarea (a.k.a. divRef).
   useEffect(() => {
     if (!divRef.current || !textareaRef.current) {
       return
@@ -73,9 +74,9 @@ export function Chatbox({
       textareaRef.current.scrollHeight > divRef.current.scrollHeight &&
       divRef.current.scrollHeight < MAX_HEIGHT
     ) {
-      setHeight(divRef.current.scrollHeight)
+      setTextAreaExpectedHeight(divRef.current.scrollHeight)
     }
-  }, [value, setHeight])
+  }, [value, setTextAreaExpectedHeight])
 
   const handleCreateChat = () => {
     if (!postId) return
@@ -100,11 +101,12 @@ export function Chatbox({
     return 'Continue chatting...'
   })()
 
-  let trackingDivValue = value.replace(/\n/g, '<br />')
+  let trackingDivValue = value || ' '
+  // Adds a non-breaking space to the end of the string to make sure the
+  // tracking div has the same height as the textarea when a new line is added
+  // to the textarea.
+  trackingDivValue = trackingDivValue.replace(/\n$/, '\n\u00A0')
 
-  if (trackingDivValue.endsWith('<br />') || trackingDivValue === '') {
-    trackingDivValue += '&nbsp;'
-  }
   const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault()
     if (!chatId) return
@@ -116,7 +118,7 @@ export function Chatbox({
     setValue('')
     runPrompt(value)
   }
-  const handleChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextAreaChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(ev.target.value)
     if (!textareaRef.current) return
 
@@ -125,7 +127,7 @@ export function Chatbox({
         ? MAX_HEIGHT
         : textareaRef.current.scrollHeight
 
-    setHeight(targetHeight)
+    setTextAreaExpectedHeight(targetHeight)
   }
 
   const handleReset = () => {
@@ -159,21 +161,26 @@ export function Chatbox({
                   canUse === false && 'cursor-not-allowed bg-zinc-100',
                   _.isNull(canUse) && 'cursor-not-allowed bg-white',
                 )}
-                style={{ maxHeight: height, height }}
-                onChange={handleChange}
+                style={{
+                  maxHeight: textAreaExpectedHeight,
+                  height: textAreaExpectedHeight,
+                }}
+                onChange={handleTextAreaChange}
                 onKeyDown={onKeyDown}
                 value={value}
               />
+              {/* Shadow textarea */}
               <div
                 ref={divRef}
-                // Todo: Check for possible XSS
-                dangerouslySetInnerHTML={{
-                  __html: trackingDivValue,
-                }}
-                // Keep this and use for debugging the shadow textarea
-                // className="t-[90px] l-0 r-0 absolute w-full bg-pink-50"
+                // Keep this and uncomment in dev to debugging the shadow textarea
+                // className="absolute left-0 right-0 top-[-220px] overflow-hidden bg-pink-200"
                 className="absolute h-0 max-h-0 overflow-hidden"
-              ></div>
+                style={{
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {trackingDivValue}
+              </div>
             </div>
             <div className="self-end">
               <Button
