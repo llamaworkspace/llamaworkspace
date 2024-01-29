@@ -1,4 +1,4 @@
-import { useCreateStandaloneChat } from '@/components/chats/chatHooks'
+import { useCreatePrivateChat } from '@/components/chats/chatHooks'
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { useCreatePost } from '@/components/posts/postsHooks'
 import { Button } from '@/components/ui/button'
@@ -23,7 +23,7 @@ import { SidebarDesktopLineItemForSingleChat } from './SidebarDesktopLineItemFor
 
 export function SidebarDesktopBody() {
   const { mutate: createPost } = useCreatePost()
-  const { mutate: createStandaloneChat } = useCreateStandaloneChat()
+  const { mutate: createStandaloneChat } = useCreatePrivateChat()
   const { data: standaloneChats } = useStandaloneChats()
   const { workspace } = useCurrentWorkspace()
   // Unless needed, replace for something else that is not sortedPosts

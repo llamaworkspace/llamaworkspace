@@ -44,7 +44,7 @@ export const useCreateChat = () => {
   })
 }
 
-export const useCreateStandaloneChat = () => {
+export const useCreatePrivateChat = () => {
   const errorHandler = useErrorHandler()
   const { data: defaultPost } = useDefaultPost()
 

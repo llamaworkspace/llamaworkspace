@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton'
-import { useRouter } from 'next/router'
+import { useNavigation } from '@/lib/frontend/useNavigation'
 import { FC } from 'react'
 import { CreateChat } from './CreateChat'
 import { CreateStandaloneChat } from './CreateStandaloneChat'
@@ -9,8 +9,9 @@ export const CreateNewChat: FC<CreateNewChatProps> = ({
   loading,
   ...props
 }) => {
-  const router = useRouter()
-  const isStandalone = router.pathname.split('/').length > 2
+  const { query } = useNavigation()
+  const postId = query.post_id
+  const isStandalone = !!postId
 
   if (loading) return <Skeleton className="h-6 w-24" />
 

@@ -2,7 +2,7 @@ import { FC } from 'react'
 
 import { Button } from '@chakra-ui/react'
 import { DocumentIcon } from '@heroicons/react/24/outline'
-import { useCreateChat } from '../../chatHooks'
+import { useCreatePrivateChat } from '../../chatHooks'
 import { NewChatProps } from './types'
 import { useCanCreateChat } from './useCanCreateChat'
 
@@ -11,19 +11,15 @@ export const CreateChat: FC<NewChatProps> = ({
   chatId,
   resetTextArea,
 }) => {
-  const { mutate: createChat } = useCreateChat()
+  const { mutate: createChat } = useCreatePrivateChat()
   const canCreateChat = useCanCreateChat(postId, chatId)
 
   const handleCreateChat = () => {
-    if (!postId) return
-    createChat(
-      { postId },
-      {
-        onSuccess: () => {
-          resetTextArea()
-        },
+    createChat({
+      onSuccess: () => {
+        resetTextArea()
       },
-    )
+    })
   }
 
   return (
