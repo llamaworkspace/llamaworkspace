@@ -1,5 +1,8 @@
+import { useUpdateChatTitle } from '@/components/chats/useUpdateChatTitle'
+import { Editable } from '@/components/ui/Editable'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import React from 'react'
 import { SidebarDesktopLineItemChatDropdown } from './SidebarDesktopLineItemChatDropdown'
 
 interface SidebarDesktopLineItemForSingleChatProps {
@@ -15,6 +18,13 @@ export function SidebarDesktopLineItemForSingleChat({
   isCurrent = false,
   href,
 }: SidebarDesktopLineItemForSingleChatProps) {
+  const [value, setValue] = React.useState(title)
+  const { mutate } = useUpdateChatTitle()
+
+  React.useEffect(() => {
+    mutate({ id: id, title: value })
+  }, [value])
+
   return (
     <li>
       <div
@@ -42,7 +52,16 @@ export function SidebarDesktopLineItemForSingleChat({
                     isCurrent ? 'text-zinc-900' : 'text-zinc-600',
                   )}
                 >
-                  {title}
+                  <Editable
+                    onChange={setValue}
+                    tagName="span"
+                    placeholder="Untitled chat"
+                    initialValue={value}
+                    className={cn(
+                      'line-clamp-1 grow text-sm font-medium leading-6',
+                      isCurrent ? 'text-zinc-900' : 'text-zinc-600',
+                    )}
+                  />
                 </div>
                 <SidebarDesktopLineItemChatDropdown
                   isPrivate
