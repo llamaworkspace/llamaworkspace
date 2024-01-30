@@ -13,7 +13,7 @@ export const useDeletePrivateChat = () => {
   const { data: defaultPost } = useDefaultPost()
   const { data: chatHistory } = useChatHistoryForSidebarPost(defaultPost?.id)
 
-  const { isSuccess, reset, mutate, ...rest } =
+  const { isSuccess, reset, mutateAsync, ...rest } =
     api.chats.deleteChat.useMutation({
       onError: errorHandler(),
       onSuccess: async () => {
@@ -27,20 +27,21 @@ export const useDeletePrivateChat = () => {
     }
   }, [isSuccess, reset])
 
-  type MutateArgs = Parameters<typeof mutate>
+  type MutateArgs = Parameters<typeof mutateAsync>
   type Params = MutateArgs[0]
   type Options = MutateArgs[1]
 
   return {
-    mutate: async (params: Params, options?: Options) => {
-      // This is an async operation I'm not sure why it's not being properly typed
-      await mutate(params, options)
+    mutateAsync: async (params: Params, options?: Options) => {
+      await mutateAsync(params, options)
 
       const chatIndex = chatHistory?.findIndex((item) => item.id === params.id)
 
       if (!chatHistory) return navigation.replace('/p')
 
-      if (!chatIndex || chatHistory.length < 1) return navigation.replace('/p')
+      const returnToBase = chatHistory.length === 1 || chatIndex === undefined
+
+      if (returnToBase) return navigation.replace('/p')
 
       const siblingChat =
         chatIndex === 0 ? chatHistory[1] : chatHistory[chatIndex - 1]

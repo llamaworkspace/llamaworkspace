@@ -26,7 +26,7 @@ export const useUpdateChatTitle = () => {
   type Options = MutateArgs[1]
 
   return {
-    mutate: debounce(async (params: Params, options?: Options) => {
+    mutate: debounce((params: Params, options?: Options) => {
       mutate(params, options)
     }, 350),
     isSuccess,

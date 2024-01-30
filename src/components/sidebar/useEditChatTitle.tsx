@@ -8,7 +8,9 @@ export const useEditChatTitle = (id: string, initialValue: string) => {
   const { mutate } = useUpdateChatTitle()
 
   React.useEffect(() => {
-    if (value && id) mutate({ id: id, title: value })
+    if (value && id) {
+      void mutate({ id: id, title: value })
+    }
 
     // Clean on unmount
     return () => {

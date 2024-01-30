@@ -5,7 +5,7 @@ import { FC } from 'react'
 import { DeleteChatProps } from './types'
 
 export const DeletePrivateChat: FC<DeleteChatProps> = ({ chatId }) => {
-  const { mutate: deleteChat } = useDeletePrivateChat()
+  const { mutateAsync: deleteChat } = useDeletePrivateChat()
 
   const handleDelete = () => {
     void deleteChat({ id: chatId, allowLastChatDeletion: true })
