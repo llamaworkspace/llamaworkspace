@@ -41,11 +41,8 @@ export function Chatbox({
   )
 
   useEffect(() => {
-    stableOnChatboxHeightChange?.(height)
-  }, [stableOnChatboxHeightChange, height])
-
-  const { mutate: createChat } = useCreateChat()
-  const canCreateChat = useCanCreateChat(postId, chatId)
+    stableOnChatboxHeightChange?.(textAreaExpectedHeight)
+  }, [stableOnChatboxHeightChange, textAreaExpectedHeight])
 
   const { can: canUse } = useCanExecuteActionForPost(
     PermissionAction.Use,
