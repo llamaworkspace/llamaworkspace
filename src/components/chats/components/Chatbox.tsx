@@ -8,7 +8,7 @@ import { ArrowRightCircleIcon } from '@heroicons/react/24/outline'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import _ from 'underscore'
 import { useMessages, usePrompt } from '../chatHooks'
-import { CreateNewChat } from './CreateNewChat'
+import { CreateNewChat } from './CreateNewChat/CreateNewChat'
 
 const MAX_HEIGHT = 200
 
@@ -184,7 +184,7 @@ export function Chatbox({
           postId={postId}
           chatId={chatId}
           loading={showSkeleton}
-          resetTextArea={handleReset}
+          onSuccess={handleReset}
         />
         {showSkeleton ? (
           <Skeleton className="h-4 w-40" />

@@ -12,7 +12,7 @@ import {
 import { cn } from '@/lib/utils'
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import { SidebarDesktopDeleteChat } from './SidebarDesktopDeleteChat'
+import { SidebarDesktopDeleteChat } from './SidebarDesktopDeleteChat/SidebarDesktopDeleteChat'
 
 interface SidebarDesktopLineItemChatDropdownProps {
   chatId: string

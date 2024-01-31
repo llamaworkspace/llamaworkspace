@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-
-import { useUpdateChatTitle } from '@/components/chats/useUpdateChatTitle'
+import { useUpdateChatTitle } from '../chats/chatHooks'
 
 export const useEditChatTitle = (id: string, initialValue: string) => {
   const [value, setValue] = useState<string>(initialValue)
@@ -9,7 +8,7 @@ export const useEditChatTitle = (id: string, initialValue: string) => {
 
   useEffect(() => {
     if (value && id) {
-      void mutate({ id: id, title: value })
+      mutate({ id: id, title: value })
     }
 
     // Clean on unmount

@@ -1,17 +1,17 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { useNavigation } from '@/lib/frontend/useNavigation'
+import { CreatePrivateChat } from './CreatePrivateChat'
 import { CreateSharedChat } from './CreateSharedChat'
-import { CreateStandaloneChat } from './CreateStandaloneChat'
 import { CreateNewChatProps } from './createNewChatTypes'
 
 export const CreateNewChat = ({ loading, ...props }: CreateNewChatProps) => {
   const { query } = useNavigation()
   const postId = query.post_id
-  const isStandalone = !!postId
+  const isShared = !!postId
 
   if (loading) return <Skeleton className="h-6 w-24" />
 
-  if (isStandalone) return <CreateStandaloneChat {...props} />
+  if (isShared) return <CreateSharedChat {...props} />
 
-  return <CreateSharedChat {...props} />
+  return <CreatePrivateChat {...props} />
 }

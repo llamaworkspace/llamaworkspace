@@ -1,5 +1,5 @@
 import { Chat } from '@/components/chats/Chat'
-import { useCreateChat } from '@/components/chats/chatHooks'
+import { useCreateSharedChat } from '@/components/chats/chatHooks'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
 import { useNavigation } from '@/lib/frontend/useNavigation'
@@ -13,7 +13,7 @@ export default function NewChatPage() {
   const query = navigation.query
 
   const postId = query.post_id as string | undefined
-  const { mutate: createChat } = useCreateChat()
+  const { mutate: createChat } = useCreateSharedChat()
 
   useEffect(() => {
     // Make this hook idempotent

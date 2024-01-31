@@ -3,6 +3,7 @@ import { useNavigation } from '@/lib/frontend/useNavigation'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { useChat as useVercelChat } from 'ai/react'
 import { produce } from 'immer'
+import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useDefaultPost, usePostById } from '../posts/postsHooks'
@@ -26,7 +27,7 @@ export const useChatById = (chatId?: string) => {
   )
 }
 
-export const useCreateChat = () => {
+export const useCreateSharedChat = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
   const navigation = useNavigation()
@@ -72,7 +73,7 @@ export const useCreatePrivateChat = () => {
   }
 }
 
-export const useDeleteChat = () => {
+export const useDeleteSharedChat = () => {
   const errorHandler = useErrorHandler()
   const navigation = useNavigation()
   const utils = api.useContext()
@@ -298,4 +299,89 @@ export const useShouldDisplayEmptySettingsAlert = (
   }
 
   return false
+}
+
+export const useDeletePrivateChat = () => {
+  const errorHandler = useErrorHandler()
+  const navigation = useNavigation()
+  const utils = api.useContext()
+
+  const { data: defaultPost } = useDefaultPost()
+  const { data: chatHistory } = useChatHistoryForSidebarPost(defaultPost?.id)
+
+  const { isSuccess, reset, mutateAsync, ...rest } =
+    api.chats.deleteChat.useMutation({
+      onError: errorHandler(),
+      onSuccess: async () => {
+        await utils.sidebar.invalidate()
+      },
+    })
+
+  useEffect(() => {
+    if (isSuccess) {
+      reset()
+    }
+  }, [isSuccess, reset])
+
+  type MutateArgs = Parameters<typeof mutateAsync>
+  type Params = MutateArgs[0]
+  type Options = MutateArgs[1]
+
+  return {
+    mutateAsync: async (params: Params, options?: Options) => {
+      await mutateAsync(params, options)
+
+      const chatIndex = chatHistory?.findIndex((item) => item.id === params.id)
+
+      if (!chatHistory) return navigation.replace('/p')
+
+      const returnToBase = chatHistory.length === 1 || chatIndex === undefined
+
+      if (returnToBase) return navigation.replace('/p')
+
+      const siblingChat =
+        chatIndex === 0 ? chatHistory[1] : chatHistory[chatIndex - 1]
+
+      if (siblingChat) {
+        return navigation.replace('/c/:chatId', {
+          chatId: siblingChat.id,
+        })
+      }
+    },
+    isSuccess,
+    reset,
+    ...rest,
+  }
+}
+
+export const useUpdateChatTitle = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+
+  const { isSuccess, reset, mutate, ...rest } =
+    api.chats.updateChatTitle.useMutation({
+      onError: errorHandler(),
+      onSuccess: async () => {
+        await utils.sidebar.invalidate()
+      },
+    })
+
+  useEffect(() => {
+    if (isSuccess) {
+      reset()
+    }
+  }, [isSuccess, reset])
+
+  type MutateArgs = Parameters<typeof mutate>
+  type Params = MutateArgs[0]
+  type Options = MutateArgs[1]
+
+  return {
+    mutate: debounce((params: Params, options?: Options) => {
+      mutate(params, options)
+    }, 350),
+    isSuccess,
+    reset,
+    ...rest,
+  }
 }

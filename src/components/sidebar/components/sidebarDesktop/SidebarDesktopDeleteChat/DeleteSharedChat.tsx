@@ -1,14 +1,10 @@
-import { useDeleteChat } from '@/components/chats/chatHooks'
+import { useDeleteSharedChat } from '@/components/chats/chatHooks'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { TrashIcon } from '@heroicons/react/24/outline'
-import { FC } from 'react'
-import { DeleteChatProps } from './types'
+import { DeleteChatProps } from './sideBarDesktopDeleteChatTypes'
 
-export const DeleteSharedChat: FC<DeleteChatProps> = ({
-  chatId,
-  isLastChat,
-}) => {
-  const { mutate: deleteChat } = useDeleteChat()
+export const DeleteSharedChat = ({ chatId, isLastChat }: DeleteChatProps) => {
+  const { mutate: deleteChat } = useDeleteSharedChat()
 
   const handleDelete = () => {
     void deleteChat({ id: chatId })

@@ -1,10 +1,9 @@
-import { useDeletePrivateChat } from '@/components/chats/useDeletePrivateChat'
+import { useDeletePrivateChat } from '@/components/chats/chatHooks'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { TrashIcon } from '@heroicons/react/24/outline'
-import { FC } from 'react'
-import { DeleteChatProps } from './types'
+import { DeleteChatProps } from './sideBarDesktopDeleteChatTypes'
 
-export const DeletePrivateChat: FC<DeleteChatProps> = ({ chatId }) => {
+export const DeletePrivateChat = ({ chatId }: DeleteChatProps) => {
   const { mutateAsync: deleteChat } = useDeletePrivateChat()
 
   const handleDelete = () => {
