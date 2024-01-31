@@ -30,16 +30,13 @@ Our cloud version can save a substantial amount of developer time and resources.
 
 #### Vercel
 
-Vercel is the easiest way to deploy Joia. You can deploy it with one click by clicking the button below:
+Vercel is the easiest way to deploy Joia. To do so, follow these steps:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/joiahq/joia)
-
-If you want to manually set up the Vercel project, you can do so by following these steps:
-
-1. Navigate to your project and add a new Postgres database. To do so, click on "Add new..." > "Store".
-2. Create a project by clicking on "Add New..." > "Project".
-3. Select "Import Third-Party Git Repository" and enter the URL of this repository.
-4. WIP
+1. Create a project by clicking on **Add New... > Project**.
+2. Select **Import Third-Party Git Repository** and enter the URL of this repository.
+3. Insert the environment variables. To do so, use `.env.example` as a reference for the variables to fill in. You'll need to set the `DATABASE_URL` variable to point to your Postgres database, which you can provision with Vercel.
+4. Deploy the project.
+5. Set up your domain to point to the Vercel deployment.
 
 #### Fully self-hosted
 
