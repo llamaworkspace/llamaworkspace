@@ -5,42 +5,43 @@
 </a>
 </p>
 
-<h3 align="center"><strong>The "ChatGPT Team" alternative that talks to any Large Language Model.</strong></h3>
+<h3 align="center"><strong>The ChatGPT Team alternative that talks to any Large Language Model.</strong></h3>
 
-[Joia](https://joia.so/) is an open source alternative to "ChatGPT Team". It is designed from the ground up for team collaboration. It connects to any Large Language Model, including those provided by OpenAI, OpenRouter, HuggingFace and Amazon Bedrock; with more providers coming soon.
+[Joia](https://joia.so/) is a collaborative alternative to ChatGPT, designed from the ground up for team collaboration. It open source and has the added benefit that can connect to any Large Language Model; including those provided by OpenAI, OpenRouter, HuggingFace and Amazon Bedrock.
 
 ## Main features & benefits
 
-- Provide access to a ChatGPT-like interface to entire teams.
-- Easily consume the latest open source LLMs like Llama 2, Mixtral and others.
-- Create reusable chatbots (also known as "GPTs"), and share them with your peers.
-- Save between 50% and 75% (depends on usage) on ChatGPT access.
-- Speed. Our benchmarks indicate a 40% faster response time than ChatGPT Plus.
-- Your data is not used for training purposes, regardless of which Large Language Model you use, including OpenAI's GPT-4.
+- Easy to give access to LLMs like ChatGPT to entire teams.
+- Use the latest open source LLMs like Llama 2, Mixtral and others.
+- Create collaborative chatbots for specific use cases, and share them across your teams.
+- Savings estimated of 50%-75% (depends on usage), when compared to ChatGPT Plus.
+- Speed. Our benchmarks indicate that responses are on average 40% faster than ChatGPT Plus.
+- Privacy. When using OpenAI models, your data is not used for training purposes. Similarly, when using other LLMs providers, your data is not used for training purposes.
 
 ## Getting started
 
-### Cloud
+#### Cloud
 
 The easiest way to get started with Joia is with [our official managed service in the cloud](https://joia.so/). At the moment it is completely free to use without limits, although we have plans to introduce a pricing model in the future.
 
-In the cloud version you can either use your own API keys to connect with the LLM providers, or purchase credits with us.
+In the cloud version you can either use your own API keys for LLM provider, or purchase credits with us.
 
-### Vercel
+Our cloud version can save a substantial amount of developer time and resources. We think it's the de-facto solution for mot customers and the value option. Plus, any future revenues will go towards the funding nad maintenance of Joia. You’ll be supporting open source software and getting a great service!
 
-Vercel is the easiest way to deploy Joia. You can deploy it with one click by using the button below:
+#### Vercel
+
+Vercel is the easiest way to deploy Joia. You can deploy it with one click by clicking the button below:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/joiahq/joia)
 
 If you want to manually set up the Vercel project, you can do so by following these steps:
 
-1. Navigate to your project and add a new Postgres database. To do so, click on **Add new... > Store**.
-2. Create a project by clicking on **Add New... > Project**.
-3. Select **Import Third-Party Git Repository** and enter the URL of this repository.
-4. Fill in the environment variables. To do so, use `.env.example` as a reference.
-5. Deploy the project and set up the domain.
+1. Navigate to your project and add a new Postgres database. To do so, click on "Add new..." > "Store".
+2. Create a project by clicking on "Add New..." > "Project".
+3. Select "Import Third-Party Git Repository" and enter the URL of this repository.
+4. WIP
 
-### Fully self-hosted
+#### Fully self-hosted
 
 To self host a Joia app you'll need to follow the next steps:
 
