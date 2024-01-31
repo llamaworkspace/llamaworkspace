@@ -18,26 +18,61 @@
 - Speed. Our benchmarks indicate that responses are on average 40% faster than ChatGPT Plus.
 - Privacy. When using OpenAI models, your data is not used for training purposes. Similarly, when using other LLMs providers, your data is not used for training purposes.
 
+## Getting started
+
+#### Cloud
+
+The easiest way to get started with Joia is with [our official managed service in the cloud](https://joia.so/). At the moment it is completely free to use without limits, although we have plans to introduce a pricing model in the future.
+
+In the cloud version you can either use your own API keys for LLM provider, or purchase credits with us.
+
+Our cloud version can save a substantial amount of developer time and resources. We think it's the de-facto solution for mot customers and the value option. Plus, any future revenues will go towards the funding nad maintenance of Joia. You’ll be supporting open source software and getting a great service!
+
+#### Vercel
+
+Vercel is the easiest way to deploy Joia. You can deploy it with one click by clicking the button below:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/joiahq/joia)
+
+If you want to manually set up the Vercel project, you can do so by following these steps:
+
+1. Navigate to your project and add a new Postgres database. To do so, click on "Add new..." > "Store".
+2. Create a project by clicking on "Add New..." > "Project".
+3. Select "Import Third-Party Git Repository" and enter the URL of this repository.
+4. WIP
+
+#### Fully self-hosted
+
+To self host a Joia app you'll need to follow the next steps:
+
+1. Provision a Postgres database. The details may vary based on your stup.
+2. Clone or copy this repository.
+3. Create an `.env` file based on the `.env.example` file. You'll need to set the `DATABASE_URL` variable to point to your Postgres database.
+4. Install the dependencies by running `yarn install`.
+5. Build the NextJS app by running `yarn production:build`. This will prepare NextJS to be built and run the build itself.
+6. Run a post-install script by running `yarn production:postbuild`. This script will run the migrations.
+7. Bootstrap the app by running `yarn production:start`.
+
+## Feedback & Roadmap
+
+We welcome feedback from our community. We have a public roadmap driven by the features suggested by the community members. Take a look at our feedback board. Please let us know if you have any requests and vote on open issues so we can better prioritize.
+
+To stay up to date with all the latest news and product updates, make sure to follow us on X (formerly Twitter), LinkedIn or Mastodon.
+
 ## Roadmap
 
-#### Now
+We welcome feedback from our community. To stay up to date with all the latest news and product updates or to reach us, [follow us on X (formerly Twitter)](https://twitter.com/joiahq).
 
-- [ ] Platform stability.
+As the project matures, we will publish a formal public roadmap In the meantime, here is a recao of the main initiatives we will be working on:
 
-#### Next
+- [ ] Allow to tune models with custom parameters.
+- [ ] Connect with any HuggingFace model.
+- [ ] Connect with Langchain.
+- [ ] Support for text-to-image models like Stable Diffusion.
+- [ ] Improve identity providers, including e-mail based logins.
+- [ ] Folders and subfolders for chatbots.
+- [ ] Improve granularity of shared chatbots.
 
-- [ ] xx
+## License & Trademarks
 
-#### Later
-
-- [ ] xx
-
-## Installation instructions
-
-#### AWS
-
-#### Heroku
-
-#### Render.com
-
-#### Raleway
+Joia is open source under the GNU Affero General Public License Version 3 (AGPLv3) or any later version.
