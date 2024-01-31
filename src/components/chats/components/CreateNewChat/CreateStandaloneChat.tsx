@@ -1,15 +1,14 @@
 import { Button } from '@chakra-ui/react'
 import { DocumentIcon } from '@heroicons/react/24/outline'
-import { FC } from 'react'
 import { useCreateChat } from '../../chatHooks'
-import { NewChatProps } from './types'
+import { NewChatProps } from './createNewChatTypes'
 import { useCanCreateChat } from './useCanCreateChat'
 
-export const CreateStandaloneChat: FC<NewChatProps> = ({
+export const CreateStandaloneChat = ({
   postId,
   chatId,
   resetTextArea,
-}) => {
+}: NewChatProps) => {
   const { mutate: createChat } = useCreateChat()
   const canCreateChat = useCanCreateChat(postId, chatId)
 
