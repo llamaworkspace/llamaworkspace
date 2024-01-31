@@ -1,7 +1,7 @@
 import { Editable } from '@/components/ui/Editable'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
-import React from 'react'
+import { useState } from 'react'
 import { useEditChatTitle } from '../../useEditChatTitle'
 import { SidebarDesktopLineItemChatDropdown } from './SidebarDesktopLineItemChatDropdown'
 
@@ -18,7 +18,7 @@ export function SidebarDesktopLineItemForSingleChat({
   isCurrent = false,
   href,
 }: SidebarDesktopLineItemForSingleChatProps) {
-  const [isHovered, setIsHovered] = React.useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   const { value, onChange } = useEditChatTitle(id, title)
 
