@@ -1,3 +1,4 @@
 {
-  "installCommand": "yarn vercel:deploy"
+  "buildCommand": "yarn production:build",
+  "installCommand": "yarn production:postbuild"
 }
