@@ -5,20 +5,39 @@
 </a>
 </p>
 
-<h3 align="center"><b>A ChatGPT alternative built for collaboration.</b></h3>
+<h3 align="center"><strong>The ChatGPT Team alternative that talks to any Large Language Model.</strong></h3>
 
-# Joia
+[Joia](https://joia.so/) is a collaborative alternative to ChatGPT, designed from the ground up for team collaboration. It open source and has the added benefit that can connect to any Large Language Model; including those provided by OpenAI, OpenRouter, HuggingFace and Amazon Bedrock.
 
-### Main features
+## Main features & benefits
 
-**Collaborative chatbots:** We make it easy for teams to create and iterate chatbots for specific use cases. Think of "GPTs", but shareable by default and more steerable.
+- Easy to give access to LLMs like ChatGPT to entire teams.
+- Use the latest open source LLMs like Llama 2, Mixtral and others.
+- Create collaborative chatbots for specific use cases, and share them across your teams.
+- Savings estimated of 50%-75% (depends on usage), when compared to ChatGPT Plus.
+- Speed. Our benchmarks indicate that responses are on average 40% faster than ChatGPT Plus.
+- Privacy. When using OpenAI models, your data is not used for training purposes. Similarly, when using other LLMs providers, your data is not used for training purposes.
 
-**Easy access management and payment:** Today, granting an entire team access to OpenAI's ChatGPT can be quite cumbersome (except for ChatGPT Enterprise users). Each member has to use a separate credit card and generate an individual invoice. With Joia, you can manage access and payment from a single point.
+## Roadmap
 
-**Speed:** Our system generates responses 35% to 55% faster by connecting to OpenAI via an API, which consistently delivers better response times than accessing ChatGPT through the UI.
+#### Now
 
-**Affordability:** For 99% of users, the cost is lower than the $20 ChatGPT Plus subscription. Our early adopters are paying an average of $7 per month. This is possible because you pay only for the words generated, with each word costing around $0.00008. To put this into perspective, you would need to generate the equivalent of an entire Harry Potter book to match the cost of ChatGPT Plus.
+- [ ] Platform stability.
 
-**Privacy:** By using OpenAI API, your data is not used for model training purposes.
+#### Next
 
-**Support for multiple LLMs** We are in the process of adding support for a variety of large language models (LLMs), including Claude, Llama, and others hosted on platforms like Amazon Bedrock and Replicate.
+- [ ] xx
+
+#### Later
+
+- [ ] xx
+
+## Installation instructions
+
+#### AWS
+
+#### Heroku
+
+#### Render.com
+
+#### Raleway
