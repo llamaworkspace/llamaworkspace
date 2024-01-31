@@ -354,34 +354,38 @@ export const useDeletePrivateChat = () => {
   }
 }
 
-export const useUpdateChatTitle = () => {
+export const useUpdateChat = () => {
   const errorHandler = useErrorHandler()
-  const utils = api.useContext()
+  const { sidebar } = api.useContext()
+  const { chatHistoryForSidebar } = sidebar
 
   const { isSuccess, reset, mutate, ...rest } =
     api.chats.updateChatTitle.useMutation({
       onError: errorHandler(),
-      onSuccess: async () => {
-        await utils.sidebar.invalidate()
-      },
     })
-
-  useEffect(() => {
-    if (isSuccess) {
-      reset()
-    }
-  }, [isSuccess, reset])
 
   type MutateArgs = Parameters<typeof mutate>
   type Params = MutateArgs[0]
   type Options = MutateArgs[1]
 
+  const { data } = useDefaultPost()
+
   return {
     mutate: debounce((params: Params, options?: Options) => {
+      if (!data) return
+
+      chatHistoryForSidebar.setData({ postId: data?.id }, (previous) => {
+        if (!previous) return previous
+
+        return produce(previous, (draft) => {
+          const chatIndex = draft.findIndex((chat) => chat.id === params.id)
+          const foundChat = draft[chatIndex]
+          if (foundChat) foundChat.title = params.title ?? null
+        })
+      })
+
       mutate(params, options)
     }, 350),
-    isSuccess,
-    reset,
     ...rest,
   }
 }

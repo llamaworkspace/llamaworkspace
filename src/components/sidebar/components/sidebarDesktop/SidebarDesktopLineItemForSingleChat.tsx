@@ -1,8 +1,8 @@
+import { useUpdateChat } from '@/components/chats/chatHooks'
 import { Editable } from '@/components/ui/Editable'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useEditChatTitle } from '../../useEditChatTitle'
 import { SidebarDesktopLineItemChatDropdown } from './SidebarDesktopLineItemChatDropdown'
 
 interface SidebarDesktopLineItemForSingleChatProps {
@@ -20,7 +20,10 @@ export function SidebarDesktopLineItemForSingleChat({
 }: SidebarDesktopLineItemForSingleChatProps) {
   const [isHovered, setIsHovered] = useState(false)
 
-  const { value, onChange } = useEditChatTitle(id, title)
+  const { mutate } = useUpdateChat()
+  const handleChange = (value: string) => {
+    mutate({ id, title: value })
+  }
 
   return (
     <li>
@@ -54,10 +57,10 @@ export function SidebarDesktopLineItemForSingleChat({
                   )}
                 >
                   <Editable
-                    onChange={onChange}
+                    onChange={handleChange}
                     tagName="span"
                     placeholder="Untitled chat"
-                    initialValue={value}
+                    initialValue={title}
                     className={cn(
                       'line-clamp-1 grow text-sm font-medium leading-6',
                       isCurrent ? 'text-zinc-900' : 'text-zinc-600',
