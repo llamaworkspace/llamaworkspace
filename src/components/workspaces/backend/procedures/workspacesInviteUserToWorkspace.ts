@@ -5,6 +5,7 @@ import { protectedProcedure } from '@/server/trpc/trpc'
 import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
+import Promise from 'bluebird'
 import { z } from 'zod'
 import { workspaceEditionFilter } from '../workspacesBackendUtils'
 
@@ -16,7 +17,7 @@ const zInput = z.object({
 export const workspacesInviteUserToWorkspace = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
-    const userId = ctx.session.user.id
+    const invitingUserId = ctx.session.user.id
 
     await prismaAsTrx(ctx.prisma, async (prisma) => {
       const workspace = await prisma.workspace.findUniqueOrThrow({
@@ -26,11 +27,11 @@ export const workspacesInviteUserToWorkspace = protectedProcedure
         },
         where: {
           id: input.workspaceId,
-          ...workspaceEditionFilter(userId),
+          ...workspaceEditionFilter(invitingUserId),
         },
       })
 
-      const existingUser = await prisma.user.findUnique({
+      const invitedUser = await prisma.user.findUnique({
         select: {
           id: true,
         },
@@ -39,28 +40,33 @@ export const workspacesInviteUserToWorkspace = protectedProcedure
         },
       })
 
-      if (existingUser) {
-        await handleExistingUser(prisma, workspace.id, existingUser.id)
-      } else {
-        await handleInexistentUser(
+      if (invitedUser) {
+        await handleUserExists(
           prisma,
-          userId,
           workspace.id,
+          invitingUserId,
+          invitedUser.id,
+        )
+      } else {
+        await handleUserDoesNotExist(
+          prisma,
+          workspace.id,
+          invitingUserId,
           input.email,
-          workspace.name,
         )
       }
     })
   })
 
-const handleExistingUser = async (
+const handleUserExists = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
-  existingUserId: string,
+  invitingUserId: string,
+  invitedUserId: string,
 ) => {
   const result = await addUserToWorkspaceService(
     prisma,
-    existingUserId,
+    invitedUserId,
     workspaceId,
   )
 
@@ -71,41 +77,51 @@ const handleExistingUser = async (
     })
   }
 
-  const user = await prisma.user.findUniqueOrThrow({
-    select: {
-      email: true,
-    },
-    where: {
-      id: existingUserId,
-    },
-  })
+  const [invitedUser, invitingUser, workspace] = await Promise.all([
+    await prisma.user.findUniqueOrThrow({
+      select: {
+        email: true,
+      },
+      where: {
+        id: invitedUserId,
+      },
+    }),
+    await prisma.user.findUniqueOrThrow({
+      select: {
+        email: true,
+        name: true,
+      },
+      where: {
+        id: invitingUserId,
+      },
+    }),
+    await prisma.workspace.findUniqueOrThrow({
+      select: {
+        name: true,
+      },
+      where: {
+        id: workspaceId,
+      },
+    }),
+  ])
 
-  const workspace = await prisma.workspace.findUniqueOrThrow({
-    select: {
-      name: true,
-    },
-    where: {
-      id: workspaceId,
-    },
-  })
+  if (!invitedUser.email) return
 
-  if (!user.email) return
+  const invitingUserOrEmail = invitingUser.name ?? invitingUser.email!
 
   await sendEmailToInvitedUser(
-    prisma,
-    existingUserId,
-    user.email,
     workspaceId,
+    invitingUserOrEmail,
+    invitedUser.email,
     workspace.name,
   )
 }
 
-const handleInexistentUser = async (
+const handleUserDoesNotExist = async (
   prisma: PrismaClientOrTrxClient,
-  userId: string,
   workspaceId: string,
-  email: string,
-  workspaceName: string,
+  invitingUserId: string,
+  invitedUserEmail: string,
 ) => {
   const existingInvite = await prisma.workspaceInvite.findUnique({
     select: {
@@ -113,7 +129,7 @@ const handleInexistentUser = async (
     },
     where: {
       email_workspaceId: {
-        email: email,
+        email: invitedUserEmail,
         workspaceId: workspaceId,
       },
     },
@@ -127,50 +143,66 @@ const handleInexistentUser = async (
     })
   }
 
+  const [invitingUser, workspace] = await Promise.all([
+    await prisma.user.findUniqueOrThrow({
+      select: {
+        email: true,
+        name: true,
+      },
+      where: {
+        id: invitingUserId,
+      },
+    }),
+    await prisma.workspace.findUniqueOrThrow({
+      select: {
+        name: true,
+      },
+      where: {
+        id: workspaceId,
+      },
+    }),
+  ])
+
   await prisma.workspaceInvite.create({
     data: {
-      invitedById: userId,
-      email: email,
+      invitedById: invitingUserId,
+      email: invitedUserEmail,
       workspaceId: workspaceId,
     },
   })
 
+  const invitingUserOrEmail = invitingUser.name ?? invitingUser.email!
+
   await sendEmailToInvitedUser(
-    prisma,
-    userId,
-    email,
     workspaceId,
-    workspaceName,
+    invitingUserOrEmail,
+    invitedUserEmail,
+    workspace.name,
   )
 }
 
 const sendEmailToInvitedUser = async (
-  prisma: PrismaClientOrTrxClient,
-  userId: string,
-  email: string,
   workspaceId: string,
+  invitingUserName: string,
+  invitedUserEmail: string,
   workspaceName: string,
 ) => {
-  const invitingUser = await prisma.user.findUniqueOrThrow({
-    where: {
-      id: userId,
-    },
-  })
-
-  const fromName = invitingUser?.name
-    ? `${invitingUser.name} - via Joia`
-    : 'Joia'
+  const fromName = invitingUserName ? `${invitingUserName} - via Joia` : 'Joia'
 
   const subject = `Your invitation to the workspace "${workspaceName}"`
 
   const workspaceUrl = `${env.NEXT_PUBLIC_FRONTEND_URL}/w/${workspaceId}`
-  const invitingUserOrEmail = invitingUser.name! && invitingUser.email!
 
   await sendEmail({
     fromName,
-    to: email,
+    to: invitedUserEmail,
     subject,
-    body: getEmailBody(invitingUserOrEmail, workspaceUrl, workspaceName, email),
+    body: getEmailBody(
+      invitingUserName,
+      workspaceUrl,
+      workspaceName,
+      invitedUserEmail,
+    ),
   })
 }
 
