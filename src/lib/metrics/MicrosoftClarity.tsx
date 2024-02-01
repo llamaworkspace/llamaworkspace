@@ -4,6 +4,8 @@ import Script from 'next/script'
 export const MicosoftClarity = () => {
   return (
     <Script
+      id="microsoft-clarity"
+      strategy="afterInteractive"
       dangerouslySetInnerHTML={{
         __html: `
         (function(c,l,a,r,i,t,y){
