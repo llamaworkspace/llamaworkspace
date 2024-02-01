@@ -10,6 +10,30 @@ export const openRouterAiModels: AiRegistryModel[] = [
     },
   },
   {
+    slug: 'meta-llama/llama-2-70b-chat' as const,
+    publicName: 'Llama v2 70B Chat' as const,
+    costPerMille: {
+      request: 0.0007,
+      response: 0.0009,
+    },
+  },
+  {
+    slug: 'codellama/codellama-70b-instruct' as const,
+    publicName: 'CodeLlama 70B Instruct' as const,
+    costPerMille: {
+      request: 0.00081,
+      response: 0.00081,
+    },
+  },
+  {
+    slug: 'meta-llama/codellama-34b-instruct' as const,
+    publicName: 'CodeLlama 34B Instruct' as const,
+    costPerMille: {
+      request: 0.0004,
+      response: 0.0004,
+    },
+  },
+  {
     slug: 'huggingfaceh4/zephyr-7b-beta' as const,
     publicName: 'Zephyr 7b (Hugging Face)' as const,
     costPerMille: {
@@ -23,22 +47,6 @@ export const openRouterAiModels: AiRegistryModel[] = [
     costPerMille: {
       request: 0.001,
       response: 0.001,
-    },
-  },
-  {
-    slug: 'meta-llama/llama-2-70b-chat' as const,
-    publicName: 'Llama v2 70B Chat' as const,
-    costPerMille: {
-      request: 0.0007,
-      response: 0.0009,
-    },
-  },
-  {
-    slug: 'meta-llama/codellama-34b-instruct' as const,
-    publicName: 'CodeLlama 34B Instruct' as const,
-    costPerMille: {
-      request: 0.0004,
-      response: 0.0004,
     },
   },
   {
