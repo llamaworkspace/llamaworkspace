@@ -13,7 +13,7 @@ export enum ChatAuthor {
 
 export enum OpenAiModelEnum {
   GPT3_5_TURBO = 'openai/gpt-3.5-turbo',
-  GPT4 = 'openai/gpt-4-1106-preview',
+  GPT4 = 'openai/gpt-4-turbo-preview',
 }
 
 export const OpenaiModelToHuman: Record<OpenAiModelEnum, string> = {

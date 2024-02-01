@@ -5,7 +5,7 @@ import {
   type PrismaClientOrTrxClient,
 } from '@/shared/globalTypes'
 
-const DEFAULT_OPENAI_MODELS = ['gpt-4-1106-preview', 'gpt-3.5-turbo']
+const DEFAULT_OPENAI_MODELS = ['gpt-4-turbo-preview', 'gpt-3.5-turbo']
 
 export const setDefaultsForWorkspace = async (
   prisma: PrismaClientOrTrxClient,
