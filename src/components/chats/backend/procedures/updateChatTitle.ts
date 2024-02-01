@@ -1,21 +1,20 @@
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { chatEditionFilter } from '../chatsBackendUtils'
 
 const zInput = z.object({
   id: z.string(),
-  allowLastChatDeletion: z.optional(z.boolean()),
+  title: z.string(),
 })
 
-export const deleteChat = protectedProcedure
+export const updateChatTitle = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
-    const { id, allowLastChatDeletion } = input
+    const { id, title } = input
 
     const chat = await ctx.prisma.chat.findFirstOrThrow({
       where: {
@@ -30,30 +29,13 @@ export const deleteChat = protectedProcedure
       chat.postId,
     )
 
-    // Getting the first to avoid having to count
-    const anotherChatInPost = await ctx.prisma.chat.findFirst({
-      select: {
-        id: true,
-      },
-      where: {
-        postId: chat.postId,
-        NOT: {
-          id,
-        },
-      },
-    })
-
     return await ctx.prisma.$transaction(async (prisma) => {
-      if (!anotherChatInPost && !allowLastChatDeletion) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'You cannot delete the last chat of a post',
-        })
-      }
-
-      return await prisma.chat.delete({
+      return await prisma.chat.update({
         where: {
           id: input.id,
+        },
+        data: {
+          title,
         },
       })
     })

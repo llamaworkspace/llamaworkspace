@@ -1,4 +1,4 @@
-import { useCreateStandaloneChat } from '@/components/chats/chatHooks'
+import { useCreatePrivateChat } from '@/components/chats/chatHooks'
 import { Button } from '@/components/ui/button'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { DocumentIcon } from '@heroicons/react/24/outline'
@@ -7,7 +7,7 @@ import { SidebarMobileLineItemForSingleChat } from './SidebarMobileLineItemForSi
 
 export const SidebarMobileChatsSection = () => {
   const { data: standaloneChats } = useStandaloneChats()
-  const { mutate: createStandaloneChat } = useCreateStandaloneChat()
+  const { mutate: createStandaloneChat } = useCreatePrivateChat()
   const navigation = useNavigation()
   return (
     <li>

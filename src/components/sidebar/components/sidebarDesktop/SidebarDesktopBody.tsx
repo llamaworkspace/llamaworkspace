@@ -1,4 +1,4 @@
-import { useCreateStandaloneChat } from '@/components/chats/chatHooks'
+import { useCreatePrivateChat } from '@/components/chats/chatHooks'
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { useCreatePost } from '@/components/posts/postsHooks'
 import { Button } from '@/components/ui/button'
@@ -23,7 +23,7 @@ import { SidebarDesktopLineItemForSingleChat } from './SidebarDesktopLineItemFor
 
 export function SidebarDesktopBody() {
   const { mutate: createPost } = useCreatePost()
-  const { mutate: createStandaloneChat } = useCreateStandaloneChat()
+  const { mutate: createStandaloneChat } = useCreatePrivateChat()
   const { data: standaloneChats } = useStandaloneChats()
   const { workspace } = useCurrentWorkspace()
   // Unless needed, replace for something else that is not sortedPosts
@@ -54,7 +54,7 @@ export function SidebarDesktopBody() {
     <>
       <div className="relative flex grow overflow-y-auto">
         <nav className="absolute bottom-0 left-0 right-0 top-0 flex grow flex-col overflow-y-auto px-4 py-6">
-          <ul role="list" className="flex flex-1 flex-col gap-y-7">
+          <ul className="flex flex-1 flex-col gap-y-7">
             <li>
               <div className="flex items-center justify-between">
                 <div className="text-xs font-semibold uppercase leading-6 text-zinc-400">
@@ -77,13 +77,14 @@ export function SidebarDesktopBody() {
                 </div>
               </div>
 
-              <ul role="list" className="-mx-1 mt-1 overflow-auto">
+              <ul className="-mx-1 mt-1 overflow-auto">
                 {standaloneChats?.slice(0, 3)?.map((chat) => {
                   return (
                     <SidebarDesktopLineItemForSingleChat
                       href={`/c/${chat.id}`}
                       title={chat.title ?? 'Untitled chat'}
                       key={chat.id}
+                      id={chat.id}
                       isCurrent={navigation.query.chat_id === chat.id}
                     />
                   )
@@ -143,7 +144,7 @@ export function SidebarDesktopBody() {
                   </Tooltip>
                 </div>
               </div>
-              <ul role="list" className="-mx-2 mt-1">
+              <ul className="-mx-2 mt-1">
                 {sortedPosts?.map((post, index) => {
                   const href = post.firstChatId
                     ? `/p/${post.id}/c/${post.firstChatId}`
@@ -188,7 +189,7 @@ export function SidebarDesktopBody() {
             !seeMore ? 'translate-x-[-300px]' : 'translate-x-[-8px]',
           )}
         >
-          <ul role="list" className="flex flex-1 flex-col gap-y-4">
+          <ul className="flex flex-1 flex-col gap-y-4">
             <li>
               <Button
                 className="ml-0.5 px-2 py-1 text-xs"
@@ -203,10 +204,11 @@ export function SidebarDesktopBody() {
               <div className="ml-1 text-xs font-semibold uppercase leading-6 text-zinc-400">
                 Chats
               </div>
-              <ul role="list" className="mt-2 overflow-auto">
+              <ul className="mt-2 overflow-auto">
                 {standaloneChats?.map((chat) => {
                   return (
                     <SidebarDesktopLineItemForSingleChat
+                      id={chat.id}
                       href={`/c/${chat.id}`}
                       title={chat.title ?? 'Untitled chat'}
                       key={chat.id}
