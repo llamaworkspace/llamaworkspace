@@ -2,6 +2,7 @@ import { RouterEventListenerProvider } from '@/components/global/components/Rout
 import { GlobalStateProvider } from '@/components/global/globalState'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { api } from '@/lib/api'
+import { Metrics } from '@/lib/metrics/Metrics'
 import '@/styles/globals.css'
 import { ChakraProvider } from '@chakra-ui/react'
 import { type Session } from 'next-auth'
@@ -29,6 +30,7 @@ const JoiaApp: AppType<{ session: Session | null }> = ({
               <TooltipProvider>
                 <DndProvider backend={HTML5Backend}>
                   <Component {...pageProps} />
+                  <Metrics />
                 </DndProvider>
               </TooltipProvider>
             </ChakraProvider>
