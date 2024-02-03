@@ -4,10 +4,11 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useEnterSubmit } from '@/lib/frontend/useEnterSubmit'
 import { cn } from '@/lib/utils'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { ArrowRightCircleIcon, DocumentIcon } from '@heroicons/react/24/outline'
+import { ArrowRightCircleIcon } from '@heroicons/react/24/outline'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import _ from 'underscore'
-import { useCreateChat, useMessages, usePrompt } from '../chatHooks'
+import { useMessages, usePrompt } from '../chatHooks'
+import { CreateNewChat } from './CreateNewChat/CreateNewChat'
 
 const MAX_HEIGHT = 200
 
@@ -15,11 +16,6 @@ interface ChatProps {
   postId?: string
   chatId?: string
   stableOnChatboxHeightChange?: (height: number) => void
-}
-
-const useCanCreateChat = (postId?: string, chatId?: string) => {
-  const { data: messages } = useMessages(chatId)
-  return postId && chatId && messages && messages.length > 0
 }
 
 export function Chatbox({
@@ -44,8 +40,9 @@ export function Chatbox({
     [textAreaExpectedHeight, stableOnChatboxHeightChange],
   )
 
-  const { mutate: createChat } = useCreateChat()
-  const canCreateChat = useCanCreateChat(postId, chatId)
+  useEffect(() => {
+    stableOnChatboxHeightChange?.(textAreaExpectedHeight)
+  }, [stableOnChatboxHeightChange, textAreaExpectedHeight])
 
   const { can: canUse } = useCanExecuteActionForPost(
     PermissionAction.Use,
@@ -77,18 +74,6 @@ export function Chatbox({
       setTextAreaExpectedHeight(divRef.current.scrollHeight)
     }
   }, [value, setTextAreaExpectedHeight])
-
-  const handleCreateChat = () => {
-    if (!postId) return
-    createChat(
-      { postId },
-      {
-        onSuccess: () => {
-          handleReset()
-        },
-      },
-    )
-  }
 
   const placeholder = (function () {
     if (_.isNull(canUse) || _.isUndefined(canUse)) {
@@ -195,29 +180,18 @@ export function Chatbox({
         </form>
       )}
       <div className="mt-2 flex justify-between text-xs tracking-tight">
-        <div>
-          {showSkeleton ? (
-            <Skeleton className="h-6 w-24" />
-          ) : (
-            <Button
-              onClick={handleCreateChat}
-              variant="outline"
-              size="xs"
-              className="mr-2"
-              // Revisit this: Is it the right behavior?
-              // https://www.notion.so/joiahq/Revisit-the-behaviour-of-the-disabled-new-chat-button-in-the-chatbox-f44da7d966754e439bd96e74bf564a60
-              disabled={!canCreateChat}
-            >
-              <DocumentIcon className="-ml-0.5 mr-1 h-3 w-3" /> New chat
-            </Button>
-          )}
-        </div>
+        <CreateNewChat
+          postId={postId}
+          chatId={chatId}
+          loading={showSkeleton}
+          onSuccess={handleReset}
+        />
         {showSkeleton ? (
           <Skeleton className="h-4 w-40" />
         ) : (
           <div className="text-zinc-400">
-            <span className="font-semibold">Shift + Enter</span>
-            &nbsp;to add a new line
+            <span className="font-semibold">Shift + Enter</span> &nbsp;to add a
+            new line
           </div>
         )}
       </div>

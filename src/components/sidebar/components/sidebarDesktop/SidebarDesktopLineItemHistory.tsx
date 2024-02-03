@@ -1,3 +1,5 @@
+import { useUpdateChat } from '@/components/chats/chatHooks'
+import { Editable } from '@/components/ui/Editable'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
@@ -82,30 +84,42 @@ function HistoryItem({
   isLastChat,
 }: HistoryItemProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const { mutate } = useUpdateChat()
+  const handleChange = (value: string) => {
+    mutate({ id: chatId, title: value })
+  }
 
   return (
-    <div
-      className={cn('flex justify-between gap-2')}
+    <Link
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      href={`/p/${postId}/c/${chatId}`}
+      className={cn('flex w-full justify-between gap-2 text-left')}
     >
-      <Link href={`/p/${postId}/c/${chatId}`} className={cn('flex-grow')}>
-        <div
-          className={cn(
-            'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
-            isCurrent &&
-              'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
-          )}
-        >
-          {title}
-        </div>
-      </Link>
-
+      <Editable
+        onChange={handleChange}
+        tagName="span"
+        placeholder="Untitled chat"
+        initialValue={title}
+        className={cn(
+          'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
+          isCurrent &&
+            'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
+        )}
+      />
       <SidebarDesktopLineItemChatDropdown
         chatId={chatId}
         isHovered={isHovered}
         isLastChat={isLastChat}
       />
-    </div>
+    </Link>
   )
 }
+
+/**
+ *  className={cn(
+            'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
+            isCurrent &&
+              'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
+          )}
+ */

@@ -1,9 +1,7 @@
-import { useDeleteChat } from '@/components/chats/chatHooks'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -12,26 +10,24 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { EllipsisHorizontalIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { EllipsisHorizontalIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
+import { SidebarDesktopDeleteChat } from './SidebarDesktopDeleteChat/SidebarDesktopDeleteChat'
 
 interface SidebarDesktopLineItemChatDropdownProps {
   chatId: string
   isHovered: boolean
   isLastChat: boolean
+  isPrivate?: boolean
 }
 
 export function SidebarDesktopLineItemChatDropdown({
   chatId,
   isHovered,
   isLastChat,
+  isPrivate,
 }: SidebarDesktopLineItemChatDropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const { mutate: deleteChat } = useDeleteChat()
-
-  const handleDelete = () => {
-    void deleteChat({ id: chatId })
-  }
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
@@ -51,12 +47,11 @@ export function SidebarDesktopLineItemChatDropdown({
         <DropdownMenuGroup>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div>
-                <DropdownMenuItem disabled={isLastChat} onSelect={handleDelete}>
-                  <TrashIcon className="mr-2 h-4 w-4" />
-                  <span>Delete</span>
-                </DropdownMenuItem>
-              </div>
+              <SidebarDesktopDeleteChat
+                chatId={chatId}
+                isPrivate={isPrivate}
+                isLastChat={isLastChat}
+              />
             </TooltipTrigger>
             {isLastChat && (
               <TooltipContent>

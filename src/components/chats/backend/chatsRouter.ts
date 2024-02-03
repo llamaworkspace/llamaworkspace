@@ -6,6 +6,7 @@ import { deleteChat } from './procedures/deleteChat'
 import { getChatById } from './procedures/getChatById'
 import { getMessagesByChatId } from './procedures/getMessagesByChatId'
 import { getPostConfigForChatId } from './procedures/getPostConfigForChatId'
+import { updateChatTitle } from './procedures/updateChatTitle'
 import { updatePostConfigForStandaloneChat } from './procedures/updatePostConfigForStandaloneChat'
 
 export const chatsRouter = createTRPCRouter({
@@ -17,4 +18,5 @@ export const chatsRouter = createTRPCRouter({
   createStandaloneChat,
   deleteChat,
   updatePostConfigForStandaloneChat,
+  updateChatTitle,
 })

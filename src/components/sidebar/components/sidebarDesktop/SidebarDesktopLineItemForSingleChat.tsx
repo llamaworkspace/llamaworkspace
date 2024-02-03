@@ -1,17 +1,30 @@
+import { useUpdateChat } from '@/components/chats/chatHooks'
+import { Editable } from '@/components/ui/Editable'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import { useState } from 'react'
+import { SidebarDesktopLineItemChatDropdown } from './SidebarDesktopLineItemChatDropdown'
 
 interface SidebarDesktopLineItemForSingleChatProps {
+  id: string
   title: string
   href: string
   isCurrent: boolean
 }
 
 export function SidebarDesktopLineItemForSingleChat({
+  id,
   title,
   isCurrent = false,
   href,
 }: SidebarDesktopLineItemForSingleChatProps) {
+  const [isHovered, setIsHovered] = useState(false)
+
+  const { mutate } = useUpdateChat()
+  const handleChange = (value: string) => {
+    mutate({ id, title: value })
+  }
+
   return (
     <li>
       <div
@@ -22,7 +35,11 @@ export function SidebarDesktopLineItemForSingleChat({
           'rounded-md p-1 text-sm',
         )}
       >
-        <Link href={href}>
+        <Link
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          href={href}
+        >
           <div>
             <div
               className={cn(
@@ -39,8 +56,23 @@ export function SidebarDesktopLineItemForSingleChat({
                     isCurrent ? 'text-zinc-900' : 'text-zinc-600',
                   )}
                 >
-                  {title}
+                  <Editable
+                    onChange={handleChange}
+                    tagName="span"
+                    placeholder="Untitled chat"
+                    initialValue={title}
+                    className={cn(
+                      'line-clamp-1 grow text-sm font-medium leading-6',
+                      isCurrent ? 'text-zinc-900' : 'text-zinc-600',
+                    )}
+                  />
                 </div>
+                <SidebarDesktopLineItemChatDropdown
+                  isPrivate
+                  chatId={id}
+                  isHovered={isHovered}
+                  isLastChat={false}
+                />
               </div>
             </div>
           </div>

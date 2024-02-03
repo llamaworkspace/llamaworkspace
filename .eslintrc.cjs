@@ -18,7 +18,6 @@ const config = {
     'react-hooks/exhaustive-deps': 'error', // or 'error' to enforce it as an error
     '@typescript-eslint/array-type': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
-
     '@typescript-eslint/consistent-type-imports': [
       'warn',
       {
