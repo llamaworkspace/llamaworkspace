@@ -5,18 +5,20 @@
 </a>
 </p>
 
-<h3 align="center"><strong>The ChatGPT Team alternative that talks to any Large Language Model.</strong></h3>
+<h3 align="center"><strong>The "ChatGPT for Teams" alternative that talks to any Large Language Model.</strong></h3>
 
-[Joia](https://joia.so/) is a collaborative alternative to ChatGPT, designed from the ground up for team collaboration. It open source and has the added benefit that can connect to any Large Language Model; including those provided by OpenAI, OpenRouter, HuggingFace and Amazon Bedrock.
+[Joia](https://joia.so/) is an open source alternative to _[ChatGPT for Teams](https://openai.com/chatgpt/team)_, designed from the ground up for team collaboration.
+
+The easiest way to get started with Joia is by creating a [Joia Cloud account](https://joia.so/). If you prefer to self-host Joia, please refer to our documentation below.
 
 ## Main features & benefits
 
-- Easy to give access to LLMs like ChatGPT to entire teams.
-- Use the latest open source LLMs like Llama 2, Mixtral and others.
-- Create collaborative chatbots for specific use cases, and share them across your teams.
-- Savings estimated of 50%-75% (depends on usage), when compared to ChatGPT Plus.
-- Speed. Our benchmarks indicate that responses are on average 40% faster than ChatGPT Plus.
-- Privacy. When using OpenAI models, your data is not used for training purposes. Similarly, when using other LLMs providers, your data is not used for training purposes.
+- **Manage people access** to LLMs.
+- Use the **latest open source LLMs** like Llama 2, Mixtral and others.
+- Create **collaborative chatbots** for specific use cases, and share them across your teams.
+- **Save between of 50% and 75%** (depends on usage) compared to ChatGPT for Teams.
+- **Get responses 40% faster** than ChatGPT Plus. The OpenAI API is generally faster than ChatGPT Plus.
+- **Prevent your prompts from being used for training purposes**. When using the OpenAI API, your data is not used for training purposes. Similarly, when using other LLMs providers, your data is not used for training purposes.
 
 ## Getting started
 
@@ -68,7 +70,7 @@ As the project matures, we will publish a formal public roadmap In the meantime,
 - [ ] Support for text-to-image models like Stable Diffusion.
 - [ ] Improve identity providers, including e-mail based logins.
 - [ ] Folders and subfolders for chatbots.
-- [ ] Improve granularity of shared chatbots.
+- [ ] Better sharing functionality for shared chatbots.
 
 ## License & Trademarks
 
