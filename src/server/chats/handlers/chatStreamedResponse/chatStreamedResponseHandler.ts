@@ -191,7 +191,7 @@ const validateModelIsEnabledOrThrow = async (
   if (!targetModel) {
     throw createHttpError(
       403,
-      `The model ${modelName} no longer exists. Please select another one.`,
+      `The model ${fullSlug} no longer exists. Please select another one.`,
     )
   }
 

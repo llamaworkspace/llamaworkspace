@@ -1,6 +1,7 @@
 import { workspaceEditionFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { Author, type OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
+import { Author } from '@/shared/aiTypesAndMappers'
+import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
 import {
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
@@ -25,6 +26,8 @@ export const postCreateRepo = async (
         id: userId,
       },
     })
+
+    const targetModel = user.defaultModel ?? DEFAULT_AI_MODEL
 
     // Check edition permissions on workspace
     await prisma.workspace.findUniqueOrThrow({
@@ -52,7 +55,7 @@ export const postCreateRepo = async (
         postConfigVersions: {
           create: [
             {
-              model: user.defaultModel as OpenAiModelEnum,
+              model: targetModel,
               messages: {
                 create: [
                   {

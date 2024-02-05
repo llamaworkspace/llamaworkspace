@@ -27,7 +27,6 @@ export const settleWorkspaceInvitesForNewUserService = async (
     // Add user to workspaces
     const workspaceIds = invites.map((invite) => invite.workspaceId)
 
-    // Create default posts
     await Promise.map(workspaceIds, async (workspaceId) => {
       await addUserToWorkspaceService(prisma, userId, workspaceId)
     })
