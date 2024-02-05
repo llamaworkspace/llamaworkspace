@@ -7,7 +7,7 @@
 
 <h3 align="center"><strong>The "ChatGPT for Teams" alternative that talks to any Large Language Model.</strong></h3>
 
-[Joia](https://joia.so/) is an open source alternative to _[ChatGPT for Teams](https://openai.com/chatgpt/team)_, designed from the ground up for team collaboration.
+[Joia](https://joia.so/) is an open source alternative to _[ChatGPT for Teams](https://openai.com/chatgpt/team)_, designed from the ground up for collaboration.
 
 The easiest way to get started with Joia is by creating a [Joia Cloud account](https://joia.so/). If you prefer to self-host Joia, please refer to our documentation below.
 
