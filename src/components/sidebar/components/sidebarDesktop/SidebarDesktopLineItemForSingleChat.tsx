@@ -35,7 +35,7 @@ export function SidebarDesktopLineItemForSingleChat({
     mutate({ id, title: value })
   }
 
-  const classNames = cn(
+  const sharedClassNames = cn(
     'line-clamp-1 grow text-sm font-medium leading-6',
     isCurrent ? 'text-zinc-900' : 'text-zinc-600',
     isEditable && 'whitespace-nowrap',
@@ -81,14 +81,10 @@ export function SidebarDesktopLineItemForSingleChat({
                       tagName="span"
                       placeholder="Untitled chat"
                       initialValue={title}
-                      className={classNames}
+                      className={sharedClassNames}
                     />
                   ) : (
-                    <span
-                      onClick={handleClick}
-                      placeholder="Untitled chat"
-                      className={classNames}
-                    >
+                    <span onClick={handleClick} className={sharedClassNames}>
                       {title}
                     </span>
                   )}

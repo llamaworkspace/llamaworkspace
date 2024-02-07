@@ -1,6 +1,7 @@
 import { useUpdateChat } from '@/components/chats/chatHooks'
 import { Editable } from '@/components/ui/Editable'
 import { Button } from '@/components/ui/button'
+import { useClickToDoubleClick } from '@/lib/frontend/useClickToDoubleClick'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
@@ -87,9 +88,9 @@ function HistoryItem({
   const [isEditable, setIsEditable] = useState(false)
   const { mutate } = useUpdateChat(350)
 
-  const handleClick = () => {
+  const handleClick = useClickToDoubleClick(() => {
     setIsEditable(true)
-  }
+  })
 
   const handleChange = (value: string) => {
     if (!value) {
@@ -98,6 +99,12 @@ function HistoryItem({
 
     mutate({ id: chatId, title: value })
   }
+
+  const sharedClassNames = cn(
+    'line-clamp-1 text-zinc-700 transition',
+    isCurrent && 'font-semibold text-zinc-900 ',
+    isEditable && 'whitespace-nowrap',
+  )
 
   return (
     <Link
@@ -110,20 +117,23 @@ function HistoryItem({
       )}
       onClick={handleClick}
     >
-      <Editable
-        onChange={handleChange}
-        tagName="span"
-        placeholder="Untitled chat"
-        initialValue={title}
-        onBlur={() => {
-          setIsEditable(false)
-        }}
-        className={cn(
-          'line-clamp-1 text-zinc-700 transition',
-          isCurrent && 'font-semibold text-zinc-900 ',
-          isEditable && 'whitespace-nowrap',
-        )}
-      />
+      {isEditable ? (
+        <Editable
+          onChange={handleChange}
+          focusOnMount={true}
+          tagName="span"
+          placeholder="Untitled chat"
+          initialValue={title}
+          onBlur={() => {
+            setIsEditable(false)
+          }}
+          className={sharedClassNames}
+        />
+      ) : (
+        <span onClick={handleClick} className={sharedClassNames}>
+          {title}
+        </span>
+      )}
 
       <SidebarDesktopLineItemChatDropdown
         chatId={chatId}
