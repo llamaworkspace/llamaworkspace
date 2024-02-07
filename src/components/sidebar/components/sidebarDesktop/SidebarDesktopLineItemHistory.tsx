@@ -104,7 +104,10 @@ function HistoryItem({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       href={`/p/${postId}/c/${chatId}`}
-      className={cn('flex w-full justify-between gap-2 text-left')}
+      className={cn(
+        'flex w-full justify-between gap-2 rounded p-1 text-left',
+        isCurrent && 'bg-zinc-200 hover:bg-zinc-200/60',
+      )}
       onClick={handleClick}
     >
       <Editable
@@ -116,9 +119,8 @@ function HistoryItem({
           setIsEditable(false)
         }}
         className={cn(
-          'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
-          isCurrent &&
-            'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
+          'line-clamp-1 text-zinc-700 transition',
+          isCurrent && 'font-semibold text-zinc-900 ',
           isEditable && 'whitespace-nowrap',
         )}
       />
