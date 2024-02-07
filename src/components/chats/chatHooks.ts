@@ -354,15 +354,14 @@ export const useDeletePrivateChat = () => {
   }
 }
 
-export const useUpdateChat = () => {
+export const useUpdateChat = (debounceMs = 0) => {
   const errorHandler = useErrorHandler()
   const { sidebar } = api.useContext()
   const { chatHistoryForSidebar } = sidebar
 
-  const { isSuccess, reset, mutate, ...rest } =
-    api.chats.updateChatTitle.useMutation({
-      onError: errorHandler(),
-    })
+  const { mutate, ...rest } = api.chats.updateChatTitle.useMutation({
+    onError: errorHandler(),
+  })
 
   type MutateArgs = Parameters<typeof mutate>
   type Params = MutateArgs[0]
@@ -385,7 +384,7 @@ export const useUpdateChat = () => {
       })
 
       mutate(params, options)
-    }, 350),
+    }, debounceMs),
     ...rest,
   }
 }

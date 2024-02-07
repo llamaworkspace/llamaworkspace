@@ -84,8 +84,18 @@ function HistoryItem({
   isLastChat,
 }: HistoryItemProps) {
   const [isHovered, setIsHovered] = useState(false)
-  const { mutate } = useUpdateChat()
+  const [isEditable, setIsEditable] = useState(false)
+  const { mutate } = useUpdateChat(350)
+
+  const handleClick = () => {
+    setIsEditable(true)
+  }
+
   const handleChange = (value: string) => {
+    if (!value) {
+      return
+    }
+
     mutate({ id: chatId, title: value })
   }
 
@@ -95,18 +105,24 @@ function HistoryItem({
       onMouseLeave={() => setIsHovered(false)}
       href={`/p/${postId}/c/${chatId}`}
       className={cn('flex w-full justify-between gap-2 text-left')}
+      onClick={handleClick}
     >
       <Editable
         onChange={handleChange}
         tagName="span"
         placeholder="Untitled chat"
         initialValue={title}
+        onBlur={() => {
+          setIsEditable(false)
+        }}
         className={cn(
           'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
           isCurrent &&
             'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
+          isEditable && 'whitespace-nowrap',
         )}
       />
+
       <SidebarDesktopLineItemChatDropdown
         chatId={chatId}
         isHovered={isHovered}
@@ -115,11 +131,3 @@ function HistoryItem({
     </Link>
   )
 }
-
-/**
- *  className={cn(
-            'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
-            isCurrent &&
-              'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
-          )}
- */

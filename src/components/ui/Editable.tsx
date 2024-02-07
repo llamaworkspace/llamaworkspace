@@ -7,11 +7,13 @@ import sanitizeHtml from 'sanitize-html'
 
 interface ContentEditableProps {
   onChange: (value: string) => void
+  onBlur?: () => void
   placeholder?: string
   tagName?: string
   className?: string
   initialValue?: string | null
   disabled?: boolean
+  focusOnMount?: boolean
 }
 
 interface ContentEditableState {
@@ -53,6 +55,33 @@ export class Editable extends React.Component<ContentEditableProps> {
     }
   }
 
+  componentDidMount(): void {
+    if (!this.props.focusOnMount) {
+      return
+    }
+    // If the initial value is empty, focus the contentEditable
+    const ref = this.contentEditable.current
+    const length = this.state.html.length
+
+    if (!this.contentEditable.current) {
+      return
+    }
+    this.contentEditable.current.focus()
+
+    const range = document.createRange()
+    const selection = window.getSelection()
+    if (!selection) {
+      return
+    }
+    range.setStart(
+      this.contentEditable.current,
+      this.contentEditable.current.childNodes.length,
+    )
+    range.collapse(true)
+    selection.removeAllRanges()
+    selection.addRange(range)
+  }
+
   handlePaste = (event: React.ClipboardEvent) => {
     event.preventDefault()
 
@@ -92,6 +121,7 @@ export class Editable extends React.Component<ContentEditableProps> {
           html={this.state.html} // innerHTML of the editable div
           disabled={!!this.props.disabled} // use true to disable editing
           onChange={this.handleChange} // handle innerHTML change
+          onBlur={this.props.onBlur}
           onKeyDown={this.handleKeyDown}
           onPaste={this.handlePaste}
           tagName={tagName} // Use a custom HTML tag (uses a div by default)
@@ -99,6 +129,7 @@ export class Editable extends React.Component<ContentEditableProps> {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           placeholder={this.props.placeholder}
+          suppressContentEditableWarning={true}
         />
       </>
     )

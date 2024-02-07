@@ -1,5 +1,6 @@
 import { useUpdateChat } from '@/components/chats/chatHooks'
 import { Editable } from '@/components/ui/Editable'
+import { useClickToDoubleClick } from '@/lib/frontend/useClickToDoubleClick'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -19,12 +20,26 @@ export function SidebarDesktopLineItemForSingleChat({
   href,
 }: SidebarDesktopLineItemForSingleChatProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const [isEditable, setIsEditable] = useState(false)
 
-  const { mutate } = useUpdateChat()
+  const { mutate } = useUpdateChat(350)
+
+  const handleClick = useClickToDoubleClick(() => {
+    setIsEditable(true)
+  })
+
   const handleChange = (value: string) => {
+    if (!value) {
+      return
+    }
     mutate({ id, title: value })
   }
 
+  const classNames = cn(
+    'line-clamp-1 grow text-sm font-medium leading-6',
+    isCurrent ? 'text-zinc-900' : 'text-zinc-600',
+    isEditable && 'whitespace-nowrap',
+  )
   return (
     <li>
       <div
@@ -56,16 +71,27 @@ export function SidebarDesktopLineItemForSingleChat({
                     isCurrent ? 'text-zinc-900' : 'text-zinc-600',
                   )}
                 >
-                  <Editable
-                    onChange={handleChange}
-                    tagName="span"
-                    placeholder="Untitled chat"
-                    initialValue={title}
-                    className={cn(
-                      'line-clamp-1 grow text-sm font-medium leading-6',
-                      isCurrent ? 'text-zinc-900' : 'text-zinc-600',
-                    )}
-                  />
+                  {isEditable ? (
+                    <Editable
+                      focusOnMount={true}
+                      onChange={handleChange}
+                      onBlur={() => {
+                        setIsEditable(false)
+                      }}
+                      tagName="span"
+                      placeholder="Untitled chat"
+                      initialValue={title}
+                      className={classNames}
+                    />
+                  ) : (
+                    <span
+                      onClick={handleClick}
+                      placeholder="Untitled chat"
+                      className={classNames}
+                    >
+                      {title}
+                    </span>
+                  )}
                 </div>
                 <SidebarDesktopLineItemChatDropdown
                   isPrivate
