@@ -1,9 +1,11 @@
 import { useUpdateChat } from '@/components/chats/chatHooks'
-import { Editable } from '@/components/ui/Editable'
 import { Button } from '@/components/ui/button'
+import { InputField } from '@/components/ui/forms/InputField'
+import { useClickToDoubleClick } from '@/lib/frontend/useClickToDoubleClick'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
+import { Field, Form as FinalForm } from 'react-final-form'
 import { useChatHistoryForSidebarPost } from '../../sidebarHooks'
 import { SidebarDesktopLineItemChatDropdown } from './SidebarDesktopLineItemChatDropdown'
 
@@ -76,6 +78,10 @@ interface HistoryItemProps {
   isLastChat: boolean
 }
 
+interface FormTitleEditValues {
+  title: string
+}
+
 function HistoryItem({
   chatId,
   postId,
@@ -84,9 +90,20 @@ function HistoryItem({
   isLastChat,
 }: HistoryItemProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const [isEditable, setIsEditable] = useState(false)
   const { mutate } = useUpdateChat()
-  const handleChange = (value: string) => {
-    mutate({ id: chatId, title: value })
+
+  const handleClick = useClickToDoubleClick(() => {
+    setIsEditable(true)
+  })
+
+  const handleChange = ({ title }: FormTitleEditValues) => {
+    setIsEditable(false)
+    if (!title) {
+      return
+    }
+
+    mutate({ id: chatId, title })
   }
 
   return (
@@ -96,17 +113,43 @@ function HistoryItem({
       href={`/p/${postId}/c/${chatId}`}
       className={cn('flex w-full justify-between gap-2 text-left')}
     >
-      <Editable
-        onChange={handleChange}
-        tagName="span"
-        placeholder="Untitled chat"
-        initialValue={title}
-        className={cn(
-          'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
-          isCurrent &&
-            'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
-        )}
-      />
+      {isEditable ? (
+        <FinalForm<FormTitleEditValues>
+          onSubmit={handleChange}
+          initialValues={{ title }}
+          render={({ handleSubmit }) => {
+            return (
+              <Field
+                name="title"
+                render={({ input }) => {
+                  return (
+                    <InputField
+                      type="text"
+                      placeholder="Untitled chat"
+                      onEnterKeyDown={() => void handleSubmit()}
+                      focusOnMount
+                      variant="unstyled"
+                      className="focus-visible:ring-none w-full bg-transparent placeholder:text-zinc-500 focus-visible:outline-none"
+                      {...input}
+                      onBlur={() => void handleSubmit()}
+                    />
+                  )
+                }}
+              />
+            )
+          }}
+        />
+      ) : (
+        <span
+          onClick={handleClick}
+          className={cn(
+            'line-clamp-1 text-zinc-700 transition',
+            isCurrent && 'font-semibold text-zinc-900 ',
+          )}
+        >
+          {title}
+        </span>
+      )}
       <SidebarDesktopLineItemChatDropdown
         chatId={chatId}
         isHovered={isHovered}
@@ -115,11 +158,3 @@ function HistoryItem({
     </Link>
   )
 }
-
-/**
- *  className={cn(
-            'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
-            isCurrent &&
-              'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
-          )}
- */

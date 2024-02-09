@@ -3,7 +3,7 @@ import { InputField } from '@/components/ui/forms/InputField'
 import { useClickToDoubleClick } from '@/lib/frontend/useClickToDoubleClick'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { SidebarDesktopLineItemChatDropdown } from './SidebarDesktopLineItemChatDropdown'
 
@@ -26,7 +26,6 @@ export function SidebarDesktopLineItemForSingleChat({
 }: SidebarDesktopLineItemForSingleChatProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isEditable, setIsEditable] = useState(false)
-  const fieldRef = useRef<HTMLInputElement>(null)
   const { mutate } = useUpdateChat()
 
   const handleClick = useClickToDoubleClick(() => {
@@ -80,7 +79,6 @@ export function SidebarDesktopLineItemForSingleChat({
                       render={({ handleSubmit }) => {
                         return (
                           <Field
-                            ref={fieldRef}
                             name="title"
                             render={({ input }) => {
                               return (
