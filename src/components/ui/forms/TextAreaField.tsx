@@ -2,9 +2,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { forwardRef } from 'react'
 import { FormFieldWrapper } from './FormFieldWrapper'
-import type { DefaultInputProps } from './formTypes'
+import type { DefaultFormInputProps } from './formTypes'
 
-interface TextAreaProps extends DefaultInputProps {
+interface TextAreaProps extends DefaultFormInputProps {
   initialValue?: string
   className?: string
   rows?: number

@@ -1,9 +1,9 @@
 import type { CheckedState } from '@radix-ui/react-checkbox'
 import { forwardRef } from 'react'
 import { Checkbox } from '../checkbox'
-import type { DefaultInputProps } from './formTypes'
+import type { DefaultFormInputProps } from './formTypes'
 
-type InputProps = Pick<DefaultInputProps, 'label'> & {
+type InputProps = Pick<DefaultFormInputProps, 'label'> & {
   checked: boolean
   onCheckedChange?: (value: boolean) => void
 }

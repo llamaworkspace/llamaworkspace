@@ -1,4 +1,4 @@
-export interface DefaultInputProps {
+export interface DefaultFormInputProps {
   label?: string
   placeholder?: string
   helperText?: string | JSX.Element
