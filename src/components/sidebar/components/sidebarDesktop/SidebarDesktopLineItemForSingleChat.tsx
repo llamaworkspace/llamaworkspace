@@ -1,6 +1,7 @@
 import { useUpdateChat } from '@/components/chats/chatHooks'
 import { Editable } from '@/components/ui/Editable'
 import { cn } from '@/lib/utils'
+import { DEFAULT_API_DEBOUNCE_MS } from '@/shared/globalConfig'
 import Link from 'next/link'
 import { useState } from 'react'
 import { SidebarDesktopLineItemChatDropdown } from './SidebarDesktopLineItemChatDropdown'
@@ -20,7 +21,7 @@ export function SidebarDesktopLineItemForSingleChat({
 }: SidebarDesktopLineItemForSingleChatProps) {
   const [isHovered, setIsHovered] = useState(false)
 
-  const { mutate } = useUpdateChat()
+  const { mutate } = useUpdateChat(DEFAULT_API_DEBOUNCE_MS)
   const handleChange = (value: string) => {
     mutate({ id, title: value })
   }

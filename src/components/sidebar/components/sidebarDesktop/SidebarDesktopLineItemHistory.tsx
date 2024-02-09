@@ -2,6 +2,7 @@ import { useUpdateChat } from '@/components/chats/chatHooks'
 import { Editable } from '@/components/ui/Editable'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { DEFAULT_API_DEBOUNCE_MS } from '@/shared/globalConfig'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { useChatHistoryForSidebarPost } from '../../sidebarHooks'
@@ -84,7 +85,7 @@ function HistoryItem({
   isLastChat,
 }: HistoryItemProps) {
   const [isHovered, setIsHovered] = useState(false)
-  const { mutate } = useUpdateChat()
+  const { mutate } = useUpdateChat(DEFAULT_API_DEBOUNCE_MS)
   const handleChange = (value: string) => {
     mutate({ id: chatId, title: value })
   }
