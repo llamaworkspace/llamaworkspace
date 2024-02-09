@@ -354,7 +354,7 @@ export const useDeletePrivateChat = () => {
   }
 }
 
-export const useUpdateChat = () => {
+export const useUpdateChat = (debounceMs = 0) => {
   const errorHandler = useErrorHandler()
   const { sidebar } = api.useContext()
   const utils = api.useContext()
@@ -389,7 +389,7 @@ export const useUpdateChat = () => {
       })
 
       mutate(params, options)
-    }, 350),
+    }, debounceMs),
     ...rest,
   }
 }
