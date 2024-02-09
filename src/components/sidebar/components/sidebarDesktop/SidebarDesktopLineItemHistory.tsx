@@ -116,11 +116,3 @@ function HistoryItem({
     </Link>
   )
 }
-
-/**
- *  className={cn(
-            'line-clamp-1 rounded p-0.5 text-zinc-700 transition',
-            isCurrent &&
-              'bg-zinc-200 font-semibold text-zinc-900 hover:bg-zinc-200/60',
-          )}
- */
