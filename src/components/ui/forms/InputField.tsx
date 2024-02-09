@@ -1,12 +1,11 @@
 import { forwardRef } from 'react'
-import { Input } from '../input'
+import { Input, type InputProps } from '../input'
 import { FormFieldWrapper } from './FormFieldWrapper'
-import type { DefaultInputProps } from './formTypes'
+import type { DefaultFormInputProps } from './formTypes'
 
-type InputProps = DefaultInputProps &
-  React.InputHTMLAttributes<HTMLInputElement>
+type InputFieldProps = DefaultFormInputProps & InputProps
 
-export const InputField = forwardRef<HTMLInputElement, InputProps>(
+export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   function InputFieldFunc(
     {
       label,
@@ -26,6 +25,7 @@ export const InputField = forwardRef<HTMLInputElement, InputProps>(
         onValueChange(value)
       }
     }
+
     return (
       <FormFieldWrapper
         label={label}

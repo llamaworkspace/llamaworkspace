@@ -9,7 +9,7 @@ import {
 import { cn } from '@/lib/utils'
 import { useMemo, useState } from 'react'
 import { FormFieldWrapper } from './FormFieldWrapper'
-import type { DefaultInputProps } from './formTypes'
+import type { DefaultFormInputProps } from './formTypes'
 
 interface InputOptionProps {
   value: string
@@ -18,7 +18,7 @@ interface InputOptionProps {
 }
 
 // Keep value and onChange in here for compatibility with shadcnui Select
-export interface SelectFieldProps extends DefaultInputProps {
+export interface SelectFieldProps extends DefaultFormInputProps {
   options: InputOptionProps[]
   onChange: (value: string) => void
   onValueChange?: (value: string) => void

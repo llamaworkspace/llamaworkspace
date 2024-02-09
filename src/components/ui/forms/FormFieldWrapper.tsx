@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react'
 import { Badge } from '../badge'
-import type { DefaultInputProps } from './formTypes'
+import type { DefaultFormInputProps } from './formTypes'
 
 // Todo: use shadcn form instead of this component
 export const FormFieldWrapper = ({
@@ -8,7 +8,7 @@ export const FormFieldWrapper = ({
   helperText,
   required: isRequired,
   children,
-}: Omit<DefaultInputProps, 'name'> & PropsWithChildren) => {
+}: Omit<DefaultFormInputProps, 'name'> & PropsWithChildren) => {
   return (
     <FormControl>
       {label && <FormLabel isRequired={isRequired}>{label}</FormLabel>}
