@@ -2,10 +2,25 @@ import * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
-export type InputProps = React.InputHTMLAttributes<HTMLInputElement>
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  onEnterKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void
+}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, onEnterKeyDown, ...props }, ref) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      props.onKeyDown?.(event)
+
+      if (
+        event.key === 'Enter' &&
+        !event.shiftKey &&
+        !event.nativeEvent.isComposing
+      ) {
+        onEnterKeyDown?.(event)
+      }
+    }
+
     return (
       <input
         type={type}
@@ -15,6 +30,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         ref={ref}
         {...props}
+        onKeyDown={handleKeyDown}
       />
     )
   },
