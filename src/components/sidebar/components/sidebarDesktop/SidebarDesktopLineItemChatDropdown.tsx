@@ -36,7 +36,7 @@ export function SidebarDesktopLineItemChatDropdown({
           className={cn(
             'h-5 w-5 transform rounded duration-200',
             isHovered || isOpen
-              ? 'cursor-pointer opacity-100 hover:bg-zinc-200'
+              ? 'cursor-pointer opacity-100 hover:bg-zinc-300'
               : 'opacity-0',
           )}
         >

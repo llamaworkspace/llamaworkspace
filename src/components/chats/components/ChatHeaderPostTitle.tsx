@@ -3,12 +3,13 @@ import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { usePostById, useUpdatePost } from '@/components/posts/postsHooks'
 import { Editable } from '@/components/ui/Editable'
 import { Skeleton } from '@/components/ui/skeleton'
+import { DEFAULT_API_DEBOUNCE_MS } from '@/shared/globalConfig'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 
 export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
   const { data: post, isLoading } = usePostById(postId)
 
-  const { mutate: updatePost } = useUpdatePost(300)
+  const { mutate: updatePost } = useUpdatePost(DEFAULT_API_DEBOUNCE_MS)
 
   const { can: canEdit } = useCanExecuteActionForPost(
     PermissionAction.Update,
