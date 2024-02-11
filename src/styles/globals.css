@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 
+
+.EmojiPickerReact {
+    --epr-emoji-fullsize: 32px !important; /* Adjust the size as needed */
+    --epr-emoji-gap: 12px !important; /* Adjust the size as needed */
+} 
 @layer base {
   #__next {
     @apply h-full;
@@ -11,6 +16,8 @@
   body {
     @apply h-full;
   }
+
+  
 
   /* Shows the placeholder in <Editable /> */
   [contenteditable]:empty:after {
