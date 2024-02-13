@@ -4,17 +4,17 @@ import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 const wrapperCv = cva(
-  'space-y-1 rounded bg-white transition transform duration-200 ease-in-out translate-y-3',
+  'space-y-1 p-3 rounded bg-white  transition transform duration-200 ease-in-out opacity-0 translate-y-3',
   {
     variants: {
       variant: {
-        user: 'bg-zinc-100/0 border-zinc-400 border-l-0',
-        assistant: 'p-3 bg-zinc-100/50 border-blue-100/40 border-l-0',
-        wizard: 'p-4 bg-sand-lightest border-sand-mid border mb-6 opacity-20',
+        default: 'bg-zinc-100/80 border-zinc-400 border-l-4',
+        green: 'bg-openai-mid/10 border-openai-mid border-l-4',
+        wizard: 'bg-sand-lightest border-sand-mid border-l-4 mb-4',
       },
     },
     defaultVariants: {
-      variant: 'user',
+      variant: 'default',
     },
   },
 )
@@ -22,26 +22,26 @@ const wrapperCv = cva(
 const authorCv = cva('font-bold tracking-tight', {
   variants: {
     variant: {
-      user: 'text-black',
-      assistant: 'text-black',
-      wizard: 'hidden',
+      default: 'text-black',
+      green: 'text-openai-dark',
+      wizard: 'text-zinc-400 hidden',
     },
   },
   defaultVariants: {
-    variant: 'user',
+    variant: 'default',
   },
 })
 // Todo: reimplement "prose" manually for more control. Remove Tw typography plugin
-const bodyCv = cva('prose max-w-none space-y-3', {
+const bodyCv = cva('prose max-w-none space-y-6 leading-relaxed text-zinc-900', {
   variants: {
     variant: {
-      user: 'leading-relaxed text-zinc-900',
-      assistant: 'leading-relaxed text-zinc-900',
-      wizard: 'leading-normal text-zinc-900/80',
+      default: '',
+      green: '',
+      wizard: 'text-zinc-700',
     },
   },
   defaultVariants: {
-    variant: 'user',
+    variant: 'default',
   },
 })
 
@@ -60,17 +60,15 @@ export function ChatMessage({ author, message, variant }: ChatMessageProps) {
   }, [hasRendered])
 
   return (
-    <div>
-      <div className={cn('mb-1', authorCv({ variant }))}>{author}</div>
-      <div
-        className={cn(
-          wrapperCv({ variant }),
-          hasRendered && 'translate-y-0 opacity-100',
-        )}
-      >
-        <div className={cn(bodyCv({ variant }))}>
-          <ReactMarkdown remarkPlugins={[]}>{message || ''}</ReactMarkdown>
-        </div>
+    <div
+      className={cn(
+        wrapperCv({ variant }),
+        hasRendered && 'translate-y-0 opacity-100',
+      )}
+    >
+      <div className={cn(authorCv({ variant }))}>{author}</div>
+      <div className={cn(bodyCv({ variant }))}>
+        <ReactMarkdown remarkPlugins={[]}>{message || ''}</ReactMarkdown>
       </div>
     </div>
   )
