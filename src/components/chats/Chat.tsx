@@ -46,7 +46,7 @@ export function Chat({ postId, chatId }: ChatProps) {
       key={refreshKey}
       className="relative flex h-full w-full flex-1 flex-col-reverse overflow-y-auto overflow-x-hidden bg-white p-4"
     >
-      <div className="mx-auto flex w-full max-w-4xl grow flex-col gap-y-2 pb-4">
+      <div className="mx-auto flex w-full max-w-4xl grow flex-col gap-y-8 pb-4">
         <div className="grow">
           <ChatNoSettingsAlert postId={postId} chatId={chatId} />
         </div>
@@ -96,9 +96,9 @@ function getAuthor(author: string) {
 
 function getVariant(author: string) {
   if (author === (ChatAuthor.Assistant as string)) {
-    return 'green'
+    return 'assistant'
   } else if (author === (ChatAuthor.Wizard as string)) {
     return 'wizard'
   }
-  return 'default'
+  return 'user'
 }
