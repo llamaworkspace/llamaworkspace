@@ -102,8 +102,10 @@ export function SidebarDesktopLineItemForSingleChat({
                     <span
                       onClick={handleClick}
                       className={cn(
-                        'line-clamp-1 grow text-sm font-medium leading-6',
-                        isCurrent ? 'text-zinc-900' : 'text-zinc-600',
+                        'line-clamp-1 grow text-sm leading-6',
+                        isCurrent
+                          ? 'font-bold text-zinc-900'
+                          : 'font-regular text-zinc-600',
                       )}
                     >
                       {title}
