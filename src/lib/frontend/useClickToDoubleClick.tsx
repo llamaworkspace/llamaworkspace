@@ -9,7 +9,7 @@ export const useClickToDoubleClick = (doubleClickFn: () => void) => {
       const newTimeout = setTimeout(() => {
         // After the delay, if no second click, clear the timeout and consider it a single click
         setClickTimeout(null) // Reset for the next click sequence
-      }, 200) // 200 ms delay for the second click to be considered a double click
+      }, 500) // 500 ms delay for the second click to be considered a double click
       setClickTimeout(newTimeout)
     } else {
       // This is the second click (double click)
