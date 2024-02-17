@@ -44,9 +44,9 @@ export function Chat({ postId, chatId }: ChatProps) {
       // Important: Keep this key here to force a remount
       // of the component on all route changes.
       key={refreshKey}
-      className="relative flex h-full w-full flex-1 flex-col-reverse overflow-y-auto overflow-x-hidden bg-white p-4"
+      className="relative flex h-full w-full flex-1 flex-col-reverse overflow-y-auto overflow-x-hidden bg-white py-4"
     >
-      <div className="mx-auto flex w-full max-w-4xl grow flex-col gap-y-4 pb-4">
+      <div className="mx-auto flex w-full max-w-4xl grow flex-col gap-y-4 px-2 pb-4 lg:px-0">
         <div className="grow">
           <ChatNoSettingsAlert postId={postId} chatId={chatId} />
         </div>
@@ -70,8 +70,8 @@ export function Chat({ postId, chatId }: ChatProps) {
         {/* Chatbox here */}
         <div
           className={cn(
-            'transition-spacing fixed bottom-0 left-0 w-full bg-white px-2 py-4 duration-200 ease-out ',
-            isDesktopSidebarOpen && 'md:pl-72',
+            'transition-spacing fixed bottom-0 left-0 w-full duration-200 ease-out',
+            isDesktopSidebarOpen && 'lg:pl-72',
           )}
         >
           <Chatbox

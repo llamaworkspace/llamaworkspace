@@ -108,6 +108,7 @@ function HistoryItem({
 
   return (
     <Link
+      onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       href={`/p/${postId}/c/${chatId}`}
@@ -146,7 +147,6 @@ function HistoryItem({
         />
       ) : (
         <span
-          onClick={handleClick}
           className={cn(
             'line-clamp-1 text-zinc-700 transition',
             isCurrent && 'font-semibold text-zinc-900 ',
