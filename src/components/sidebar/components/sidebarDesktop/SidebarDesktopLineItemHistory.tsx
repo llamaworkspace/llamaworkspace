@@ -30,7 +30,7 @@ export const SidebarDesktopLineItemHistory = ({
     setIsMore(!isMore)
   }
   return (
-    <div className="mt-1 max-h-[180px] space-y-1 overflow-y-auto pl-6 text-[0.84rem]">
+    <div className="mt-1 max-h-[180px] space-y-0.5 overflow-y-auto rounded text-[0.84rem]">
       {firstThreeChatHistory?.map((chat) => (
         <HistoryItem
           key={chat.id}
@@ -55,14 +55,14 @@ export const SidebarDesktopLineItemHistory = ({
           )
         })}
       {displayMoreButton && (
-        <div className="cursor-pointer font-semibold text-zinc-600">
+        <div className="pt-2x cursor-pointer p-1 pt-2">
           <Button
             variant="link"
             size="paddingless"
-            className="text-[0.84rem]"
+            className="text-[0.84rem] font-semibold text-zinc-400"
             onClick={handleMore}
           >
-            {isMore ? 'See less' : 'See more'}
+            {isMore ? 'See less' : 'See previous chats'}
           </Button>
         </div>
       )}
@@ -111,7 +111,12 @@ function HistoryItem({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       href={`/p/${postId}/c/${chatId}`}
-      className={cn('flex w-full justify-between gap-2 text-left')}
+      className={cn(
+        'flex w-full justify-between gap-2 rounded p-1 transition',
+        isCurrent
+          ? 'bg-opacity-1000 bg-zinc-200 '
+          : 'hover:bg-zinc-200/50  hover:bg-opacity-100',
+      )}
     >
       {isEditable ? (
         <FinalForm<FormTitleEditValues>

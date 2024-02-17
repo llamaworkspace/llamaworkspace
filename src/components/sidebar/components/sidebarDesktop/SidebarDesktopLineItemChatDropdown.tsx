@@ -34,7 +34,7 @@ export function SidebarDesktopLineItemChatDropdown({
       <DropdownMenuTrigger asChild>
         <div
           className={cn(
-            'h-5 w-5 transform rounded duration-200',
+            'h-5 w-5 rounded transition duration-200',
             isHovered || isOpen
               ? 'cursor-pointer opacity-100 hover:bg-zinc-300'
               : 'opacity-0',
