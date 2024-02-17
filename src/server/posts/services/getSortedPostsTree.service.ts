@@ -28,6 +28,7 @@ const getPosts = async (
     select: {
       id: true,
       title: true,
+      emoji: true,
       isDemo: true,
       chats: {
         select: {

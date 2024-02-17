@@ -2,6 +2,7 @@ import { useCanExecuteActionForPost } from '@/components/permissions/permissions
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { usePostById, useUpdatePost } from '@/components/posts/postsHooks'
 import { Editable } from '@/components/ui/Editable'
+import { JoiaIcon } from '@/components/ui/icons/JoiaIcon'
 import {
   Popover,
   PopoverContent,
@@ -16,7 +17,7 @@ import { useState } from 'react'
 export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
   const { data: post, isLoading } = usePostById(postId)
   const [isEmojiEditable, setIsEmojiEditable] = useState(false)
-  const [emojiValue, setEmojiValue] = useState<string | null>(null)
+
   const { mutate: updatePost } = useUpdatePost(DEFAULT_API_DEBOUNCE_MS)
 
   const { can: canEdit } = useCanExecuteActionForPost(
@@ -25,7 +26,8 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
   )
 
   const handleEmojiClick = (emoji: EmojiClickData) => {
-    setEmojiValue(emoji.unified)
+    handleEmojiChange(emoji.unified)
+    setIsEmojiEditable(false)
   }
 
   const handleTitleChange = (title: string) => {
@@ -33,6 +35,11 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
 
     if (!postId) return
     updatePost({ id: postId, title: title || null })
+  }
+
+  const handleEmojiChange = (emoji: string) => {
+    if (!postId) return
+    updatePost({ id: postId, emoji })
   }
 
   if (isLoading) {
@@ -45,8 +52,16 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
         <div className="flex w-full items-center gap-x-1 text-zinc-900">
           <div className="relative text-xl">
             <PopoverTrigger asChild>
-              <div className="w-8 cursor-pointer">
-                <Emoji unified={emojiValue ?? '1f423'} size={28} />
+              <div>
+                {post?.emoji ? (
+                  <div className="w-8 cursor-pointer">
+                    <Emoji unified={post.emoji} size={28} />
+                  </div>
+                ) : (
+                  <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center text-[1.1rem] text-zinc-300">
+                    <JoiaIcon />
+                  </div>
+                )}
               </div>
             </PopoverTrigger>
 

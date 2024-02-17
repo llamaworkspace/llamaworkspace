@@ -1,5 +1,6 @@
 import { JoiaIcon } from '@/components/ui/icons/JoiaIcon'
 import { cn } from '@/lib/utils'
+import { Emoji } from 'emoji-picker-react'
 import Link from 'next/link'
 import { forwardRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
@@ -9,6 +10,7 @@ import { SidebarDesktopLineItemHistory } from './SidebarDesktopLineItemHistory'
 
 interface SidebarDesktopLineItemForChatAppProps {
   title: string
+  emoji: string | null
   href: string
   isCurrent: boolean
   postId: string
@@ -19,6 +21,7 @@ interface SidebarDesktopLineItemForChatAppProps {
 
 export function SidebarDesktopLineItemForChatApp({
   title,
+  emoji,
   isCurrent = false,
   href,
   postId,
@@ -105,8 +108,9 @@ export function SidebarDesktopLineItemForChatApp({
                 'flex h-4 w-4 shrink-0 items-center justify-center text-[1.1rem] text-zinc-300',
               )}
             >
-              <JoiaIcon />
+              {emoji ? <Emoji unified={emoji} size={28} /> : <JoiaIcon />}
             </div>
+
             <div className="flex w-full items-center justify-between space-x-1">
               <div
                 className={cn(
