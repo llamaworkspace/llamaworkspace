@@ -58,7 +58,7 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
                     <Emoji unified={post.emoji} size={28} />
                   </div>
                 ) : (
-                  <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center text-[1.1rem] text-zinc-300">
+                  <div className="mr-2 flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center text-[1.1rem] text-zinc-300">
                     <JoiaIcon />
                   </div>
                 )}
