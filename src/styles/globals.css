@@ -4,10 +4,7 @@
 
 
 
-.EmojiPickerReact {
-    --epr-emoji-fullsize: 32px !important; /* Adjust the size as needed */
-    --epr-emoji-gap: 12px !important; /* Adjust the size as needed */
-} 
+
 @layer base {
   #__next {
     @apply h-full;
@@ -17,7 +14,6 @@
     @apply h-full;
   }
 
-  
 
   /* Shows the placeholder in <Editable /> */
   [contenteditable]:empty:after {
@@ -38,5 +34,15 @@
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
   }
- 
+
 }
+
+  .EmojiPickerReact {
+      --epr-emoji-fullsize: 32px !important; /* Adjust the size as needed */
+      --epr-emoji-gap: 12px !important; /* Adjust the size as needed */
+      --epr-category-label-font-size: 14px !important;
+
+      .epr-emoji-category-label {
+        font-size: var(--epr-category-label-font-size) !important;
+      }
+  }

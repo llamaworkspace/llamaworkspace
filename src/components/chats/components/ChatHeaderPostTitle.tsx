@@ -6,16 +6,23 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { DEFAULT_API_DEBOUNCE_MS } from '@/shared/globalConfig'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import EmojiPicker, { Emoji } from 'emoji-picker-react'
+import { useState } from 'react'
 
 export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
   const { data: post, isLoading } = usePostById(postId)
-
+  const [isEmojiEditable, setIsEmojiEditable] = useState(false)
+  const [emojiValue, setEmojiValue] = useState(null)
   const { mutate: updatePost } = useUpdatePost(DEFAULT_API_DEBOUNCE_MS)
 
   const { can: canEdit } = useCanExecuteActionForPost(
     PermissionAction.Update,
     postId,
   )
+
+  const handleEmojiClick = (emoji: any, b) => {
+    console.log(emoji, b)
+    setEmojiValue(emoji.unified)
+  }
 
   const handleTitleChange = (title: string) => {
     title = title.trim()
@@ -31,24 +38,23 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
   return (
     <div className="relative">
       <div className="flex w-full items-center gap-x-1 text-zinc-900">
-        <div className="bg-zinc-100x relative px-2 py-1 text-xl">
-          <div>
-            <Emoji unified="1f423" size="25" />
+        <div className="relative text-xl">
+          <div
+            className="w-8"
+            onClick={() => setIsEmojiEditable(!isEmojiEditable)}
+          >
+            <Emoji unified={emojiValue ?? '1f423'} size="28" />
           </div>
-          <div>
-            <div className="hiddenx absolute left-0 top-9 z-50">
+          {isEmojiEditable && (
+            <div className="absolute left-0 top-9 z-50">
               <EmojiPicker
-                style={{
-                  '--epr-emoji-fullsize': '12px',
-                  '--epr-emoji-size': '12px',
-                }}
-                open={true}
-                width={300}
+                width={330}
                 previewConfig={{ showPreview: false }}
                 searchDisabled
+                onEmojiClick={handleEmojiClick}
               />
             </div>
-          </div>
+          )}
         </div>
         <Editable
           onChange={handleTitleChange}
