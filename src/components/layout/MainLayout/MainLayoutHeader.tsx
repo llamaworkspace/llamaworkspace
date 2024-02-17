@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils'
 import { MainLayoutHeaderAsHidden } from './MainLayoutHeaderAsHidden'
 import { MainLayoutHeaderForChatbot } from './MainLayoutHeaderForChatbot'
 import { MainLayoutHeaderForStandaloneChat } from './MainLayoutHeaderForStandaloneChat'
@@ -19,13 +18,7 @@ export function MainLayoutHeader({
   variant: HeaderVariants
 }) {
   return (
-    <header
-      key={`${postId}-${chatId}`}
-      className={cn(
-        'flex h-12 max-h-12 flex-row items-center justify-between border-zinc-200/50 py-2.5 lg:px-0',
-        variant === HeaderVariants.Chatbot && 'border-b',
-      )}
-    >
+    <div key={`${postId}-${chatId}`}>
       {variant === HeaderVariants.Chatbot && (
         <MainLayoutHeaderForChatbot postId={postId} />
       )}
@@ -37,6 +30,6 @@ export function MainLayoutHeader({
       {variant === HeaderVariants.Hidden && (
         <MainLayoutHeaderAsHidden postId={postId} />
       )}
-    </header>
+    </div>
   )
 }
