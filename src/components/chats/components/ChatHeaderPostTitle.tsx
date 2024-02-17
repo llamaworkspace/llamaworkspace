@@ -25,9 +25,14 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
     postId,
   )
 
-  const handleEmojiClick = (emoji: EmojiClickData) => {
+  const handleSelectEmoji = (emoji: EmojiClickData) => {
     handleEmojiChange(emoji.unified)
     setIsEmojiEditable(false)
+  }
+
+  const handleEmojiChange = (emoji: string) => {
+    if (!postId) return
+    updatePost({ id: postId, emoji })
   }
 
   const handleTitleChange = (title: string) => {
@@ -35,11 +40,6 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
 
     if (!postId) return
     updatePost({ id: postId, title: title || null })
-  }
-
-  const handleEmojiChange = (emoji: string) => {
-    if (!postId) return
-    updatePost({ id: postId, emoji })
   }
 
   if (isLoading) {
@@ -70,7 +70,7 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
                 width={330}
                 previewConfig={{ showPreview: false }}
                 searchDisabled
-                onEmojiClick={handleEmojiClick}
+                onEmojiClick={handleSelectEmoji}
               />
             </PopoverContent>
           </div>
