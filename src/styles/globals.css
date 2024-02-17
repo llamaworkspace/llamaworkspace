@@ -42,6 +42,10 @@
       --epr-emoji-gap: 12px !important; /* Adjust the size as needed */
       --epr-category-label-font-size: 14px !important;
 
+      &.epr-main {
+        border: 0 !important;
+      }
+      
       .epr-emoji-category-label {
         font-size: var(--epr-category-label-font-size) !important;
       }

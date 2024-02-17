@@ -2,16 +2,21 @@ import { useCanExecuteActionForPost } from '@/components/permissions/permissions
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { usePostById, useUpdatePost } from '@/components/posts/postsHooks'
 import { Editable } from '@/components/ui/Editable'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DEFAULT_API_DEBOUNCE_MS } from '@/shared/globalConfig'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import EmojiPicker, { Emoji } from 'emoji-picker-react'
+import EmojiPicker, { Emoji, type EmojiClickData } from 'emoji-picker-react'
 import { useState } from 'react'
 
 export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
   const { data: post, isLoading } = usePostById(postId)
   const [isEmojiEditable, setIsEmojiEditable] = useState(false)
-  const [emojiValue, setEmojiValue] = useState(null)
+  const [emojiValue, setEmojiValue] = useState<string | null>(null)
   const { mutate: updatePost } = useUpdatePost(DEFAULT_API_DEBOUNCE_MS)
 
   const { can: canEdit } = useCanExecuteActionForPost(
@@ -19,8 +24,7 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
     postId,
   )
 
-  const handleEmojiClick = (emoji: any, b) => {
-    console.log(emoji, b)
+  const handleEmojiClick = (emoji: EmojiClickData) => {
     setEmojiValue(emoji.unified)
   }
 
@@ -37,34 +41,34 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
 
   return (
     <div className="relative">
-      <div className="flex w-full items-center gap-x-1 text-zinc-900">
-        <div className="relative text-xl">
-          <div
-            className="w-8"
-            onClick={() => setIsEmojiEditable(!isEmojiEditable)}
-          >
-            <Emoji unified={emojiValue ?? '1f423'} size="28" />
-          </div>
-          {isEmojiEditable && (
-            <div className="absolute left-0 top-9 z-50">
+      <Popover open={isEmojiEditable} onOpenChange={setIsEmojiEditable}>
+        <div className="flex w-full items-center gap-x-1 text-zinc-900">
+          <div className="relative text-xl">
+            <PopoverTrigger asChild>
+              <div className="w-8 cursor-pointer">
+                <Emoji unified={emojiValue ?? '1f423'} size={28} />
+              </div>
+            </PopoverTrigger>
+
+            <PopoverContent className="w-[332px] p-0">
               <EmojiPicker
                 width={330}
                 previewConfig={{ showPreview: false }}
                 searchDisabled
                 onEmojiClick={handleEmojiClick}
               />
-            </div>
-          )}
+            </PopoverContent>
+          </div>
+          <Editable
+            onChange={handleTitleChange}
+            tagName="h1"
+            className="text-lg font-semibold tracking-tighter"
+            placeholder={EMPTY_POST_NAME}
+            initialValue={post?.title}
+            disabled={!canEdit}
+          />
         </div>
-        <Editable
-          onChange={handleTitleChange}
-          tagName="h1"
-          className="text-lg font-semibold tracking-tighter"
-          placeholder={EMPTY_POST_NAME}
-          initialValue={post?.title}
-          disabled={!canEdit}
-        />
-      </div>
+      </Popover>
     </div>
   )
 }
