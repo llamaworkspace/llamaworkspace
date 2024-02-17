@@ -68,8 +68,11 @@ export const useCreatePost = () => {
 // https://chat.openai.com/c/a06effd9-c3bd-4b15-bfad-697133cb02b6
 export const useUpdatePost = (debounceMs = 0) => {
   const errorHandler = useErrorHandler()
-  const { sidebar } = api.useContext()
-  const { postsForSidebar } = sidebar
+  const { sidebar: sidebarRouter, posts: postsRouter } = api.useContext()
+
+  const { postsForSidebar } = sidebarRouter
+  const { getById: getPostById } = postsRouter
+
   const { mutate, ...rest } = api.posts.update.useMutation({
     onError: errorHandler(),
   })
@@ -85,15 +88,24 @@ export const useUpdatePost = (debounceMs = 0) => {
         if (!previous) return previous
         return produce(previous, (draft) => {
           const index = previous.findIndex((item) => item.id === params.id)
-          const thing = draft[index]
-          if (thing) {
-            thing.title = params.title ?? null
+          const draftPost = draft[index]
+          if (draftPost) {
+            draftPost.title = params.title ?? null
+            draftPost.emoji = params.emoji ?? null
           }
         })
       })
+
+      getPostById.setData({ id: params.id }, (previous) => {
+        if (!previous) return previous
+        return produce(previous, (draftPost) => {
+          draftPost.emoji = params.emoji ?? null
+        })
+      })
+
       _debounced(params)
     }
-  }, [debounceMs, workspace, postsForSidebar, mutate])
+  }, [debounceMs, workspace, postsForSidebar, getPostById, mutate])
 
   return {
     mutate: debounced,

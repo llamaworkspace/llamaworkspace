@@ -157,6 +157,7 @@ export function SidebarDesktopBody() {
                       currentChatId={navigation.query.chat_id as string}
                       href={href}
                       title={post.title ?? EMPTY_POST_NAME}
+                      emoji={post.emoji}
                       isCurrent={navigation.query.post_id === post.id}
                       showDroppableBefore={index === 0}
                     />

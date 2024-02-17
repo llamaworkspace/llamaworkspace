@@ -48,7 +48,7 @@ const ContinueWithGoogle = ({ token }: { token: string }) => {
               callbackUrl: `/api/invites/invite-flow-success?token=${token}`,
             })
           }
-          className="focus-visible:button-focus-outline relative flex w-full min-w-[60px] flex-row items-center justify-center space-x-1  rounded-lg bg-white px-3 py-4 text-sm font-medium text-gray-700 shadow ring-1 ring-black/5 transition hover:bg-gray-50 focus:outline-none disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-white"
+          className="focus-visible:button-focus-outline relative flex w-full min-w-[60px] flex-row items-center justify-center space-x-1  rounded-lg bg-white px-3 py-4 text-sm font-medium text-zinc-700 shadow ring-1 ring-black/5 transition hover:bg-zinc-50 focus:outline-none disabled:cursor-not-allowed disabled:text-zinc-400 disabled:hover:bg-white"
         >
           <GoogleSvg />
           <span className="relative whitespace-nowrap text-zinc-800">
