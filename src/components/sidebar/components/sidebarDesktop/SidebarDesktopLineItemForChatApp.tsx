@@ -108,7 +108,7 @@ export function SidebarDesktopLineItemForChatApp({
                 'flex h-4 w-4 shrink-0 items-center justify-center text-[1.1rem] text-zinc-300',
               )}
             >
-              {emoji ? <Emoji unified={emoji} size={28} /> : <JoiaIcon />}
+              {emoji ? <Emoji unified={emoji} size={16} /> : <JoiaIcon />}
             </div>
 
             <div className="flex w-full items-center justify-between space-x-1">
