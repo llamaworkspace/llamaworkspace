@@ -89,17 +89,31 @@ export const useUpdatePost = (debounceMs = 0) => {
         return produce(previous, (draft) => {
           const index = previous.findIndex((item) => item.id === params.id)
           const draftPost = draft[index]
+
+          // Done manually to avoid werid code with type errors.
           if (draftPost) {
-            draftPost.title = params.title ?? null
-            draftPost.emoji = params.emoji ?? null
+            if (params.title) {
+              draftPost.title = params.title
+            }
+
+            if (params.emoji) {
+              draftPost.emoji = params.emoji
+            }
           }
         })
       })
 
       getPostById.setData({ id: params.id }, (previous) => {
         if (!previous) return previous
+
+        // Done manually to avoid werid code with type errors.
         return produce(previous, (draftPost) => {
-          draftPost.emoji = params.emoji ?? null
+          if (params.emoji) {
+            draftPost.emoji = params.emoji
+          }
+          if (params.title) {
+            draftPost.title = params.title
+          }
         })
       })
 
