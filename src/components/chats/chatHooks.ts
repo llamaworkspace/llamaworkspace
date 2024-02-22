@@ -183,7 +183,7 @@ export const usePrompt = (chatId?: string) => {
     setMessages: setVercelMessages,
   } = useVercelChat({
     api: '/api/chat',
-    onFinish: (message) => {
+    onFinish: () => {
       setIsLoading(false)
       setVercelMessages([])
       // Expects the title to be generated

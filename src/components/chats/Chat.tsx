@@ -88,8 +88,6 @@ export function Chat({ postId, chatId }: ChatProps) {
 function getAuthor(author: string) {
   if (author === (ChatAuthor.Assistant as string)) {
     return 'Assistant'
-  } else if (author === (ChatAuthor.Wizard as string)) {
-    return 'Prompt Wizard'
   }
   return 'You'
 }
@@ -97,8 +95,6 @@ function getAuthor(author: string) {
 function getVariant(author: string) {
   if (author === (ChatAuthor.Assistant as string)) {
     return 'assistant'
-  } else if (author === (ChatAuthor.Wizard as string)) {
-    return 'wizard'
   }
   return 'user'
 }
