@@ -211,6 +211,7 @@ export const usePrompt = (chatId?: string) => {
       return toast(errorValue, { duration: 10000 })
     }
 
+    // Writes streamed response to usequery cache
     utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
       if (previous) {
         return produce(previous, (draft) => {
