@@ -59,7 +59,7 @@ export const SidebarDesktopLineItemHistory = ({
           <Button
             variant="link"
             size="paddingless"
-            className="text-[0.84rem] font-semibold text-zinc-400"
+            className="text-[0.84rem] font-semibold text-zinc-500"
             onClick={handleMore}
           >
             {isMore ? 'See less' : 'See previous chats'}
