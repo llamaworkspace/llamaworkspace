@@ -10,7 +10,7 @@ export const aiProvidersFetcher = new AiProvidersFetcherService(
   prisma,
   new AiRegistry([
     OpenAiProvider({
-      fallbackApiKey: env.OPENAI_KEY,
+      fallbackApiKey: env.INTERNAL_OPENAI_API_KEY,
       fallbackBaseUrl: env.OPTIONAL_OPENAI_BASE_URL,
     }),
     BedrockProvider(),
