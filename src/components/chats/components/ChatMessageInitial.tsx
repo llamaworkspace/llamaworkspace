@@ -3,7 +3,6 @@ import { JoiaIcon } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { Emoji } from 'emoji-picker-react'
-import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useChatById, useMessages, usePostConfigForChat } from '../chatHooks'
 
@@ -12,27 +11,19 @@ export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
   const { data: chat } = useChatById(chatId)
   const { data: post } = usePostById(chat?.postId)
   const { data: messages } = useMessages(chatId)
-  const [hasMessages, setHasMessages] = useState(false)
-
-  useEffect(() => {
-    if (messages?.length) {
-      setHasMessages(true)
-    } else {
-      setHasMessages(false)
-    }
-  }, [messages])
-
-  const displayInitialMessage = messages && !messages?.length
 
   const isLoading = !postConfig || !chat || !post || !messages
   const hasTitleOrInitialMessage = post?.title ?? postConfig?.initialMessage
+
+  if (isLoading || messages.length) {
+    return null
+  }
 
   return (
     <div className="h-full">
       <div
         className={cn(
           'flex h-full w-full transform items-center transition duration-300 ease-in-out',
-          // displayInitialMessage || showSkeleton ? 'opacity-100' : 'opacity-50',
         )}
       >
         <div className="w-full space-y-4">
