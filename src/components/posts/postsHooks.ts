@@ -2,7 +2,7 @@ import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { serialDebouncer } from '@/lib/utils'
 import { produce } from 'immer'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { throttle } from 'underscore'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { usePostsForSidebar } from '../sidebar/sidebarHooks'
@@ -80,6 +80,8 @@ export const useUpdatePost = (debounceMs = 0) => {
 
   const { postsForSidebar } = sidebarRouter
   const { getById: getPostById } = postsRouter
+  const postsForSidebarRef = useRef(postsForSidebar)
+  const getPostByIdRef = useRef(getPostById)
 
   const { mutate, ...rest } = api.posts.update.useMutation({
     onError: errorHandler(),
@@ -88,35 +90,33 @@ export const useUpdatePost = (debounceMs = 0) => {
 
   const debounced = useMemo(() => {
     const _debounced = serialDebouncer((params: PostUpdateInput) => {
-      mutate(params, {
-        onSuccess: () => {
-          void postsForSidebar.invalidate({ workspaceId: workspace?.id! })
-          void getPostById.invalidate({ id: params.id })
-        },
-      })
+      mutate(params)
     }, debounceMs)
 
     return (params: PostUpdateInput) => {
-      postsForSidebar.setData({ workspaceId: workspace?.id! }, (previous) => {
-        if (!previous) return previous
-        return produce(previous, (draft) => {
-          const index = previous.findIndex((item) => item.id === params.id)
-          const draftPost = draft[index]
+      postsForSidebarRef.current.setData(
+        { workspaceId: workspace?.id! },
+        (previous) => {
+          if (!previous) return previous
+          return produce(previous, (draft) => {
+            const index = previous.findIndex((item) => item.id === params.id)
+            const draftPost = draft[index]
 
-          // Done manually to avoid weird code with type errors.
-          if (draftPost) {
-            if (params.title) {
-              draftPost.title = params.title
+            // Done manually to avoid weird code with type errors.
+            if (draftPost) {
+              if (params.title) {
+                draftPost.title = params.title
+              }
+
+              if (params.emoji) {
+                draftPost.emoji = params.emoji
+              }
             }
+          })
+        },
+      )
 
-            if (params.emoji) {
-              draftPost.emoji = params.emoji
-            }
-          }
-        })
-      })
-
-      getPostById.setData({ id: params.id }, (previous) => {
+      getPostByIdRef.current.setData({ id: params.id }, (previous) => {
         if (!previous) return previous
 
         // Done manually to avoid werid code with type errors.
@@ -132,7 +132,7 @@ export const useUpdatePost = (debounceMs = 0) => {
 
       _debounced(params)
     }
-  }, [debounceMs, workspace, postsForSidebar, getPostById, mutate])
+  }, [debounceMs, workspace, postsForSidebarRef, getPostByIdRef, mutate])
 
   return {
     mutate: debounced,
