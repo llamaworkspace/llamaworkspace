@@ -228,23 +228,23 @@ export const usePrompt = (chatId?: string) => {
     (message: string) => {
       if (!chatId) return
 
-      utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
-        // Write a temporary message to the cache for real-time display
-        return produce(previous, (draft) => {
-          const obj = {
-            id: 'temp',
-            chatId,
-            postConfigVersionId: null,
-            message,
-            author: 'user',
-            tokens: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }
+      // utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
+      //   // Write a temporary message to the cache for real-time display
+      //   return produce(previous, (draft) => {
+      //     const obj = {
+      //       id: 'temp',
+      //       chatId,
+      //       postConfigVersionId: null,
+      //       message,
+      //       author: 'user',
+      //       tokens: null,
+      //       createdAt: new Date(),
+      //       updatedAt: new Date(),
+      //     }
 
-          draft?.push(obj)
-        })
-      })
+      //     draft?.push(obj)
+      //   })
+      // })
 
       setIsLoading(true)
       createMessage(
