@@ -1,8 +1,9 @@
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
-import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
+import { getAiProviderKVsWithFallbackToInternalKeys } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import type { PrismaTrxClient } from '@/shared/globalTypes'
 import type { PrismaClient } from '@prisma/client'
+import { HttpError } from 'http-errors'
 import type { NextApiResponse } from 'next'
 import OpenAI, { type ClientOptions } from 'openai'
 
@@ -22,29 +23,22 @@ export const handleChatTitleCreate = async (
   // Todo: improve and search in case there are multiple user messages
   const firstUserMessage = userMessages[0]
 
-  const openaiProviderKVs = await getAiProviderKVs(
-    prisma,
-    workspaceId,
-    userId,
-    'openai',
-  )
-
-  const apiKey = openaiProviderKVs.apiKey
-  const baseURL = openaiProviderKVs.baseURL
-
-  if (!apiKey) {
-    return
+  let openaiProviderKVs: ClientOptions
+  try {
+    openaiProviderKVs = await getAiProviderKVsWithFallbackToInternalKeys(
+      prisma,
+      workspaceId,
+      userId,
+      'openai',
+    )
+  } catch (error) {
+    if (error instanceof HttpError && error.statusCode === 403) {
+      return
+    }
+    throw error
   }
 
-  const openAiPayload: ClientOptions = {
-    apiKey,
-  }
-
-  if (baseURL) {
-    openAiPayload.baseURL = baseURL
-  }
-
-  const openai = new OpenAI(openAiPayload)
+  const openai = new OpenAI(openaiProviderKVs)
 
   let content = chat.post.title ? `MAIN TITLE: ${chat.post.title}. ` : ''
   const instructions = systemMessage?.message?.slice(0, 500)
