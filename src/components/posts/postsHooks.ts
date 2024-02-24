@@ -80,7 +80,12 @@ export const useUpdatePost = (debounceMs = 0) => {
 
   const debounced = useMemo(() => {
     const _debounced = serialDebouncer((params: PostUpdateInput) => {
-      mutate(params)
+      mutate(params, {
+        onSuccess: () => {
+          void postsForSidebar.invalidate({ workspaceId: workspace?.id! })
+          void getPostById.invalidate({ id: params.id })
+        },
+      })
     }, debounceMs)
 
     return (params: PostUpdateInput) => {
