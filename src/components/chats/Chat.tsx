@@ -1,7 +1,9 @@
 import { cn } from '@/lib/utils'
 import { ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useCallback, useState } from 'react'
+import { isBoolean } from 'underscore'
 import { useGlobalState } from '../global/globalState'
+import { useIsDefaultPost } from '../posts/postsHooks'
 import { useMessages } from './chatHooks'
 import { ChatMessage } from './components/ChatMessage'
 import { ChatMessageInitial } from './components/ChatMessageInitial'
@@ -20,7 +22,7 @@ export function Chat({ postId, chatId }: ChatProps) {
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
   const { data: messages } = useMessages(chatId)
-
+  const isDefaultPost = useIsDefaultPost(postId)
   const [lastBlockHeight, setLastBlockHeight] = useState(LAST_BLOCK_MIN_HEIGHT)
 
   const handleChatboxHeightChangeStable = useCallback((height: number) => {
@@ -50,7 +52,9 @@ export function Chat({ postId, chatId }: ChatProps) {
         <div className="grow">
           <ChatNoSettingsAlert postId={postId} chatId={chatId} />
         </div>
-        <ChatMessageInitial chatId={chatId} />
+        {isBoolean(isDefaultPost) && !isDefaultPost && (
+          <ChatMessageInitial chatId={chatId} />
+        )}
 
         {messages
           ?.map((message) => {

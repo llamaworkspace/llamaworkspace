@@ -25,6 +25,14 @@ export const useDefaultPost = () => {
   )
 }
 
+export const useIsDefaultPost = (postId?: string) => {
+  const { data: defaultPost } = useDefaultPost()
+
+  if (!defaultPost || !postId) return
+
+  return defaultPost.id === postId
+}
+
 export const useCreatePost = () => {
   const errorHandler = useErrorHandler()
   const navigation = useNavigation()
