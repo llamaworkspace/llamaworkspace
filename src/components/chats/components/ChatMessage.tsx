@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
@@ -8,7 +8,6 @@ const wrapperCv = cva('space-y-1 rounded bg-white', {
     variant: {
       user: 'bg-zinc-100/0 border-zinc-400 border-l-0',
       assistant: 'p-3 bg-zinc-100/50 border-blue-100/40 border-l-0',
-      wizard: 'p-4 border border-zinc-300 mb-6 ',
     },
   },
   defaultVariants: {
@@ -21,7 +20,6 @@ const authorCv = cva('font-bold tracking-tight', {
     variant: {
       user: 'text-black',
       assistant: 'text-black',
-      wizard: 'hidden',
     },
   },
   defaultVariants: {
@@ -34,7 +32,6 @@ const bodyCv = cva('prose max-w-none  text-zinc-900', {
     variant: {
       user: 'leading-relaxed space-y-3',
       assistant: 'leading-relaxed space-y-3',
-      wizard: 'text-[0.91rem] space-y-2 leading-normal',
     },
   },
   defaultVariants: {
@@ -42,7 +39,8 @@ const bodyCv = cva('prose max-w-none  text-zinc-900', {
   },
 })
 
-interface ChatMessageProps extends VariantProps<typeof wrapperCv> {
+interface ChatMessageProps {
+  variant: 'user' | 'assistant'
   author: string
   message: string
 }

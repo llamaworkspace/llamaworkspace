@@ -25,6 +25,14 @@ export const useDefaultPost = () => {
   )
 }
 
+export const useIsDefaultPost = (postId?: string) => {
+  const { data: defaultPost } = useDefaultPost()
+
+  if (!defaultPost || !postId) return
+
+  return defaultPost.id === postId
+}
+
 export const useCreatePost = () => {
   const errorHandler = useErrorHandler()
   const navigation = useNavigation()
@@ -80,7 +88,12 @@ export const useUpdatePost = (debounceMs = 0) => {
 
   const debounced = useMemo(() => {
     const _debounced = serialDebouncer((params: PostUpdateInput) => {
-      mutate(params)
+      mutate(params, {
+        onSuccess: () => {
+          void postsForSidebar.invalidate({ workspaceId: workspace?.id! })
+          void getPostById.invalidate({ id: params.id })
+        },
+      })
     }, debounceMs)
 
     return (params: PostUpdateInput) => {
@@ -89,17 +102,31 @@ export const useUpdatePost = (debounceMs = 0) => {
         return produce(previous, (draft) => {
           const index = previous.findIndex((item) => item.id === params.id)
           const draftPost = draft[index]
+
+          // Done manually to avoid weird code with type errors.
           if (draftPost) {
-            draftPost.title = params.title ?? null
-            draftPost.emoji = params.emoji ?? null
+            if (params.title) {
+              draftPost.title = params.title
+            }
+
+            if (params.emoji) {
+              draftPost.emoji = params.emoji
+            }
           }
         })
       })
 
       getPostById.setData({ id: params.id }, (previous) => {
         if (!previous) return previous
+
+        // Done manually to avoid werid code with type errors.
         return produce(previous, (draftPost) => {
-          draftPost.emoji = params.emoji ?? null
+          if (params.emoji) {
+            draftPost.emoji = params.emoji
+          }
+          if (params.title) {
+            draftPost.title = params.title
+          }
         })
       })
 

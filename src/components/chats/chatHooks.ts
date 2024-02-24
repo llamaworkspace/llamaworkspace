@@ -183,7 +183,7 @@ export const usePrompt = (chatId?: string) => {
     setMessages: setVercelMessages,
   } = useVercelChat({
     api: '/api/chat',
-    onFinish: (message) => {
+    onFinish: () => {
       setIsLoading(false)
       setVercelMessages([])
       // Expects the title to be generated
@@ -211,6 +211,7 @@ export const usePrompt = (chatId?: string) => {
       return toast(errorValue, { duration: 10000 })
     }
 
+    // Writes streamed response to usequery cache
     utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
       if (previous) {
         return produce(previous, (draft) => {
@@ -226,6 +227,25 @@ export const usePrompt = (chatId?: string) => {
   const mutate = useCallback(
     (message: string) => {
       if (!chatId) return
+
+      // utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
+      //   // Write a temporary message to the cache for real-time display
+      //   return produce(previous, (draft) => {
+      //     const obj = {
+      //       id: 'temp',
+      //       chatId,
+      //       postConfigVersionId: null,
+      //       message,
+      //       author: 'user',
+      //       tokens: null,
+      //       createdAt: new Date(),
+      //       updatedAt: new Date(),
+      //     }
+
+      //     draft?.push(obj)
+      //   })
+      // })
+
       setIsLoading(true)
       createMessage(
         { chatId, author: Author.User, message },
