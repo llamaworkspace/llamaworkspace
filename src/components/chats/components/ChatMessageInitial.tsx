@@ -23,8 +23,6 @@ export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
 
   const showSkeleton = !chat || !post || !messages
 
-  // TODO
-  // - Unnamed chatbot fallback, and real time sync with the store
   return (
     <div className="h-full">
       <div
@@ -52,7 +50,7 @@ export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
               {!showSkeleton && post?.title && <>{post.title}</>}
             </div>
           </div>
-          <div className="max-w-3xl space-y-4 text-[0.92rem]">
+          <div className="max-w-3xl space-y-4 text-[1.05rem]">
             {showSkeleton && (
               <div className="space-y-2">
                 <Skeleton className="h-4 w-4/6" />

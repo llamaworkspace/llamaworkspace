@@ -90,7 +90,7 @@ export const useUpdatePost = (debounceMs = 0) => {
           const index = previous.findIndex((item) => item.id === params.id)
           const draftPost = draft[index]
 
-          // Done manually to avoid werid code with type errors.
+          // Done manually to avoid weird code with type errors.
           if (draftPost) {
             if (params.title) {
               draftPost.title = params.title
