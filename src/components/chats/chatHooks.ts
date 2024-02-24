@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { Author } from '@/shared/aiTypesAndMappers'
+import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useChat as useVercelChat } from 'ai/react'
 import { produce } from 'immer'
 import { debounce } from 'lodash'
@@ -214,6 +214,7 @@ export const usePrompt = (chatId?: string) => {
     // Writes streamed response to usequery cache
     utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
       if (previous) {
+        // It assumes that the first item is the target assistant message
         return produce(previous, (draft) => {
           if (!draft[0]) return
           draft[0].message = targetMessage
@@ -228,43 +229,83 @@ export const usePrompt = (chatId?: string) => {
     (message: string) => {
       if (!chatId) return
 
-      // utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
-      //   // Write a temporary message to the cache for real-time display
-      //   return produce(previous, (draft) => {
-      //     const obj = {
-      //       id: 'temp',
-      //       chatId,
-      //       postConfigVersionId: null,
-      //       message,
-      //       author: 'user',
-      //       tokens: null,
-      //       createdAt: new Date(),
-      //       updatedAt: new Date(),
-      //     }
+      // Inmediately set the user message to the cache
+      utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
+        // Write a temporary message to the cache for real-time display
+        return produce(previous, (draft) => {
+          const obj = {
+            id: 'temp_user',
+            chatId,
+            postConfigVersionId: null,
+            message,
+            author: ChatAuthor.User,
+            tokens: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }
 
-      //     draft?.push(obj)
-      //   })
-      // })
+          draft?.unshift(obj)
+        })
+      })
 
       setIsLoading(true)
       createMessage(
         { chatId, author: Author.User, message },
         {
-          onSuccess: () => {
+          onSuccess: (userMessage) => {
+            utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
+              return produce(previous, (draft) => {
+                let target = draft?.find(
+                  (message) => message.id === 'temp_user',
+                )
+                if (!target) return draft
+                target = userMessage
+              })
+            })
+
+            // Ensure that the last message is from the assistant, and provide perception
+            // of a greater speed
+            utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
+              // Write a temporary message to the cache for real-time display
+
+              return produce(previous, (draft) => {
+                const obj = {
+                  id: 'temp_assistant',
+                  chatId,
+                  postConfigVersionId: null,
+                  message: null,
+                  author: ChatAuthor.Assistant,
+                  tokens: null,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                }
+
+                draft?.unshift(obj)
+              })
+            })
+
             createMessage(
               { chatId, author: Author.Assistant },
               {
-                onSuccess: (message) => {
-                  // Todo: Avoid refetching getMessagesByChatId to update the UI. Do a .setData for react-query
-                  // Todo: Idem, Avoid refetching getMessagesByChatId to update the UI
-                  void utils.chats.getMessagesByChatId.refetch({
-                    chatId,
-                  })
+                onSuccess: (assistantMessage) => {
+                  utils.chats.getMessagesByChatId.setData(
+                    { chatId },
+                    (previous) => {
+                      return produce(previous, (draft) => {
+                        let target = draft?.find(
+                          (message) => message.id === 'temp_assistant',
+                        )
+                        if (!target) return draft
+                        target = assistantMessage
+                      })
+                    },
+                  )
+
                   setVercelMessages([])
 
                   void append(
                     {
-                      id: message.id,
+                      id: assistantMessage.id,
                       role: Author.User,
                       content: '',
                     },
