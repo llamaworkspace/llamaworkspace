@@ -55,7 +55,7 @@ export function Chat({ postId, chatId }: ChatProps) {
         {isBoolean(isDefaultPost) && !isDefaultPost && (
           <ChatMessageInitial chatId={chatId} />
         )}
-
+        <div className="h-[32px]"></div>
         {messages
           ?.map((message) => {
             return (
