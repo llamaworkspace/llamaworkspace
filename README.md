@@ -5,7 +5,7 @@
 </a>
 </p>
 
-<h3 align="center"><strong>The "ChatGPT for Teams" alternative that talks to any Large Language Model.</strong></h3>
+<h3 align="center"><strong>A lightweight ChatGPT alternative designed for team collaboration</strong></h3>
 
 [Joia](https://joia.so/) is an open source alternative to _[ChatGPT for Teams](https://openai.com/chatgpt/team)_, designed from the ground up for collaboration.
 
@@ -13,12 +13,12 @@ The easiest way to get started with Joia is by creating a [Joia Cloud account](h
 
 ## Main features & benefits
 
-- **Manage people access** to LLMs.
-- Use the **latest open source LLMs** like Llama 2, Mixtral and others.
+- Efortlessly grant **people access** to a user-friendly AI Chat.
+- Use any LLM, including the **latest open source LLMs** like Llama 2, Mixtral and others (more coming soon).
 - Create **collaborative chatbots** for specific use cases, and share them across your teams.
-- **Save between of 50% and 75%** (depends on usage) compared to ChatGPT for Teams.
-- **Get responses 40% faster** than ChatGPT Plus. The OpenAI API is generally faster than ChatGPT Plus.
-- **Prevent your prompts from being used for training purposes**. When using the OpenAI API, your data is not used for training purposes. Similarly, when using other LLMs providers, your data is not used for training purposes.
+- **Save between of 50% and 75%** (depends on usage) compared to _ChatGPT for Teams_ and _ChatGPT Enterprise_.
+- **Get responses 40% faster** than ChatGPT Plus. The OpenAI API is generally faster.
+- **Prevent your prompts from being used for training purposes**. When using ChatGPT Plus, your data might then be used for training purposes. However, when connecting to OpenAI via API keys, you're guaranteed that any inputs provided won't be used.
 
 ## Getting started
 
@@ -28,11 +28,11 @@ The easiest way to get started with Joia is with [our official managed service i
 
 In the cloud version you can either use your own API keys for LLM provider, or purchase credits with us.
 
-Our cloud version can save a substantial amount of developer time and resources. We think it's the de-facto solution for mot customers and the value option. Plus, any future revenues will go towards the funding nad maintenance of Joia. You’ll be supporting open source software and getting a great service!
+Our cloud version can save a substantial amount of developer time and resources. We think it's the de-facto solution for most customers and the one which provides most value for mone. Plus, any future revenues will go towards the funding and maintenance of Joia. You’ll be supporting open source software and getting a great service!
 
 #### Vercel
 
-Vercel is the easiest way to deploy Joia. To do so, follow these steps:
+To deploy on Vercel, follow these steps:
 
 1. Create a project by clicking on **Add New... > Project**.
 2. Select **Import Third-Party Git Repository** and enter the URL of this repository.
@@ -52,25 +52,13 @@ To self host a Joia app you'll need to follow the next steps:
 6. Run a post-install script by running `yarn production:postbuild`. This script will run the migrations.
 7. Bootstrap the app by running `yarn production:start`.
 
-## Feedback & Roadmap
+## Feedback
 
-We welcome feedback from our community. We have a public roadmap driven by the features suggested by the community members. Take a look at our feedback board. Please let us know if you have any requests and vote on open issues so we can better prioritize.
-
-To stay up to date with all the latest news and product updates, make sure to follow us on X (formerly Twitter), LinkedIn or Mastodon.
+We are happy to hear your valuable feedback. For this purpose, we have created a [Discord channel](https://discord.com/invite/wTHhNBDKvW) where you can share your thoughts and ideas. [Join the channel here](https://discord.com/invite/wTHhNBDKvW).
 
 ## Roadmap
 
 We welcome feedback from our community. To stay up to date with all the latest news and product updates or to reach us, [follow us on X (formerly Twitter)](https://twitter.com/joiahq).
-
-As the project matures, we will publish a formal public roadmap In the meantime, here is a recao of the main initiatives we will be working on:
-
-- [ ] Allow to tune models with custom parameters.
-- [ ] Connect with any HuggingFace model.
-- [ ] Connect with Langchain.
-- [ ] Support for text-to-image models like Stable Diffusion.
-- [ ] Improve identity providers, including e-mail based logins.
-- [ ] Folders and subfolders for chatbots.
-- [ ] Better sharing functionality for shared chatbots.
 
 ## License & Trademarks
 
