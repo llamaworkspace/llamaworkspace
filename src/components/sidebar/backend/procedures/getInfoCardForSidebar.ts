@@ -57,7 +57,7 @@ const shouldShowInviteMembersCard = async (
     numChatsPromise,
   ])
 
-  if (numUsers < 2 || numChats <= 30) {
+  if (numUsers < 2 && numChats <= 30) {
     return true
   }
 
