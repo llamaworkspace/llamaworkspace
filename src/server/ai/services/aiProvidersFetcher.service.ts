@@ -1,9 +1,8 @@
 import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
 import { AiRegistry } from '@/server/lib/ai-registry/AiRegistry'
-import { BedrockProvider } from '@/server/lib/ai-registry/providers/bedrock/BedrockProvider'
+import { AzureProvider } from '@/server/lib/ai-registry/providers/azure/AzureProvider'
 import { OpenAiProvider } from '@/server/lib/ai-registry/providers/openai/OpenAiProvider'
-import { OpenRouterProvider } from '@/server/lib/ai-registry/providers/openrouter/OpenRouterProvider'
 import { AiProvidersFetcherService } from './AiProvidersFetcher/AiProvidersFetcher.service'
 
 export const aiProvidersFetcher = new AiProvidersFetcherService(
@@ -13,7 +12,8 @@ export const aiProvidersFetcher = new AiProvidersFetcherService(
       fallbackApiKey: env.INTERNAL_OPENAI_API_KEY,
       fallbackBaseUrl: env.OPTIONAL_OPENAI_BASE_URL,
     }),
-    BedrockProvider(),
-    OpenRouterProvider(),
+    // BedrockProvider(),
+    // OpenRouterProvider(),
+    AzureProvider(),
   ]),
 )
