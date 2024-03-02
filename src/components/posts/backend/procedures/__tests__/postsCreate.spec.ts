@@ -1,7 +1,7 @@
 import type { RouterInputs } from '@/lib/api'
 import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
 import mockDb from '@/server/testing/mockDb'
-import { rootRouter } from '@/server/trpc/rootRouter'
+import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import { createInnerTRPCContext } from '@/server/trpc/trpc'
 
 type SubjectPayload = RouterInputs['posts']['create']
@@ -26,7 +26,8 @@ describe('postsCreate', () => {
     const ctx = createInnerTRPCContext({
       session,
     })
-    const caller = rootRouter.createCaller({ ...ctx, prisma: mockDb })
+
+    const { caller } = trpcContextSetupHelper(mockDb, userId)
     await caller.posts.create(payload)
   }
 
