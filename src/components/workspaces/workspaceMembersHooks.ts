@@ -27,6 +27,7 @@ export const useInviteUserToWorkspace = () => {
     onSuccess: () => {
       void utils.workspaces.getWorkspaceMembers.invalidate()
     },
+    retry: 0,
   })
 }
 
