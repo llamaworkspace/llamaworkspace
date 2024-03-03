@@ -1,14 +1,10 @@
 import { faker } from '@faker-js/faker'
-import type { Post, PostShare, PrismaClient } from '@prisma/client'
+import type { Post, PrismaClient } from '@prisma/client'
 import { WorkspaceFactory } from './WorkspaceFactory'
 
 type PostFactoryFields = {
   userId: string
 } & Partial<Post>
-
-interface DependencyOverrides {
-  postShare?: Partial<PostShare>
-}
 
 const generateDefaults = () => {
   return {
