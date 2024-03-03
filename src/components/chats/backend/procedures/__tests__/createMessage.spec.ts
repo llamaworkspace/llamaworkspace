@@ -4,8 +4,7 @@ import { ChatFactory } from '@/server/testing/factories/ChatFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { rootRouter } from '@/server/trpc/rootRouter'
-import { createInnerTRPCContext } from '@/server/trpc/trpc'
+import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { UserAccessLevel } from '@/shared/globalTypes'
 import { faker } from '@faker-js/faker'
@@ -34,15 +33,9 @@ const subject = async (
     authorId: user.id,
   })
   const messageContent = faker.lorem.sentence()
-  const session = {
-    user: { id: user.id, name: user.name },
-    expires: '1',
-  }
 
-  const ctx = createInnerTRPCContext({
-    session,
-  })
-  const caller = rootRouter.createCaller({ ...ctx, prisma })
+  const { caller } = trpcContextSetupHelper(prisma, user.id)
+
   const message = await caller.chats.createMessage({
     chatId: chat.id,
     message: messageContent,

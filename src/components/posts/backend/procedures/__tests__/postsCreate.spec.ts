@@ -1,8 +1,7 @@
 import type { RouterInputs } from '@/lib/api'
 import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
 import mockDb from '@/server/testing/mockDb'
-import { rootRouter } from '@/server/trpc/rootRouter'
-import { createInnerTRPCContext } from '@/server/trpc/trpc'
+import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 
 type SubjectPayload = RouterInputs['posts']['create']
 type MockedPostCreateRepo = jest.MockedFunction<typeof postCreateRepo>
@@ -18,15 +17,7 @@ describe('postsCreate', () => {
   })
 
   const subject = async (payload: SubjectPayload) => {
-    const session = {
-      user: { id: userId, name: 'John Doe' },
-      expires: '1',
-    }
-
-    const ctx = createInnerTRPCContext({
-      session,
-    })
-    const caller = rootRouter.createCaller({ ...ctx, prisma: mockDb })
+    const { caller } = trpcContextSetupHelper(mockDb, userId)
     await caller.posts.create(payload)
   }
 
