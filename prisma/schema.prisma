@@ -104,6 +104,7 @@ model WorkspaceInvite {
     workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt
+    Share       Share[]
 
     @@unique([email, workspaceId])
 }
@@ -144,16 +145,18 @@ model PostShare {
 }
 
 model Share {
-    id          String      @id @default(cuid())
-    postId      String
-    post        Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
-    sharerId    String?
-    sharer      User?       @relation(fields: [sharerId], references: [id], onDelete: Cascade)
-    scope       String
-    accessLevel String
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
-    shareUsers  ShareUser[]
+    id                String           @id @default(cuid())
+    postId            String?
+    post              Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+    workspaceInviteId String?
+    workspaceInvite   WorkspaceInvite? @relation(fields: [workspaceInviteId], references: [id], onDelete: Cascade)
+    sharerId          String?
+    sharer            User?            @relation(fields: [sharerId], references: [id], onDelete: Cascade)
+    scope             String
+    accessLevel       String
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    shareUsers        ShareUser[]
 }
 
 model ShareUser {

@@ -3,7 +3,8 @@ import { generateToken } from '@/lib/utils'
 import { sendEmail } from '@/server/mailer/mailer'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { UserAccessLevel } from '@/shared/globalTypes'
+import { inviteToWorkspace } from '@/server/workspaces/services/inviteToWorkspace'
+import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { PrismaClient, User } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
@@ -13,6 +14,63 @@ const zInput = z.object({
   postId: z.string(),
   email: z.string().email(),
 })
+
+export const postsSharePerformV2 = protectedProcedure
+  .input(zInput)
+  .mutation(async ({ ctx, input }) => {
+    const invitingUserId = ctx.session.user.id
+
+    const invitedUser = await ctx.prisma.user.findFirst({
+      where: {
+        email: input.email,
+      },
+    })
+
+    if (!invitedUser) {
+      const post = await ctx.prisma.post.findFirstOrThrow({
+        select: {
+          workspaceId: true,
+        },
+        where: {
+          id: input.postId,
+        },
+      })
+
+      const invite = await inviteToWorkspace(
+        ctx.prisma,
+        post.workspaceId,
+        invitingUserId,
+        input.email,
+      )
+      if (!invite) {
+        throw new Error('An invite was expected')
+      }
+
+      return await ctx.prisma.share.create({
+        data: {
+          postId: input.postId,
+          workspaceInviteId: invite.id, // This does not work
+          sharerId: invitingUserId,
+          scope: ShareScope.User,
+          accessLevel: UserAccessLevel.Use,
+        },
+      })
+    }
+
+    return await ctx.prisma.share.create({
+      data: {
+        postId: input.postId,
+        sharerId: invitingUserId,
+        scope: ShareScope.User,
+        accessLevel: UserAccessLevel.Use,
+        shareUsers: {
+          create: {
+            userId: invitedUser.id,
+          },
+        },
+      },
+    })
+  })
 
 export const postsSharePerform = protectedProcedure
   .input(zInput)

@@ -4,6 +4,7 @@ import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
+import createHttpError from 'http-errors'
 import { addUserToWorkspaceService } from './addUserToWorkspace.service'
 
 export const inviteToWorkspace = async (
@@ -12,7 +13,7 @@ export const inviteToWorkspace = async (
   invitingUserId: string,
   invitedUserEmail: string,
 ) => {
-  await prismaAsTrx(prisma, async (prisma) => {
+  return await prismaAsTrx(prisma, async (prisma) => {
     const workspace = await prisma.workspace.findUniqueOrThrow({
       select: {
         id: true,
@@ -34,20 +35,19 @@ export const inviteToWorkspace = async (
     })
 
     if (invitedUser) {
-      await handleUserExists(
+      return await handleUserExists(
         prisma,
         workspace.id,
         invitingUserId,
         invitedUser.id,
       )
-    } else {
-      await handleUserDoesNotExist(
-        prisma,
-        workspace.id,
-        invitingUserId,
-        invitedUserEmail,
-      )
     }
+    return await handleUserDoesNotExist(
+      prisma,
+      workspace.id,
+      invitingUserId,
+      invitedUserEmail,
+    )
   })
 }
 
@@ -129,11 +129,10 @@ const handleUserDoesNotExist = async (
   })
 
   if (!!existingInvite) {
-    throw new TRPCError({
-      code: 'BAD_REQUEST',
-      message:
-        'The user is already invited to the workspace, but has not yet accepted the invitation.',
-    })
+    throw createHttpError(
+      403,
+      'The user is already a member of this workspace2222',
+    )
   }
 
   const [invitingUser, workspace] = await Promise.all([
@@ -156,7 +155,7 @@ const handleUserDoesNotExist = async (
     }),
   ])
 
-  await prisma.workspaceInvite.create({
+  const invite = await prisma.workspaceInvite.create({
     data: {
       invitedById: invitingUserId,
       email: invitedUserEmail,
@@ -172,6 +171,8 @@ const handleUserDoesNotExist = async (
     invitedUserEmail,
     workspace.name,
   )
+
+  return invite
 }
 
 const sendEmailToInvitedUser = async (
