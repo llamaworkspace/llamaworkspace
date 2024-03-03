@@ -4,7 +4,6 @@ import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
-import createHttpError from 'http-errors'
 import { addUserToWorkspaceService } from './addUserToWorkspace.service'
 
 export const inviteToWorkspace = async (
@@ -57,6 +56,12 @@ const handleUserExists = async (
   invitingUserId: string,
   invitedUserId: string,
 ) => {
+  if (invitingUserId === invitedUserId) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'You cannot invite yourself',
+    })
+  }
   const result = await addUserToWorkspaceService(
     prisma,
     invitedUserId,
@@ -129,10 +134,11 @@ const handleUserDoesNotExist = async (
   })
 
   if (!!existingInvite) {
-    throw createHttpError(
-      403,
-      'The user is already a member of this workspace2222',
-    )
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message:
+        'The user is already invited to the workspace, but has not yet accepted the invitation.',
+    })
   }
 
   const [invitingUser, workspace] = await Promise.all([
