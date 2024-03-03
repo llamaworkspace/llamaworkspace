@@ -28,7 +28,7 @@ export const errorLoggerForTRPC = (
   error: TRPCError,
   meta: ErrorLoggerForTRPCMeta,
 ) => {
-  log(chalk.red.bold.bgWhite('  *** START: Logging error ***  '))
+  log(chalk.red.bold.bgWhite('  *** START: Logging error (trpc) ***  '))
   logError(error)
-  log(chalk.red.bold.bgWhite('  *** END: Logging error ***  '))
+  log(chalk.red.bold.bgWhite('  *** END: Logging error (trpc) ***  '))
 }
