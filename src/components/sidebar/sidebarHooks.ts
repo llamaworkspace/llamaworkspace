@@ -6,11 +6,12 @@ import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
 export const useChatHistoryForSidebarPost = (postId?: string) => {
   const errorHandler = useErrorHandler()
+  const { workspace } = useCurrentWorkspace()
   return api.sidebar.chatHistoryForSidebar.useQuery(
-    { postId: postId! },
+    { postId: postId!, workspaceId: workspace?.id! },
     {
       onError: errorHandler(),
-      enabled: !!postId,
+      enabled: !!postId && !!workspace?.id,
     },
   )
 }

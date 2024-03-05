@@ -1,36 +1,26 @@
-import { chatVisibilityFilter } from '@/components/chats/backend/chatsBackendUtils'
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { getChats } from '@/server/chats/services/getChats.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
 
 const zInput = z.object({
   postId: z.string(),
+  workspaceId: z.string(),
 })
 
 export const getChatHistoryForSidebar = protectedProcedure
   .input(zInput)
   .query(async ({ input, ctx }) => {
     const userId = ctx.session.user.id
-    const { postId } = input
+    const { postId, workspaceId } = input
 
-    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-      PermissionAction.View,
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      workspaceId,
       userId,
-      postId,
     )
 
-    return await ctx.prisma.chat.findMany({
-      select: {
-        id: true,
-        title: true,
-      },
-      where: {
-        postId,
-        ...chatVisibilityFilter(userId),
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
+    return await getChats(ctx.prisma, context, {
+      postId,
     })
   })

@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import type { Post, PrismaClient } from '@prisma/client'
 import { WorkspaceFactory } from './WorkspaceFactory'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type PostFactoryFields = {
   userId: string
@@ -8,6 +9,7 @@ type PostFactoryFields = {
 
 const generateDefaults = () => {
   return {
+    ...generateBaseForDefaults(),
     title: faker.lorem.sentence(),
   }
 }
@@ -31,13 +33,11 @@ export const PostFactory = {
 
     const workspace = await WorkspaceFactory.create(prisma)
 
-    const post = await prisma.post.create({
+    return await prisma.post.create({
       data: {
         ...rest,
         workspaceId: workspace.id,
       },
     })
-
-    return post
   },
 }

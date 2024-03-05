@@ -1,11 +1,13 @@
 import { Author } from '@/shared/aiTypesAndMappers'
 import { faker } from '@faker-js/faker'
 import type { Message, PrismaClient } from '@prisma/client'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type MessageFactoryFields = Partial<Message>
 
 const generateDefaults = () => {
   return {
+    ...generateBaseForDefaults(),
     author: Author.User,
     message: faker.lorem.sentence(),
   }

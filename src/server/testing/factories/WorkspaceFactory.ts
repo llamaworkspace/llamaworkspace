@@ -1,10 +1,12 @@
 import { faker } from '@faker-js/faker'
 import type { PrismaClient, Workspace } from '@prisma/client'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 const generateDefaults = () => {
   return {
-    id: faker.string.nanoid(),
+    ...generateBaseForDefaults(),
     name: faker.person.firstName() + "'s workspace",
+    isOnboardingCompleted: false,
   }
 }
 
