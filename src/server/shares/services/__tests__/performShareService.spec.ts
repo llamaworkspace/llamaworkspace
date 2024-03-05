@@ -1,12 +1,13 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { WorkspaceInviteFactory } from '@/server/testing/factories/WorkspaceInviteFactory'
-import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import { inviteToWorkspace } from '@/server/workspaces/services/inviteToWorkspace'
 import { faker } from '@faker-js/faker'
 import type { Post, User, Workspace, WorkspaceInvite } from '@prisma/client'
+import { performShare } from '../performShare.service'
 
 type MockedInviteToWorkspaceService = jest.MockedFunction<
   typeof inviteToWorkspace
@@ -21,9 +22,18 @@ jest.mock('@/server/workspaces/services/inviteToWorkspace', () => {
   }
 })
 
-const subject = async (userId: string, postId: string, email: string) => {
-  const { caller } = trpcContextSetupHelper(prisma, userId)
-  return await caller.posts.sharev2({ postId, email })
+const subject = async (
+  userId: string,
+  workspaceId: string,
+  postId: string,
+  email: string,
+) => {
+  const context = await createUserOnWorkspaceContext(
+    prisma,
+    workspaceId,
+    userId,
+  )
+  return await performShare(prisma, context, { postId, email })
 }
 
 describe('postsSharePerform', () => {
@@ -44,65 +54,68 @@ describe('postsSharePerform', () => {
     invitedUser = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
+
     post = await PostFactory.create(prisma, {
       userId: invitingUser.id,
       workspaceId: workspace.id,
     })
   })
 
-  it('shares the post', async () => {
-    await subject(invitingUser.id, post.id, invitedUser.email!)
-    const share = await prisma.share.findFirstOrThrow({
-      where: { postId: post.id },
-      include: { shareUsers: true },
+  describe('when the invited user exists', () => {
+    it('shares the post', async () => {
+      await subject(invitingUser.id, workspace.id, post.id, invitedUser.email!)
+      const share = await prisma.share.findFirstOrThrow({
+        where: { postId: post.id },
+        include: { shareUsersOrInvites: true },
+      })
+
+      expect(share.sharerId).toBe(invitingUser.id)
+      expect(share.shareUsersOrInvites.length).toBe(1)
+      expect(share.shareUsersOrInvites.at(0)?.userId).toBe(invitedUser.id)
+      expect(share.shareUsersOrInvites.at(0)?.workspaceInviteId).toBeNull()
     })
-
-    expect(share.sharerId).toBe(invitingUser.id)
-    expect(share.shareUsers.length).toBe(1)
-    expect(share.shareUsers.at(0)?.userId).toBe(invitedUser.id)
-  })
-
-  describe.skip('when the inviting user does not have enough permissions', () => {
-    it.todo('pending')
   })
 
   describe('when the invited user does not exist', () => {
     let fakeEmail: string
-    let invite: WorkspaceInvite
+    let workspaceInvite: WorkspaceInvite
+
     beforeEach(() => {
       fakeEmail = faker.internet.email()
 
       mockedInviteToWorkspace.mockImplementation(async () => {
-        invite = await WorkspaceInviteFactory.create(prisma, {
+        workspaceInvite = await WorkspaceInviteFactory.create(prisma, {
           email: fakeEmail,
           workspaceId: workspace.id,
         })
-        return invite
+
+        return workspaceInvite
       })
     })
 
     it('invites the user', async () => {
-      await subject(invitingUser.id, post.id, fakeEmail)
+      await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
       expect(inviteToWorkspace).toHaveBeenCalled()
     })
 
-    it('creates the share', async () => {
-      mockedInviteToWorkspace.mockImplementation(async () => {
-        return await WorkspaceInviteFactory.create(prisma, {
-          email: fakeEmail,
-          workspaceId: workspace.id,
-        })
-      })
-      await subject(invitingUser.id, post.id, fakeEmail)
+    it.only('creates the share', async () => {
+      await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
 
       const share = await prisma.share.findFirstOrThrow({
         where: { postId: post.id },
-        include: { shareUsers: true },
+        include: { shareUsersOrInvites: true },
       })
 
       expect(share.sharerId).toBe(invitingUser.id)
-      expect(share.workspaceInviteId).toBeDefined()
-      expect(share.shareUsers.length).toBe(0)
+      expect(share.shareUsersOrInvites.length).toBe(1)
+      expect(share.shareUsersOrInvites.at(0)?.workspaceInviteId).toBe(
+        workspaceInvite.id,
+      )
+      expect(share.shareUsersOrInvites.at(0)?.userId).toBeNull()
     })
+  })
+
+  describe.skip('when the inviting user does not have enough permissions', () => {
+    it.todo('pending')
   })
 })

@@ -33,6 +33,7 @@ export const UserFactory = {
     if (!workspaceId) {
       return await prisma.user.create({ data: UserFactory.build(rest) })
     }
+
     return await prisma.user.create({
       data: {
         ...UserFactory.build(rest),

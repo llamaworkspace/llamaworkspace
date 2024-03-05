@@ -67,7 +67,7 @@ model User {
     postSorts        PostSort[]
     workspaceInvites WorkspaceInvite[]
     shareds          Share[]
-    shares           ShareUser[]
+    shares           ShareUserOrInvite[]
 }
 
 model Workspace {
@@ -96,15 +96,15 @@ model UsersOnWorkspaces {
 }
 
 model WorkspaceInvite {
-    id          String    @id @default(cuid())
-    email       String
-    invitedById String?
-    invitedBy   User?     @relation(fields: [invitedById], references: [id], onDelete: SetNull)
-    workspaceId String
-    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    Share       Share[]
+    id                  String              @id @default(cuid())
+    email               String
+    invitedById         String?
+    invitedBy           User?               @relation(fields: [invitedById], references: [id], onDelete: SetNull)
+    workspaceId         String
+    workspace           Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt           DateTime            @default(now())
+    updatedAt           DateTime            @updatedAt
+    shareUsersOrInvites ShareUserOrInvite[]
 
     @@unique([email, workspaceId])
 }
@@ -145,30 +145,35 @@ model PostShare {
 }
 
 model Share {
-    id                String           @id @default(cuid())
-    postId            String?
-    post              Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
-    workspaceInviteId String?
-    workspaceInvite   WorkspaceInvite? @relation(fields: [workspaceInviteId], references: [id], onDelete: Cascade)
-    sharerId          String?
-    sharer            User?            @relation(fields: [sharerId], references: [id], onDelete: Cascade)
-    scope             String
-    accessLevel       String
-    createdAt         DateTime         @default(now())
-    updatedAt         DateTime         @updatedAt
-    shareUsers        ShareUser[]
+    id                  String              @id @default(cuid())
+    postId              String?
+    post                Post?               @relation(fields: [postId], references: [id], onDelete: Cascade)
+    sharerId            String?
+    sharer              User?               @relation(fields: [sharerId], references: [id], onDelete: Cascade)
+    scope               String
+    accessLevel         String
+    createdAt           DateTime            @default(now())
+    updatedAt           DateTime            @updatedAt
+    shareUsersOrInvites ShareUserOrInvite[]
 }
 
-model ShareUser {
-    id        String   @id @default(cuid())
-    shareId   String
-    share     Share    @relation(fields: [shareId], references: [id], onDelete: Cascade)
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+// This table has been tuned in the migration to:
+// - add a partial unique constraint on the combination of shareId, userId
+// - add a partial unique constraint on the combination of shareId, inviteId
+// - add an xor check on userId and inviteId
+model ShareUserOrInvite {
+    id                String           @id @default(cuid())
+    shareId           String
+    share             Share            @relation(fields: [shareId], references: [id], onDelete: Cascade)
+    userId            String?
+    user              User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    workspaceInviteId String?
+    workspaceInvite   WorkspaceInvite? @relation(fields: [workspaceInviteId], references: [id], onDelete: Cascade)
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
 
     @@unique([shareId, userId])
+    @@unique([shareId, workspaceInviteId])
 }
 
 model PostSort {
