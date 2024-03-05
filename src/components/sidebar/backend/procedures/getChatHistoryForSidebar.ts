@@ -13,6 +13,7 @@ export const getChatHistoryForSidebar = protectedProcedure
   .query(async ({ input, ctx }) => {
     const userId = ctx.session.user.id
     const { postId, workspaceId } = input
+
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
       workspaceId,
