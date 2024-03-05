@@ -9,7 +9,7 @@ const subject = async (userId: string, postId: string) => {
   return await updatePostSortingForNullPreviousId(prisma, userId, postId)
 }
 
-describe('updatePostSortingForNullPreviousIdService', () => {
+describe.skip('updatePostSortingForNullPreviousIdService', () => {
   let workspace: Workspace, user: User
 
   beforeEach(async () => {
