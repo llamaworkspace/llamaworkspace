@@ -2,7 +2,7 @@ import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
 
 // Use this class as a guarantee that the user is a member of the workspace.
-class UserOnWorkspaceContext {
+export class UserOnWorkspaceContext {
   private _tag = 'UserOnWorkspaceContext' as const
 
   static create(workspaceId: string, userId: string): UserOnWorkspaceContext {
@@ -18,15 +18,17 @@ class UserOnWorkspaceContext {
     return (obj as UserOnWorkspaceContext)._tag === this._tag
   }
 
-  get workspaceId(): string {
+  get workspaceId() {
     return this._workspaceId
   }
-  get userId(): string {
+  get userId() {
     return this._userId
   }
-}
 
-export type { UserOnWorkspaceContext }
+  get _type() {
+    return this.constructor.name
+  }
+}
 
 export async function createUserOnWorkspaceContext(
   prisma: PrismaClientOrTrxClient,

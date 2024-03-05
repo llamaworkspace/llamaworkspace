@@ -1,6 +1,7 @@
 import { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import { faker } from '@faker-js/faker'
 import type { PrismaClient, User } from '@prisma/client'
+import { generateBaseForDefaults } from './testingFactoryUtils'
 
 type UserFactoryFields = {
   workspaceId?: string
@@ -8,7 +9,9 @@ type UserFactoryFields = {
 
 const generateDefaults = () => {
   return {
+    ...generateBaseForDefaults(),
     name: faker.person.fullName(),
+    image: faker.image.avatar(),
     username: faker.internet.userName(),
     email: faker.string.nanoid() + faker.internet.email(),
     emailVerified: faker.date.past(),
@@ -17,7 +20,7 @@ const generateDefaults = () => {
 }
 
 export const UserFactory = {
-  build: (overrides: Partial<User>) => {
+  build: (overrides: UserFactoryFields) => {
     return {
       ...generateDefaults(),
       ...overrides,

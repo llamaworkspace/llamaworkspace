@@ -1,4 +1,4 @@
-import { UserOnWorkspaceContext } from '@/server/auth/session'
+import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { scopeChatByWorkspace } from '../chatUtils'
