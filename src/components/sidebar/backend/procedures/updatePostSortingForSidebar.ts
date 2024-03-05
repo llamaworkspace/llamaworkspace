@@ -1,3 +1,8 @@
+import {
+  UserOnWorkspaceContext,
+  createUserOnWorkspaceContext,
+} from '@/server/auth/userOnWorkspaceContext'
+import { scopePostByWorkspace } from '@/server/posts/postUtils'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { uniq } from 'underscore'
@@ -17,26 +22,34 @@ export const updatePostSortingForSidebar = protectedProcedure
     const { workspaceId, sortedPosts } = input
     const userId = ctx.session.user.id
 
-    await doLegacyUpdate(ctx.prisma, userId, workspaceId, sortedPosts)
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      workspaceId,
+      userId,
+    )
+
+    await doLegacyUpdate(ctx.prisma, context, sortedPosts)
     // await updatePostSorting(ctx.prisma, userId, postId, previousPostId)
   })
 
 const doLegacyUpdate = async (
   prisma: PrismaClientOrTrxClient,
-  userId: string,
-  workspaceId: string,
+  uowContext: UserOnWorkspaceContext,
   sortedPosts: string[],
 ) => {
+  const { userId, workspaceId } = uowContext
   const existingPosts = await prisma.post.findMany({
     select: {
       id: true,
     },
-    where: {
-      id: {
-        in: sortedPosts,
+    where: scopePostByWorkspace(
+      {
+        id: {
+          in: sortedPosts,
+        },
       },
       workspaceId,
-    },
+    ),
   })
 
   const existingPostIds = new Set(existingPosts.map((post) => post.id))

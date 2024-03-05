@@ -1,16 +1,18 @@
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
-import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { sortBy } from 'underscore'
 import { z } from 'zod'
+import { scopePostByWorkspace } from '../postUtils'
 
 const zSortedPosts = z.string().array()
 
 export const getSortedPostsTree = async function (
   prisma: PrismaClientOrTrxClient,
-  userId: string,
-  workspaceId: string,
+  uowContext: UserOnWorkspaceContext,
 ) {
+  const { userId, workspaceId } = uowContext
+
   const [posts, postSorts] = await Promise.all([
     getPosts(prisma, userId, workspaceId),
     getPostSorts(prisma, userId, workspaceId),
@@ -43,13 +45,12 @@ const getPosts = async (
         take: 1,
       },
     },
-    where: {
-      isDefault: false,
-      workspaceId,
-      workspace: {
-        ...workspaceVisibilityFilter(userId),
+    where: scopePostByWorkspace(
+      {
+        isDefault: false,
       },
-    },
+      workspaceId,
+    ),
     orderBy: {
       createdAt: 'desc',
     },
@@ -71,7 +72,7 @@ const getPostSorts = async (
     },
     where: {
       userId,
-      workspaceId,
+      workspaceId, // Scoping happening here
     },
     orderBy: {
       createdAt: 'desc',
