@@ -16,14 +16,14 @@ jest.mock(
 describe('updatePostSortingService', () => {
   const subject = async (withPreviousPostId?: boolean) => {
     const user = UserFactory.build({ id: faker.string.nanoid() })
-    const previousPost = PostFactory.build({ userId: user.id! })
-    const post = PostFactory.build({ userId: user.id! })
+    const previousPost = PostFactory.build({ userId: user.id })
+    const post = PostFactory.build({ userId: user.id })
 
     await updatePostSorting(
       mockDb,
-      user.id!,
-      post.id!,
-      withPreviousPostId ? previousPost.id! : null,
+      user.id,
+      post.id,
+      withPreviousPostId ? previousPost.id : null,
     )
   }
   describe('when previousPostId is null', () => {

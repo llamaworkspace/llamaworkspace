@@ -66,7 +66,7 @@ describe('handleUserSignup', () => {
     mock.mockResolvedValue(workspace as Workspace)
     const user = UserFactory.build({ id: faker.string.nanoid() })
 
-    await handleUserSignup(mockDb, user.id!)
+    await handleUserSignup(mockDb, user.id)
     return user
   }
 

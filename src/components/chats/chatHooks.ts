@@ -433,21 +433,25 @@ export const useUpdateChat = (debounceMs = 0) => {
   type Params = MutateArgs[0]
   type Options = MutateArgs[1]
 
-  const { data } = useDefaultPost()
+  const { data: post } = useDefaultPost()
+  const { workspace } = useCurrentWorkspace()
 
   return {
     mutate: debounce((params: Params, options?: Options) => {
-      if (!data) return
+      if (!post || !workspace) return
 
-      chatHistoryForSidebar.setData({ postId: data?.id }, (previous) => {
-        if (!previous) return previous
+      chatHistoryForSidebar.setData(
+        { postId: post.id, workspaceId: workspace.id },
+        (previous) => {
+          if (!previous) return previous
 
-        return produce(previous, (draft) => {
-          const chatIndex = draft.findIndex((chat) => chat.id === params.id)
-          const foundChat = draft[chatIndex]
-          if (foundChat) foundChat.title = params.title ?? null
-        })
-      })
+          return produce(previous, (draft) => {
+            const chatIndex = draft.findIndex((chat) => chat.id === params.id)
+            const foundChat = draft[chatIndex]
+            if (foundChat) foundChat.title = params.title ?? null
+          })
+        },
+      )
 
       mutate(params, options)
     }, debounceMs),
