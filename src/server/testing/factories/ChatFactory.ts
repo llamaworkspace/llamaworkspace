@@ -1,4 +1,5 @@
 import type { Chat, PrismaClient } from '@prisma/client'
+import { generateBaseForDefaults } from './testingFactoryUtils'
 
 type ChatFactoryFields = {
   postId: string
@@ -6,7 +7,7 @@ type ChatFactoryFields = {
 } & Partial<Chat>
 
 const generateDefaults = () => {
-  return {}
+  return generateBaseForDefaults()
 }
 
 export const ChatFactory = {

@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import type { Invite, PrismaClient } from '@prisma/client'
+import { generateBaseForDefaults } from './testingFactoryUtils'
 
 type InviteFactoryFields = {
   invitedById: string
@@ -7,6 +8,7 @@ type InviteFactoryFields = {
 
 const generateDefaults = () => {
   return {
+    ...generateBaseForDefaults(),
     email: faker.internet.email(),
     token: faker.string.uuid(),
   }
