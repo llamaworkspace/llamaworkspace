@@ -1,5 +1,5 @@
 import type { Chat, PrismaClient } from '@prisma/client'
-import { generateBaseForDefaults } from './testingFactoryUtils'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type ChatFactoryFields = {
   postId: string

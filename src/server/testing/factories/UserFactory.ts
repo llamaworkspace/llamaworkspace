@@ -1,7 +1,7 @@
 import { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import { faker } from '@faker-js/faker'
 import type { PrismaClient, User } from '@prisma/client'
-import { generateBaseForDefaults } from './testingFactoryUtils'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type UserFactoryFields = {
   workspaceId?: string

@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 import type { Post, PrismaClient } from '@prisma/client'
 import { WorkspaceFactory } from './WorkspaceFactory'
-import { generateBaseForDefaults } from './testingFactoryUtils'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type PostFactoryFields = {
   userId: string

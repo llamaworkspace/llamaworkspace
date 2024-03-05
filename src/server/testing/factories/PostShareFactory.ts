@@ -1,6 +1,6 @@
 import { UserAccessLevel } from '@/shared/globalTypes'
 import type { PostShare, PrismaClient } from '@prisma/client'
-import { generateBaseForDefaults } from './testingFactoryUtils'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 export type PostShareFactoryFields = {
   postId: string

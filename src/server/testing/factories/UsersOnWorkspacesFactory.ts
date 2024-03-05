@@ -1,5 +1,5 @@
 import type { PrismaClient, UsersOnWorkspaces } from '@prisma/client'
-import { generateBaseForDefaults } from './testingFactoryUtils'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type UsersOnWorkspacesFactoryFields = {
   userId: string

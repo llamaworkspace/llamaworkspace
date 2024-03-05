@@ -1,7 +1,7 @@
 import { Author } from '@/shared/aiTypesAndMappers'
 import { faker } from '@faker-js/faker'
 import type { Message, PrismaClient } from '@prisma/client'
-import { generateBaseForDefaults } from './testingFactoryUtils'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type MessageFactoryFields = Partial<Message>
 

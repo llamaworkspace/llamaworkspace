@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import type { PrismaClient, Workspace } from '@prisma/client'
-import { generateBaseForDefaults } from './testingFactoryUtils'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 const generateDefaults = () => {
   return {

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import type { Invite, PrismaClient } from '@prisma/client'
-import { generateBaseForDefaults } from './testingFactoryUtils'
+import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type InviteFactoryFields = {
   invitedById: string
