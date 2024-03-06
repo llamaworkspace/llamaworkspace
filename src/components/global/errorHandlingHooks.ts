@@ -7,13 +7,14 @@ import {
   type AppHttpErrorPayload,
 } from './components/AppClientError'
 
-const DEFAULT_MESSAGE = 'An unexpected error just happened. Please try again.'
+const DEFAULT_ERROR_MESSAGE =
+  'An unexpected error just happened. Please try again.'
 
 export const useErrorHandler = () => {
   const toast = useErrorToast()
 
   return (message?: string) => (error: unknown) => {
-    message = message ?? DEFAULT_MESSAGE
+    message = message ?? DEFAULT_ERROR_MESSAGE
     const asError = error as Error
 
     // Case 1: TRPCClientError
@@ -28,7 +29,7 @@ export const useErrorHandler = () => {
       appError = buildAppClientErrorOrThrow(asError)
       return handleAsAppClientError(appError, toast)
     } catch (_e) {
-      toast(DEFAULT_MESSAGE)
+      toast(DEFAULT_ERROR_MESSAGE)
       errorLogger(asError)
     }
   }
@@ -58,7 +59,7 @@ const handleAsTrpcClientError = (
 
   if (errorPayload?.httpStatus && errorPayload.httpStatus >= 500) {
     errorLogger(trpcClientError)
-    return toast(DEFAULT_MESSAGE)
+    return toast(DEFAULT_ERROR_MESSAGE)
   }
 
   if (errorPayload?.zodError) {

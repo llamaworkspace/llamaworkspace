@@ -1,11 +1,12 @@
+import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { upsertAiProvider } from '@/server/ai/services/upsertProviderKVs.service'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import {
+import { DEFAULT_MODELS_FOR_NEW_WORKSPACE } from '@/shared/globalConfig'
+import type {
+  PrismaClientOrTrxClient,
   PrismaTrxClient,
-  type PrismaClientOrTrxClient,
 } from '@/shared/globalTypes'
-
-const DEFAULT_OPENAI_MODELS = ['gpt-4-turbo-preview', 'gpt-3.5-turbo']
+import Promise from 'bluebird'
 
 export const setDefaultsForWorkspace = async (
   prisma: PrismaClientOrTrxClient,
@@ -20,14 +21,14 @@ const setDefaultEnabledAiModels = async (
   prisma: PrismaTrxClient,
   workspaceId: string,
 ) => {
-  await upsertAiProvider(
-    prisma,
-    workspaceId,
-    'openai',
-    undefined,
-    DEFAULT_OPENAI_MODELS.map((slug) => ({
-      slug,
-      enabled: true,
-    })),
-  )
+  // Important: Do mapSeries or else it will try to create the same provider twice and fail
+  await Promise.mapSeries(DEFAULT_MODELS_FOR_NEW_WORKSPACE, async (slug) => {
+    const { model, provider } = getProviderAndModelFromFullSlug(slug)
+    await upsertAiProvider(prisma, workspaceId, provider, undefined, [
+      {
+        slug: model,
+        enabled: true,
+      },
+    ])
+  })
 }

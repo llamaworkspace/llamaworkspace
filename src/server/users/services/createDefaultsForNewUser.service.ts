@@ -1,8 +1,8 @@
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
-import {
+import type {
+  PrismaClientOrTrxClient,
   PrismaTrxClient,
-  type PrismaClientOrTrxClient,
 } from '@/shared/globalTypes'
 
 export const createDefaultsForNewUserService = async (
