@@ -20,6 +20,7 @@
     "cloak:generate": "npx cloak generate | grep 'CLOAK_MASTER_KEY' | cut -d '=' -f2"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.16.1",
     "@aws-sdk/client-bedrock-runtime": "^3.481.0",
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
@@ -50,7 +51,7 @@
     "@trpc/next": "^10.38.1",
     "@trpc/react-query": "^10.38.1",
     "@trpc/server": "^10.38.1",
-    "ai": "^2.2.30",
+    "ai": "^3.0.5",
     "bluebird": "^3.7.2",
     "chalk": "^5.3.0",
     "class-variance-authority": "^0.7.0",

@@ -28,6 +28,7 @@ export const saveTokenCountForChatRun = async (
 
     switch (providerSlug) {
       case 'openai':
+      case 'anthropic':
         return await saveTokenCountForOpenaiProvider(prisma, chatRun)
     }
 
