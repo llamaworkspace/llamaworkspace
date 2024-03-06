@@ -34,6 +34,5 @@ export const workspacesUpdateWorkspace = protectedProcedure
     return {
       id: workspace.id,
       name: workspace.name,
-      isOnboardingCompleted: workspace.isOnboardingCompleted,
     }
   })

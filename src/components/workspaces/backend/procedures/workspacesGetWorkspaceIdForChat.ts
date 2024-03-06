@@ -21,7 +21,6 @@ export const workspacesGetWorkspaceIdForChat = protectedProcedure
               select: {
                 id: true,
                 name: true,
-                isOnboardingCompleted: true,
               },
             },
           },

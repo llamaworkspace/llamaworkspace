@@ -12,6 +12,5 @@ export const workspacesCreateWorkspace = protectedProcedure
     return {
       id: workspace.id,
       name: workspace.name,
-      isOnboardingCompleted: workspace.isOnboardingCompleted,
     }
   })
