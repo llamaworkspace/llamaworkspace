@@ -10,7 +10,7 @@ jest.mock('@/server/shares/services/performShare.service')
 
 const subject = async (userId: string, postId: string, email: string) => {
   const { caller } = trpcContextSetupHelper(prisma, userId)
-  return await caller.posts.sharev2({ postId, email })
+  return await caller.posts.share({ postId, email })
 }
 
 describe('postsSharePerform', () => {

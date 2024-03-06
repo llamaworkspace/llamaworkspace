@@ -7,10 +7,7 @@ import { postsGetById } from './procedures/postsGetById'
 import { postsGetDefault } from './procedures/postsGetDefault'
 import { postsGetLatest } from './procedures/postsGetLatest'
 import { postsGetShares } from './procedures/postsGetShares'
-import {
-  postsSharePerform,
-  postsSharePerformV2,
-} from './procedures/postsSharePerform'
+import { postsSharePerformV2 } from './procedures/postsSharePerform'
 import { postsShareUpdateAccessLevel } from './procedures/postsShareUpdateAccessLevel'
 import { postsUpdate } from './procedures/postsUpdate'
 
@@ -20,8 +17,7 @@ export const postsRouter = createTRPCRouter({
   create: postsCreate,
   update: postsUpdate,
   delete: postsDelete,
-  share: postsSharePerform,
-  sharev2: postsSharePerformV2,
+  share: postsSharePerformV2,
   getShares: postsGetShares,
   updateShareAccessLevel: postsShareUpdateAccessLevel,
   updateConfig: postsConfigUpdate,
