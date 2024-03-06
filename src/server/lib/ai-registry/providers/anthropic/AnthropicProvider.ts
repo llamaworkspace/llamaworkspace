@@ -1,10 +1,18 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { AnthropicStream, StreamingTextResponse } from 'ai'
-import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
+import { AnthropicStream } from 'ai'
+import type {
+  AiRegistryExecutePayload,
+  AiRegistryMessage,
+} from '../../aiRegistryTypes'
 import { anthropicModels } from './lib/anthropicModels'
 
 interface AnthropicExecuteOptions {
   apiKey: string
+}
+
+interface AiRegistryMessageWithoutSystemRole
+  extends Omit<AiRegistryMessage, 'role'> {
+  role: 'user' | 'assistant'
 }
 
 export const AnthropicProvider = () => {
@@ -31,16 +39,47 @@ export const AnthropicProvider = () => {
         apiKey: options.apiKey,
       })
 
-      const response = await anthropic.messages.create({
-        messages: [{ role: 'user', content: 'Hello, Claude' }],
-        model: 'claude-3-opus-20240229',
-        stream: true,
-        max_tokens: 3000,
+      const systemMessages = payload.messages
+        .filter((message) => message.role === 'system')
+        .join('. ')
+        .trim()
+
+      let nonSystemMessages = payload.messages.filter(
+        (message) => message.role !== 'system',
+      ) as AiRegistryMessageWithoutSystemRole[]
+
+      nonSystemMessages = nonSystemMessages.flatMap((message, index) => {
+        if (index === 0) {
+          return message
+        }
+
+        if (
+          nonSystemMessages[index - 1]!.role === 'user' &&
+          nonSystemMessages[index]!.role === 'user'
+        ) {
+          return [{ role: 'assistant', content: '-' }, message]
+        }
+        if (
+          nonSystemMessages[index - 1]!.role === 'assistant' &&
+          nonSystemMessages[index]!.role === 'assistant'
+        ) {
+          return [{ role: 'user', content: '-' }, message]
+        }
+        return message
       })
-      console.log(1, response)
-      const stream = AnthropicStream(response)
-      console.log(2, stream)
-      return new StreamingTextResponse(stream)
+
+      const response = await anthropic.messages.create({
+        messages: nonSystemMessages,
+        system: systemMessages,
+        model: payload.model,
+        stream: true,
+        max_tokens: 4096,
+      })
+
+      return AnthropicStream(response, {
+        onToken: payload?.onToken,
+        onFinal: payload?.onFinal,
+      })
     },
   }
 }
