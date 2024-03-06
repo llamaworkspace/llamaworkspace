@@ -19,7 +19,6 @@ export const workspacesGetWorkspace = protectedProcedure
       select: {
         id: true,
         name: true,
-        isOnboardingCompleted: true,
       },
       where: {
         id: input.workspaceId,
