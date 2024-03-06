@@ -14,8 +14,8 @@ export const aiProvidersFetcher = new AiProvidersFetcherService(
       fallbackApiKey: env.INTERNAL_OPENAI_API_KEY,
       fallbackBaseUrl: env.OPTIONAL_OPENAI_BASE_URL,
     }),
+    AnthropicProvider(),
     BedrockProvider(),
     OpenRouterProvider(),
-    AnthropicProvider(),
   ]),
 )

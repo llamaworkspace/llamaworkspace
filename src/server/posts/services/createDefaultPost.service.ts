@@ -1,6 +1,6 @@
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import { DEFAULT_POST_NAME } from '../constants'
+import { DEFAULT_POST_NAME } from '../postConstants'
 import { postCreateRepo } from '../repositories/postsCreateRepo'
 
 export const createDefaultPostService = async (
