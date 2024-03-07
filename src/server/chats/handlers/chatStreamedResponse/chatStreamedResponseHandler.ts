@@ -1,7 +1,7 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
-import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
+import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
@@ -85,7 +85,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       postConfigVersion.model,
     )
 
-    const providerKVs = await getAiProviderKVs(
+    const providerKVs = await getAiProviderKVsService(
       prisma,
       workspaceId,
       userId,
