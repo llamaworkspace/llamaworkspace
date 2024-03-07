@@ -54,7 +54,7 @@ model User {
     email           String?             @unique
     emailVerified   DateTime?
     image           String?
-    defaultModel    String?
+    defaultModel    String
     createdAt       DateTime            @default(now())
     updatedAt       DateTime            @updatedAt
     accounts        Account[]
