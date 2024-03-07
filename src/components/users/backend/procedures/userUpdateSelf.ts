@@ -1,4 +1,5 @@
 import { protectedProcedure } from '@/server/trpc/trpc'
+import { updateUserService } from '@/server/users/services/updateUser.service'
 import { z } from 'zod'
 import { zodUserOutput } from '../usersBackendUtils'
 
@@ -11,18 +12,5 @@ export const userUpdateSelf = protectedProcedure
   .output(zodUserOutput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-
-    const res = await ctx.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: { ...input },
-    })
-
-    return {
-      id: res.id,
-      email: res.email,
-      name: res.name,
-      defaultModel: res.defaultModel!,
-    }
+    return await updateUserService(ctx.prisma, userId, input)
   })

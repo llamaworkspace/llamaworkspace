@@ -1,4 +1,5 @@
 import { protectedProcedure } from '@/server/trpc/trpc'
+import { getUserService } from '@/server/users/services/getUser.service'
 import { zodUserOutput } from '../usersBackendUtils'
 
 export const userGetSelf = protectedProcedure
@@ -6,14 +7,5 @@ export const userGetSelf = protectedProcedure
   .query(async ({ ctx }) => {
     const userId = ctx.session.user.id
 
-    const res = await ctx.prisma.user.findFirstOrThrow({
-      where: { id: userId },
-    })
-
-    return {
-      id: res.id,
-      email: res.email,
-      name: res.name,
-      defaultModel: res.defaultModel!,
-    }
+    return await getUserService(ctx.prisma, userId)
   })
