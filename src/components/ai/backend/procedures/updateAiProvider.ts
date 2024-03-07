@@ -1,5 +1,5 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
-import { upsertAiProvider } from '@/server/ai/services/upsertProviderKVs.service'
+import { upsertAiProviderService } from '@/server/ai/services/upsertProviderKVs.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -26,7 +26,7 @@ export const updateAiProvider = protectedProcedure
       },
     })
 
-    return await upsertAiProvider(
+    return await upsertAiProviderService(
       ctx.prisma,
       workspaceId,
       providerSlug,

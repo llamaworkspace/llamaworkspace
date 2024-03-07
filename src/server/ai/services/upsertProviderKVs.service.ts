@@ -13,7 +13,7 @@ interface ModelParams {
   enabled: boolean
 }
 
-export const upsertAiProvider = async (
+export const upsertAiProviderService = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
   slug: string,
