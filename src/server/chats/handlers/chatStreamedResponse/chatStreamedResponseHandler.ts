@@ -18,7 +18,7 @@ import createHttpError from 'http-errors'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { chain } from 'underscore'
-import { saveTokenCountForChatRun } from '../../services/saveTokenCountForChatRun.service'
+import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
 import {
   chatStreamToResponse,
   handleChatTitleCreate,
@@ -94,7 +94,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const onFinal = async (final: string) => {
       await updateMessage(assistantTargetMessage.id, final)
-      await saveTokenCountForChatRun(prisma, chatRun.id)
+      await saveTokenCountForChatRunService(prisma, chatRun.id)
     }
 
     const onToken = (token: string) => {
