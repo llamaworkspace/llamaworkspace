@@ -1,6 +1,6 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
-import { aiProvidersFetcher } from '@/server/ai/services/aiProvidersFetcher.service'
+import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
@@ -106,7 +106,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       errorLogger(error)
     }
 
-    const provider = aiProvidersFetcher.getProvider(providerSlug)
+    const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
     if (!provider) {
       throw new Error(`Provider ${providerSlug} not found`)
@@ -176,7 +176,7 @@ const validateModelIsEnabledOrThrow = async (
   userId: string,
   fullSlug: string,
 ) => {
-  const providersMeta = await aiProvidersFetcher.getFullAiProvidersMeta(
+  const providersMeta = await aiProvidersFetcherService.getFullAiProvidersMeta(
     workspaceId,
     userId,
   )

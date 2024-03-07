@@ -1,4 +1,4 @@
-import { aiProvidersFetcher } from '@/server/ai/services/aiProvidersFetcher.service'
+import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type {
   PrismaClientOrTrxClient,
@@ -32,7 +32,7 @@ const upsertProviderRaw = async (
   workspaceId: string,
   slug: string,
 ) => {
-  const provider = aiProvidersFetcher.getProvider(slug)
+  const provider = aiProvidersFetcherService.getProvider(slug)
 
   if (!provider) {
     throw new Error(`Provider not found: ${slug}`)
