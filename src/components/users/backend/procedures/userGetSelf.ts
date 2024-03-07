@@ -7,5 +7,14 @@ export const userGetSelf = protectedProcedure
   .query(async ({ ctx }) => {
     const userId = ctx.session.user.id
 
-    return await getUserService(ctx.prisma, userId)
+    const res = await getUserService(ctx.prisma, userId, {
+      id: true,
+      email: true,
+      name: true,
+      defaultModel: true,
+    })
+    return {
+      ...res,
+      defaultModel: res.defaultModel!,
+    }
   })

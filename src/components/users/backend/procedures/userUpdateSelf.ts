@@ -12,5 +12,9 @@ export const userUpdateSelf = protectedProcedure
   .output(zodUserOutput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-    return await updateUserService(ctx.prisma, userId, input)
+    const res = await updateUserService(ctx.prisma, userId, input)
+    return {
+      ...res,
+      defaultModel: res.defaultModel!,
+    }
   })
