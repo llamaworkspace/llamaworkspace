@@ -1,5 +1,5 @@
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { inviteToWorkspace } from '@/server/workspaces/services/inviteToWorkspace'
+import { inviteToWorkspaceService } from '@/server/workspaces/services/inviteToWorkspace.service'
 import { z } from 'zod'
 import { workspaceEditionFilter } from '../workspacesBackendUtils'
 
@@ -24,7 +24,7 @@ export const workspacesInviteUserToWorkspace = protectedProcedure
       },
     })
 
-    await inviteToWorkspace(
+    await inviteToWorkspaceService(
       ctx.prisma,
       input.workspaceId,
       invitingUserId,

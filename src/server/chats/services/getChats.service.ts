@@ -7,7 +7,7 @@ interface GetChatsPayload {
   postId: string
 }
 
-export const getChats = async (
+export const getChatsService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   payload: GetChatsPayload,

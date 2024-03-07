@@ -10,7 +10,7 @@ import BBPromise from 'bluebird'
 import { encode as gptTokenizer } from 'gpt-tokenizer'
 import { chunk, isNull, omit } from 'underscore'
 
-export const saveTokenCountForChatRun = async (
+export const saveTokenCountForChatRunService = async (
   prisma: PrismaClientOrTrxClient,
   chatRunId: string,
 ): Promise<ChatRun> => {

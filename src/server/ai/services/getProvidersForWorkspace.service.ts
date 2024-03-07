@@ -6,7 +6,7 @@ import type {
   PrismaTrxClient,
 } from '@/shared/globalTypes'
 
-export const getAiProvidersKVs = async (
+export const getAiProvidersKVsService = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
   userId: string,
@@ -24,13 +24,13 @@ export const getAiProvidersKVs = async (
   return aiProvidersDbPayloadToKeyValues(result)
 }
 
-export const getAiProviderKVsWithFallbackToInternalKeys = async (
+export const getAiProviderKVsWithFallbackToInternalKeysService = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
   userId: string,
   providerSlug: string,
 ) => {
-  const providerKVs = await getAiProviderKVs(
+  const providerKVs = await getAiProviderKVsService(
     prisma,
     workspaceId,
     userId,
@@ -50,13 +50,13 @@ export const getAiProviderKVsWithFallbackToInternalKeys = async (
   return providerKVs
 }
 
-export const getAiProviderKVs = async (
+export const getAiProviderKVsService = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
   userId: string,
   providerSlug: string,
 ) => {
-  const result = await getAiProvidersKVs(prisma, workspaceId, userId, [
+  const result = await getAiProvidersKVsService(prisma, workspaceId, userId, [
     providerSlug,
   ])
   if (!result[providerSlug]) {

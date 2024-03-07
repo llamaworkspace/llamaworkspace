@@ -7,7 +7,7 @@ import { scopePostByWorkspace } from '../postUtils'
 
 const zSortedPosts = z.string().array()
 
-export const getSortedPostsTree = async function (
+export const getSortedPostsTreeService = async function (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
 ) {

@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getChats } from '@/server/chats/services/getChats.service'
+import { getChatsService } from '@/server/chats/services/getChats.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -20,7 +20,7 @@ export const getChatHistoryForSidebar = protectedProcedure
       userId,
     )
 
-    return await getChats(ctx.prisma, context, {
+    return await getChatsService(ctx.prisma, context, {
       postId,
     })
   })

@@ -1,7 +1,7 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
-import { aiProvidersFetcher } from '@/server/ai/services/aiProvidersFetcher.service'
-import { getAiProviderKVs } from '@/server/ai/services/getProvidersForWorkspace.service'
+import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
+import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
@@ -18,7 +18,7 @@ import createHttpError from 'http-errors'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { chain } from 'underscore'
-import { saveTokenCountForChatRun } from '../../services/saveTokenCountForChatRun.service'
+import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
 import {
   chatStreamToResponse,
   handleChatTitleCreate,
@@ -85,7 +85,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       postConfigVersion.model,
     )
 
-    const providerKVs = await getAiProviderKVs(
+    const providerKVs = await getAiProviderKVsService(
       prisma,
       workspaceId,
       userId,
@@ -94,7 +94,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const onFinal = async (final: string) => {
       await updateMessage(assistantTargetMessage.id, final)
-      await saveTokenCountForChatRun(prisma, chatRun.id)
+      await saveTokenCountForChatRunService(prisma, chatRun.id)
     }
 
     const onToken = (token: string) => {
@@ -106,7 +106,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       errorLogger(error)
     }
 
-    const provider = aiProvidersFetcher.getProvider(providerSlug)
+    const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
     if (!provider) {
       throw new Error(`Provider ${providerSlug} not found`)
@@ -176,7 +176,7 @@ const validateModelIsEnabledOrThrow = async (
   userId: string,
   fullSlug: string,
 ) => {
-  const providersMeta = await aiProvidersFetcher.getFullAiProvidersMeta(
+  const providersMeta = await aiProvidersFetcherService.getFullAiProvidersMeta(
     workspaceId,
     userId,
   )

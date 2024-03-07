@@ -7,7 +7,7 @@ import { OpenAiProvider } from '@/server/lib/ai-registry/providers/openai/OpenAi
 import { OpenRouterProvider } from '@/server/lib/ai-registry/providers/openrouter/OpenRouterProvider'
 import { AiProvidersFetcherService } from './AiProvidersFetcher/AiProvidersFetcher.service'
 
-export const aiProvidersFetcher = new AiProvidersFetcherService(
+export const aiProvidersFetcherService = new AiProvidersFetcherService(
   prisma,
   new AiRegistry([
     OpenAiProvider({

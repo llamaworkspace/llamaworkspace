@@ -7,7 +7,7 @@ import { createWorkspaceForUserService } from '@/server/users/services/createWor
 import { settlePostSharesForNewUserService } from '@/server/users/services/settlePostSharesForNewUser.service'
 import { settleWorkspaceInvitesForNewUserService } from '@/server/users/services/settleWorkspaceInvitesForNewUser.service'
 import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
-import { setDefaultsForWorkspace } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
+import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import { faker } from '@faker-js/faker'
 import type { Workspace } from '@prisma/client'
 import { handleUserSignup } from '../handleUserSignup'
@@ -40,7 +40,7 @@ type MockedCreateDefaultsForNewUser = jest.MockedFunction<
 >
 
 type MockedSetDefaultsForWorkspace = jest.MockedFunction<
-  typeof setDefaultsForWorkspace
+  typeof setDefaultsForWorkspaceService
 >
 
 describe('handleUserSignup', () => {
@@ -57,7 +57,9 @@ describe('handleUserSignup', () => {
     ;(
       settleWorkspaceInvitesForNewUserService as MockedSettleWorkspaceInvitesForUser
     ).mockClear()
-    ;(setDefaultsForWorkspace as MockedSetDefaultsForWorkspace).mockClear()
+    ;(
+      setDefaultsForWorkspaceService as MockedSetDefaultsForWorkspace
+    ).mockClear()
   })
 
   const subject = async () => {
@@ -97,6 +99,6 @@ describe('handleUserSignup', () => {
 
   it('executes setDefaultsForWorkspace service', async () => {
     await subject()
-    expect(setDefaultsForWorkspace).toHaveBeenCalled()
+    expect(setDefaultsForWorkspaceService).toHaveBeenCalled()
   })
 })

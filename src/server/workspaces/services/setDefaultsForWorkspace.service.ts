@@ -1,5 +1,5 @@
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
-import { upsertAiProvider } from '@/server/ai/services/upsertProviderKVs.service'
+import { upsertAiProviderService } from '@/server/ai/services/upsertProviderKVs.service'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { DEFAULT_MODELS_FOR_NEW_WORKSPACE } from '@/shared/globalConfig'
 import type {
@@ -8,7 +8,7 @@ import type {
 } from '@/shared/globalTypes'
 import Promise from 'bluebird'
 
-export const setDefaultsForWorkspace = async (
+export const setDefaultsForWorkspaceService = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
 ) => {
@@ -24,7 +24,7 @@ const setDefaultEnabledAiModels = async (
   // Important: Do mapSeries or else it will try to create the same provider twice and fail
   await Promise.mapSeries(DEFAULT_MODELS_FOR_NEW_WORKSPACE, async (slug) => {
     const { model, provider } = getProviderAndModelFromFullSlug(slug)
-    await upsertAiProvider(prisma, workspaceId, provider, undefined, [
+    await upsertAiProviderService(prisma, workspaceId, provider, undefined, [
       {
         slug: model,
         enabled: true,

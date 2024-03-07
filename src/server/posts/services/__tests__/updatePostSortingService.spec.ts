@@ -2,7 +2,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import mockDb from '@/server/testing/mockDb'
 import { faker } from '@faker-js/faker'
-import { updatePostSorting } from '../updatePostSorting.service'
+import { updatePostSortingService } from '../updatePostSorting.service'
 import { updatePostSortingForNonNullPreviousId } from '../updatePostSorting/updatePostSortingForNonNullPreviousId.service'
 import { updatePostSortingForNullPreviousId } from '../updatePostSorting/updatePostSortingForNullPreviousId.service'
 
@@ -19,7 +19,7 @@ describe('updatePostSortingService', () => {
     const previousPost = PostFactory.build({ userId: user.id })
     const post = PostFactory.build({ userId: user.id })
 
-    await updatePostSorting(
+    await updatePostSortingService(
       mockDb,
       user.id,
       post.id,

@@ -3,7 +3,7 @@
 // To run, go to the server and invoke:
 // npx env-cmd npx tsx src/scripts/<path_to_file_including_ts_extension>
 
-import { upsertAiProvider } from '@/server/ai/services/upsertProviderKVs.service'
+import { upsertAiProviderService } from '@/server/ai/services/upsertProviderKVs.service'
 import { prisma } from '@/server/db'
 import Bluebird from 'bluebird'
 
@@ -13,7 +13,7 @@ async function main() {
   console.log(`Updating ${workspaces.length} workspaces...`)
 
   await Bluebird.mapSeries(workspaces, async (workspace) => {
-    await upsertAiProvider(prisma, workspace.id, 'openai', undefined, [
+    await upsertAiProviderService(prisma, workspace.id, 'openai', undefined, [
       {
         slug: 'gpt-4-1106-preview',
         enabled: true,
