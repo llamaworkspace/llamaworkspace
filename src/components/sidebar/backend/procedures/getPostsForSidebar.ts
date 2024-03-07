@@ -1,6 +1,6 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { getSortedPostsTree } from '@/server/posts/services/getSortedPostsTree.service'
+import { getSortedPostsTreeService } from '@/server/posts/services/getSortedPostsTree.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -20,5 +20,5 @@ export const getPostsForSidebar = protectedProcedure
       userId,
     )
 
-    return await getSortedPostsTree(prisma, context)
+    return await getSortedPostsTreeService(prisma, context)
   })

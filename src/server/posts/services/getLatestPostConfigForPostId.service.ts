@@ -2,7 +2,7 @@ import { postVisibilityFilter } from '@/components/posts/backend/postsBackendUti
 import { Author } from '@/shared/aiTypesAndMappers'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
-export const getLatestPostConfigForPostId = async (
+export const getLatestPostConfigForPostIdService = async (
   prisma: PrismaClientOrTrxClient,
   userId: string,
   postId: string,

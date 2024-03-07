@@ -6,7 +6,7 @@ import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
 import { addUserToWorkspaceService } from './addUserToWorkspace.service'
 
-export const inviteToWorkspace = async (
+export const inviteToWorkspaceService = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
   invitingUserId: string,

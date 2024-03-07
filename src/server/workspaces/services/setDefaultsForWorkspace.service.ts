@@ -8,7 +8,7 @@ import type {
 } from '@/shared/globalTypes'
 import Promise from 'bluebird'
 
-export const setDefaultsForWorkspace = async (
+export const setDefaultsForWorkspaceService = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
 ) => {

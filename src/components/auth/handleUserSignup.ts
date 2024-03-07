@@ -4,7 +4,7 @@ import { createWorkspaceForUserService } from '@/server/users/services/createWor
 import { settlePostSharesForNewUserService } from '@/server/users/services/settlePostSharesForNewUser.service'
 import { settleWorkspaceInvitesForNewUserService } from '@/server/users/services/settleWorkspaceInvitesForNewUser.service'
 import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
-import { setDefaultsForWorkspace } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
+import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import type { PrismaClient } from '@prisma/client'
 
 export const handleUserSignup = async (
@@ -14,7 +14,7 @@ export const handleUserSignup = async (
   try {
     await prisma.$transaction(async (prisma) => {
       const workspace = await createWorkspaceForUserService(prisma, userId)
-      await setDefaultsForWorkspace(prisma, workspace.id)
+      await setDefaultsForWorkspaceService(prisma, workspace.id)
       await addUserToWorkspaceService(prisma, userId, workspace.id)
       await settlePostSharesForNewUserService(prisma, userId)
       await settleWorkspaceInvitesForNewUserService(prisma, userId)

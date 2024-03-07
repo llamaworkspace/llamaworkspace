@@ -1,4 +1,4 @@
-import { getLatestPostConfigForPostId } from '@/server/posts/services/getLatestPostConfigForPostId.service'
+import { getLatestPostConfigForPostIdService } from '@/server/posts/services/getLatestPostConfigForPostId.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -11,5 +11,9 @@ export const postsConfigGetLatestForPostId = protectedProcedure
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
-    return await getLatestPostConfigForPostId(ctx.prisma, userId, input.postId)
+    return await getLatestPostConfigForPostIdService(
+      ctx.prisma,
+      userId,
+      input.postId,
+    )
   })

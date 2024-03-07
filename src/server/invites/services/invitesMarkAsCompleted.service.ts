@@ -1,6 +1,6 @@
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
-export const invitesMarkAsCompleted = async function (
+export const invitesMarkAsCompletedService = async function (
   prisma: PrismaClientOrTrxClient,
   token: string,
 ) {

@@ -3,7 +3,7 @@ import type { PrismaClient } from '@prisma/client'
 import { updatePostSortingForNonNullPreviousId } from './updatePostSorting/updatePostSortingForNonNullPreviousId.service'
 import { updatePostSortingForNullPreviousId } from './updatePostSorting/updatePostSortingForNullPreviousId.service'
 
-export const updatePostSorting = async (
+export const updatePostSortingService = async (
   prisma: PrismaClient,
   userId: string,
   postId: string,
