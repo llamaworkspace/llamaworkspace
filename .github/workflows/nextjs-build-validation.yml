@@ -15,6 +15,15 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
-      - run: yarn install --frozen-lockfile
-      - run: cp .env.test .env
-      - run: yarn build
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Copy ENV files
+        run: cp .env.test .env
+
+      - name: Build NextJS app
+        run: yarn build
