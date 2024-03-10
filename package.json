@@ -1,7 +1,6 @@
 {
   "name": "joia",
   "version": "0.1.0",
-  "private": false,
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -135,5 +134,6 @@
     "*.{js,jsx,ts,tsx,mjs}": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "yarn@4.1.1"
 }
