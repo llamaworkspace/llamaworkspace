@@ -5,6 +5,7 @@ import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWor
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
+import { withMiddlewareForAppRouter } from '@/server/middlewares/withMiddleware'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { getPostConfigForChatIdService } from '@/server/posts/services/getPostConfigForChatId.service'
 import { Author } from '@/shared/aiTypesAndMappers'
@@ -29,7 +30,7 @@ interface BodyPayload {
   messages: VoidIncomingMessage[]
 }
 
-export async function chatStreamedResponseHandler(req: Request) {
+async function handler(req: Request) {
   let tokenResponse = ''
   let assistantTargetMessageId: string | undefined = undefined
 
@@ -343,5 +344,4 @@ const ensureError = (err: unknown): Error => {
   return new Error(String(err))
 }
 
-// PENDING: Solve this
-// export default withMiddleware()(chatStreamedResponseHandler)
+export const chatStreamedResponseHandler = withMiddlewareForAppRouter(handler)
