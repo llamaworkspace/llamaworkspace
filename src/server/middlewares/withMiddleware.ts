@@ -14,7 +14,7 @@ export const withMiddleware = label(
 type HandlerFunc = (
   request: Request | NextRequest,
   response?: Response | NextResponse,
-) => Promise<unknown>
+) => void | Response | Promise<void | Response>
 
 export const withMiddlewareForAppRouter = (handler: HandlerFunc) => {
   return async (
