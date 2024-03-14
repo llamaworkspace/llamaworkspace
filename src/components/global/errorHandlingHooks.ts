@@ -2,10 +2,7 @@ import { type rootRouter } from '@/server/trpc/rootRouter'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { TRPCClientError } from '@trpc/client'
 import { useErrorToast } from '../ui/toastHooks'
-import {
-  AppClientError,
-  type AppHttpErrorPayload,
-} from './components/AppClientError'
+import { AppClientError, type AppHttpErrorPayload } from './AppClientError'
 
 const DEFAULT_ERROR_MESSAGE =
   'An unexpected error just happened. Please try again.'
