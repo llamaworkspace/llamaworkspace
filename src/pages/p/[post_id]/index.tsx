@@ -1,5 +1,5 @@
 import { GlobalRedirector } from '@/components/global/components/GlobalRedirector'
 
-export default function AppIndexPage() {
+export default function PostIndexPage() {
   return <GlobalRedirector />
 }
