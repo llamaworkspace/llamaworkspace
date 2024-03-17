@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"scripts": {
 		"build": "next build",
-		"dev": "next dev",
+		"dev": "cross-env dotenv -e $CUSTOM_ENV_PATH -- next dev",
 		"postinstall": "prisma generate",
 		"lint": "next lint",
 		"start": "next start",
@@ -107,6 +107,8 @@
 		"@typescript-eslint/eslint-plugin": "^6.6.0",
 		"@typescript-eslint/parser": "^6.6.0",
 		"autoprefixer": "^10.4.15",
+		"cross-env": "^7.0.3",
+		"dotenv-cli": "^7.3.0",
 		"env-cmd": "^10.1.0",
 		"eslint": "^8.48.0",
 		"eslint-config-next": "^14.1.3",
