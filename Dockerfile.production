@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Install dependencies using Yarn
-RUN yarn install --production
+RUN yarn install --frozen-lockfile --production
 
 # Copy the rest of the application code to the working directory
 COPY . .
@@ -22,5 +22,5 @@ RUN yarn production:build
 # Expose the port on which the application will run (default for Next.js is 3000)
 EXPOSE 3000
 
-# Run the Next.js application in production mode
-CMD ["yarn", "start"]
+# Set the entrypoint to load environment variables from the ConfigMap
+ENTRYPOINT ["/bin/sh", "-c", "export $(echo $ENV_VARS | xargs) && yarn start"]
