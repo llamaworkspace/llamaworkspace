@@ -3003,6 +3003,116 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@kapitolph/general_apps-internal-joia@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@kapitolph/general_apps-internal-joia@workspace:."
+  dependencies:
+    "@anthropic-ai/sdk": "npm:^0.16.1"
+    "@aws-sdk/client-bedrock-runtime": "npm:^3.481.0"
+    "@chakra-ui/react": "npm:^2.8.1"
+    "@emotion/react": "npm:^11.11.1"
+    "@emotion/styled": "npm:^11.11.0"
+    "@faker-js/faker": "npm:^8.0.2"
+    "@headlessui/react": "npm:^1.7.17"
+    "@heroicons/react": "npm:^2.0.18"
+    "@huggingface/inference": "npm:^2.6.4"
+    "@next-auth/prisma-adapter": "npm:^1.0.7"
+    "@prisma/client": "npm:^5.3.1"
+    "@radix-ui/react-alert-dialog": "npm:^1.0.5"
+    "@radix-ui/react-checkbox": "npm:^1.0.4"
+    "@radix-ui/react-dialog": "npm:^1.0.5"
+    "@radix-ui/react-dropdown-menu": "npm:^2.0.5"
+    "@radix-ui/react-icons": "npm:^1.3.0"
+    "@radix-ui/react-label": "npm:^2.0.2"
+    "@radix-ui/react-popover": "npm:^1.0.6"
+    "@radix-ui/react-radio-group": "npm:^1.1.3"
+    "@radix-ui/react-select": "npm:^1.2.2"
+    "@radix-ui/react-separator": "npm:^1.0.3"
+    "@radix-ui/react-slot": "npm:^1.0.2"
+    "@radix-ui/react-tabs": "npm:^1.0.4"
+    "@radix-ui/react-tooltip": "npm:^1.0.7"
+    "@t3-oss/env-nextjs": "npm:^0.6.1"
+    "@tailwindcss/typography": "npm:^0.5.10"
+    "@tanstack/react-query": "npm:^4.35.0"
+    "@tanstack/react-table": "npm:^8.10.7"
+    "@testing-library/jest-dom": "npm:^6.1.3"
+    "@testing-library/react": "npm:^14.0.0"
+    "@trpc/client": "npm:^10.38.1"
+    "@trpc/next": "npm:^10.38.1"
+    "@trpc/react-query": "npm:^10.38.1"
+    "@trpc/server": "npm:^10.38.1"
+    "@types/bluebird": "npm:^3.5.38"
+    "@types/eslint": "npm:^8.44.2"
+    "@types/http-errors": "npm:^2.0.1"
+    "@types/jest": "npm:^29.5.4"
+    "@types/joi": "npm:^17.2.3"
+    "@types/node": "npm:^20.5.9"
+    "@types/nodemailer": "npm:^6.4.11"
+    "@types/react": "npm:^18.2.21"
+    "@types/react-dom": "npm:^18.2.7"
+    "@types/sanitize-html": "npm:^2.9.0"
+    "@types/underscore": "npm:^1.11.9"
+    "@typescript-eslint/eslint-plugin": "npm:^6.6.0"
+    "@typescript-eslint/parser": "npm:^6.6.0"
+    ai: "npm:^3.0.5"
+    autoprefixer: "npm:^10.4.15"
+    bluebird: "npm:^3.7.2"
+    chalk: "npm:^5.3.0"
+    class-variance-authority: "npm:^0.7.0"
+    clsx: "npm:^2.0.0"
+    cross-env: "npm:^7.0.3"
+    dotenv-cli: "npm:^7.3.0"
+    emoji-picker-react: "npm:^4.7.14"
+    env-cmd: "npm:^10.1.0"
+    eslint: "npm:^8.48.0"
+    eslint-config-next: "npm:^14.1.3"
+    eslint-config-prettier: "npm:^9.0.0"
+    final-form: "npm:^4.20.10"
+    framer-motion: "npm:^10.16.4"
+    gpt-tokenizer: "npm:^2.1.1"
+    http-errors: "npm:^2.0.0"
+    husky: "npm:>=6"
+    immer: "npm:^10.0.2"
+    jest: "npm:^29.7.0"
+    jest-environment-jsdom: "npm:^29.7.0"
+    jest-mock-extended: "npm:^3.0.5"
+    joi: "npm:^17.10.2"
+    lint-staged: "npm:>=10"
+    lodash: "npm:^4.17.21"
+    micro: "npm:^10.0.1"
+    next: "npm:^14.1.3"
+    next-api-middleware: "npm:^2.0.1"
+    next-auth: "npm:^4.24.7"
+    next-joi: "npm:^2.2.1"
+    nodemailer: "npm:^6.9.9"
+    openai: "npm:^4.26.1"
+    postcss: "npm:^8.4.29"
+    postcss-nesting: "npm:^12.0.4"
+    prettier: "npm:^3.0.3"
+    prettier-plugin-organize-imports: "npm:^3.2.3"
+    prettier-plugin-tailwindcss: "npm:^0.5.4"
+    prisma: "npm:^5.3.1"
+    prisma-field-encryption: "npm:^1.5.0"
+    react: "npm:^18.2.0"
+    react-contenteditable: "npm:3.3.7"
+    react-dnd: "npm:^16.0.1"
+    react-dnd-html5-backend: "npm:^16.0.1"
+    react-dom: "npm:^18.2.0"
+    react-final-form: "npm:^6.5.9"
+    react-markdown: "npm:^8.0.7"
+    sanitize-html: "npm:^2.12.1"
+    superjson: "npm:^1.13.1"
+    tailwind-merge: "npm:^1.14.0"
+    tailwindcss: "npm:^3.3.3"
+    tailwindcss-animate: "npm:^1.0.7"
+    tsx: "npm:^3.14.0"
+    typescript: "npm:^5.4.2"
+    underscore: "npm:^1.13.6"
+    usehooks-ts: "npm:^2.15.1"
+    zod: "npm:^3.22.3"
+  languageName: unknown
+  linkType: soft
+
 "@next-auth/prisma-adapter@npm:^1.0.7":
   version: 1.0.7
   resolution: "@next-auth/prisma-adapter@npm:1.0.7"
@@ -6566,7 +6676,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
+"cross-env@npm:^7.0.3":
+  version: 7.0.3
+  resolution: "cross-env@npm:7.0.3"
+  dependencies:
+    cross-spawn: "npm:^7.0.1"
+  bin:
+    cross-env: src/bin/cross-env.js
+    cross-env-shell: src/bin/cross-env-shell.js
+  checksum: 10c0/f3765c25746c69fcca369655c442c6c886e54ccf3ab8c16847d5ad0e91e2f337d36eedc6599c1227904bf2a228d721e690324446876115bc8e7b32a866735ecf
+  languageName: node
+  linkType: hard
+
+"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.1, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
   dependencies:
@@ -6987,10 +7109,38 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv-cli@npm:^7.3.0":
+  version: 7.4.1
+  resolution: "dotenv-cli@npm:7.4.1"
+  dependencies:
+    cross-spawn: "npm:^7.0.3"
+    dotenv: "npm:^16.3.0"
+    dotenv-expand: "npm:^10.0.0"
+    minimist: "npm:^1.2.6"
+  bin:
+    dotenv: cli.js
+  checksum: 10c0/d317c83b7783b123933bea7e0faee51b72adddc6ac0d588e4f2fdad6ab1b6da4f1d3d6b13843cb50ff2d4650850ed3a42dd09448e9cb842aa984875208d58caf
+  languageName: node
+  linkType: hard
+
+"dotenv-expand@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "dotenv-expand@npm:10.0.0"
+  checksum: 10c0/298f5018e29cfdcb0b5f463ba8e8627749103fbcf6cf81c561119115754ed582deee37b49dfc7253028aaba875ab7aea5fa90e5dac88e511d009ab0e6677924e
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:^10.0.0":
   version: 10.0.0
   resolution: "dotenv@npm:10.0.0"
   checksum: 10c0/2d8d4ba64bfaff7931402aa5e8cbb8eba0acbc99fe9ae442300199af021079eafa7171ce90e150821a5cb3d74f0057721fbe7ec201a6044b68c8a7615f8c123f
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.3.0":
+  version: 16.4.5
+  resolution: "dotenv@npm:16.4.5"
+  checksum: 10c0/48d92870076832af0418b13acd6e5a5a3e83bb00df690d9812e94b24aff62b88ade955ac99a05501305b8dc8f1b0ee7638b18493deb6fe93d680e5220936292f
   languageName: node
   linkType: hard
 
@@ -9535,114 +9685,6 @@ __metadata:
   checksum: 10c0/2cc89f0fc71282018a9032d48652fe6c62009689a7919512fb5a76735225875d4554da580d8b5c074bc4abd5b0ca0e4b32b3f2ab7e32c9f0b338d43f6bdf1162
   languageName: node
   linkType: hard
-
-"joia@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "joia@workspace:."
-  dependencies:
-    "@anthropic-ai/sdk": "npm:^0.16.1"
-    "@aws-sdk/client-bedrock-runtime": "npm:^3.481.0"
-    "@chakra-ui/react": "npm:^2.8.1"
-    "@emotion/react": "npm:^11.11.1"
-    "@emotion/styled": "npm:^11.11.0"
-    "@faker-js/faker": "npm:^8.0.2"
-    "@headlessui/react": "npm:^1.7.17"
-    "@heroicons/react": "npm:^2.0.18"
-    "@huggingface/inference": "npm:^2.6.4"
-    "@next-auth/prisma-adapter": "npm:^1.0.7"
-    "@prisma/client": "npm:^5.3.1"
-    "@radix-ui/react-alert-dialog": "npm:^1.0.5"
-    "@radix-ui/react-checkbox": "npm:^1.0.4"
-    "@radix-ui/react-dialog": "npm:^1.0.5"
-    "@radix-ui/react-dropdown-menu": "npm:^2.0.5"
-    "@radix-ui/react-icons": "npm:^1.3.0"
-    "@radix-ui/react-label": "npm:^2.0.2"
-    "@radix-ui/react-popover": "npm:^1.0.6"
-    "@radix-ui/react-radio-group": "npm:^1.1.3"
-    "@radix-ui/react-select": "npm:^1.2.2"
-    "@radix-ui/react-separator": "npm:^1.0.3"
-    "@radix-ui/react-slot": "npm:^1.0.2"
-    "@radix-ui/react-tabs": "npm:^1.0.4"
-    "@radix-ui/react-tooltip": "npm:^1.0.7"
-    "@t3-oss/env-nextjs": "npm:^0.6.1"
-    "@tailwindcss/typography": "npm:^0.5.10"
-    "@tanstack/react-query": "npm:^4.35.0"
-    "@tanstack/react-table": "npm:^8.10.7"
-    "@testing-library/jest-dom": "npm:^6.1.3"
-    "@testing-library/react": "npm:^14.0.0"
-    "@trpc/client": "npm:^10.38.1"
-    "@trpc/next": "npm:^10.38.1"
-    "@trpc/react-query": "npm:^10.38.1"
-    "@trpc/server": "npm:^10.38.1"
-    "@types/bluebird": "npm:^3.5.38"
-    "@types/eslint": "npm:^8.44.2"
-    "@types/http-errors": "npm:^2.0.1"
-    "@types/jest": "npm:^29.5.4"
-    "@types/joi": "npm:^17.2.3"
-    "@types/node": "npm:^20.5.9"
-    "@types/nodemailer": "npm:^6.4.11"
-    "@types/react": "npm:^18.2.21"
-    "@types/react-dom": "npm:^18.2.7"
-    "@types/sanitize-html": "npm:^2.9.0"
-    "@types/underscore": "npm:^1.11.9"
-    "@typescript-eslint/eslint-plugin": "npm:^6.6.0"
-    "@typescript-eslint/parser": "npm:^6.6.0"
-    ai: "npm:^3.0.5"
-    autoprefixer: "npm:^10.4.15"
-    bluebird: "npm:^3.7.2"
-    chalk: "npm:^5.3.0"
-    class-variance-authority: "npm:^0.7.0"
-    clsx: "npm:^2.0.0"
-    emoji-picker-react: "npm:^4.7.14"
-    env-cmd: "npm:^10.1.0"
-    eslint: "npm:^8.48.0"
-    eslint-config-next: "npm:^14.1.3"
-    eslint-config-prettier: "npm:^9.0.0"
-    final-form: "npm:^4.20.10"
-    framer-motion: "npm:^10.16.4"
-    gpt-tokenizer: "npm:^2.1.1"
-    http-errors: "npm:^2.0.0"
-    husky: "npm:>=6"
-    immer: "npm:^10.0.2"
-    jest: "npm:^29.7.0"
-    jest-environment-jsdom: "npm:^29.7.0"
-    jest-mock-extended: "npm:^3.0.5"
-    joi: "npm:^17.10.2"
-    lint-staged: "npm:>=10"
-    lodash: "npm:^4.17.21"
-    micro: "npm:^10.0.1"
-    next: "npm:^14.1.3"
-    next-api-middleware: "npm:^2.0.1"
-    next-auth: "npm:^4.24.7"
-    next-joi: "npm:^2.2.1"
-    nodemailer: "npm:^6.9.9"
-    openai: "npm:^4.26.1"
-    postcss: "npm:^8.4.29"
-    postcss-nesting: "npm:^12.0.4"
-    prettier: "npm:^3.0.3"
-    prettier-plugin-organize-imports: "npm:^3.2.3"
-    prettier-plugin-tailwindcss: "npm:^0.5.4"
-    prisma: "npm:^5.3.1"
-    prisma-field-encryption: "npm:^1.5.0"
-    react: "npm:^18.2.0"
-    react-contenteditable: "npm:3.3.7"
-    react-dnd: "npm:^16.0.1"
-    react-dnd-html5-backend: "npm:^16.0.1"
-    react-dom: "npm:^18.2.0"
-    react-final-form: "npm:^6.5.9"
-    react-markdown: "npm:^8.0.7"
-    sanitize-html: "npm:^2.12.1"
-    superjson: "npm:^1.13.1"
-    tailwind-merge: "npm:^1.14.0"
-    tailwindcss: "npm:^3.3.3"
-    tailwindcss-animate: "npm:^1.0.7"
-    tsx: "npm:^3.14.0"
-    typescript: "npm:^5.4.2"
-    underscore: "npm:^1.13.6"
-    usehooks-ts: "npm:^2.15.1"
-    zod: "npm:^3.22.3"
-  languageName: unknown
-  linkType: soft
 
 "jose@npm:^4.15.5":
   version: 4.15.5
