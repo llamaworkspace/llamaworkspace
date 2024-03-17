@@ -1,0 +1,31 @@
+name: Update Yarn Lock
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check for changes in package.json
+        id: changes
+        run: echo ::set-output name=changed::$(git diff --name-only HEAD^ HEAD | grep package.json)
+
+      - name: Install dependencies
+        if: steps.changes.outputs.changed != ''
+        run: yarn install
+
+      - name: Commit and push yarn.lock
+        if: steps.changes.outputs.changed != ''
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add yarn.lock
+          git commit -m "Update yarn.lock"
+          git push
