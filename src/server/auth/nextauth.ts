@@ -65,6 +65,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
   events: {
     async createUser({ user }) {
       await handleUserSignup(prisma, user.id)
