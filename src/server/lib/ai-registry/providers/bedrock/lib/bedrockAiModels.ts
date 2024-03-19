@@ -23,13 +23,6 @@ export const bedrockAiModels: AiRegistryModel[] = [
       max_tokens_to_sample: 4096,
     },
   },
-  {
-    slug: 'anthropic.claude-v1' as const,
-    publicName: 'Antrophic Claude v1.3' as const,
-    defaultPayload: {
-      max_tokens_to_sample: 4096,
-    },
-  },
 
   {
     slug: 'anthropic.claude-instant-v1' as const,
