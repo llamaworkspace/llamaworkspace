@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+  app:
+    profiles:
+      - dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # target: development
+      # env_file:
+      #   - .env
+    ports:
+      - 3000:3000
+    
+    depends_on:
+      - joia_db
+    volumes:
+      - ./:/app/.
+
   joia_db:
     container_name: db
     image: postgres:15

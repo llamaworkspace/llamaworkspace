@@ -1,0 +1,10 @@
+.git
+.gitignore
+.next
+node_modules
+.vscode
+.vercel
+.swc
+.github
+*.md
+dist
