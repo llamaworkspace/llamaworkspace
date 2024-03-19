@@ -10,6 +10,7 @@ import { useDefaultPost, usePostById } from '../posts/postsHooks'
 import { useChatHistoryForSidebarPost } from '../sidebar/sidebarHooks'
 import { useErrorToast } from '../ui/toastHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
+import { extractErrors } from './utils/chatsUtils'
 
 const useCreateMessage = () => {
   const errorHandler = useErrorHandler()
@@ -200,6 +201,15 @@ export const usePrompt = (chatId?: string) => {
 
   useEffect(() => {
     if (!chatId || !targetMessage) return
+
+    const errorValue = extractErrors(targetMessage)
+    if (errorValue) {
+      // Removes the assistant message
+      void utils.chats.getMessagesByChatId.refetch({
+        chatId,
+      })
+      return toast(errorValue, { duration: 10000 })
+    }
 
     // Writes streamed response to usequery cache
     utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {

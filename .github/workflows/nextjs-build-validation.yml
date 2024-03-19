@@ -9,21 +9,12 @@ jobs:
     name: NextJS build validation
     runs-on: ubuntu-latest
     steps:
-      - name: Enable corepack
-        run: corepack enable
-
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Copy ENV files
-        run: cp .env.test .env
-
-      - name: Build NextJS app
-        run: yarn build
+      - run: yarn install --frozen-lockfile
+      - run: cp .env.test .env
+      - run: yarn build

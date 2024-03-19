@@ -40,12 +40,3 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-
-# Yarn 4
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions

@@ -17,10 +17,6 @@ export const sendEmail = async (
   params: ISendEmailParams,
   options?: nodemailer.SendMailOptions,
 ) => {
-  if (env.NODE_ENV === 'test') {
-    throw new Error('sendEmail is not available in test environment')
-  }
-
   const { fromName, fromEmail, to, subject, body: text } = params
 
   const from = fromName

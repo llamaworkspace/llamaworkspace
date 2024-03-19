@@ -1,6 +1,7 @@
-import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { createStandaloneChatService } from '@/server/chats/services/createStandaloneChat.service'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { protectedProcedure } from '@/server/trpc/trpc'
+import { Author, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
 
 const zInput = z.object({
@@ -14,25 +15,39 @@ export const createStandaloneChat = protectedProcedure
 
     const userId = ctx.session.user.id
 
-    // await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-    //   PermissionAction.Use,
-    //   userId,
-    //   postId,
-    // )
-
-    const post = await ctx.prisma.post.findUniqueOrThrow({
-      where: {
-        id: postId,
-      },
-    })
-
-    const context = await createUserOnWorkspaceContext(
-      ctx.prisma,
-      post.workspaceId,
+    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
+      PermissionAction.Use,
       userId,
+      postId,
     )
 
-    return await createStandaloneChatService(ctx.prisma, context, {
-      postId,
+    return await ctx.prisma.$transaction(async (prisma) => {
+      const user = await prisma.user.findUniqueOrThrow({
+        where: {
+          id: userId,
+        },
+      })
+
+      const postConfigVersion = await prisma.postConfigVersion.create({
+        data: {
+          postId,
+          model: user.defaultModel ?? OpenAiModelEnum.GPT3_5_TURBO,
+          messages: {
+            create: [
+              {
+                author: Author.System,
+              },
+            ],
+          },
+        },
+      })
+
+      return await prisma.chat.create({
+        data: {
+          ...input,
+          authorId: userId,
+          postConfigVersionId: postConfigVersion.id,
+        },
+      })
     })
   })

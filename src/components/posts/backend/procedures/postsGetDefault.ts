@@ -1,5 +1,4 @@
-import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getDefaultPostService } from '@/server/posts/services/getDefaultPost.service'
+import { createDefaultPostService } from '@/server/posts/services/createDefaultPost.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -12,11 +11,22 @@ export const postsGetDefault = protectedProcedure
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
-    const context = await createUserOnWorkspaceContext(
-      ctx.prisma,
-      input.workspaceId,
-      userId,
-    )
-
-    return await getDefaultPostService(ctx.prisma, context)
+    const defaultPost = await ctx.prisma.post.findFirst({
+      select: { id: true },
+      where: {
+        userId,
+        workspaceId: input.workspaceId,
+        isDefault: true,
+      },
+    })
+    if (!defaultPost) {
+      // This scenario should never happen, but this is just
+      // defensive code to generate a default post as a last resort
+      return await createDefaultPostService(
+        ctx.prisma,
+        input.workspaceId,
+        userId,
+      )
+    }
+    return defaultPost
   })

@@ -5,20 +5,24 @@ import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWor
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
-import { withMiddlewareForAppRouter } from '@/server/middlewares/withMiddleware'
+import { nextApiSessionChecker } from '@/server/lib/apiUtils'
+import { withMiddleware } from '@/server/middlewares/withMiddleware'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { getPostConfigForChatIdService } from '@/server/posts/services/getPostConfigForChatId.service'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message } from '@prisma/client'
-import { StreamingTextResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { chain } from 'underscore'
 import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
-import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
+import {
+  chatStreamToResponse,
+  handleChatTitleCreate,
+} from './chatStreamedResponseHandlerUtils'
 
 interface VoidIncomingMessage {
   role: string
@@ -30,13 +34,15 @@ interface BodyPayload {
   messages: VoidIncomingMessage[]
 }
 
-async function handler(req: Request) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   let tokenResponse = ''
   let assistantTargetMessageId: string | undefined = undefined
 
   try {
-    const { chatId } = await getParsedBody(req)
-    const userId = await getRequestUserId()
+    await validateRequestOrThrow(req, res)
+
+    const { chatId } = getParsedBody(req)
+    const userId = await getRequestUserId(req, res)
 
     const [chat, postConfigVersion, messages] = await Promise.all([
       await getChat(chatId, userId),
@@ -116,8 +122,7 @@ async function handler(req: Request) {
       },
       providerKVs,
     )
-    // PENDING: TEST when this fails in the middle of the stream. Before we had MID_STREAM_ERROR
-    return new StreamingTextResponse(stream)
+    chatStreamToResponse(stream, res, undefined, onError)
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {
@@ -129,6 +134,21 @@ async function handler(req: Request) {
     errorLogger(error)
     throw createHttpError(403, error.message)
   }
+}
+
+const validateRequestOrThrow = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+) => {
+  if (req.method !== 'POST') {
+    throw createHttpError(404)
+  }
+
+  const sessionExists = await nextApiSessionChecker(req, res)
+  if (!sessionExists) {
+    throw createHttpError(401, 'You must be logged in.')
+  }
+  return true
 }
 
 const validateUserPermissionsOrThrow = async (
@@ -240,9 +260,8 @@ const getParsedMessagesForChat = async (chatId: string, userId: string) => {
   })
 }
 
-const getRequestUserId = async () => {
-  const session = await getServerSession(authOptions)
-
+const getRequestUserId = async (req: NextApiRequest, res: NextApiResponse) => {
+  const session = await getServerSession(req, res, authOptions)
   if (!session) throw createHttpError(401, 'You must be logged in.')
   return session.user.id
 }
@@ -326,8 +345,8 @@ const transformMessageModelToPayload = (
   }
 }
 
-const getParsedBody = async (req: Request) => {
-  return (await req.json()) as BodyPayload
+const getParsedBody = (req: NextApiRequest) => {
+  return req.body as BodyPayload
 }
 // Utility function to ensure we're working with a proper Error object
 const ensureError = (err: unknown): Error => {
@@ -344,4 +363,4 @@ const ensureError = (err: unknown): Error => {
   return new Error(String(err))
 }
 
-export const chatStreamedResponseHandler = withMiddlewareForAppRouter(handler)
+export default withMiddleware()(handler)

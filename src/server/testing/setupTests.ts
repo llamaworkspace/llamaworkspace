@@ -7,9 +7,3 @@ beforeAll(async () => {
 afterAll(async () => {
   await prisma.$disconnect()
 })
-
-jest.mock('@/server/mailer/mailer', () => {
-  return {
-    sendEmail: jest.fn(),
-  }
-})
