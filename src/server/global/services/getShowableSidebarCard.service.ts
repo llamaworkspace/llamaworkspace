@@ -3,8 +3,8 @@ import {
   type PrismaClientOrTrxClient,
 } from '@/shared/globalTypes'
 import type { Workspace } from '@prisma/client'
-import type { UserOnWorkspaceContext } from '../auth/userOnWorkspaceContext'
-import { scopeChatByWorkspace } from '../chats/chatUtils'
+import type { UserOnWorkspaceContext } from '../../auth/userOnWorkspaceContext'
+import { scopeChatByWorkspace } from '../../chats/chatUtils'
 
 export const getShowableSidebarCard = async (
   prisma: PrismaClientOrTrxClient,

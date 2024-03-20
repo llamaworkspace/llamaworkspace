@@ -15,7 +15,7 @@ export const workspacesGetWorkspace = protectedProcedure
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
-    const workspace = await ctx.prisma.workspace.findFirstOrThrow({
+    return await ctx.prisma.workspace.findFirstOrThrow({
       select: {
         id: true,
         name: true,
@@ -25,8 +25,4 @@ export const workspacesGetWorkspace = protectedProcedure
         ...workspaceVisibilityFilter(userId),
       },
     })
-
-    return {
-      ...workspace,
-    }
   })
