@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getShowableSidebarCard } from '@/server/global/getShowableSidebarCard.service'
+import { getShowableSidebarCard } from '@/server/global/services/getShowableSidebarCard.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
