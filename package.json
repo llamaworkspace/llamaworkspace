@@ -4,13 +4,14 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "preinstall": "npx only-allow npm",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "prisma:dev": "yarn prisma migrate dev --name",
-    "prisma:push": "yarn prisma db push",
+    "prisma:dev": "npm run prisma migrate dev --name",
+    "prisma:push": "npm run prisma db push",
     "prisma:deploy": "prisma migrate deploy",
-    "production:build": "prisma generate && yarn build && yarn prisma:deploy",
+    "production:build": "prisma generate && npm run build && npm run prisma:deploy",
     "test:prepare": "env-cmd -f .env.test prisma db push --force-reset",
     "test": "jest --watch",
     "test:ci": "jest --ci",
@@ -108,7 +109,7 @@
     "@typescript-eslint/parser": "^6.6.0",
     "autoprefixer": "^10.4.15",
     "env-cmd": "^10.1.0",
-    "eslint": "^8.48.0",
+    "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.3",
     "eslint-config-prettier": "^9.0.0",
     "husky": ">=6",
@@ -133,6 +134,5 @@
     "*.{js,jsx,ts,tsx,mjs}": [
       "prettier --write"
     ]
-  },
-  "packageManager": "yarn@4.1.1"
+  }
 }

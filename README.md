@@ -47,10 +47,10 @@ To self host a Joia app you'll need to follow the next steps:
 1. Provision a Postgres database. The details may vary based on your stup.
 2. Clone or copy this repository.
 3. Create an `.env` file based on the `.env.example` file. You'll need to set the `DATABASE_URL` variable to point to your Postgres database.
-4. Install the dependencies by running `yarn install`.
-5. Build the NextJS app by running `yarn production:build`. This will prepare NextJS to be built and run the build itself.
-6. Run a post-install script by running `yarn production:postbuild`. This script will run the migrations.
-7. Bootstrap the app by running `yarn production:start`.
+4. Install the dependencies by running `npm install`.
+5. Build the NextJS app by running `npm run production:build`. This will prepare NextJS to be built and run the build itself.
+6. Run a post-install script by running `npm run production:postbuild`. This script will run the migrations.
+7. Bootstrap the app by running `npm run production:start`.
 
 ## Feedback
 

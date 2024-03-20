@@ -116,8 +116,11 @@ async function handler(req: Request) {
       },
       providerKVs,
     )
-    // PENDING: TEST when this fails in the middle of the stream. Before we had MID_STREAM_ERROR
-    return new StreamingTextResponse(stream)
+
+    const headers = {
+      'Content-Type': 'text/event-stream',
+    }
+    return new StreamingTextResponse(stream, { headers })
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {
