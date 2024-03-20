@@ -8,10 +8,10 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "prisma:dev": "yarn prisma migrate dev --name",
-    "prisma:push": "yarn prisma db push",
+    "prisma:dev": "npm run prisma migrate dev --name",
+    "prisma:push": "npm run prisma db push",
     "prisma:deploy": "prisma migrate deploy",
-    "production:build": "prisma generate && yarn build && yarn prisma:deploy",
+    "production:build": "prisma generate && npm run build && npm run prisma:deploy",
     "test:prepare": "env-cmd -f .env.test prisma db push --force-reset",
     "test": "jest --watch",
     "test:ci": "jest --ci",
@@ -134,6 +134,5 @@
     "*.{js,jsx,ts,tsx,mjs}": [
       "prettier --write"
     ]
-  },
-  "packageManager": "yarn@4.1.1"
+  }
 }

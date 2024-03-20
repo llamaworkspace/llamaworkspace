@@ -34,14 +34,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: 'yarn.lock'
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm run install --frozen-lockfile
 
       - name: Prepare test environment
-        run: yarn test:prepare && cp .env.test .env
+        run: npm run test:prepare && cp .env.test .env
 
       - name: Run Jest tests
-        run: yarn test:ci
+        run: npm run test:ci
