@@ -1,13 +1,12 @@
 import { scopePostByWorkspace } from '@/server/posts/postUtils'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import { getLatestWorkspaceForUser } from '../../workspaces/services/getLatestWorkspaceForUser.service'
+import { getLatestWorkspaceForUserService } from '../../workspaces/services/getLatestWorkspaceForUser.service'
 
-export const getEntrypointRedirectUrl = async (
+export const getEntrypointRedirectUrlService = async (
   prisma: PrismaClientOrTrxClient,
   userId: string,
 ) => {
-  // TODO: The latest ws for the user
-  const workspace = await getLatestWorkspaceForUser(prisma, userId)
+  const workspace = await getLatestWorkspaceForUserService(prisma, userId)
   const chatRuns = await prisma.chatRun.count({
     where: {
       chat: {

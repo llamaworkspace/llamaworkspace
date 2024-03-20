@@ -5,10 +5,10 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import type { Chat, Post, User, Workspace } from '@prisma/client'
-import { getEntrypointRedirectUrl } from '../getEntrypointRedirectUrl.service'
+import { getEntrypointRedirectUrlService } from '../getEntrypointRedirectUrl.service'
 
 const subject = async (userId: string) => {
-  return await getEntrypointRedirectUrl(prisma, userId)
+  return await getEntrypointRedirectUrlService(prisma, userId)
 }
 describe('getEntrypointRedirectUrl', () => {
   let workspace: Workspace

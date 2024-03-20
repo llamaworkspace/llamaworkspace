@@ -1,19 +1,49 @@
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
-export const getLatestWorkspaceForUser = async (
+export const getLatestWorkspaceForUserService = async (
   prisma: PrismaClientOrTrxClient,
   userId: string,
 ) => {
-  return await prisma.workspace.findFirstOrThrow({
+  const chatRun = await prisma.chatRun.findFirst({
     where: {
-      users: {
-        some: {
-          userId,
+      chat: {
+        authorId: userId,
+      },
+    },
+    include: {
+      chat: {
+        select: {
+          post: {
+            select: {
+              workspaceId: true,
+            },
+          },
         },
       },
     },
     orderBy: {
-      updatedAt: 'desc',
+      createdAt: 'desc',
+    },
+  })
+
+  if (!chatRun) {
+    return await prisma.workspace.findFirstOrThrow({
+      where: {
+        users: {
+          some: {
+            userId,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+  }
+
+  return await prisma.workspace.findFirstOrThrow({
+    where: {
+      id: chatRun.chat.post.workspaceId,
     },
   })
 }

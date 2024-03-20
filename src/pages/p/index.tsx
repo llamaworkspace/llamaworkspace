@@ -2,7 +2,7 @@ import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
 import { getServerAuthSession } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
-import { getEntrypointRedirectUrl } from '@/server/global/services/getEntrypointRedirectUrl.service'
+import { getEntrypointRedirectUrlService } from '@/server/global/services/getEntrypointRedirectUrl.service'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async (
@@ -19,7 +19,7 @@ export const getServerSideProps: GetServerSideProps = async (
   }
   const userId = session?.user.id
 
-  const { url } = await getEntrypointRedirectUrl(prisma, userId)
+  const { url } = await getEntrypointRedirectUrlService(prisma, userId)
 
   return {
     redirect: {
