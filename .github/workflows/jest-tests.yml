@@ -38,7 +38,7 @@ jobs:
           cache-dependency-path: 'package-lock.json'
 
       - name: Install dependencies
-        run: npm run install --frozen-lockfile
+        run: npm install --frozen-lockfile
 
       - name: Prepare test environment
         run: npm run test:prepare && cp .env.test .env
