@@ -1,19 +1,6 @@
+import { scopePostByWorkspace } from '@/server/posts/postUtils'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { getLatestWorkspaceForUser } from '../../workspaces/services/getLatestWorkspaceForUser.service'
-
-// Which workspaceId to use?
-// Current logic lives in useCurrentWorkspace => Reuse!
-
-// Handle ServerSide
-// Case 1: Empty project => Chatbot runner
-// Else:
-// Last single chat empty? => Single chat
-// Last single chat not empty? => New single chat
-
-// Zero chatRuns?
-// One chatbot? => Chatbot
-
-// Else, redirect to /c/new?workspaceId=workspace.id
 
 export const getEntrypointRedirectUrl = async (
   prisma: PrismaClientOrTrxClient,
@@ -30,14 +17,11 @@ export const getEntrypointRedirectUrl = async (
       },
     },
   })
+
   if (chatRuns) {
     return await handleChatRunsExist(prisma, workspace.id)
   }
-  return { url: `/c/new?workspaceId=${workspace.id}` }
-  if (!chatRuns) {
-    // Return to Fun facts, if exists
-    return { url: `/c/new?workspaceId=${workspace.id}` }
-  }
+  return await handleNoChatRuns(prisma, workspace.id)
 }
 
 const handleChatRunsExist = async (
@@ -46,10 +30,12 @@ const handleChatRunsExist = async (
 ) => {
   const latestChat = await prisma.chat.findFirstOrThrow({
     where: {
-      post: {
+      post: scopePostByWorkspace(
+        {
+          isDefault: true,
+        },
         workspaceId,
-        isDefault: true,
-      },
+      ),
     },
     include: {
       chatRun: {
@@ -69,4 +55,24 @@ const handleChatRunsExist = async (
   }
 
   return { url: `/c/${latestChat.id}` }
+}
+
+const handleNoChatRuns = async (
+  prisma: PrismaClientOrTrxClient,
+  workspaceId: string,
+) => {
+  const demoChatbot = await prisma.post.findFirst({
+    where: scopePostByWorkspace(
+      {
+        isDemo: true,
+      },
+      workspaceId,
+    ),
+  })
+
+  if (demoChatbot) {
+    return { url: `/p/${demoChatbot.id}` }
+  }
+
+  return { url: `/c/new?workspaceId=${workspaceId}` }
 }

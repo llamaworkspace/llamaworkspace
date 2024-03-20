@@ -4,7 +4,7 @@ import { ChatRunFactory } from '@/server/testing/factories/ChatRunFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { Chat, ChatRun, Post, User, Workspace } from '@prisma/client'
+import type { Chat, Post, User, Workspace } from '@prisma/client'
 import { getEntrypointRedirectUrl } from '../getEntrypointRedirectUrl.service'
 
 const subject = async (userId: string) => {
@@ -37,7 +37,6 @@ describe('getEntrypointRedirectUrl', () => {
   describe('when there are chatRuns', () => {
     let chat1: Chat
     let chat2: Chat
-    let chatRun: ChatRun
 
     beforeEach(async () => {
       chat1 = await ChatFactory.create(prisma, {
@@ -52,12 +51,12 @@ describe('getEntrypointRedirectUrl', () => {
         title: 'chat2',
       })
 
-      chatRun = await ChatRunFactory.create(prisma, {
+      await ChatRunFactory.create(prisma, {
         chatId: chat1.id,
       })
     })
 
-    describe('and the last chat has been run', () => {
+    describe('and the last private chat has been run', () => {
       beforeEach(async () => {
         await ChatRunFactory.create(prisma, {
           chatId: chat2.id,
@@ -69,7 +68,7 @@ describe('getEntrypointRedirectUrl', () => {
         expect(url).toEqual(`/c/new?workspaceId=${workspace.id}`)
       })
     })
-    describe('and the last chat has not been run', () => {
+    describe('and the last private chat has not been run', () => {
       it('returns the url of the last chat', async () => {
         const { url } = await subject(user.id)
         expect(url).toEqual(`/c/${chat2.id}`)
@@ -77,24 +76,26 @@ describe('getEntrypointRedirectUrl', () => {
     })
   })
 
-  describe('when there are no chats', () => {
-    describe('when the default chatbot exists', () => {
-      it.todo('it returns the url of the default chatbot')
-    })
-    describe('when the default chatbot does not exist', () => {
-      describe('and the last chat has been run', () => {
-        it.todo('returns the url of the last chat')
-      })
-      describe('and the last chat has not been run', () => {
-        it.todo('it returns the url of a newly created chat')
+  describe('when there are no chatRuns', () => {
+    describe('when the demo chatbot exists', () => {
+      it('it returns the url of the demo chatbot', async () => {
+        const { url } = await subject(user.id)
+        expect(url).toEqual(`/p/${demoChatbot.id}`)
       })
     })
-    describe('when there are no chatbots', () => {
-      describe('and the last chat has been run', () => {
-        it.todo('returns the url of the last chat')
+
+    describe('when the demo chatbot does not exist', () => {
+      beforeEach(async () => {
+        await prisma.post.delete({
+          where: {
+            id: demoChatbot.id,
+          },
+        })
       })
-      describe('and the last chat has not been run', () => {
-        it.todo('it returns the url of a newly created chat')
+
+      it('it returns the url to create a new chat', async () => {
+        const { url } = await subject(user.id)
+        expect(url).toEqual(`/c/new?workspaceId=${workspace.id}`)
       })
     })
   })
