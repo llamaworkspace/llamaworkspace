@@ -64,7 +64,6 @@ export class Editable extends React.Component<ContentEditableProps> {
 
     // Get the plain text from the clipboard
     const text = event.clipboardData.getData('text/plain')
-    console.log('event.clipboardData', text)
     this.applyChangeWithSideEffects(text ?? '')
   }
 
