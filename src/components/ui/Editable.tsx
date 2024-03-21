@@ -18,6 +18,7 @@ interface ContentEditableState {
   html: string
   initialValue?: string | null
   colonCounter: number
+  isFocused: boolean
 }
 
 const sanitizeConfig = {
@@ -33,6 +34,10 @@ export class Editable extends React.Component<ContentEditableProps> {
     props: ContentEditableProps,
     state: ContentEditableState,
   ) {
+    if (state.isFocused) {
+      return null
+    }
+
     if (props.initialValue != state.initialValue) {
       return {
         ...state,
@@ -50,6 +55,7 @@ export class Editable extends React.Component<ContentEditableProps> {
       html: sanitizeHtml(props.initialValue ?? '', sanitizeConfig),
       initialValue: props.initialValue,
       colonCounter: 0,
+      isFocused: false,
     }
   }
 
@@ -72,6 +78,14 @@ export class Editable extends React.Component<ContentEditableProps> {
       event.preventDefault()
       this.contentEditable.current?.blur()
     }
+  }
+
+  handleOnFocus = () => {
+    this.setState({ isFocused: true })
+  }
+
+  handleOnBlur = () => {
+    this.setState({ isFocused: false })
   }
 
   render = () => {
