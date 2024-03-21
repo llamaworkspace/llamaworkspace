@@ -58,15 +58,13 @@ export class Editable extends React.Component<ContentEditableProps> {
 
     // Get the plain text from the clipboard
     const text = event.clipboardData.getData('text/plain')
-    this.setState({
-      html: sanitizeHtml(text ?? '', sanitizeConfig),
-    })
+    console.log('event.clipboardData', text)
+    this.applyChangeWithSideEffects(text ?? '')
   }
 
   handleChange = (evt: ContentEditableEvent) => {
     const html = evt.target.value
-    this.setState({ html })
-    this.props.onChange(sanitizeHtml(html, sanitizeConfig))
+    this.applyChangeWithSideEffects(html)
   }
 
   handleKeyDown = (event: React.KeyboardEvent) => {
@@ -102,5 +100,10 @@ export class Editable extends React.Component<ContentEditableProps> {
         />
       </>
     )
+  }
+
+  private applyChangeWithSideEffects = (html: string) => {
+    this.setState({ html })
+    this.props.onChange(sanitizeHtml(html, sanitizeConfig))
   }
 }
