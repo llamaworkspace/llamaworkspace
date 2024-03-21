@@ -19,8 +19,8 @@ export function MainLayoutHeaderForStandaloneChat({
   const { isDesktopSidebarOpen } = state
   return (
     <div className="relative">
-      <div className="absolute left-0 right-0 z-50 border-b border-zinc-200/50 bg-white md:border-none md:bg-transparent">
-        <header className="flex h-12 max-h-12 flex-row items-center justify-between py-2.5 lg:px-0">
+      <div className="absolute left-0 right-0 z-50 bg-white">
+        <header className="flex h-12 max-h-12 flex-row items-center justify-between border-b border-zinc-200/50 py-2.5 lg:px-0">
           {/* Mobile button */}
           <div className="flex w-full px-2 py-5 lg:hidden">
             <button
