@@ -12,7 +12,7 @@ export const inviteToWorkspaceService = async (
   workspaceId: string,
   invitingUserId: string,
   invitedUserEmail: string,
-  source = WorkspaceInviteSources.Direct,
+  source: WorkspaceInviteSources = WorkspaceInviteSources.Direct,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
     const workspace = await prisma.workspace.findUniqueOrThrow({
