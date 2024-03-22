@@ -4,6 +4,7 @@ import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
+import { WorkspaceInviteSources } from '../workspaceTypes'
 import { addUserToWorkspaceService } from './addUserToWorkspace.service'
 
 export const inviteToWorkspaceService = async (
@@ -11,6 +12,7 @@ export const inviteToWorkspaceService = async (
   workspaceId: string,
   invitingUserId: string,
   invitedUserEmail: string,
+  source = WorkspaceInviteSources.Direct,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
     const workspace = await prisma.workspace.findUniqueOrThrow({
@@ -46,6 +48,7 @@ export const inviteToWorkspaceService = async (
       workspace.id,
       invitingUserId,
       invitedUserEmail,
+      source,
     )
   })
 }
@@ -120,6 +123,7 @@ const handleUserDoesNotExist = async (
   workspaceId: string,
   invitingUserId: string,
   invitedUserEmail: string,
+  source: WorkspaceInviteSources,
 ) => {
   const existingInvite = await prisma.workspaceInvite.findUnique({
     select: {
@@ -166,6 +170,7 @@ const handleUserDoesNotExist = async (
       invitedById: invitingUserId,
       email: invitedUserEmail,
       workspaceId: workspaceId,
+      source,
     },
   })
 
