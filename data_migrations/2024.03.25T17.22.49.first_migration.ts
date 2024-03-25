@@ -1,8 +1,10 @@
 import type { MigrationFn } from 'umzug'
-import type { DataMigrationContext } from '../src/server/dataMigrations/dataMigrator'
-export const up: MigrationFn<DataMigrationContext> = async ({ prisma }) => {
+
+export const up: MigrationFn = async ({ context }) => {
+  await Promise.resolve()
   console.log('Empty first migration UP')
 }
-export const down: MigrationFn<DataMigrationContext> = async ({ prisma }) => {
+export const down: MigrationFn = async ({ context }) => {
+  await Promise.resolve()
   console.log('Empty first migration DOWN')
 }
