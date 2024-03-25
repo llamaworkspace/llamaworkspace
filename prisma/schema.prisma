@@ -66,8 +66,8 @@ model User {
     authoredChats    Chat[]
     postSort         PostSort[]
     workspaceInvites WorkspaceInvite[]
-    shares           Share[]             @relation("sharingUser")
     sharedTargets    ShareTarget[]
+    sharingTargets   ShareTarget[]       @relation("sharingUser")
 }
 
 model Workspace {
@@ -147,9 +147,7 @@ model PostShare {
 model Share {
     id           String        @id @default(cuid())
     postId       String
-    sharerId     String
     scope        String
-    sharer       User          @relation("sharingUser", fields: [sharerId], references: [id], onDelete: Cascade)
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt
     post         Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
@@ -159,12 +157,14 @@ model Share {
 model ShareTarget {
     id                String           @id @default(cuid())
     shareId           String
+    sharerId          String
     userId            String?
     workspaceInviteId String?
     accessLevel       String
     createdAt         DateTime         @default(now())
     updatedAt         DateTime         @updatedAt
     share             Share            @relation(fields: [shareId], references: [id], onDelete: Cascade)
+    sharer            User             @relation("sharingUser", fields: [sharerId], references: [id], onDelete: Cascade)
     user              User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
     workspaceInvite   WorkspaceInvite? @relation(fields: [workspaceInviteId], references: [id], onDelete: Cascade)
 
