@@ -17,7 +17,7 @@ import {
   stringOrNumberRequired,
 } from '@/lib/frontend/finalFormValidations'
 import { cn } from '@/lib/utils'
-import type { UserAccessLevel } from '@/shared/globalTypes'
+import { UserAccessLevelActions } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { FormApi } from 'final-form'
 import { Field, Form as FinalForm, type FieldMetaState } from 'react-final-form'
@@ -139,7 +139,9 @@ const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
                     <ChatHeaderShareAccessLevelPopover
                       postId={postId}
                       shareId={share.id}
-                      activeAccessLevel={share.accessLevel as UserAccessLevel}
+                      activeAccessLevel={
+                        share.accessLevel as UserAccessLevelActions
+                      }
                     />
                   </div>
                 )

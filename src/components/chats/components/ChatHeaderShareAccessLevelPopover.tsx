@@ -2,10 +2,7 @@ import { useAccessLevelForPost } from '@/components/permissions/permissionsHooks
 import { usePostShareUpdateAccessLevel } from '@/components/posts/postsHooks'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { cn } from '@/lib/utils'
-import {
-  UserAccessLevelActions,
-  type UserAccessLevel,
-} from '@/shared/globalTypes'
+import { UserAccessLevelActions } from '@/shared/globalTypes'
 import { Popover, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { CheckIcon } from '@heroicons/react/24/solid'
@@ -45,7 +42,7 @@ export const ChatHeaderShareAccessLevelPopover = ({
   activeAccessLevel,
 }: {
   postId: string
-  activeAccessLevel: UserAccessLevel
+  activeAccessLevel: UserAccessLevelActions
   shareId: string
 }) => {
   const { mutate: updateAccessLevel } = usePostShareUpdateAccessLevel()
