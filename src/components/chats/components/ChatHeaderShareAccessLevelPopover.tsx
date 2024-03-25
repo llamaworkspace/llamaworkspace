@@ -63,7 +63,7 @@ export const ChatHeaderShareAccessLevelPopover = ({
         const handleClickFor =
           (clickedAccessLevel: UserAccessLevelActions) => () => {
             updateAccessLevel(
-              { shareId, accessLevel: UserAccessLevelActions.Remove },
+              { shareId, accessLevel: clickedAccessLevel },
               {
                 onSuccess: () => {
                   if (clickedAccessLevel === UserAccessLevelActions.Remove) {
