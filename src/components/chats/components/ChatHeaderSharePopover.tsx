@@ -32,10 +32,10 @@ const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
   const toast = useSuccessToast()
 
   const { data: shares } = usePostShares(postId)
-  const { mutate: share } = usePostSharePerform()
+  const { mutate: performShare } = usePostSharePerform()
 
   const handleSubmit = ({ email }: FormShape, form: FormApi<FormShape>) => {
-    share(
+    performShare(
       { email, postId },
       {
         onSuccess: () => {
@@ -112,7 +112,7 @@ const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
               )}
               {shares?.map((share, index) => {
                 const isUser = !!share.userId
-                const email = isUser ? share.user?.email : share.invite?.email
+                const email = share.email
 
                 return (
                   <div

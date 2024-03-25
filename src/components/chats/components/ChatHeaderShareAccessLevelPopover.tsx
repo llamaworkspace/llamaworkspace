@@ -2,39 +2,40 @@ import { useAccessLevelForPost } from '@/components/permissions/permissionsHooks
 import { usePostShareUpdateAccessLevel } from '@/components/posts/postsHooks'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { cn } from '@/lib/utils'
-import { UserAccessLevel } from '@/shared/globalTypes'
+import {
+  UserAccessLevelActions,
+  type UserAccessLevel,
+} from '@/shared/globalTypes'
 import { Popover, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { CheckIcon } from '@heroicons/react/24/solid'
 
-type UserAccessLevelWithRemove = UserAccessLevel | 'remove'
-
 const permissionLevelOptions = [
   {
     title: 'Owner',
-    value: UserAccessLevel.Owner,
+    value: UserAccessLevelActions.Owner,
     description: 'All permissions, including deletion',
     disabled: true,
   },
   {
     title: 'Edit and share',
-    value: UserAccessLevel.EditAndShare,
+    value: UserAccessLevelActions.EditAndShare,
     description: 'Use, edit and share with others',
   },
   {
     title: 'Use',
-    value: UserAccessLevel.Use,
+    value: UserAccessLevelActions.Use,
     description: 'Create and run chats',
   },
   {
     title: 'View',
-    value: UserAccessLevel.View,
+    value: UserAccessLevelActions.View,
     description: 'View existing chats only',
   },
   {
     title: 'Remove',
     description: "Remove this person's access",
-    value: 'remove' as const,
+    value: UserAccessLevelActions.Remove,
   },
 ]
 
@@ -60,12 +61,12 @@ export const ChatHeaderShareAccessLevelPopover = ({
     <Popover>
       {({ open, close }) => {
         const handleClickFor =
-          (clickedAccessLevel: UserAccessLevelWithRemove) => () => {
+          (clickedAccessLevel: UserAccessLevelActions) => () => {
             updateAccessLevel(
-              { shareId, accessLevel: clickedAccessLevel },
+              { shareId, accessLevel: UserAccessLevelActions.Remove },
               {
                 onSuccess: () => {
-                  if (clickedAccessLevel === 'remove') {
+                  if (clickedAccessLevel === UserAccessLevelActions.Remove) {
                     toast(undefined, 'Access removed')
                   } else {
                     toast(undefined, 'Access level updated')
@@ -85,9 +86,10 @@ export const ChatHeaderShareAccessLevelPopover = ({
             <Popover.Button
               className={cn(
                 'font-medium',
-                activeAccessLevel === UserAccessLevel.Owner && 'cursor-default',
+                activeAccessLevel === UserAccessLevelActions.Owner &&
+                  'cursor-default',
               )}
-              disabled={activeAccessLevel === UserAccessLevel.Owner}
+              disabled={activeAccessLevel === UserAccessLevelActions.Owner}
             >
               <div className="flex items-center gap-x-1 text-xs text-zinc-400">
                 {targetOption?.title}
@@ -96,7 +98,8 @@ export const ChatHeaderShareAccessLevelPopover = ({
                   className={cn(
                     'h-3 w-3',
                     open && 'rotate-180 transform',
-                    activeAccessLevel === UserAccessLevel.Owner && 'invisible',
+                    activeAccessLevel === UserAccessLevelActions.Owner &&
+                      'invisible',
                   )}
                 />
               </div>
@@ -137,7 +140,7 @@ export const ChatHeaderShareAccessLevelPopover = ({
                         <div
                           className={cn(
                             'font-medium',
-                            option.value === 'remove'
+                            option.value === UserAccessLevelActions.Remove
                               ? 'text-red-600'
                               : 'text-zinc-600',
                           )}
@@ -147,7 +150,7 @@ export const ChatHeaderShareAccessLevelPopover = ({
                         <div
                           className={cn(
                             'text-xs',
-                            option.value === 'remove'
+                            option.value === UserAccessLevelActions.Remove
                               ? 'text-red-400'
                               : 'text-zinc-400',
                           )}
