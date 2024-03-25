@@ -147,6 +147,21 @@ const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
                 )
               })}
             </div>
+            <div>
+              <div className="font-semibold tracking-tight">General access</div>
+              <div className={cn('flex items-center justify-between py-3')}>
+                <div className="flex items-center gap-x-2">
+                  <div className="text-zinc-700">Restricted</div>
+                </div>
+                {/* <ChatHeaderShareAccessLevelPopover
+                  postId={postId}
+                  shareId={share.id}
+                  activeAccessLevel={
+                    share.accessLevel as UserAccessLevelActions
+                  }
+                /> */}
+              </div>
+            </div>
           </div>
         )
       }}
