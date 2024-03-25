@@ -48,24 +48,26 @@ model VerificationToken {
 }
 
 model User {
-    id              String              @id @default(cuid())
-    name            String?
-    username        String?             @unique
-    email           String?             @unique
-    emailVerified   DateTime?
-    image           String?
-    defaultModel    String?
-    createdAt       DateTime            @default(now())
-    updatedAt       DateTime            @updatedAt
-    accounts        Account[]
-    posts           Post[]
-    sessions        Session[]
-    postShares      PostShare[]
-    invites         Invite[]
-    workspaces      UsersOnWorkspaces[]
-    authoredChats   Chat[]
-    PostSort        PostSort[]
-    WorkspaceInvite WorkspaceInvite[]
+    id               String              @id @default(cuid())
+    name             String?
+    username         String?             @unique
+    email            String?             @unique
+    emailVerified    DateTime?
+    image            String?
+    defaultModel     String?
+    createdAt        DateTime            @default(now())
+    updatedAt        DateTime            @updatedAt
+    accounts         Account[]
+    posts            Post[]
+    sessions         Session[]
+    postShares       PostShare[]
+    invites          Invite[]
+    workspaces       UsersOnWorkspaces[]
+    authoredChats    Chat[]
+    postSort         PostSort[]
+    workspaceInvites WorkspaceInvite[]
+    shares           Share[]             @relation("sharingUser")
+    shareds          Share[]             @relation("sharedUser")
 }
 
 model Workspace {
@@ -102,6 +104,7 @@ model WorkspaceInvite {
     workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt
+    shares      Share[]
 
     @@unique([email, workspaceId])
 }
@@ -125,6 +128,7 @@ model Post {
     chats                  Chat[]
     postShares             PostShare[]
     postConfigVersions     PostConfigVersion[]
+    shares                 Share[]
 }
 
 model PostShare {
@@ -138,6 +142,26 @@ model PostShare {
     accessLevel String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+}
+
+model Share {
+    id                String           @id @default(cuid())
+    postId            String
+    sharerId          String
+    scope             String
+    accessLevel       String
+    userId            String?
+    workspaceInviteId String?
+    sharer            User             @relation("sharingUser", fields: [sharerId], references: [id], onDelete: Cascade)
+    user              User?            @relation("sharedUser", fields: [userId], references: [id], onDelete: Cascade)
+    workspaceInvite   WorkspaceInvite? @relation(fields: [workspaceInviteId], references: [id], onDelete: Cascade)
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    post              Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+    @@unique([postId, userId])
+    @@unique([postId, workspaceInviteId])
+    @@index(workspaceInviteId)
 }
 
 model PostSort {
