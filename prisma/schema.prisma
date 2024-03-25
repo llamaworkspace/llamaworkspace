@@ -97,7 +97,7 @@ model UsersOnWorkspaces {
 model WorkspaceInvite {
     id           String        @id @default(cuid())
     email        String
-    source       String        @default("direct")
+    source       String
     invitedById  String?
     invitedBy    User?         @relation(fields: [invitedById], references: [id], onDelete: SetNull)
     workspaceId  String

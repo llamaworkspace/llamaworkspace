@@ -72,7 +72,7 @@ describe('postsSharePerformService', () => {
       })
     })
 
-    it('shares the post', async () => {
+    it.only('shares the post', async () => {
       const createdShare = await subject(
         invitingUser.id,
         workspace.id,

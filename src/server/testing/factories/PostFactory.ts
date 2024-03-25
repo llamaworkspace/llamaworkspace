@@ -1,4 +1,4 @@
-import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
+import { ShareScope } from '@/shared/globalTypes'
 import { faker } from '@faker-js/faker'
 import type { Post, PrismaClient } from '@prisma/client'
 import { WorkspaceFactory } from './WorkspaceFactory'
@@ -30,7 +30,6 @@ export const PostFactory = {
       create: [
         {
           sharerId: overrides.userId,
-          accessLevel: UserAccessLevel.Owner,
           scope: ShareScope.User,
         },
       ],

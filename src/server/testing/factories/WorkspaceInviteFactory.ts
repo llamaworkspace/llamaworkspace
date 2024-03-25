@@ -1,3 +1,4 @@
+import { WorkspaceInviteSources } from '@/server/workspaces/workspaceTypes'
 import { faker } from '@faker-js/faker'
 import type { PrismaClient, WorkspaceInvite } from '@prisma/client'
 
@@ -9,6 +10,7 @@ const generateDefaults = () => {
   return {
     id: faker.string.nanoid(),
     email: faker.internet.email(),
+    source: WorkspaceInviteSources.Direct,
   }
 }
 

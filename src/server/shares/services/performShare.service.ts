@@ -140,7 +140,6 @@ const handleInvitedUserExists = async (
     where: {
       postId,
       sharerId: invitingUserId,
-      userId: invitedUserId,
     },
   })
 
@@ -156,8 +155,6 @@ const handleInvitedUserExists = async (
       postId: postId,
       sharerId: invitingUserId,
       scope: ShareScope.User,
-      accessLevel: UserAccessLevel.Use,
-      userId: invitedUserId,
     },
   })
 
