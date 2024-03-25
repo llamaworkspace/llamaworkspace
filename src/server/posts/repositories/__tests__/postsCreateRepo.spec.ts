@@ -2,6 +2,7 @@ import { prisma } from '@/server/db'
 import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { ShareScope } from '@/shared/globalTypes'
 
 describe('postCreateRepo', () => {
   const input = { title: 'Test Post' }
@@ -35,6 +36,25 @@ describe('postCreateRepo', () => {
     })
 
     expect(chat).toBeDefined()
+  })
+
+  it('creates an Everybody-based share for the post', async () => {
+    const workspace = await WorkspaceFactory.create(prisma)
+    const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
+    const post = await postCreateRepo(prisma, workspace.id, user.id, input)
+
+    const share = await prisma.share.findMany({
+      where: {
+        postId: post.id,
+      },
+    })
+    expect(share).toHaveLength(1)
+    expect(share).toMatchObject([
+      {
+        postId: post.id,
+        scope: ShareScope.Everybody,
+      },
+    ])
   })
 
   it('creates a first postConfigVersion', async () => {

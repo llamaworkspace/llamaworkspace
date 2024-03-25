@@ -3,6 +3,7 @@ import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
 import {
+  ShareScope,
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
@@ -45,6 +46,13 @@ export const postCreateRepo = async (
         workspaceId,
         userId,
         ...input,
+        shares: {
+          create: [
+            {
+              scope: ShareScope.Everybody,
+            },
+          ],
+        },
         chats: {
           create: [
             {
