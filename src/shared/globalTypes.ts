@@ -8,6 +8,10 @@ export enum UserAccessLevel {
   View = 'view',
 }
 
+export enum ShareScope {
+  Everybody = 'everybody',
+}
+
 export enum SidebarInfoCardType {
   Onboarding = 'onboarding',
 }

@@ -19,7 +19,10 @@
     "prepare": "husky install",
     "prettier": "prettier --config prettier.config.mjs --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "cloak:generate": "npx cloak generate | grep 'CLOAK_MASTER_KEY' | cut -d '=' -f2",
-    "datamigrate": "tsx src/server/dataMigrations/dataMigrator.ts"
+    "datamigrate": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts",
+    "datamigrate:create": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts create --name",
+    "datamigrate:up": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts up",
+    "datamigrate:down": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts down"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.16.1",
