@@ -11,7 +11,7 @@
     "prisma:dev": "npm run prisma migrate dev --name",
     "prisma:push": "npm run prisma db push",
     "prisma:deploy": "prisma migrate deploy",
-    "db:deploy": "npm run prisma:deploy && npm run datamigrate up",
+    "db:deploy": "npm run prisma:deploy && tsx src/server/dataMigrations/dataMigrator.ts up",
     "production:build": "prisma generate && npm run build && npm run db:deploy",
     "test:prepare": "env-cmd -f .env.test prisma db push --force-reset",
     "test": "jest --watch",
