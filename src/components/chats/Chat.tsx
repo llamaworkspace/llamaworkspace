@@ -57,11 +57,11 @@ export function Chat({ postId, chatId }: ChatProps) {
         )}
         <div className="h-[32px]"></div>
         {messages
-          ?.map((message) => {
+          ?.map((message, index) => {
             return (
               <ChatMessage
                 variant={getVariant(message.author)}
-                key={message.id}
+                key={index} // Keep index, otherwise changes in message.id (temp vs final) trigger re-mounts
                 message={message.message ?? ''}
                 author={getAuthor(message.author) ?? ''}
               />
