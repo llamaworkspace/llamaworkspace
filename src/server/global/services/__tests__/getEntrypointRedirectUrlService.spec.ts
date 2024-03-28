@@ -99,4 +99,58 @@ describe('getEntrypointRedirectUrl', () => {
       })
     })
   })
+
+  describe('when there are no chats for the default post', () => {
+    beforeEach(async () => {
+      await prisma.chat.deleteMany({
+        where: {
+          postId: defaultPost.id,
+        },
+      })
+    })
+
+    describe('when the demo chatbot exists', () => {
+      it('it returns the url of the demo chatbot', async () => {
+        const { url } = await subject(user.id)
+        expect(url).toEqual(`/p/${demoChatbot.id}`)
+      })
+    })
+
+    describe('when the demo chatbot does not exist', () => {
+      beforeEach(async () => {
+        await prisma.post.delete({
+          where: {
+            id: demoChatbot.id,
+          },
+        })
+      })
+
+      it('it returns the url to create a new chat', async () => {
+        const { url } = await subject(user.id)
+        expect(url).toEqual(`/c/new?workspaceId=${workspace.id}`)
+      })
+    })
+
+    // Handling edge case that is risky to fail via chages on code
+    describe('and there are chats on chatbots', () => {
+      beforeEach(async () => {
+        const otherPost = await PostFactory.create(prisma, {
+          userId: user.id,
+          workspaceId: workspace.id,
+        })
+        const otherChat = await ChatFactory.create(prisma, {
+          postId: otherPost.id,
+          authorId: user.id,
+        })
+        await ChatRunFactory.create(prisma, {
+          chatId: otherChat.id,
+        })
+      })
+
+      it('returns the url of the demo chatbot', async () => {
+        const { url } = await subject(user.id)
+        expect(url).toEqual(`/c/new?workspaceId=${workspace.id}`)
+      })
+    })
+  })
 })
