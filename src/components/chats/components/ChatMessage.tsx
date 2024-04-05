@@ -6,8 +6,8 @@ import ReactMarkdown from 'react-markdown'
 const wrapperCv = cva('space-y-1 rounded bg-white', {
   variants: {
     variant: {
-      user: 'bg-zinc-100/0 border-zinc-400 border-l-0',
-      assistant: 'p-3 bg-zinc-100/50 border-blue-100/40 border-l-0',
+      user: 'p-3x bg-zinc-100/50x border-blue-100/40 border-l-0 mb-0',
+      assistant: 'bg-zinc-100/0 border-zinc-400 border-l-0 mb-8',
     },
   },
   defaultVariants: {
@@ -15,11 +15,11 @@ const wrapperCv = cva('space-y-1 rounded bg-white', {
   },
 })
 
-const authorCv = cva('font-bold tracking-tight', {
+const authorCv = cva('font-bold tracking-tight text-black', {
   variants: {
     variant: {
-      user: 'text-black',
-      assistant: 'text-black',
+      user: '',
+      assistant: '',
     },
   },
   defaultVariants: {
@@ -27,11 +27,11 @@ const authorCv = cva('font-bold tracking-tight', {
   },
 })
 // Todo: reimplement "prose" manually for more control. Remove Tw typography plugin
-const bodyCv = cva('prose max-w-none  text-zinc-900', {
+const bodyCv = cva('prose max-w-none text-zinc-900 leading-relaxed space-y-3', {
   variants: {
     variant: {
-      user: 'leading-relaxed space-y-3',
-      assistant: 'leading-relaxed space-y-3',
+      user: '',
+      assistant: '',
     },
   },
   defaultVariants: {
@@ -59,6 +59,7 @@ export function ChatMessage({ author, message, variant }: ChatMessageProps) {
       className={cn(
         'translate-y-3 transform opacity-0 transition duration-300 ease-in-out',
         hasRendered && 'translate-y-0 opacity-100',
+        variant === 'user' && 'mb-8 rounded-lg bg-zinc-100/80 p-2',
       )}
     >
       <div className={cn('mb-1', authorCv({ variant }))}>{author}</div>

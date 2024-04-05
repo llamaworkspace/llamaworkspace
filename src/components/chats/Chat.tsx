@@ -46,16 +46,15 @@ export function Chat({ postId, chatId }: ChatProps) {
       // Important: Keep this key here to force a remount
       // of the component on all route changes.
       key={refreshKey}
-      className="relative flex h-full w-full flex-1 flex-col-reverse overflow-y-auto overflow-x-hidden bg-white py-4"
+      className="relative flex h-full w-full overflow-y-auto overflow-x-hidden pt-12"
     >
-      <div className="mx-auto flex w-full max-w-4xl grow flex-col gap-y-4 px-2 pb-4 lg:px-0">
-        <div className="grow">
-          <ChatNoSettingsAlert postId={postId} chatId={chatId} />
-        </div>
+      <div className="mx-auto w-full max-w-4xl space-y-0 px-2 lg:px-0">
+        <ChatNoSettingsAlert postId={postId} chatId={chatId} />
+
         {isBoolean(isDefaultPost) && !isDefaultPost && (
           <ChatMessageInitial chatId={chatId} />
         )}
-        <div className="h-[32px]"></div>
+
         {messages
           ?.map((message, index) => {
             return (
