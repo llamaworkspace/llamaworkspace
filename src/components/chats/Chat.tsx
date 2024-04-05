@@ -55,19 +55,23 @@ export function Chat({ postId, chatId }: ChatProps) {
           <ChatMessageInitial chatId={chatId} />
         )}
 
-        {messages
-          ?.map((message, index) => {
-            return (
-              <ChatMessage
-                variant={getVariant(message.author)}
-                key={index} // Keep index, otherwise changes in message.id (temp vs final) trigger re-mounts
-                message={message.message ?? ''}
-                author={getAuthor(message.author) ?? ''}
-              />
-            )
-          })
-          .reverse()}
-
+        <div className="space-y-6">
+          <div className="h-[20px]"></div>
+          {/* Do not revert on every re-render, do Server Side */}
+          {messages
+            ?.map((message, index) => {
+              return (
+                <ChatMessage
+                  variant={getVariant(message.author)}
+                  key={index} // Keep index, otherwise changes in message.id (temp vs final) trigger a re-mount that causes a flicker
+                  message={message.message ?? ''}
+                  author={getAuthor(message.author) ?? ''}
+                />
+              )
+            })
+            .reverse()}
+          <div className="h-[16px]"></div>
+        </div>
         <div style={{ minHeight: lastBlockHeight }}></div>
 
         {/* Chatbox here */}
