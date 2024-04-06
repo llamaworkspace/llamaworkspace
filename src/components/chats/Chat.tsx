@@ -35,6 +35,7 @@ export function Chat({ postId, chatId }: ChatProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const autoScrollEnabled = useRef(true)
+  const [autoScrollEnabledState, setAutoScrollEnabledState] = useState(true)
   const router = useRouter()
 
   const handleChatboxHeightChangeStable = useCallback((height: number) => {
@@ -55,6 +56,7 @@ export function Chat({ postId, chatId }: ChatProps) {
     if (messagesEndRef.current) {
       scrollToBottom(messagesEndRef.current, 'smooth')
       autoScrollEnabled.current = true
+      setAutoScrollEnabledState(true)
     }
   }, [messagesEndRef])
 
@@ -64,6 +66,7 @@ export function Chat({ postId, chatId }: ChatProps) {
     if (chatContainerRef.current && messagesEndRef.current) {
       scrollToBottom(messagesEndRef.current, 'instant')
       autoScrollEnabled.current = true
+      setAutoScrollEnabledState(true)
     }
   }, [])
 
@@ -86,6 +89,7 @@ export function Chat({ postId, chatId }: ChatProps) {
       )
 
       autoScrollEnabled.current = isScrollAtBottom
+      setAutoScrollEnabledState(isScrollAtBottom)
     }
 
     chatContainerRef.current.addEventListener('scroll', handleScroll)
@@ -148,6 +152,8 @@ export function Chat({ postId, chatId }: ChatProps) {
             chatId={chatId}
             stableOnChatboxHeightChange={handleChatboxHeightChangeStable}
             onChatSubmit={handleChatSubmit}
+            showScrollToBottomIcon={!autoScrollEnabledState}
+            onScrollToBottomIconClick={handleChatSubmit}
           />
         </div>
       </div>
