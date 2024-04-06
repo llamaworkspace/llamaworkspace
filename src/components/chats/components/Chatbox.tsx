@@ -136,9 +136,9 @@ export function Chatbox({
       {showScrollToBottomIcon && (
         <div
           onClick={onScrollToBottomIconClick}
-          className="absolute -top-14 right-0 h-10 w-10 cursor-pointer rounded hover:bg-zinc-200"
+          className="absolute -top-14 right-0 h-10 w-10 cursor-pointer rounded "
         >
-          <ArrowDownCircleIcon className="text-zinc-800" />
+          <ArrowDownCircleIcon className="rounded-full bg-white text-zinc-800 hover:bg-zinc-100" />
         </div>
       )}
       {showSkeleton ? (
@@ -190,7 +190,7 @@ export function Chatbox({
                 disabled={!value || isLoading}
                 variant="secondary"
               >
-                <PaperAirplaneIcon className="h-5 w-5" />
+                <PaperAirplaneIcon className="h-5 w-5 text-zinc-600" />
               </Button>
             </div>
           </div>
