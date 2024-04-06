@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { ChatAuthor } from '@/shared/aiTypesAndMappers'
-import { useCallback, useState } from 'react'
-import { isBoolean } from 'underscore'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import _, { isBoolean } from 'underscore'
 import { useGlobalState } from '../global/globalState'
 import { useIsDefaultPost } from '../posts/postsHooks'
 import { useMessages } from './chatHooks'
@@ -24,6 +24,44 @@ export function Chat({ postId, chatId }: ChatProps) {
   const { data: messages } = useMessages(chatId)
   const isDefaultPost = useIsDefaultPost(postId)
   const [lastBlockHeight, setLastBlockHeight] = useState(LAST_BLOCK_MIN_HEIGHT)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
+  const autoScroll = useRef(true)
+
+  const scrollToBottom = useMemo(() => {
+    const func = () => {
+      console.log('called')
+      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' })
+    }
+    return _.throttle(func, 500)
+  }, [messagesEndRef])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!chatContainerRef.current) return
+      // Determine if the user is scrolling up
+      const isScrollingUp =
+        chatContainerRef.current.scrollTop +
+          chatContainerRef.current.clientHeight <
+        chatContainerRef.current.scrollHeight
+      console.log('isScrollingUp', isScrollingUp)
+      autoScroll.current = !autoScroll.current
+    }
+
+    const chatContainer = chatContainerRef.current
+    chatContainer?.addEventListener('scroll', handleScroll)
+    chatContainer?.addEventListener('scroll', (ev) => {
+      console.log('scrolling', ev)
+    })
+
+    return () => chatContainer?.removeEventListener('scroll', handleScroll)
+  }, []) // Empty dependency array means this effect runs once on mount
+
+  useEffect(() => {
+    if (autoScroll.current) {
+      scrollToBottom()
+    }
+  }, [messages])
 
   const handleChatboxHeightChangeStable = useCallback((height: number) => {
     const lines = height / 24 || 1
@@ -45,8 +83,10 @@ export function Chat({ postId, chatId }: ChatProps) {
     <div
       // Important: Keep this key here to force a remount
       // of the component on all route changes.
+      // Important: Keep "flex flex-col" for the scrolling to work
       key={refreshKey}
-      className="relative flex h-full w-full overflow-y-auto overflow-x-hidden pt-12"
+      ref={chatContainerRef}
+      className="bg-pink relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden pt-12"
     >
       <div className="mx-auto w-full max-w-4xl px-4 lg:px-0">
         <ChatNoSettingsAlert postId={postId} chatId={chatId} />
@@ -88,6 +128,9 @@ export function Chat({ postId, chatId }: ChatProps) {
           />
         </div>
       </div>
+
+      {/* This div is used for scrolling */}
+      <div ref={messagesEndRef}></div>
     </div>
   )
 }
