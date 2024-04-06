@@ -123,7 +123,7 @@ export function Chatbox({
   const showSkeleton = !chatId
 
   return (
-    <div className="mx-auto max-w-4xl bg-white px-2 pb-4 pt-2 lg:px-0">
+    <div className="mx-auto max-w-4xl bg-white px-2 pb-4 lg:px-0">
       {showSkeleton ? (
         <Skeleton className="h-14 w-full" />
       ) : (

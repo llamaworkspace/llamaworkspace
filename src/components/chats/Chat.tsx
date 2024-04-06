@@ -48,7 +48,7 @@ export function Chat({ postId, chatId }: ChatProps) {
       key={refreshKey}
       className="relative flex h-full w-full overflow-y-auto overflow-x-hidden pt-12"
     >
-      <div className="mx-auto w-full max-w-4xl space-y-0 px-2 lg:px-0">
+      <div className="mx-auto w-full max-w-4xl px-4 lg:px-0">
         <ChatNoSettingsAlert postId={postId} chatId={chatId} />
 
         {isBoolean(isDefaultPost) && !isDefaultPost && (
