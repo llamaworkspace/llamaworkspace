@@ -16,12 +16,14 @@ interface ChatProps {
   postId?: string
   chatId?: string
   stableOnChatboxHeightChange?: (height: number) => void
+  onChatSubmit?: () => void
 }
 
 export function Chatbox({
   postId,
   chatId,
   stableOnChatboxHeightChange,
+  onChatSubmit,
 }: ChatProps) {
   const { formRef, onKeyDown } = useEnterSubmit()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -94,6 +96,7 @@ export function Chatbox({
 
   const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault()
+    onChatSubmit?.()
     if (!chatId) return
     if (isLoading) return
 
@@ -103,6 +106,7 @@ export function Chatbox({
     setValue('')
     runPrompt(value)
   }
+
   const handleTextAreaChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(ev.target.value)
     if (!textareaRef.current) return
