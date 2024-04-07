@@ -101,6 +101,25 @@ export function Chat({ postId, chatId }: ChatProps) {
     // Router.asPath is used to force a re-link with chatContainerRef, otherwise nextjs route changes causes issues: the container is removed from the DOM but this listener isn't remounted.
   }, [router.asPath])
 
+  // Handles showing or not the arrow when there is a page transition
+  useEffect(() => {
+    if (!chatContainerRef.current) {
+      return
+    }
+    const isScrollAtBottom = !(
+      chatContainerRef.current.scrollTop +
+        chatContainerRef.current.clientHeight <
+      chatContainerRef.current.scrollHeight
+    )
+    if (isScrollAtBottom) {
+      autoScrollEnabled.current = true
+      setAutoScrollEnabledState(true)
+      return
+    }
+    autoScrollEnabled.current = false
+    setAutoScrollEnabledState(false)
+  }, [router.asPath])
+
   const refreshKey = `${postId}-${chatId}`
 
   return (
