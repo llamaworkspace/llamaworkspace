@@ -120,6 +120,9 @@ export function Chat({ postId, chatId }: ChatProps) {
     setAutoScrollEnabledState(false)
   }, [router.asPath])
 
+  // If no messages, never show the arrow. For example, in chatbots intro message: Do not show
+  const showScrollToBottomIcon = !!(messages?.length && !autoScrollEnabledState)
+
   const refreshKey = `${postId}-${chatId}`
 
   return (
@@ -172,7 +175,7 @@ export function Chat({ postId, chatId }: ChatProps) {
             chatId={chatId}
             stableOnChatboxHeightChange={handleChatboxHeightChangeStable}
             onChatSubmit={handleChatSubmit}
-            showScrollToBottomIcon={!autoScrollEnabledState}
+            showScrollToBottomIcon={showScrollToBottomIcon}
             onScrollToBottomIconClick={handleChatSubmit}
           />
         </div>
