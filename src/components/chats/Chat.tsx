@@ -98,6 +98,7 @@ export function Chat({ postId, chatId }: ChatProps) {
     return () => {
       _chatContainer.removeEventListener('scroll', handleScroll)
     }
+    // Router.asPath is used to force a re-link with chatContainerRef, otherwise nextjs route changes causes issues: the container is removed from the DOM but this listener isn't remounted.
   }, [router.asPath])
 
   const refreshKey = `${postId}-${chatId}`
@@ -109,7 +110,7 @@ export function Chat({ postId, chatId }: ChatProps) {
       // Important: Keep "flex flex-col" for the scrolling to work
       key={refreshKey}
       ref={chatContainerRef}
-      className="bg-pink relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden pt-12"
+      className="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden pt-12"
     >
       <div className="mx-auto w-full max-w-4xl px-4 lg:px-0">
         <ChatNoSettingsAlert postId={postId} chatId={chatId} />
