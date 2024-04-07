@@ -52,7 +52,7 @@ export function Chat({ postId, chatId }: ChatProps) {
     setLastBlockHeight(nextHeight)
   }, [])
 
-  const handleChatSubmit = useCallback(() => {
+  const performSmoothScrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
       scrollToBottom(messagesEndRef.current, 'smooth')
       autoScrollEnabled.current = true
@@ -60,7 +60,8 @@ export function Chat({ postId, chatId }: ChatProps) {
     }
   }, [messagesEndRef])
 
-  const handleLineHeightChange = useCallback((height: number) => {
+  const handleLineHeightChange = useCallback(() => {
+    // Only perform it when the user is at the bottom
     if (!autoScrollEnabled.current) return
 
     if (chatContainerRef.current && messagesEndRef.current) {
@@ -123,7 +124,7 @@ export function Chat({ postId, chatId }: ChatProps) {
 
         <div className="space-y-6">
           <div className="h-[20px]"></div>
-          {/* Do not revert on every re-render, do Server Side */}
+
           {messages
             ?.map((message, index) => {
               return (
@@ -154,9 +155,9 @@ export function Chat({ postId, chatId }: ChatProps) {
             postId={postId}
             chatId={chatId}
             stableOnChatboxHeightChange={handleChatboxHeightChangeStable}
-            onChatSubmit={handleChatSubmit}
+            onChatSubmit={performSmoothScrollToBottom}
             showScrollToBottomIcon={showScrollToBottomIcon}
-            onScrollToBottomIconClick={handleChatSubmit}
+            onScrollToBottomIconClick={performSmoothScrollToBottom}
           />
         </div>
       </div>
