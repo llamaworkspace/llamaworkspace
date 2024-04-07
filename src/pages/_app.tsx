@@ -7,21 +7,15 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { type AppType } from 'next/app'
-import { Inter } from 'next/font/google'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-})
 
 const JoiaApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <div className={`${inter.variable} h-full font-sans`}>
+    <div className={`h-full font-sans`}>
       <GlobalStateProvider>
         <RouterEventListenerProvider>
           <SessionProvider session={session}>

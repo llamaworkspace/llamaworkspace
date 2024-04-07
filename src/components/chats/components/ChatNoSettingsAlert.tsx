@@ -30,18 +30,14 @@ export const ChatNoSettingsAlert = ({
   if (!shouldDisplay) return null
 
   return (
-    <div className="space-y-4">
-      <div>
-        <Alert variant="fuchsia">
-          <AlertRightButton onClick={handleDismiss}>Dismiss</AlertRightButton>
-          <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertTitle>Heads up!</AlertTitle>
-          <AlertDescription>
-            You haven&apos;t set up any custom instructions for this chatbot.{' '}
-            <StyledLink href={href}>Set them up now</StyledLink>.
-          </AlertDescription>
-        </Alert>
-      </div>
-    </div>
+    <Alert variant="fuchsia">
+      <AlertRightButton onClick={handleDismiss}>Dismiss</AlertRightButton>
+      <ExclamationTriangleIcon className="h-4 w-4" />
+      <AlertTitle>Heads up!</AlertTitle>
+      <AlertDescription>
+        You haven&apos;t set up any custom instructions for this chatbot.{' '}
+        <StyledLink href={href}>Set them up now</StyledLink>.
+      </AlertDescription>
+    </Alert>
   )
 }
