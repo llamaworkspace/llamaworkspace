@@ -162,7 +162,7 @@ export function Chat({ postId, chatId }: ChatProps) {
       </div>
 
       {/* This div is used for scrolling */}
-      <div ref={messagesEndRef}></div>
+      <div id="messagesEndAnchor" ref={messagesEndRef}></div>
     </div>
   )
 }
