@@ -113,9 +113,9 @@ export function Chat({ postId, chatId }: ChatProps) {
       // Important: Keep "flex flex-col" for the scrolling to work
       key={refreshKey}
       ref={chatContainerRef}
-      className="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden pt-12"
+      className="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden"
     >
-      <div className="mx-auto w-full max-w-4xl px-4 lg:px-0">
+      <div className="mx-auto h-full w-full max-w-4xl px-4 lg:px-0">
         <ChatNoSettingsAlert postId={postId} chatId={chatId} />
 
         {isBoolean(isDefaultPost) && !isDefaultPost && (
@@ -123,8 +123,7 @@ export function Chat({ postId, chatId }: ChatProps) {
         )}
 
         <div className="space-y-6">
-          <div className="h-[20px]"></div>
-
+          <div className="h-4 "></div>
           {messages
             ?.map((message, index) => {
               return (
