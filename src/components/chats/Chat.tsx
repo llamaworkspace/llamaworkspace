@@ -159,10 +159,14 @@ export function Chat({ postId, chatId }: ChatProps) {
             onScrollToBottomIconClick={performSmoothScrollToBottom}
           />
         </div>
-      </div>
 
-      {/* This div is used for scrolling */}
-      <div id="messagesEndAnchor" ref={messagesEndRef}></div>
+        {/* This div is used for scrolling */}
+        <div
+          id="messagesEndAnchor"
+          ref={messagesEndRef}
+          className="h-0 max-h-0"
+        ></div>
+      </div>
     </div>
   )
 }

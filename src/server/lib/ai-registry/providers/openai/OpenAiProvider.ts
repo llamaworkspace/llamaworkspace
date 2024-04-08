@@ -40,8 +40,7 @@ export const OpenAiProvider = (
       payload: AiRegistryExecutePayload,
       options: OpenAiExecuteOptions,
     ) => {
-      // FIXME
-      hackedValidateModelExists(payload.model)
+      validateModelExistsOrThrow(payload.model)
 
       const openAiClientPayload: ClientOptions = {
         apiKey: options.apiKey || params?.fallbackApiKey,
@@ -61,6 +60,7 @@ export const OpenAiProvider = (
         model: payload.model,
         messages: payload.messages,
         stream: true,
+        max_tokens: 4096,
       })
 
       const stream = OpenAIStream(aiResponse, {
@@ -73,7 +73,7 @@ export const OpenAiProvider = (
     hasFallbackCredentials: !!params?.fallbackApiKey,
   }
 }
-const hackedValidateModelExists = (modelName: string) => {
+const validateModelExistsOrThrow = (modelName: string) => {
   if (!openAiModels.find((model) => model.slug === modelName)) {
     throw new Error(`Model ${modelName} does not exist.`)
   }
