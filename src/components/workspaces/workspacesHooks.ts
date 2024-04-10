@@ -19,14 +19,6 @@ export const useWorkspaces = () => {
   })
 }
 
-export const useCreateWorkspace = () => {
-  const errorHandler = useErrorHandler()
-
-  return api.workspaces.createWorkspace.useMutation({
-    onError: errorHandler(),
-  })
-}
-
 export const useUpdateWorkspace = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
