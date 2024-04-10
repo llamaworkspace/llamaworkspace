@@ -8,7 +8,8 @@ import { useCallback } from 'react'
  * If there are no posts, it returns hasNoPosts=true after it finishes loading.
  */
 export function useDefaultPageRedirection() {
-  const { workspace, isLoading: isLoadingWorkspace } = useCurrentWorkspace()
+  const { data: workspace, isLoading: isLoadingWorkspace } =
+    useCurrentWorkspace()
   const { data: post, isLoading: isLoadingPage } = useLatestPost(
     isLoadingWorkspace ? undefined : workspace?.id,
   )

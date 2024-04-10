@@ -2,7 +2,6 @@ import { useNavigation } from '@/lib/frontend/useNavigation'
 import { signIn } from 'next-auth/react'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useLatestWorkspaceIdLocalStorage } from '../global/localStorageHooks'
 import { GoogleSvg } from '../ui/icons/Google'
 
 export const SignIn = () => {
@@ -49,13 +48,11 @@ function getSanitizedCallbackUrl(
 
 const ContinueWithGoogle = () => {
   const navigation = useNavigation()
-  const [, , clearLastWorkspaceId] = useLatestWorkspaceIdLocalStorage()
   const queryCallbackUrl = navigation.query?.callbackUrl as string | undefined
 
   const callbackUrl = getSanitizedCallbackUrl(queryCallbackUrl, '/p')
 
   const handleSignIn = async () => {
-    clearLastWorkspaceId()
     await signIn('google', { callbackUrl })
   }
 

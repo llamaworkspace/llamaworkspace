@@ -6,7 +6,7 @@ import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { Field } from 'react-final-form'
 
 export const PostConfigSettings = ({ disabled = false }) => {
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   const profileUrl = `/w/${workspace?.id}/profile`
 

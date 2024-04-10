@@ -27,7 +27,7 @@ export const SettingsAiProvidersCustomKeys = () => {
   const successToast = useSuccessToast()
   const { mutate: updateAiProvider } = useUpdateAiProvider()
 
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const { data: providers } = useAiProviders()
 
   const handleFormSubmit = (providerSlug: string) => (values: FormValues) => {

@@ -6,7 +6,7 @@ import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
 export const useChatHistoryForSidebarPost = (postId?: string) => {
   const errorHandler = useErrorHandler()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   return api.sidebar.chatHistoryForSidebar.useQuery(
     { postId: postId!, workspaceId: workspace?.id! },
     {
@@ -94,7 +94,7 @@ export const useUpdatePostSorting = (workspaceId: string | undefined) => {
 
 export const useInfoCardForSidebar = () => {
   const errorHandler = useErrorHandler()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   return api.sidebar.infoCardForSidebar.useQuery(
     { workspaceId: workspace?.id! },
     {

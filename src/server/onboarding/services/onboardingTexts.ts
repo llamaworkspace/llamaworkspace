@@ -8,11 +8,9 @@ In your first response (and only in the first one), you'll end the message in a 
 PS - To view the prompt behind this app, click on the cog wheel icon at the top.
 `
 
-const initialMessage = `👋 Welcome to your new workspace at Joia!
+const initialMessage = `👋 Welcome!
 
-This is The Fun Facts Teller, a demo chatbot shared among all the members of this workspace. It is programmed with a prompt that you can see and customize by clicking on the Settings icon at the top right of this screen.
-
-When you are ready, create your first chatbot by clicking on the Create button in the side panel.
+This is The Fun Facts Teller, a demo chatbot we've created to show you how Joia works. It is programmed with a predefined prompt that you can see and customize by clicking on the Settings icon at the top right of this screen.
 
 Do you want to see it in action? Bring up any topic, and it will tell you a fun fact.`
 

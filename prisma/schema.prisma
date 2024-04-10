@@ -64,7 +64,7 @@ model User {
     invites          Invite[]
     workspaces       UsersOnWorkspaces[]
     authoredChats    Chat[]
-    postSort         PostSort[]
+    postSorts        PostSort[]
     workspaceInvites WorkspaceInvite[]
     sharedTargets    ShareTarget[]
     sharingTargets   ShareTarget[]       @relation("sharingUser")

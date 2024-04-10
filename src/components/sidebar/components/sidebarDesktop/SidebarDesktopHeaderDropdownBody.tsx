@@ -19,7 +19,7 @@ import { CheckIcon } from '@heroicons/react/20/solid'
 
 function SidebarDesktopHeaderWorkspacesDropdownSub() {
   const navigation = useNavigation()
-  const { workspace: currentWorkspace } = useCurrentWorkspace()
+  const { data: currentWorkspace } = useCurrentWorkspace()
   const { data: workspaces } = useWorkspaces()
 
   if (!workspaces || workspaces.length < 2) return null
@@ -64,7 +64,7 @@ export function SidebarDesktopHeaderDropdownBody() {
   const { data: workspaces } = useWorkspaces()
   const numberOfWorkspaces = workspaces?.length ?? 0
 
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const profileLink = workspace?.id
     ? navigation.buildPath('/w/:workspaceId/profile', {
         workspaceId: workspace.id,

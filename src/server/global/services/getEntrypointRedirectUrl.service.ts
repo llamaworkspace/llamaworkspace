@@ -18,16 +18,16 @@ export const getEntrypointRedirectUrlService = async (
   })
 
   if (chatRuns) {
-    return await handleChatRunsExist(prisma, workspace.id)
+    return await handleCaseChatRunsExist(prisma, workspace.id)
   }
-  return await handleNoChatRuns(prisma, workspace.id)
+  return await handleCaseNoChatRuns(prisma, workspace.id)
 }
 
-const handleChatRunsExist = async (
+const handleCaseChatRunsExist = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
 ) => {
-  const latestChat = await prisma.chat.findFirstOrThrow({
+  const latestPrivateChat = await prisma.chat.findFirst({
     where: {
       post: scopePostByWorkspace(
         {
@@ -47,16 +47,20 @@ const handleChatRunsExist = async (
     },
   })
 
-  const latestChatHasRuns = !!latestChat.chatRun.length
-
-  if (latestChatHasRuns) {
+  if (!latestPrivateChat) {
     return { url: `/c/new?workspaceId=${workspaceId}` }
   }
 
-  return { url: `/c/${latestChat.id}` }
+  const latestPrivateChatHasRuns = !!latestPrivateChat.chatRun.length
+
+  if (latestPrivateChatHasRuns) {
+    return { url: `/c/new?workspaceId=${workspaceId}` }
+  }
+
+  return { url: `/c/${latestPrivateChat.id}` }
 }
 
-const handleNoChatRuns = async (
+const handleCaseNoChatRuns = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
 ) => {

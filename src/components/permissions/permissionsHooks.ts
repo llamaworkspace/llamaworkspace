@@ -12,7 +12,7 @@ import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
 export const useAccessLevelForPost = (postId?: string) => {
   const { data: user } = useSelf()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const { workspaceMembers } = useWorkspaceMembers(workspace?.id)
   const { data: postShares } = usePostShares(postId)
 

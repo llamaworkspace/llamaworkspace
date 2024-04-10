@@ -8,7 +8,7 @@ import { SettingsName } from './SettingsName'
 
 export function Settings({ tab }: { tab: string }) {
   const navigation = useNavigation()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   const handleTabChange = (tab: string) => {
     if (!workspace) return

@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import { ChatAuthor } from '@/shared/aiTypesAndMappers'
-import { useCallback, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { isBoolean } from 'underscore'
 import { useGlobalState } from '../global/globalState'
 import { useIsDefaultPost } from '../posts/postsHooks'
@@ -18,12 +19,24 @@ interface ChatProps {
 const LAST_BLOCK_HEIGHT_INCREMENTS = 24
 const LAST_BLOCK_MIN_HEIGHT = 80
 
+const scrollToBottom = (
+  element: HTMLDivElement,
+  speed: 'smooth' | 'instant' = 'instant',
+) => {
+  element.scrollIntoView({ behavior: speed })
+}
+
 export function Chat({ postId, chatId }: ChatProps) {
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
   const { data: messages } = useMessages(chatId)
   const isDefaultPost = useIsDefaultPost(postId)
   const [lastBlockHeight, setLastBlockHeight] = useState(LAST_BLOCK_MIN_HEIGHT)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
+  const autoScrollEnabled = useRef(true)
+  const [autoScrollEnabledState, setAutoScrollEnabledState] = useState(true)
+  const router = useRouter()
 
   const handleChatboxHeightChangeStable = useCallback((height: number) => {
     const lines = height / 24 || 1
@@ -39,36 +52,95 @@ export function Chat({ postId, chatId }: ChatProps) {
     setLastBlockHeight(nextHeight)
   }, [])
 
+  const performSmoothScrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      scrollToBottom(messagesEndRef.current, 'smooth')
+      autoScrollEnabled.current = true
+      setAutoScrollEnabledState(true)
+    }
+  }, [messagesEndRef])
+
+  const handleLineHeightChange = useCallback(() => {
+    // Only perform it when the user is at the bottom
+    if (!autoScrollEnabled.current) return
+
+    if (chatContainerRef.current && messagesEndRef.current) {
+      scrollToBottom(messagesEndRef.current, 'instant')
+      autoScrollEnabled.current = true
+      setAutoScrollEnabledState(true)
+    }
+  }, [])
+
+  // This effect controls whether the UI should autoscroll.
+  // It only autoscrolls if the user is at the bottom of the chat.
+  useEffect(() => {
+    if (!chatContainerRef.current) {
+      return
+    }
+    const handleScroll = () => {
+      if (!chatContainerRef.current) {
+        return
+      }
+
+      // Determine if the user is scrolling up
+      const isScrollAtBottom = !(
+        chatContainerRef.current.scrollTop +
+          chatContainerRef.current.clientHeight <
+        chatContainerRef.current.scrollHeight
+      )
+
+      autoScrollEnabled.current = isScrollAtBottom
+      setAutoScrollEnabledState(isScrollAtBottom)
+    }
+
+    chatContainerRef.current.addEventListener('scroll', handleScroll)
+    const _chatContainer = chatContainerRef.current
+
+    return () => {
+      _chatContainer.removeEventListener('scroll', handleScroll)
+    }
+    // Router.asPath is used to force a re-link with chatContainerRef, otherwise nextjs route changes causes issues: the container is removed from the DOM but this listener isn't remounted.
+  }, [router.asPath])
+
+  // If no messages, never show the arrow. For example, in chatbots intro message: Do not show
+  const showScrollToBottomIcon = !!(messages?.length && !autoScrollEnabledState)
   const refreshKey = `${postId}-${chatId}`
 
   return (
     <div
       // Important: Keep this key here to force a remount
       // of the component on all route changes.
+      // Important: Keep "flex flex-col" for the scrolling to work
       key={refreshKey}
-      className="relative flex h-full w-full flex-1 flex-col-reverse overflow-y-auto overflow-x-hidden bg-white py-4"
+      ref={chatContainerRef}
+      className="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden"
     >
-      <div className="mx-auto flex w-full max-w-4xl grow flex-col gap-y-4 px-2 pb-4 lg:px-0">
-        <div className="grow">
-          <ChatNoSettingsAlert postId={postId} chatId={chatId} />
-        </div>
+      <div className="mx-auto h-full w-full max-w-4xl px-4 lg:px-0">
+        <ChatNoSettingsAlert postId={postId} chatId={chatId} />
+
         {isBoolean(isDefaultPost) && !isDefaultPost && (
           <ChatMessageInitial chatId={chatId} />
         )}
-        <div className="h-[32px]"></div>
-        {messages
-          ?.map((message) => {
-            return (
-              <ChatMessage
-                variant={getVariant(message.author)}
-                key={message.id}
-                message={message.message ?? ''}
-                author={getAuthor(message.author) ?? ''}
-              />
-            )
-          })
-          .reverse()}
 
+        <div className="space-y-6">
+          <div className="h-4 "></div>
+          {messages
+            ?.map((message, index) => {
+              return (
+                <ChatMessage
+                  variant={getVariant(message.author)}
+                  key={index} // Keep index, otherwise changes in message.id (temp vs final) trigger a re-mount that causes a flicker
+                  message={message.message ?? ''}
+                  author={getAuthor(message.author) ?? ''}
+                  onLineHeightChange={
+                    index ? undefined : handleLineHeightChange
+                  }
+                />
+              )
+            })
+            .reverse()}
+          <div className="h-[16px]"></div>
+        </div>
         <div style={{ minHeight: lastBlockHeight }}></div>
 
         {/* Chatbox here */}
@@ -82,8 +154,18 @@ export function Chat({ postId, chatId }: ChatProps) {
             postId={postId}
             chatId={chatId}
             stableOnChatboxHeightChange={handleChatboxHeightChangeStable}
+            onChatSubmit={performSmoothScrollToBottom}
+            showScrollToBottomIcon={showScrollToBottomIcon}
+            onScrollToBottomIconClick={performSmoothScrollToBottom}
           />
         </div>
+
+        {/* This div is used for scrolling */}
+        <div
+          id="messagesEndAnchor"
+          ref={messagesEndRef}
+          className="h-0 max-h-0"
+        ></div>
       </div>
     </div>
   )

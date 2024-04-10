@@ -4,7 +4,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useEnterSubmit } from '@/lib/frontend/useEnterSubmit'
 import { cn } from '@/lib/utils'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { ArrowRightCircleIcon } from '@heroicons/react/24/outline'
+import { ArrowDownCircleIcon } from '@heroicons/react/24/outline'
+import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import _ from 'underscore'
 import { useMessages, usePrompt } from '../chatHooks'
@@ -16,12 +17,18 @@ interface ChatProps {
   postId?: string
   chatId?: string
   stableOnChatboxHeightChange?: (height: number) => void
+  onChatSubmit?: () => void
+  showScrollToBottomIcon?: boolean
+  onScrollToBottomIconClick?: () => void
 }
 
 export function Chatbox({
   postId,
   chatId,
   stableOnChatboxHeightChange,
+  onChatSubmit,
+  showScrollToBottomIcon = false,
+  onScrollToBottomIconClick,
 }: ChatProps) {
   const { formRef, onKeyDown } = useEnterSubmit()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -94,6 +101,7 @@ export function Chatbox({
 
   const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault()
+    onChatSubmit?.()
     if (!chatId) return
     if (isLoading) return
 
@@ -103,6 +111,7 @@ export function Chatbox({
     setValue('')
     runPrompt(value)
   }
+
   const handleTextAreaChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(ev.target.value)
     if (!textareaRef.current) return
@@ -123,7 +132,15 @@ export function Chatbox({
   const showSkeleton = !chatId
 
   return (
-    <div className="mx-auto max-w-4xl bg-white px-2 pb-4 pt-2 lg:px-0">
+    <div className="relative mx-auto max-w-4xl bg-white px-2 pb-4 lg:px-0">
+      {showScrollToBottomIcon && (
+        <div
+          onClick={onScrollToBottomIconClick}
+          className="absolute -top-14 right-0 h-10 w-10 cursor-pointer rounded "
+        >
+          <ArrowDownCircleIcon className="rounded-full bg-white text-zinc-800 hover:bg-zinc-100" />
+        </div>
+      )}
       {showSkeleton ? (
         <Skeleton className="h-14 w-full" />
       ) : (
@@ -173,7 +190,7 @@ export function Chatbox({
                 disabled={!value || isLoading}
                 variant="secondary"
               >
-                <ArrowRightCircleIcon className="h-6 w-6" />
+                <PaperAirplaneIcon className="h-5 w-5 text-zinc-600" />
               </Button>
             </div>
           </div>

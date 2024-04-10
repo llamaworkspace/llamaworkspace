@@ -43,13 +43,13 @@ describe('postCreateRepo', () => {
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     const post = await postCreateRepo(prisma, workspace.id, user.id, input)
 
-    const postShare = await prisma.share.findMany({
+    const share = await prisma.share.findMany({
       where: {
         postId: post.id,
       },
     })
-    expect(postShare).toHaveLength(1)
-    expect(postShare).toMatchObject([
+    expect(share).toHaveLength(1)
+    expect(share).toMatchObject([
       {
         sharerId: user.id,
         accessLevel: UserAccessLevel.Owner,
