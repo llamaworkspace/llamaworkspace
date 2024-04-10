@@ -80,7 +80,7 @@ export const useDeleteSharedChat = () => {
   const routerPostId = navigation.query.post_id as string | undefined
   const routerChatId = navigation.query.chat_id as string | undefined
 
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const { data: chatHistory } = useChatHistoryForSidebarPost(routerPostId)
 
   const { isSuccess, reset, mutate, ...rest } =
@@ -424,7 +424,7 @@ export const useUpdateChat = (debounceMs = 0) => {
   type Options = MutateArgs[1]
 
   const { data: post } = useDefaultPost()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   return {
     mutate: debounce((params: Params, options?: Options) => {

@@ -5,4 +5,10 @@ export const zodUserOutput = z.object({
   email: z.string().nullable(),
   name: z.string().nullable(),
   defaultModel: z.string(),
+  workspace: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+    })
+    .optional(),
 })

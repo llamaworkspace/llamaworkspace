@@ -10,7 +10,7 @@ import { SidebarMobileLineItemForChatbot } from './SidebarMobileLineItemForChatb
 
 export const SidebarMobileChatBotsSection = () => {
   const { mutate: createPost } = useCreatePost()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const { sortedPosts } = usePostsForSidebar(workspace?.id)
 
   const navigation = useNavigation()

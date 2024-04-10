@@ -16,7 +16,7 @@ import { SidebarMobileChatsSection } from './sidebarMobile/SidebarMobileChatsSec
 export function SidebarMobile() {
   const { state, toggleMobileSidebar } = useGlobalState()
   const isOpen = state.isMobileSidebarOpen
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const profileLink = workspace?.id ? `/w/${workspace.id}/profile` : '#'
   const settingsLink = workspace?.id ? `/w/${workspace.id}/settings` : '#'
   return (

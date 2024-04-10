@@ -1,19 +1,19 @@
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Prisma } from '@prisma/client'
 
-interface GetUserPayload {
+interface GetUserWorkspacesPayload {
   select?: Prisma.UserSelect
 }
 
-export const getUserService = async (
+export const getUserWorkspaces = async (
   prisma: PrismaClientOrTrxClient,
   userId: string,
-  payload?: GetUserPayload,
+  payload?: GetUserWorkspacesPayload,
 ) => {
   const select = payload?.select
 
-  return await prisma.user.findFirstOrThrow({
+  return await prisma.workspace.findMany({
     select,
-    where: { id: userId },
+    where: { users: { some: { userId } } },
   })
 }

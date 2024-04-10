@@ -11,7 +11,7 @@ import type { PostUpdateInput } from './postsTypes'
 
 export const useDefaultPost = () => {
   const errorHandler = useErrorHandler()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   return api.posts.getDefault.useQuery(
     { workspaceId: workspace?.id! },
@@ -86,7 +86,7 @@ export const useUpdatePost = (debounceMs = 0) => {
   const { mutate, ...rest } = api.posts.update.useMutation({
     onError: errorHandler(),
   })
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   const debounced = useMemo(() => {
     const _debounced = serialDebouncer((params: PostUpdateInput) => {
@@ -144,7 +144,7 @@ export const useDeletePost = () => {
   const errorHandler = useErrorHandler()
   const navigation = useNavigation()
   const utils = api.useContext()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   const { sortedPosts } = usePostsForSidebar(workspace?.id)
   const routerPostId = navigation.query.post_id as string | undefined

@@ -4,7 +4,7 @@ import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
 export const useAiProviders = () => {
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
   return api.ai.getAiProviders.useQuery(
@@ -33,7 +33,7 @@ export interface UseAiModelsOptions {
 }
 
 export const useAiModels = (options?: UseAiModelsOptions) => {
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
 
   const queryResponse = api.ai.getAiProviders.useQuery(
