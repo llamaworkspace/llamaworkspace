@@ -4,7 +4,7 @@ import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 
 export const ChatEmptyState = () => {
   const { mutate: createPost } = useCreatePost()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   const handleCreatePost = () => {
     if (!workspace?.id) return

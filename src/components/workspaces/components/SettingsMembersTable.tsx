@@ -31,7 +31,7 @@ import { useCurrentWorkspace } from '../workspacesHooks'
 type WorkspaceMember = z.infer<typeof zodWorkspaceMemberOutput>
 
 export const SettingsMembersTable = () => {
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const { workspaceMembers } = useWorkspaceMembers(workspace?.id)
   const { data: self } = useSelf()
   const { mutate: revokeAccess } = useRevokeWorkspaceMemberAccess()

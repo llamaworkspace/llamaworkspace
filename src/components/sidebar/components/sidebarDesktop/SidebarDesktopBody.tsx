@@ -25,7 +25,7 @@ export function SidebarDesktopBody() {
   const { mutate: createPost } = useCreatePost()
   const { mutate: createStandaloneChat } = useCreatePrivateChat()
   const { data: standaloneChats } = useStandaloneChats()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   // Unless needed, replace for something else that is not sortedPosts
   // maybe an ad-hoc query!
   const { sortedPosts } = usePostsForSidebar(workspace?.id)

@@ -22,7 +22,7 @@ const zodInviteUserFormValues = z.object({
 type InviteUserFormValues = z.infer<typeof zodInviteUserFormValues>
 
 export const SettingsMembersInviteForm = () => {
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const navigation = useNavigation()
   const { mutateAsync: inviteUser } = useInviteUserToWorkspace()
   const toast = useSuccessToast()

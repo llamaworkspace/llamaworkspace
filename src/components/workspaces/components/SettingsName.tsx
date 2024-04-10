@@ -14,7 +14,7 @@ type SettingsNameFormValues = z.infer<typeof zodSettingsNameFormValues>
 export const SettingsName = () => {
   const { mutate: updateWorkspace } = useUpdateWorkspace()
   const successToast = useSuccessToast()
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
 
   return (
     <Section>

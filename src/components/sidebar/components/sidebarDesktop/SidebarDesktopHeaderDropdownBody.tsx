@@ -64,7 +64,7 @@ export function SidebarDesktopHeaderDropdownBody() {
   const { data: workspaces } = useWorkspaces()
   const numberOfWorkspaces = workspaces?.length ?? 0
 
-  const { workspace } = useCurrentWorkspace()
+  const { data: workspace } = useCurrentWorkspace()
   const profileLink = workspace?.id
     ? navigation.buildPath('/w/:workspaceId/profile', {
         workspaceId: workspace.id,
