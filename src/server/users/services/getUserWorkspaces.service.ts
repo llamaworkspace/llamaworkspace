@@ -2,7 +2,7 @@ import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Prisma } from '@prisma/client'
 
 interface GetUserWorkspacesPayload {
-  select?: Prisma.UserSelect
+  select?: Prisma.WorkspaceSelect
 }
 
 export const getUserWorkspaces = async (
