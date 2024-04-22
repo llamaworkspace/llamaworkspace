@@ -40,42 +40,13 @@ export const postCreateRepo = async (
         ...workspaceEditionFilter(userId),
       },
     })
-
-    const post = await prisma.post.create({
-      data: {
-        workspaceId,
-        userId,
-        ...input,
-        shares: {
-          create: [
-            {
-              scope: ShareScope.Everybody,
-            },
-          ],
-        },
-        chats: {
-          create: [
-            {
-              authorId: userId,
-            },
-          ],
-        },
-        postConfigVersions: {
-          create: [
-            {
-              model: targetModel,
-              messages: {
-                create: [
-                  {
-                    author: Author.System,
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    })
+    const post = await createPost(
+      prisma,
+      workspaceId,
+      userId,
+      targetModel,
+      input,
+    )
 
     const chat = await prisma.chat.findFirstOrThrow({
       select: {
@@ -88,5 +59,49 @@ export const postCreateRepo = async (
     })
 
     return { ...post, firstChatId: chat.id }
+  })
+}
+
+const createPost = async (
+  prisma: PrismaTrxClient,
+  workspaceId: string,
+  userId: string,
+  targetModel: string,
+  input: PostCreateRepoInputProps,
+) => {
+  return await prisma.post.create({
+    data: {
+      workspaceId,
+      userId,
+      ...input,
+      shares: {
+        create: [
+          {
+            scope: ShareScope.Everybody,
+          },
+        ],
+      },
+      chats: {
+        create: [
+          {
+            authorId: userId,
+          },
+        ],
+      },
+      postConfigVersions: {
+        create: [
+          {
+            model: targetModel,
+            messages: {
+              create: [
+                {
+                  author: Author.System,
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
   })
 }
