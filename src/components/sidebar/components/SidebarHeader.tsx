@@ -13,7 +13,7 @@ const NewChatButton = () => {
     <div className="flex max-h-[48px] ">
       <button
         onClick={() => console.log(11)}
-        className="flex grow basis-0 items-center justify-start gap-x-2 rounded px-2 py-3 font-bold text-zinc-950 transition-margin duration-75 ease-in hover:bg-zinc-200/80 active:m-0.5 "
+        className="flex grow basis-0 items-center justify-start gap-x-2 rounded px-2 py-3 font-bold text-zinc-950 transition hover:bg-zinc-200/80 active:m-0.5 active:bg-zinc-200/80 active:duration-75 active:ease-in "
       >
         <PencilSquareIcon className="h-5 w-5 text-zinc-950" />
         <span>New chat</span>
