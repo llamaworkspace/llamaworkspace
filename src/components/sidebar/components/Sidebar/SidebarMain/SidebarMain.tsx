@@ -1,27 +1,16 @@
 import { cn } from '@/lib/utils'
-import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
-import { Emoji } from 'emoji-picker-react'
+import { SidebarMainApps } from './SidebarMainApps'
 
 export function SidebarMain() {
   return (
     <>
       <div className="relative flex grow overflow-y-auto p-2">
         <div className="w-full space-y-12">
-          <SidebarApps />
+          <SidebarMainApps />
           <ChatHistory />
         </div>
       </div>
     </>
-  )
-}
-
-const SidebarApps = () => {
-  return (
-    <div className="space-y-1">
-      <AppItem highlighted={true} />
-      <AppItem />
-      <AppExploreItem />
-    </div>
   )
 }
 
@@ -49,34 +38,6 @@ const ChatHistoryTimeBlock = ({ title }: { title: string }) => {
         <ChatItem />
         <ChatItem highlighted={true} />
       </div>
-    </div>
-  )
-}
-
-const AppItem = ({ highlighted }: { highlighted?: boolean }) => {
-  return (
-    <div
-      className={cn(
-        'flex w-full cursor-pointer items-center gap-2 rounded px-2 py-2 text-[14px] font-bold text-zinc-950 transition hover:bg-zinc-200/80',
-        highlighted && 'bg-zinc-950 text-white',
-        !highlighted && 'text-zinc-950',
-      )}
-    >
-      <span className="flex grow basis-0 items-center gap-x-1 ">
-        <Emoji unified={'2728'} size={24} />
-        Texts summarizer
-      </span>
-    </div>
-  )
-}
-
-const AppExploreItem = () => {
-  return (
-    <div className="flex w-full cursor-pointer items-center gap-2 rounded px-2 py-2 text-[14px] font-bold text-zinc-950 transition hover:bg-zinc-200/80">
-      <span className="flex grow basis-0 items-center gap-x-1 ">
-        <Square3Stack3DIcon className="h-6 w-6" />
-        Explore GPTs
-      </span>
     </div>
   )
 }
