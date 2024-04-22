@@ -47,7 +47,8 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
       transitionProperty: {
-        margin: 'margin', // Used in "New chat" button, search for: transition-margin
+        'with-margin':
+          'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, margin', // Used in "New chat" button, search for: transition-with-margin
       },
     },
   },

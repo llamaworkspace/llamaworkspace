@@ -1,12 +1,12 @@
 import { cn } from '@/lib/utils'
-import { PencilSquareIcon } from '@heroicons/react/24/outline'
+import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
+import { Emoji } from 'emoji-picker-react'
 export function SidebarBody() {
   return (
     <>
       <div className="relative flex grow overflow-y-auto p-2">
         <div className="w-full space-y-12">
-          {/* <NewChatButton /> */}
-          {/* <SidebarGPTs /> */}
+          <SidebarApps />
           <ChatHistory />
         </div>
       </div>
@@ -14,29 +14,12 @@ export function SidebarBody() {
   )
 }
 
-const NewChatButton = () => {
+const SidebarApps = () => {
   return (
-    <div className="">
-      <div className="flex max-h-[48px] ">
-        <button
-          onClick={() => console.log(11)}
-          className=" flex grow basis-0 items-center justify-start gap-x-2 rounded px-2 py-3 font-bold text-zinc-950 transition hover:bg-zinc-200/80 active:mx-1 active:my-1"
-        >
-          <PencilSquareIcon className="h-5 w-5 text-zinc-950" />
-          <span>New chat</span>
-        </button>
-      </div>
-    </div>
-  )
-}
-
-const SidebarGPTs = () => {
-  return (
-    <div>
-      <div>Some GPTs</div>
-      <div>Some GPTs</div>
-      <div>Some GPTs</div>
-      <div>Some GPTs</div>
+    <div className="space-y-1">
+      <AppItem highlighted={true} />
+      <AppItem />
+      <AppExploreItem />
     </div>
   )
 }
@@ -65,6 +48,34 @@ const ChatHistoryTimeBlock = ({ title }: { title: string }) => {
         <ChatItem />
         <ChatItem highlighted={true} />
       </div>
+    </div>
+  )
+}
+
+const AppItem = ({ highlighted }: { highlighted?: boolean }) => {
+  return (
+    <div
+      className={cn(
+        'flex w-full cursor-pointer items-center gap-2 rounded px-2 py-2 text-[14px] font-bold text-zinc-950 transition hover:bg-zinc-200/80',
+        highlighted && 'bg-zinc-950 text-white',
+        !highlighted && 'text-zinc-950',
+      )}
+    >
+      <span className="flex grow basis-0 items-center gap-x-1 ">
+        <Emoji unified={'2728'} size={24} />
+        Texts summarizer
+      </span>
+    </div>
+  )
+}
+
+const AppExploreItem = () => {
+  return (
+    <div className="flex w-full cursor-pointer items-center gap-2 rounded px-2 py-2 text-[14px] font-bold text-zinc-950 transition hover:bg-zinc-200/80">
+      <span className="flex grow basis-0 items-center gap-x-1 ">
+        <Square3Stack3DIcon className="h-6 w-6" />
+        Explore GPTs
+      </span>
     </div>
   )
 }
