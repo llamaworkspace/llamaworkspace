@@ -1,11 +1,13 @@
 import { SidebarBody } from './SidebarBody'
-import { SidebarDesktopHeader } from './sidebarDesktop/SidebarDesktopHeader'
+import { SidebarFooter } from './SidebarFooter'
+import { SidebarHeader } from './SidebarHeader'
 
 export function SidebarContentWrapper() {
   return (
     <>
+      <SidebarHeader />
       <SidebarBody />
-      <SidebarDesktopHeader />
+      <SidebarFooter />
     </>
   )
 }

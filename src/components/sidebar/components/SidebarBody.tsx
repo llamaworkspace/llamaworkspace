@@ -1,12 +1,11 @@
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-
+import { PencilSquareIcon } from '@heroicons/react/24/outline'
 export function SidebarBody() {
   return (
     <>
       <div className="relative flex grow overflow-y-auto p-2">
-        <div className="w-full space-y-12 ">
-          <NewChatButton />
+        <div className="w-full space-y-12">
+          {/* <NewChatButton /> */}
           {/* <SidebarGPTs /> */}
           <ChatHistory />
         </div>
@@ -17,8 +16,16 @@ export function SidebarBody() {
 
 const NewChatButton = () => {
   return (
-    <div>
-      <Button>New chat</Button>
+    <div className="">
+      <div className="flex max-h-[48px] ">
+        <button
+          onClick={() => console.log(11)}
+          className=" flex grow basis-0 items-center justify-start gap-x-2 rounded px-2 py-3 font-bold text-zinc-950 transition hover:bg-zinc-200/80 active:mx-1 active:my-1"
+        >
+          <PencilSquareIcon className="h-5 w-5 text-zinc-950" />
+          <span>New chat</span>
+        </button>
+      </div>
     </div>
   )
 }
@@ -38,10 +45,10 @@ const ChatHistory = () => {
   return (
     <div className="w-full space-y-8 ">
       <ChatHistoryTimeBlock title="Today" />
-      {/* <ChatHistoryTimeBlock title="Yesterday" />
+      <ChatHistoryTimeBlock title="Yesterday" />
       <ChatHistoryTimeBlock title="Last 30 days" />
       <ChatHistoryTimeBlock title="Last 30 days" />
-      <ChatHistoryTimeBlock title="Last 30 days" /> */}
+      <ChatHistoryTimeBlock title="Last 30 days" />
     </div>
   )
 }
