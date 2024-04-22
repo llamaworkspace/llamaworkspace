@@ -1,19 +1,11 @@
 import { useGlobalState } from '@/components/global/globalState'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { Dialog, Transition } from '@headlessui/react'
-import {
-  Cog6ToothIcon,
-  UserCircleIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Fragment } from 'react'
-import { SidebarMobileChatBotsSection } from './sidebarMobile/SidebarMobileChatBotsSection'
-import { SidebarMobileChatsSection } from './sidebarMobile/SidebarMobileChatsSection'
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import { Fragment, PropsWithChildren } from 'react'
+import { SidebarContentWrapper } from './SidebarContentWrapper'
 
-export function SidebarMobile() {
+export function SidebarWrapperMobile({ children }: PropsWithChildren) {
   const { state, toggleMobileSidebar } = useGlobalState()
   const isOpen = state.isMobileSidebarOpen
   const { data: workspace } = useCurrentWorkspace()
@@ -73,52 +65,8 @@ export function SidebarMobile() {
                 </div>
               </Transition.Child>
               {/* Sidebar component, swap this element with another sidebar if you like */}
-              <div className="flex grow flex-col gap-1 overflow-y-auto bg-white px-6 pb-4 md:gap-y-5">
-                <div className="flex h-16 shrink-0 items-center">
-                  <Image
-                    className="h-6 w-auto"
-                    src="/images/joia_logo_red.svg"
-                    alt="Joia"
-                    width="38"
-                    height="32"
-                  />
-                </div>
-                <nav className="flex flex-1 flex-col">
-                  <Alert variant="fuchsia" className="mb-4">
-                    <AlertDescription>
-                      This sidebar still has limited functionality. Use the
-                      desktop version for a complete experience.
-                    </AlertDescription>
-                  </Alert>
-
-                  <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                    <SidebarMobileChatsSection />
-                    <SidebarMobileChatBotsSection />
-
-                    <li className="mt-auto">
-                      <Link
-                        href={settingsLink}
-                        className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-zinc-700 hover:bg-zinc-50 hover:text-indigo-600"
-                      >
-                        <Cog6ToothIcon
-                          className="h-6 w-6 shrink-0 text-zinc-400 group-hover:text-indigo-600"
-                          aria-hidden="true"
-                        />
-                        Workspace settings
-                      </Link>
-                      <Link
-                        href={profileLink}
-                        className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-zinc-700 hover:bg-zinc-50 hover:text-indigo-600"
-                      >
-                        <UserCircleIcon
-                          className="h-6 w-6 shrink-0 text-zinc-400 group-hover:text-indigo-600"
-                          aria-hidden="true"
-                        />
-                        Profile
-                      </Link>
-                    </li>
-                  </ul>
-                </nav>
+              <div className="overflow-y- auto flex grow flex-col  gap-1 bg-zinc-10 px-2 pb-4 md:gap-y-5">
+                <SidebarContentWrapper />
               </div>
             </Dialog.Panel>
           </Transition.Child>

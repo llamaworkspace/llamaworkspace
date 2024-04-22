@@ -1,11 +1,11 @@
-import { SidebarDesktop } from './components/SidebarDesktop'
-import { SidebarMobile } from './components/SidebarMobile'
+import { SidebarWrapperDesktop } from './components/SidebarWrapperDesktop'
+import { SidebarWrapperMobile } from './components/SidebarWrapperMobile'
 
 export function Sidebar() {
   return (
     <>
-      <SidebarMobile />
-      <SidebarDesktop />
+      <SidebarWrapperMobile />
+      <SidebarWrapperDesktop />
     </>
   )
 }

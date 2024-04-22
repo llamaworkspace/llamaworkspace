@@ -1,9 +1,8 @@
 import { useGlobalState } from '@/components/global/globalState'
 import { cn } from '@/lib/utils'
-import { SidebarDesktopBody } from './sidebarDesktop/SidebarDesktopBody'
-import { SidebarDesktopHeader } from './sidebarDesktop/SidebarDesktopHeader'
+import { SidebarContentWrapper } from './SidebarContentWrapper'
 
-export function SidebarDesktop() {
+export function SidebarWrapperDesktop() {
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
 
@@ -14,9 +13,8 @@ export function SidebarDesktop() {
         isDesktopSidebarOpen ? 'w-72' : 'w-0',
       )}
     >
-      <div className="flex h-full grow flex-col overflow-hidden border-r border-zinc-200 bg-white">
-        <SidebarDesktopHeader />
-        <SidebarDesktopBody />
+      <div className="flex h-full grow flex-col overflow-hidden border-r border-zinc-300 bg-zinc-10">
+        <SidebarContentWrapper />
       </div>
     </div>
   )

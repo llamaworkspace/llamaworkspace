@@ -23,6 +23,9 @@ module.exports = {
           mid: '#80A89C',
           dark: '#0E7657',
         },
+        zinc: {
+          '10': '#FCFCFC',
+        },
         sand: {
           lightest: '#FCFAF8',
           light: '#F8F5F1',
