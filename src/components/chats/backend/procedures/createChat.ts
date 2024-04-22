@@ -1,3 +1,4 @@
+import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
@@ -20,10 +21,31 @@ export const createChat = protectedProcedure
       postId,
     )
 
-    return await ctx.prisma.chat.create({
-      data: {
-        ...input,
-        authorId: userId,
-      },
+    return await prismaAsTrx(ctx.prisma, async (prisma) => {
+      const chat = await prisma.chat.create({
+        data: {
+          ...input,
+          authorId: userId,
+        },
+      })
+
+      await prisma.postsOnUsers.upsert({
+        where: {
+          userId_postId: {
+            postId: input.postId,
+            userId,
+          },
+        },
+        update: {
+          lastVisitedAt: new Date(),
+        },
+        create: {
+          postId: input.postId,
+          userId,
+          lastVisitedAt: new Date(),
+        },
+      })
+
+      return chat
     })
   })

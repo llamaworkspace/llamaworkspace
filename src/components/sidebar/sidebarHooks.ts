@@ -34,6 +34,20 @@ export const usePostsForSidebar = (workspaceId: string | undefined) => {
   }
 }
 
+export const usePostsForSidebarV2 = (workspaceId: string | undefined) => {
+  const errorHandler = useErrorHandler()
+
+  return api.sidebar.postsForSidebarV2.useQuery(
+    {
+      workspaceId: workspaceId!,
+    },
+    {
+      onError: errorHandler(),
+      enabled: !!workspaceId,
+    },
+  )
+}
+
 export const useUpdatePostSorting = (workspaceId: string | undefined) => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
