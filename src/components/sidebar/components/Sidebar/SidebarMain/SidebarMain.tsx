@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { SidebarMainApps } from './SidebarMainApps'
+import { SidebarMainApps } from './SidebarMainApps/SidebarMainApps'
 
 export function SidebarMain() {
   return (
