@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { ChatHeaderPostLinks } from '../../chats/components/ChatHeaderPostLinks'
 import { ChatHeaderPostTitle } from '../../chats/components/ChatHeaderPostTitle'
 import { useGlobalState } from '../../global/globalState'
-import { SidebarToggleIcon } from '../../sidebar/SidebarToggleIcon'
+import { SidebarToggleIcon } from '../../sidebar/components/SidebarToggleIcon'
 
 export function MainLayoutHeaderForChatbot({ postId }: { postId?: string }) {
   const { toggleMobileSidebar, toggleDesktopSidebar, state } = useGlobalState()

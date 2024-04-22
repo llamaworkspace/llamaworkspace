@@ -1,12 +1,12 @@
-import { SidebarBody } from './SidebarBody'
 import { SidebarFooter } from './SidebarFooter'
 import { SidebarHeader } from './SidebarHeader'
+import { SidebarMain } from './SidebarMain'
 
-export function SidebarContentWrapper() {
+export function SidebarContent() {
   return (
     <>
       <SidebarHeader />
-      <SidebarBody />
+      <SidebarMain />
       <SidebarFooter />
     </>
   )

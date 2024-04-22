@@ -1,7 +1,8 @@
 import { cn } from '@/lib/utils'
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
 import { Emoji } from 'emoji-picker-react'
-export function SidebarBody() {
+
+export function SidebarMain() {
   return (
     <>
       <div className="relative flex grow overflow-y-auto p-2">

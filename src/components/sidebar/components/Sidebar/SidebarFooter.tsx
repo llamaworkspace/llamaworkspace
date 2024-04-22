@@ -1,6 +1,6 @@
 import { useGlobalState } from '@/components/global/globalState'
 import { SidebarToggleIcon } from '../SidebarToggleIcon'
-import { SidebarDesktopUserDropdown } from './sidebarDesktop/SidebarDesktopUserDropdown'
+import { SidebarDesktopUserDropdown } from '../sidebarDesktop/SidebarDesktopUserDropdown'
 
 export function SidebarFooter() {
   const { toggleDesktopSidebar } = useGlobalState()

@@ -2,15 +2,16 @@ import { useGlobalState } from '@/components/global/globalState'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { Fragment, PropsWithChildren } from 'react'
-import { SidebarContentWrapper } from './SidebarContentWrapper'
+import { Fragment } from 'react'
+import { SidebarContent } from './SidebarContent'
 
-export function SidebarWrapperMobile({ children }: PropsWithChildren) {
+export function SidebarWrapperMobile() {
   const { state, toggleMobileSidebar } = useGlobalState()
   const isOpen = state.isMobileSidebarOpen
   const { data: workspace } = useCurrentWorkspace()
   const profileLink = workspace?.id ? `/w/${workspace.id}/profile` : '#'
   const settingsLink = workspace?.id ? `/w/${workspace.id}/settings` : '#'
+
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog
@@ -64,9 +65,8 @@ export function SidebarWrapperMobile({ children }: PropsWithChildren) {
                   </button>
                 </div>
               </Transition.Child>
-              {/* Sidebar component, swap this element with another sidebar if you like */}
               <div className="overflow-y- auto flex grow flex-col  gap-1 bg-zinc-10 px-2 pb-4 md:gap-y-5">
-                <SidebarContentWrapper />
+                <SidebarContent />
               </div>
             </Dialog.Panel>
           </Transition.Child>

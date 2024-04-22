@@ -1,6 +1,6 @@
 import { useGlobalState } from '@/components/global/globalState'
 import { cn } from '@/lib/utils'
-import { SidebarContentWrapper } from './SidebarContentWrapper'
+import { SidebarContent } from './SidebarContent'
 
 export function SidebarWrapperDesktop() {
   const { state } = useGlobalState()
@@ -14,7 +14,7 @@ export function SidebarWrapperDesktop() {
       )}
     >
       <div className="flex h-full grow flex-col overflow-hidden border-r border-zinc-300 bg-zinc-10">
-        <SidebarContentWrapper />
+        <SidebarContent />
       </div>
     </div>
   )

@@ -4,7 +4,7 @@ import { type PropsWithChildren } from 'react'
 import { useGlobalState } from '../global/globalState'
 import { EMPTY_POST_NAME } from '../posts/postsConstants'
 import { usePostById } from '../posts/postsHooks'
-import { Sidebar } from '../sidebar/Sidebar'
+import { Sidebar } from '../sidebar/components/Sidebar/Sidebar'
 import {
   MainLayoutHeader,
   type HeaderVariants,
