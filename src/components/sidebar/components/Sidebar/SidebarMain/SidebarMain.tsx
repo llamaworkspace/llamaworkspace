@@ -36,7 +36,7 @@ const ChatHistoryTimeBlock = ({ title }: { title: string }) => {
         <ChatItem highlighted={false} />
 
         <ChatItem />
-        <ChatItem highlighted={true} />
+        <ChatItem highlighted={false} />
       </div>
     </div>
   )

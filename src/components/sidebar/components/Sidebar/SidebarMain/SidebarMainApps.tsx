@@ -1,25 +1,10 @@
+import { useCreateSharedChat } from '@/components/chats/chatHooks'
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { usePostsForSidebar } from '@/components/sidebar/sidebarHooks'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { cn } from '@/lib/utils'
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
 import { Emoji } from 'emoji-picker-react'
-
-import { useCallback } from 'react'
-
-const useCreateAppInstance = () => {
-  const navigation = useNavigation()
-
-  return useCallback(
-    async (postId: string) => {
-      await navigation.push(`/p/:postId/c/new`, {
-        postId,
-      })
-    },
-    [navigation],
-  )
-}
 
 interface AppItemProps {
   postId: string
@@ -27,22 +12,24 @@ interface AppItemProps {
   highlighted?: boolean
 }
 
-const AppItem = ({ postId, title, highlighted }: AppItemProps) => {
-  const createAppInstance = useCreateAppInstance()
+const AppItem = ({ postId, title, highlighted = true }: AppItemProps) => {
+  const { mutate: createChat } = useCreateSharedChat()
 
   return (
-    <div
-      className={cn(
-        'flex w-full cursor-pointer items-center gap-2 rounded  px-2 py-2 text-[14px] font-bold text-zinc-950 transition hover:bg-zinc-200/80',
-        highlighted && 'bg-zinc-950 text-white',
-        !highlighted && 'text-zinc-950',
-      )}
-      onClick={() => void createAppInstance(postId)}
-    >
-      <span className="flex grow basis-0 items-center gap-x-1 ">
-        <Emoji unified={'2728'} size={24} />
-        {title ? title : EMPTY_POST_NAME}
-      </span>
+    <div>
+      <div
+        className={cn(
+          'flex w-full cursor-pointer items-center gap-2 rounded px-2 py-2 text-[14px] font-bold text-zinc-950 transition hover:bg-zinc-200/80 active:bg-zinc-300',
+          highlighted && 'bg-zinc-950 text-white',
+          !highlighted && 'text-zinc-950',
+        )}
+        onClick={() => createChat({ postId })}
+      >
+        <span className="flex grow basis-0 items-center gap-x-1">
+          <Emoji unified={'2728'} size={24} />
+          {title ? title : EMPTY_POST_NAME}
+        </span>
+      </div>
     </div>
   )
 }
