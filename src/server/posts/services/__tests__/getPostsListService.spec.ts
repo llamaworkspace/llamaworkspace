@@ -3,7 +3,7 @@ import { prisma } from '@/server/db'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { Post, Share, User, Workspace } from '@prisma/client'
+import type { Post, User, Workspace } from '@prisma/client'
 import { getPostsListService } from '../getPostsList.service'
 
 const subject = async (userId: string, workspaceId: string) => {
@@ -18,10 +18,8 @@ const subject = async (userId: string, workspaceId: string) => {
 describe('getPostsListService', () => {
   let workspace: Workspace
   let user: User
-  let sharedUser: User
   let post1: Post
   let post2: Post
-  let share: Share
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
