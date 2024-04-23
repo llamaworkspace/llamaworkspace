@@ -1,4 +1,5 @@
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
+import { useSidebarButtonLikeStyles } from '@/components/sidebar/sidebarHooks'
 import { cn } from '@/lib/utils'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
@@ -23,13 +24,13 @@ export const SidebarMainItemShell = ({
   linkHref,
 }: SidebarMainItemShellProps) => {
   const WrapperEl = linkHref ? Link : Fragment
+
+  const baseStyles = useSidebarButtonLikeStyles(isActive)
+
   return (
     <WrapperEl href={linkHref ?? '#'}>
       <div
-        className={cn(
-          'group flex w-full grow basis-0 cursor-pointer items-center justify-between gap-x-2 rounded px-2 py-2 text-[14px] font-bold text-zinc-950 transition hover:bg-zinc-200/80 active:bg-zinc-300',
-          isActive && 'bg-zinc-200',
-        )}
+        className={cn(baseStyles, 'py-2 text-[14px] font-bold')}
         onClick={() => onClick?.()}
       >
         <div className="w-[24px] min-w-[24px]">{icon}</div>

@@ -1,4 +1,5 @@
 import { api } from '@/lib/api'
+import { cn } from '@/lib/utils'
 import { useCallback } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useDefaultPost } from '../posts/postsHooks'
@@ -137,4 +138,11 @@ export const useInfoCardForSidebar = () => {
 export const useStandaloneChats = () => {
   const { data: post } = useDefaultPost()
   return useChatHistoryForSidebarPost(post?.id)
+}
+
+export const useSidebarButtonLikeStyles = (isSelected = false) => {
+  return cn(
+    'group flex w-full grow basis-0 cursor-pointer items-center justify-between gap-x-2 rounded px-2 text-zinc-950 transition hover:bg-zinc-200/80 active:bg-zinc-300',
+    isSelected && 'bg-zinc-200',
+  )
 }

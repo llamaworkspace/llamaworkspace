@@ -19,7 +19,10 @@ export const SidebarMainApps = () => {
         )
       })}
 
-      <SidebarMainExploreButton />
+      {/* Keep this div to respect space-y */}
+      <div>
+        <SidebarMainExploreButton />
+      </div>
     </div>
   )
 }
