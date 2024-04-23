@@ -22,7 +22,7 @@ export function Settings({ tab }: { tab: string }) {
     <SectionWrapper>
       <SectionWrapperTitle>Workspace settings</SectionWrapperTitle>
       <Tabs value={tab} onValueChange={handleTabChange}>
-        <TabsList className="max-w-[400px]x mb-12 grid w-full grid-cols-3">
+        <TabsList className="mb-12 grid w-full grid-cols-3">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="members">Members</TabsTrigger>
           <TabsTrigger value="models">AI Models</TabsTrigger>

@@ -10,10 +10,11 @@ interface GetChatsPayload {
 export const getChatsService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  payload: GetChatsPayload,
+  payload?: GetChatsPayload,
 ) => {
   const { userId, workspaceId } = uowContext
-  const { postId } = payload
+  const postId = payload?.postId
+
   return await prismaAsTrx(prisma, async (prisma) => {
     // TODO: Re-implement permissions
     // await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
