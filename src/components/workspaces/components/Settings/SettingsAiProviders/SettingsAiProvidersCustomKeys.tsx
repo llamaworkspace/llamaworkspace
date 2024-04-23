@@ -12,10 +12,10 @@ import {
 } from '@/components/ui/card'
 import { InputField } from '@/components/ui/forms/InputField'
 import { useSuccessToast } from '@/components/ui/toastHooks'
+import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { useMemo } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import _, { groupBy, mapObject } from 'underscore'
-import { useCurrentWorkspace } from '../../workspacesHooks'
 import { SettingsAiProvidersModelsTable } from './SettingsAiProvidersModelsTable'
 type PartialFormValuesForModels = Record<
   'models',

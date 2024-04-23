@@ -4,7 +4,7 @@ import { useSuccessToast } from '@/components/ui/toastHooks'
 import { validateFormWithZod } from '@/lib/frontend/finalFormValidations'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { z } from 'zod'
-import { useCurrentWorkspace, useUpdateWorkspace } from '../workspacesHooks'
+import { useCurrentWorkspace, useUpdateWorkspace } from '../../workspacesHooks'
 
 const zodSettingsNameFormValues = z.object({
   name: z.string(),

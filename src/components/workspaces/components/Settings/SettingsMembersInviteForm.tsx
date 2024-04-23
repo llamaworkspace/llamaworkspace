@@ -13,8 +13,8 @@ import { FORM_ERROR, type Config } from 'final-form'
 import { useCallback, useEffect, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { z } from 'zod'
-import { useInviteUserToWorkspace } from '../workspaceMembersHooks'
-import { useCurrentWorkspace } from '../workspacesHooks'
+import { useInviteUserToWorkspace } from '../../workspaceMembersHooks'
+import { useCurrentWorkspace } from '../../workspacesHooks'
 
 const zodInviteUserFormValues = z.object({
   email: z.string().email(),

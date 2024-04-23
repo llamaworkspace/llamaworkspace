@@ -40,7 +40,7 @@ export const SettingsAiProvidersModelsTable = ({
             <TableRow key={model.slug} className="h-10">
               <TableCell>{model.publicName}</TableCell>
               <TableCell>
-                <span className="font-mono bg-zinc-100 px-0.5 text-pink-600">
+                <span className="bg-zinc-100 px-0.5 font-mono text-pink-600">
                   {model.slug}
                 </span>
               </TableCell>
