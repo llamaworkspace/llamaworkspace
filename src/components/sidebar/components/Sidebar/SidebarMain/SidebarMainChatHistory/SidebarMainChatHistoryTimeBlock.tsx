@@ -18,9 +18,15 @@ export const SidebarMainChatHistoryTimeBlock = ({
       <div className="px-2 text-xs font-bold uppercase text-zinc-400">
         {title}
       </div>
-      <div className="w-full">
+      <div className="w-full space-y-0.5">
         {chats.map((chat) => {
-          return <SidebarMainChatHistoryItem key={chat.id} title={chat.title} />
+          return (
+            <SidebarMainChatHistoryItem
+              key={chat.id}
+              chatId={chat.id}
+              title={chat.title}
+            />
+          )
         })}
       </div>
     </div>

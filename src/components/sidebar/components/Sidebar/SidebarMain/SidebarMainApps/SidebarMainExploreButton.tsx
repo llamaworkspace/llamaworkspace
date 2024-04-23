@@ -18,7 +18,7 @@ export const SidebarMainExploreButton = () => {
       isActive={false}
       showPencil={false}
       icon={<Square3Stack3DIcon className="h-6 w-6" />}
-      onClick={handleCreatePost}
+      linkHref={`/w/${workspace?.id}/apps`}
     />
   )
 }
