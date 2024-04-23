@@ -220,6 +220,19 @@ export const usePostById = (postId?: string) => {
   )
 }
 
+export const usePosts = () => {
+  const errorHandler = useErrorHandler()
+  const { data: workspace } = useCurrentWorkspace()
+  const workspaceId = workspace?.id
+
+  return api.posts.getAll.useQuery(
+    {
+      workspaceId: workspaceId ?? '',
+    },
+    { onError: errorHandler(), enabled: !!workspaceId },
+  )
+}
+
 export const usePostShares = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
