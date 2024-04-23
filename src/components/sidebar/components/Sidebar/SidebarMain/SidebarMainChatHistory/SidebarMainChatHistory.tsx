@@ -9,15 +9,19 @@ export const SidebarMainChatHistory = () => {
   const { data: chats } = useChatHistoryForSidebarPostV2()
 
   return (
-    chats &&
-    Object.entries<ChatHistoryForSidebarOutput>(chats).map(([title, chats]) => {
-      return (
-        <SidebarMainChatHistoryTimeBlock
-          key={title}
-          title={title}
-          chats={chats}
-        />
-      )
-    })
+    <div className="space-y-8">
+      {chats &&
+        Object.entries<ChatHistoryForSidebarOutput>(chats).map(
+          ([title, chats]) => {
+            return (
+              <SidebarMainChatHistoryTimeBlock
+                key={title}
+                title={title}
+                chats={chats}
+              />
+            )
+          },
+        )}
+    </div>
   )
 }
