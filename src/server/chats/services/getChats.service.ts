@@ -27,6 +27,7 @@ export const getChatsService = async (
       select: {
         id: true,
         title: true,
+        createdAt: true,
       },
       where: scopeChatByWorkspace(
         {

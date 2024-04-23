@@ -3,6 +3,22 @@ import { useCallback } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useDefaultPost } from '../posts/postsHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
+import { getChatsGroupedByDate } from './utils/sidebarUtils'
+
+export const useChatHistoryForSidebarPostV2 = () => {
+  const errorHandler = useErrorHandler()
+  const { data: workspace } = useCurrentWorkspace()
+  return api.sidebar.chatHistoryForSidebarV2.useQuery(
+    { workspaceId: workspace?.id! },
+    {
+      onError: errorHandler(),
+      enabled: !!workspace?.id,
+      select: (data) => {
+        return getChatsGroupedByDate(data)
+      },
+    },
+  )
+}
 
 export const useChatHistoryForSidebarPost = (postId?: string) => {
   const errorHandler = useErrorHandler()
