@@ -2,8 +2,8 @@ import { useCreatePost } from '@/components/posts/postsHooks'
 import {
   Section,
   SectionBody,
-  SectionWrapper,
-  SectionWrapperTitle,
+  SectionsHeader,
+  SectionsShell,
 } from '@/components/ui/Section'
 import { Button } from '@/components/ui/button'
 import { useCurrentWorkspace } from '../../workspacesHooks'
@@ -11,15 +11,15 @@ import { AppsListTable } from './AppsListTable'
 
 export const AppsList = () => {
   return (
-    <SectionWrapper>
-      <SectionWrapperTitle>Workspace GPTs</SectionWrapperTitle>
+    <SectionsShell>
+      <SectionsHeader>Workspace GPTs</SectionsHeader>
       <Section>
         <SectionBody className="space-y-4">
           <AppsListCreateThing />
           <AppsListTable />
         </SectionBody>
       </Section>
-    </SectionWrapper>
+    </SectionsShell>
   )
 }
 

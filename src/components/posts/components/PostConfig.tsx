@@ -3,8 +3,8 @@ import { useErrorHandler } from '@/components/global/errorHandlingHooks'
 import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
 import {
   SectionDivider,
-  SectionWrapper,
-  SectionWrapperHeader,
+  SectionsHeader,
+  SectionsShell,
 } from '@/components/ui/Section'
 import { Button } from '@/components/ui/button'
 import { useSuccessToast } from '@/components/ui/toastHooks'
@@ -76,13 +76,13 @@ export function PostConfig({ postId }: PostConfigProps) {
   }
 
   return (
-    <SectionWrapper>
+    <SectionsShell>
       {!hideBackButton && (
-        <SectionWrapperHeader>
+        <SectionsHeader>
           <Link href={returnToChatRoute}>
             <Button variant="outline">&larr; Back to chat</Button>
           </Link>
-        </SectionWrapperHeader>
+        </SectionsHeader>
       )}
       <FinalForm
         onSubmit={handleSubmit}
@@ -130,6 +130,6 @@ export function PostConfig({ postId }: PostConfigProps) {
           )
         }}
       />
-    </SectionWrapper>
+    </SectionsShell>
   )
 }

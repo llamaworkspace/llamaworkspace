@@ -7,8 +7,10 @@ export const SettingsMembers = () => {
     <Section>
       <SectionHeader title="Members" />
       <SectionBody>
-        <SettingsMembersInviteForm />
-        <SettingsMembersTable />
+        <div className="space-y-8">
+          <SettingsMembersInviteForm />
+          <SettingsMembersTable />
+        </div>
       </SectionBody>
     </Section>
   )
