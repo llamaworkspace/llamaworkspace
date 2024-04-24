@@ -5,8 +5,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { DropdownMenuItemLink } from '@/components/ui/extensions/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline'
+import {
+  PencilIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline'
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
 import type { Post } from '@prisma/client'
 import { Emoji } from 'emoji-picker-react'
@@ -28,57 +33,56 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
   }
 
   return (
-    <>
-      <div
-        onClick={handleCreateChat}
-        className={cn(
-          'group grid grid-cols-12 border-b border-b-zinc-200 py-3',
-          'cursor-pointer transition delay-0 duration-75 hover:bg-zinc-100 ',
-        )}
-      >
-        <div className="flex items-start justify-center">
-          <div className="col-span-2 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-50">
-            <Emoji unified={Math.random() > 0.5 ? '2728' : '1f984'} size={24} />
-          </div>
+    <div
+      onClick={handleCreateChat}
+      className={cn(
+        'group grid grid-cols-12 rounded-lg  py-3',
+        'cursor-pointer transition delay-0 duration-75 hover:bg-zinc-200 ',
+      )}
+    >
+      <div className="flex items-start justify-center">
+        <div className="col-span-2 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-50">
+          <Emoji unified={Math.random() > 0.5 ? '2728' : '1f984'} size={24} />
         </div>
-        <div className="col-span-9 flex flex-col justify-center">
-          <div className=" font-semibold">{post.title ?? 'Untitled'}</div>
+      </div>
+      <div className="col-span-9 flex flex-col justify-center">
+        <div className="font-semibold">{post.title ?? 'Untitled'}</div>
 
-          {/* <div className="line-clamp-2 text-sm">
+        {/* <div className="line-clamp-2 text-sm">
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odio fugit
           incidunt accusantium, minima, eligendi accusamus magnam non reiciendis
           voluptate quam a nam modi nesciunt cupiditate sequi eos, facere
           veritatis dolor?
         </div> */}
+      </div>
+      <div className="col-span-2 flex items-center justify-end gap-x-2 pr-2">
+        <div
+          className={cn(
+            'flex h-8 w-8 transform items-center justify-center rounded opacity-0 duration-100',
+            'group-hover:opacity-100',
+          )}
+        >
+          <PencilSquareIcon className="h-5 w-5" />
         </div>
-        <div className="col-span-2 flex items-center justify-end gap-x-2 pr-2">
-          <div
-            className={cn(
-              'flex h-8 w-8 transform items-center justify-center rounded opacity-0 duration-100',
-              'group-hover:opacity-100',
-            )}
-          >
-            <PencilSquareIcon className="h-5 w-5" />
-          </div>
-          <div
-            className={cn(
-              'flex h-8 w-8 transform items-center justify-center rounded duration-100',
-              'hover:bg-zinc-200',
-            )}
-          >
-            <EllipsisDropdown onDelete={handleDelete} />
-          </div>
+        <div
+          className={cn(
+            'flex h-8 w-8 transform items-center justify-center rounded duration-100',
+            'hover:bg-zinc-200',
+          )}
+        >
+          <EllipsisDropdown postId={post.id} onDelete={handleDelete} />
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
 interface EllipsisDropdownProps {
+  postId: string
   onDelete: () => void
 }
 
-const EllipsisDropdown = ({ onDelete }: EllipsisDropdownProps) => {
+const EllipsisDropdown = ({ postId, onDelete }: EllipsisDropdownProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -92,12 +96,20 @@ const EllipsisDropdown = ({ onDelete }: EllipsisDropdownProps) => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuItemLink
+          onClick={(ev) => {
+            ev.stopPropagation()
+          }}
+          href={`/p/${postId}/configuration?backButton=false`}
+        >
+          <PencilIcon className="mr-2 h-4 w-4" />
+          <span>Edit</span>
+        </DropdownMenuItemLink>
         <DropdownMenuItem
           onClick={(ev) => {
             ev.stopPropagation()
             onDelete()
           }}
-          className="pepe"
         >
           <TrashIcon className="mr-2 h-4 w-4" />
           <span>Delete</span>

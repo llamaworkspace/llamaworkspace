@@ -1,3 +1,4 @@
+import { useCreateSharedChat } from '@/components/chats/chatHooks'
 import { useErrorHandler } from '@/components/global/errorHandlingHooks'
 import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
 import {
@@ -36,6 +37,7 @@ export function PostConfig({ postId }: PostConfigProps) {
   const returnToChatRoute = router.asPath.replace(`/configuration`, '')
   const { data: postConfig } = useLatestPostConfigVersionForPost(postId)
   const { mutate: updatePostConfigVersion } = usePostConfigUpdate()
+  const { mutateAsync: createChat } = useCreateSharedChat()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
   const { can: canEdit } = useCanExecuteActionForPost(
@@ -92,7 +94,11 @@ export function PostConfig({ postId }: PostConfigProps) {
         render={({ handleSubmit, pristine, submitting }) => {
           const handleSubmitAndRedirect = async () => {
             await handleSubmit()
-            void router.push(returnToChatRoute)
+            if (router.query.chat_id) {
+              return void router.push(returnToChatRoute)
+            }
+            if (!postId) return
+            await createChat({ postId })
           }
           return (
             <>

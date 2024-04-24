@@ -31,7 +31,7 @@ export const AppsListTable = () => {
   }
 
   return (
-    <div>
+    <div className="space-y-1">
       {posts?.map((post) => {
         return (
           <AppsListRow
