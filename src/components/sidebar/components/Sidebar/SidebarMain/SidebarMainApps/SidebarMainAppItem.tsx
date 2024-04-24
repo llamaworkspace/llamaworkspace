@@ -7,9 +7,10 @@ import { SidebarMainItemShell } from './SidebarMainItemShell'
 interface AppItemProps {
   postId: string
   title: string | null
+  emoji: string | null
 }
 
-export const SidebarMainAppItem = ({ postId, title }: AppItemProps) => {
+export const SidebarMainAppItem = ({ postId, title, emoji }: AppItemProps) => {
   const navigation = useNavigation()
   const { mutate: createChat } = useCreateSharedChat()
   const isActive = navigation.query.post_id === postId
@@ -20,6 +21,7 @@ export const SidebarMainAppItem = ({ postId, title }: AppItemProps) => {
       isActive={isActive}
       icon={
         <EmojiWithFallback
+          unified={emoji}
           size={24}
           fallbackClassName="h-6 w-6 text-zinc-400"
         />

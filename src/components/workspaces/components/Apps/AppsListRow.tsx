@@ -44,6 +44,7 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
         <div className="col-span-2 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-50">
           <EmojiWithFallback
             size={24}
+            unified={post.emoji}
             fallbackClassName="h-6 w-6 text-zinc-400"
           />
         </div>

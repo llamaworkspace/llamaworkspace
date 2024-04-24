@@ -17,6 +17,7 @@ export const getSortedPostsForSidebarService = async function (
     SELECT
       "Post"."id" as "id",
       "Post"."title" as "title",
+      "Post"."emoji" as "emoji",
       max("PostsOnUsers"."lastVisitedAt") as "lastVisitedAt"
     FROM "Post"
     LEFT JOIN "PostsOnUsers" ON "Post"."id" = "PostsOnUsers"."postId"
