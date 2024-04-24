@@ -19,5 +19,7 @@ export const getChatHistoryForSidebarV2 = protectedProcedure
       userId,
     )
 
-    return await getChatsService(ctx.prisma, context)
+    return await getChatsService(ctx.prisma, context, {
+      excludeEmpty: true,
+    })
   })
