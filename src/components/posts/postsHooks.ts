@@ -209,6 +209,20 @@ export const useDeletePost = () => {
   }
 }
 
+export const useDeletePostV2 = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+
+  return api.posts.delete.useMutation({
+    onError: errorHandler(),
+    onSuccess: async () => {
+      // Important: Invalidate the entire sidebar cache!
+      await utils.sidebar.invalidate()
+      await utils.posts.invalidate()
+    },
+  })
+}
+
 export const usePostById = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
