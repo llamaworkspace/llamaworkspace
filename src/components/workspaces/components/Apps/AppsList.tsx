@@ -1,9 +1,12 @@
+import { useCreatePost } from '@/components/posts/postsHooks'
 import {
   Section,
   SectionBody,
   SectionWrapper,
   SectionWrapperTitle,
 } from '@/components/ui/Section'
+import { Button } from '@/components/ui/button'
+import { useCurrentWorkspace } from '../../workspacesHooks'
 import { AppsListTable } from './AppsListTable'
 
 export const AppsList = () => {
@@ -11,10 +14,27 @@ export const AppsList = () => {
     <SectionWrapper>
       <SectionWrapperTitle>Workspace GPTs</SectionWrapperTitle>
       <Section>
-        <SectionBody>
+        <SectionBody className="space-y-4">
+          <AppsListCreateThing />
           <AppsListTable />
         </SectionBody>
       </Section>
     </SectionWrapper>
+  )
+}
+
+const AppsListCreateThing = () => {
+  const { data: workspace } = useCurrentWorkspace()
+  const { mutateAsync: createPost } = useCreatePost()
+
+  const handleCreatePost = async () => {
+    if (!workspace?.id) return
+    await createPost({ workspaceId: workspace.id })
+  }
+
+  return (
+    <div className="flex w-full justify-end ">
+      <Button onClick={() => void handleCreatePost()}>Create GPT</Button>
+    </div>
   )
 }

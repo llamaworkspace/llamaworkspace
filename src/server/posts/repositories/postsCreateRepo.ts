@@ -10,6 +10,7 @@ import {
 
 interface PostCreateRepoInputProps {
   title?: string
+  emoji?: string
   isDefault?: boolean
   isDemo?: boolean
   hideEmptySettingsAlert?: boolean

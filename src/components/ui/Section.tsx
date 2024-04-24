@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import type { PropsWithChildren } from 'react'
 import { Separator } from './separator'
 
@@ -45,6 +46,10 @@ export const SectionHeader = ({ title, description }: SectionHeaderProps) => {
   )
 }
 
-export const SectionBody = ({ children }: PropsWithChildren) => {
-  return <div className="space-y-8">{children}</div>
+interface SectionBodyProps extends PropsWithChildren {
+  className?: string
+}
+
+export const SectionBody = ({ children, className }: SectionBodyProps) => {
+  return <div className={cn('space-y-8', className)}>{children}</div>
 }
