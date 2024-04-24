@@ -30,7 +30,7 @@ export const ChatNoSettingsAlert = ({
   if (!shouldDisplay) return null
 
   return (
-    <Alert variant="fuchsia">
+    <Alert variant="fuchsia" className="mt-4">
       <AlertRightButton onClick={handleDismiss}>Dismiss</AlertRightButton>
       <ExclamationTriangleIcon className="h-4 w-4" />
       <AlertTitle>Heads up!</AlertTitle>
