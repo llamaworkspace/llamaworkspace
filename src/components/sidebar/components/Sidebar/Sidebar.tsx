@@ -4,8 +4,12 @@ import { SidebarWrapperMobile } from './SidebarWrapperMobile'
 export function Sidebar() {
   return (
     <>
-      <SidebarWrapperMobile />
-      <SidebarWrapperDesktop />
+      <div className="lg:hidden">
+        <SidebarWrapperMobile />
+      </div>
+      <div className="hidden lg:block">
+        <SidebarWrapperDesktop />
+      </div>
     </>
   )
 }
