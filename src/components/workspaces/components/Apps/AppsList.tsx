@@ -9,7 +9,7 @@ import { AppsListTable } from './AppsListTable'
 export const AppsList = () => {
   return (
     <SectionWrapper>
-      <SectionWrapperTitle>Explore GPTs</SectionWrapperTitle>
+      <SectionWrapperTitle>Workspace GPTs</SectionWrapperTitle>
       <Section>
         <SectionBody>
           <AppsListTable />

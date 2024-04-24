@@ -1,5 +1,6 @@
 import { useDeletePostV2, usePosts } from '@/components/posts/postsHooks'
 import { DeleteConfirmationDialog } from '@/components/ui/DeleteConfirmationDialog'
+import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useState } from 'react'
 import { AppsListRow } from './AppsListRow'
 
@@ -10,6 +11,7 @@ export const AppsListTable = () => {
   >(null)
 
   const { mutateAsync: deletePost } = useDeletePostV2()
+  const successToast = useSuccessToast()
 
   const handlePostDeletetionRequest = (postId: string) => {
     setDeleteModalTargetPostId(postId)
@@ -20,7 +22,14 @@ export const AppsListTable = () => {
       if (!deleteModalTargetPostId!) {
         return
       }
-      await deletePost({ id: deleteModalTargetPostId })
+      await deletePost(
+        { id: deleteModalTargetPostId },
+        {
+          onSuccess: () => {
+            successToast(undefined, 'GPT successfully deleted')
+          },
+        },
+      )
       setDeleteModalTargetPostId(null)
     }
     void _doPostDeletion()
