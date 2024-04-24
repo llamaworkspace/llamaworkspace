@@ -1,7 +1,7 @@
 import { useCreateSharedChat } from '@/components/chats/chatHooks'
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
+import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { Emoji } from 'emoji-picker-react'
 import { SidebarMainItemShell } from './SidebarMainItemShell'
 
 interface AppItemProps {
@@ -19,7 +19,10 @@ export const SidebarMainAppItem = ({ postId, title }: AppItemProps) => {
       title={title ?? EMPTY_POST_NAME}
       isActive={isActive}
       icon={
-        <Emoji unified={Math.random() > 0.5 ? '2728' : '1f984'} size={24} />
+        <EmojiWithFallback
+          size={24}
+          fallbackClassName="h-6 w-6 text-zinc-400"
+        />
       }
       onClick={() => createChat({ postId })}
     />

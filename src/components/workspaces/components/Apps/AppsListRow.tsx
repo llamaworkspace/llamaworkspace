@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { DropdownMenuItemLink } from '@/components/ui/extensions/dropdown-menu'
+import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import { cn } from '@/lib/utils'
 import {
   PencilIcon,
@@ -14,7 +15,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
 import type { Post } from '@prisma/client'
-import { Emoji } from 'emoji-picker-react'
 
 interface AppsListRowProps {
   post: Post
@@ -42,7 +42,10 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
     >
       <div className="flex items-start justify-center">
         <div className="col-span-2 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-50">
-          <Emoji unified={Math.random() > 0.5 ? '2728' : '1f984'} size={24} />
+          <EmojiWithFallback
+            size={24}
+            fallbackClassName="h-6 w-6 text-zinc-400"
+          />
         </div>
       </div>
       <div className="col-span-9 flex flex-col justify-center">
