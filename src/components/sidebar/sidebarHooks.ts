@@ -19,24 +19,6 @@ export const useChatHistoryForSidebarPostV2 = () => {
   )
 }
 
-export const usePostsForSidebar = (workspaceId: string | undefined) => {
-  const errorHandler = useErrorHandler()
-
-  const postsForSidebarQuery = api.sidebar.postsForSidebar.useQuery(
-    {
-      workspaceId: workspaceId!,
-    },
-    {
-      onError: errorHandler(),
-      enabled: !!workspaceId,
-    },
-  )
-
-  return {
-    sortedPosts: postsForSidebarQuery.data,
-  }
-}
-
 export const usePostsForSidebarV2 = (workspaceId: string | undefined) => {
   const errorHandler = useErrorHandler()
 
