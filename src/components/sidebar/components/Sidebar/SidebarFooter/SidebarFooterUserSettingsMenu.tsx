@@ -58,7 +58,7 @@ function SidebarDesktopHeaderWorkspacesDropdownSub() {
   )
 }
 
-export function SidebarDesktopHeaderDropdownBody() {
+export function SidebarFooterUserSettingsMenu() {
   const navigation = useNavigation()
   const signOut = useSignOut()
   const { data: workspaces } = useWorkspaces()

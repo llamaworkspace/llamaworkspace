@@ -1,13 +1,13 @@
 import { useGlobalState } from '@/components/global/globalState'
-import { SidebarToggleIcon } from '../SidebarToggleIcon'
-import { SidebarDesktopUserDropdown } from '../sidebarDesktop/SidebarDesktopUserDropdown'
+import { SidebarToggleIcon } from '../../SidebarToggleIcon'
+import { SidebarFooterUserSettingsDropdown } from './SidebarFooterUserSettingsDropdown'
 
 export function SidebarFooter() {
   const { toggleDesktopSidebar } = useGlobalState()
 
   return (
     <div className="flex h-12 shrink-0 items-center justify-between gap-x-4 border-b border-zinc-200/50 px-4">
-      <SidebarDesktopUserDropdown />
+      <SidebarFooterUserSettingsDropdown />
 
       <button
         type="button"

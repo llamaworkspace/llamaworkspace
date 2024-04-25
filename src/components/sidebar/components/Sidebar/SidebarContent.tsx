@@ -1,4 +1,4 @@
-import { SidebarFooter } from './SidebarFooter'
+import { SidebarFooter } from './SidebarFooter/SidebarFooter'
 import { SidebarHeader } from './SidebarHeader'
 import { SidebarMain } from './SidebarMain/SidebarMain'
 
