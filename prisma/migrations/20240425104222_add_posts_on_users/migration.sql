@@ -4,6 +4,8 @@ CREATE TABLE "PostsOnUsers" (
     "userId" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
     "position" INTEGER,
+    "pinnedAt" TIMESTAMP(3),
+    "lastVisitedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

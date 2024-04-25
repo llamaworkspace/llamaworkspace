@@ -131,14 +131,16 @@ model Post {
 }
 
 model PostsOnUsers {
-    id        String   @id @default(cuid())
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    postId    String
-    post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-    position  Int?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id            String    @id @default(cuid())
+    userId        String
+    user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    postId        String
+    post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    position      Int?
+    pinnedAt      DateTime?
+    lastVisitedAt DateTime?
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
 
     @@unique([userId, postId])
     @@unique([userId, postId, position])
