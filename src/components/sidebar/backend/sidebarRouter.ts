@@ -1,10 +1,10 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
-import { getChatHistoryForSidebarV2 } from './procedures/getChatHistoryForSidebarV2'
+import { getChatHistoryForSidebar } from './procedures/getChatHistoryForSidebar'
 import { getInfoCardForSidebar } from './procedures/getInfoCardForSidebar'
-import { getPostsForSidebarV2 } from './procedures/getPostsForSidebarV2'
+import { getPostsForSidebar } from './procedures/getPostsForSidebar'
 
 export const sidebarRouter = createTRPCRouter({
-  postsForSidebarV2: getPostsForSidebarV2,
-  chatHistoryForSidebarV2: getChatHistoryForSidebarV2,
+  postsForSidebar: getPostsForSidebar,
+  chatHistoryForSidebar: getChatHistoryForSidebar,
   infoCardForSidebar: getInfoCardForSidebar,
 })

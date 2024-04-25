@@ -4,10 +4,10 @@ import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 import { getChatsGroupedByDate } from './utils/sidebarUtils'
 
-export const useChatHistoryForSidebarPostV2 = () => {
+export const useChatHistoryForSidebarPost = () => {
   const errorHandler = useErrorHandler()
   const { data: workspace } = useCurrentWorkspace()
-  return api.sidebar.chatHistoryForSidebarV2.useQuery(
+  return api.sidebar.chatHistoryForSidebar.useQuery(
     { workspaceId: workspace?.id! },
     {
       onError: errorHandler(),
@@ -19,10 +19,10 @@ export const useChatHistoryForSidebarPostV2 = () => {
   )
 }
 
-export const usePostsForSidebarV2 = (workspaceId: string | undefined) => {
+export const usePostsForSidebar = (workspaceId: string | undefined) => {
   const errorHandler = useErrorHandler()
 
-  return api.sidebar.postsForSidebarV2.useQuery(
+  return api.sidebar.postsForSidebar.useQuery(
     {
       workspaceId: workspaceId!,
     },

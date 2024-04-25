@@ -130,7 +130,7 @@ export const usePrompt = (chatId?: string) => {
       setIsLoading(false)
       setVercelMessages([])
       // Expects the title to be generated
-      void utils.sidebar.chatHistoryForSidebarV2.invalidate()
+      void utils.sidebar.chatHistoryForSidebar.invalidate()
     },
 
     onError: (error) => {
@@ -306,7 +306,7 @@ export const useUpdateChat = (debounceMs = 0) => {
     onError: errorHandler(),
     onSuccess: () => {
       void utils.sidebar.postsForSidebar.invalidate()
-      void utils.sidebar.chatHistoryForSidebarV2.invalidate()
+      void utils.sidebar.chatHistoryForSidebar.invalidate()
     },
   })
 
@@ -321,7 +321,7 @@ export const useUpdateChat = (debounceMs = 0) => {
     mutate: debounce((params: Params, options?: Options) => {
       if (!post || !workspace) return
 
-      sidebar.chatHistoryForSidebarV2.setData(
+      sidebar.chatHistoryForSidebar.setData(
         { workspaceId: workspace.id },
         (previous) => {
           if (!previous) return previous

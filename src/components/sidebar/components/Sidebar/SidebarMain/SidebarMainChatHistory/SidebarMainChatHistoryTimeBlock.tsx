@@ -3,7 +3,7 @@ import { useNavigation } from '@/lib/frontend/useNavigation'
 import { SidebarMainChatHistoryItem } from './SidebarMainChatHistoryItem'
 
 type ChatHistoryForSidebarOutput =
-  RouterOutputs['sidebar']['chatHistoryForSidebarV2']
+  RouterOutputs['sidebar']['chatHistoryForSidebar']
 
 interface ChatHistoryTimeBlockProps {
   title: string

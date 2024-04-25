@@ -7,7 +7,7 @@ const zInput = z.object({
   workspaceId: z.string(),
 })
 
-export const getChatHistoryForSidebarV2 = protectedProcedure
+export const getChatHistoryForSidebar = protectedProcedure
   .input(zInput)
   .query(async ({ input, ctx }) => {
     const userId = ctx.session.user.id
