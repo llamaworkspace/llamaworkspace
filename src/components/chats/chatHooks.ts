@@ -187,6 +187,7 @@ export const usePrompt = (chatId?: string) => {
         { chatId, author: Author.User, message },
         {
           onSuccess: (userMessage) => {
+            void utils.sidebar.chatHistoryForSidebar.invalidate()
             utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
               return produce(previous, (draft) => {
                 let target = draft?.find(

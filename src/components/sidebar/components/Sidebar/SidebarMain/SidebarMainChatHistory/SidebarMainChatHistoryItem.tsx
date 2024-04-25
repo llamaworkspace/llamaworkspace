@@ -41,7 +41,7 @@ interface EllipsisDropdownProps {
   onDelete: () => void
 }
 
-const EllipsisDropdown = ({ postId, onDelete }: EllipsisDropdownProps) => {
+const EllipsisDropdown = ({ onDelete }: EllipsisDropdownProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
