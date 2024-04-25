@@ -1,10 +1,12 @@
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
-interface PostIdWithLastVisitedAt {
+interface PostIdWithPosition {
   id: string
   title: string | null
-  lastVisitedAt: Date
+  emoji: string | null
+  position: number | null
+  updatedAt: Date
 }
 
 export const getSortedPostsForSidebarService = async function (
@@ -29,5 +31,5 @@ export const getSortedPostsForSidebarService = async function (
     GROUP BY 1,2,3,4
     ORDER BY "position" ASC
   `
-  return result as PostIdWithLastVisitedAt[]
+  return result as PostIdWithPosition[]
 }
