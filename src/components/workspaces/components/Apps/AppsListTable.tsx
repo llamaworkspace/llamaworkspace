@@ -1,4 +1,4 @@
-import { useDeletePostV2, usePosts } from '@/components/posts/postsHooks'
+import { useDeletePost, usePosts } from '@/components/posts/postsHooks'
 import { DeleteConfirmationDialog } from '@/components/ui/DeleteConfirmationDialog'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useState } from 'react'
@@ -10,7 +10,7 @@ export const AppsListTable = () => {
     string | null
   >(null)
 
-  const { mutateAsync: deletePost } = useDeletePostV2()
+  const { mutateAsync: deletePost } = useDeletePost()
   const successToast = useSuccessToast()
 
   const handlePostDeletetionRequest = (postId: string) => {

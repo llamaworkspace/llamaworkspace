@@ -2,10 +2,9 @@ import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { serialDebouncer } from '@/lib/utils'
 import { produce } from 'immer'
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { throttle } from 'underscore'
 import { useErrorHandler } from '../global/errorHandlingHooks'
-import { usePostsForSidebar } from '../sidebar/sidebarHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 import type { PostUpdateInput } from './postsTypes'
 
@@ -141,75 +140,6 @@ export const useUpdatePost = (debounceMs = 0) => {
 }
 
 export const useDeletePost = () => {
-  const errorHandler = useErrorHandler()
-  const navigation = useNavigation()
-  const utils = api.useContext()
-  const { data: workspace } = useCurrentWorkspace()
-
-  const { sortedPosts } = usePostsForSidebar(workspace?.id)
-  const routerPostId = navigation.query.post_id as string | undefined
-
-  const { isSuccess, reset, mutate, ...rest } = api.posts.delete.useMutation({
-    onError: errorHandler(),
-    onSuccess: async () => {
-      // Important: Invalidate the entire sidebar cache!
-      await utils.sidebar.invalidate()
-    },
-  })
-
-  useEffect(() => {
-    if (isSuccess) {
-      reset()
-    }
-  }, [isSuccess, reset])
-
-  type MutateArgs = Parameters<typeof mutate>
-  type Params = MutateArgs[0]
-  type Options = MutateArgs[1]
-
-  return {
-    mutate: async (params: Params, options?: Options) => {
-      if (!sortedPosts) return
-      if (!workspace?.id) return
-      if (routerPostId === params.id) {
-        const deletableSortedPostIndex = sortedPosts.findIndex(
-          (post) => post.id === params.id,
-        )
-
-        if (deletableSortedPostIndex > 0) {
-          const targetPost = sortedPosts[deletableSortedPostIndex - 1]
-
-          if (!targetPost?.firstChatId) return
-
-          await navigation.replace(`/p/:postId/c/:chatId`, {
-            postId: targetPost.id,
-            chatId: targetPost.firstChatId,
-          })
-        } else if (deletableSortedPostIndex < sortedPosts.length - 1) {
-          const targetPost = sortedPosts[deletableSortedPostIndex + 1]
-
-          if (!targetPost?.firstChatId) return
-
-          await navigation.replace(`/p/:postId/c/:chatId`, {
-            postId: targetPost.id,
-            chatId: targetPost.firstChatId,
-          })
-        } else {
-          await navigation.replace('/w/:workspaceId/empty', {
-            workspaceId: workspace.id,
-          })
-        }
-      }
-
-      mutate(params, options)
-    },
-    isSuccess,
-    reset,
-    ...rest,
-  }
-}
-
-export const useDeletePostV2 = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
