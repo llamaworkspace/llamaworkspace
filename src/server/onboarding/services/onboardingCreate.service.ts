@@ -9,6 +9,7 @@ export const onboardingCreateService = async (
 ) => {
   const post = await postCreateRepo(prisma, workspaceId, userId, {
     title: `Joia's fun facts teller`,
+    emoji: '1f920', // Cowboy emoji 🤠
     isDemo: true,
   })
 

@@ -209,6 +209,20 @@ export const useDeletePost = () => {
   }
 }
 
+export const useDeletePostV2 = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+
+  return api.posts.delete.useMutation({
+    onError: errorHandler(),
+    onSuccess: async () => {
+      // Important: Invalidate the entire sidebar cache!
+      await utils.sidebar.invalidate()
+      await utils.posts.invalidate()
+    },
+  })
+}
+
 export const usePostById = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
@@ -217,6 +231,19 @@ export const usePostById = (postId?: string) => {
       id: postId!,
     },
     { onError: errorHandler(), enabled: !!postId },
+  )
+}
+
+export const usePosts = () => {
+  const errorHandler = useErrorHandler()
+  const { data: workspace } = useCurrentWorkspace()
+  const workspaceId = workspace?.id
+
+  return api.posts.getAll.useQuery(
+    {
+      workspaceId: workspaceId ?? '',
+    },
+    { onError: errorHandler(), enabled: !!workspaceId },
   )
 }
 

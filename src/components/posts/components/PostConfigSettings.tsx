@@ -19,7 +19,7 @@ export const PostConfigSettings = ({ disabled = false }) => {
   return (
     <Section>
       <SectionHeader title="Settings" />
-      <SectionBody>
+      <SectionBody className="space-y-8">
         <div>
           <Field
             name="initial_message"

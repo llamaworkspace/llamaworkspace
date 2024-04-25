@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { useMemo } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { useGlobalState } from '../../global/globalState'
-import { SidebarToggleIcon } from '../../sidebar/SidebarToggleIcon'
+import { SidebarToggleIcon } from '../../sidebar/components/SidebarToggleIcon'
 
 export function MainLayoutHeaderForStandaloneChat({
   chatId,

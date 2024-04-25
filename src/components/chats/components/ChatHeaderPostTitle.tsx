@@ -2,7 +2,7 @@ import { useCanExecuteActionForPost } from '@/components/permissions/permissions
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { usePostById, useUpdatePost } from '@/components/posts/postsHooks'
 import { Editable } from '@/components/ui/Editable'
-import { JoiaIcon } from '@/components/ui/icons/JoiaIcon'
+import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import {
   Popover,
   PopoverContent,
@@ -59,7 +59,7 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
                   </div>
                 ) : (
                   <div className="mr-2 flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center text-[1.1rem] text-zinc-300">
-                    <JoiaIcon />
+                    <JoiaIcon24 />
                   </div>
                 )}
               </div>

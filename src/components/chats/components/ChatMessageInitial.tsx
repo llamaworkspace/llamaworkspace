@@ -1,5 +1,5 @@
 import { usePostById } from '@/components/posts/postsHooks'
-import { JoiaIcon } from '@/components/ui/icons/JoiaIcon'
+import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'
 import ReactMarkdown from 'react-markdown'
@@ -28,8 +28,8 @@ export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
               {post?.emoji ? (
                 <Emoji unified={post.emoji} size={54} />
               ) : (
-                <div className="inline-flex h-16 w-16 text-zinc-200">
-                  <JoiaIcon />
+                <div className="inline-flex h-16 w-16 text-zinc-300">
+                  <JoiaIcon24 className="h-16 w-16" />
                 </div>
               )}
             </>

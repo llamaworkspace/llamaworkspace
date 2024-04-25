@@ -66,6 +66,7 @@ model User {
     authoredChats    Chat[]
     postSorts        PostSort[]
     workspaceInvites WorkspaceInvite[]
+    postsMeta        PostsOnUsers[]
 }
 
 model Workspace {
@@ -126,6 +127,23 @@ model Post {
     postShares             PostShare[]
     postConfigVersions     PostConfigVersion[]
     shares                 Share[]
+    usersMeta              PostsOnUsers[]
+}
+
+model PostsOnUsers {
+    id            String    @id @default(cuid())
+    userId        String
+    user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    postId        String
+    post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    position      Int?
+    pinnedAt      DateTime?
+    lastVisitedAt DateTime?
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+
+    @@unique([userId, postId])
+    @@unique([userId, postId, position])
 }
 
 model PostShare {
@@ -187,7 +205,7 @@ model Chat {
     messages            Message[]
     createdAt           DateTime           @default(now())
     updatedAt           DateTime           @updatedAt
-    chatRun             ChatRun[]
+    chatRuns            ChatRun[]
 }
 
 model Message {

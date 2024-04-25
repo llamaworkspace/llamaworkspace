@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react'
 import { Separator } from './separator'
 
-export const SectionWrapper = ({ children }: PropsWithChildren) => {
+export const SectionsShell = ({ children }: PropsWithChildren) => {
   return (
     <div className="w-full overflow-y-auto px-4 pb-16 pt-8 md:px-0">
       <div className="mx-auto w-full max-w-4xl space-y-8">
@@ -11,11 +11,7 @@ export const SectionWrapper = ({ children }: PropsWithChildren) => {
   )
 }
 
-export const SectionWrapperHeader = ({ children }: PropsWithChildren) => {
-  return <div className="mb-8">{children}</div>
-}
-
-export const SectionWrapperTitle = ({ children }: PropsWithChildren) => {
+export const SectionsHeader = ({ children }: PropsWithChildren) => {
   return (
     <div className="mb-12 border-b pb-4 text-3xl font-bold tracking-tight">
       {children}
@@ -45,6 +41,10 @@ export const SectionHeader = ({ title, description }: SectionHeaderProps) => {
   )
 }
 
-export const SectionBody = ({ children }: PropsWithChildren) => {
-  return <div className="space-y-8">{children}</div>
+interface SectionBodyProps extends PropsWithChildren {
+  className?: string
+}
+
+export const SectionBody = ({ children, className }: SectionBodyProps) => {
+  return <div className={className}>{children}</div>
 }

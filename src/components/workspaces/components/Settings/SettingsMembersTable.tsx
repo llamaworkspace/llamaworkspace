@@ -20,13 +20,13 @@ import { type z } from 'zod'
 import {
   WorkspaceMemberRole,
   type zodWorkspaceMemberOutput,
-} from '../backend/workspacesBackendUtils'
+} from '../../backend/workspacesBackendUtils'
 import {
   useCancelWorkspaceInvite,
   useRevokeWorkspaceMemberAccess,
   useWorkspaceMembers,
-} from '../workspaceMembersHooks'
-import { useCurrentWorkspace } from '../workspacesHooks'
+} from '../../workspaceMembersHooks'
+import { useCurrentWorkspace } from '../../workspacesHooks'
 
 type WorkspaceMember = z.infer<typeof zodWorkspaceMemberOutput>
 

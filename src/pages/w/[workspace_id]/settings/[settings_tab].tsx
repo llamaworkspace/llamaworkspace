@@ -1,6 +1,6 @@
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
-import { Settings } from '@/components/workspaces/components/Settings'
+import { Settings } from '@/components/workspaces/components/Settings/Settings'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 
 export default function SettingsPage() {
