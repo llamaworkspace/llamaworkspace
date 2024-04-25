@@ -123,11 +123,6 @@ export function Chatbox({
     setTextAreaExpectedHeight(targetHeight)
   }
 
-  const handleReset = () => {
-    setValue('')
-    textareaRef.current?.focus()
-  }
-
   const showSkeleton = !chatId
 
   return (
