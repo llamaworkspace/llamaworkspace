@@ -26,11 +26,6 @@ module.exports = {
         zinc: {
           '10': '#FCFCFC',
         },
-        sand: {
-          lightest: '#FCFAF8',
-          light: '#F8F5F1',
-          mid: '#EFEAE2',
-        },
       },
       keyframes: {
         'accordion-down': {
