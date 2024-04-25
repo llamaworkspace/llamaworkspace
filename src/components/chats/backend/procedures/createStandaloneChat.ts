@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { createStandaloneChatService } from '@/server/chats/services/createStandaloneChat.service'
+import { createChatService } from '@/server/chats/services/createChat.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -26,7 +26,7 @@ export const createStandaloneChat = protectedProcedure
       userId,
     )
 
-    return await createStandaloneChatService(ctx.prisma, context, {
+    return await createChatService(ctx.prisma, context, {
       postId,
     })
   })

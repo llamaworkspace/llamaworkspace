@@ -78,4 +78,37 @@ describe('createChatService', () => {
       updatePostSortingV2ServiceWrapper.updatePostSortingV2Service,
     ).toHaveBeenCalled()
   })
+
+  describe('when the post is default', () => {
+    let defaultPost: Post
+
+    beforeEach(async () => {
+      defaultPost = await PostFactory.create(prisma, {
+        userId: user.id,
+        workspaceId: workspace.id,
+        isDefault: true,
+      })
+    })
+
+    it('creates a postConfigVersion', async () => {
+      const result = await subject(workspace.id, user.id, defaultPost.id)
+
+      const dbPostConfigVersion =
+        await prisma.postConfigVersion.findFirstOrThrow({
+          where: {
+            postId: defaultPost.id,
+          },
+        })
+
+      expect(result.postConfigVersionId).toEqual(dbPostConfigVersion.id)
+      expect(dbPostConfigVersion.model).toEqual('openai/gpt-3.5-turbo')
+    })
+
+    it('does not update post sorting', async () => {
+      await subject(workspace.id, user.id, defaultPost.id)
+      expect(
+        updatePostSortingV2ServiceWrapper.updatePostSortingV2Service,
+      ).not.toHaveBeenCalled()
+    })
+  })
 })
