@@ -141,7 +141,6 @@ model PostsOnUsers {
     updatedAt     DateTime  @updatedAt
 
     @@unique([userId, postId])
-    @@unique([userId, postId, position])
 }
 
 model PostShare {
