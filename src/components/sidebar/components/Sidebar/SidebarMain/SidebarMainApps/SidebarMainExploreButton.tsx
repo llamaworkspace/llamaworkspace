@@ -11,7 +11,7 @@ export const SidebarMainExploreButton = () => {
 
   return (
     <SidebarMainItemShell
-      title="See all GPTs"
+      title="All GPTs"
       isActive={isActive}
       showPencil={false}
       icon={<Square3Stack3DIcon className="h-6 w-6" />}
