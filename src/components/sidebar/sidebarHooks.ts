@@ -1,7 +1,6 @@
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { useErrorHandler } from '../global/errorHandlingHooks'
-import { useDefaultPost } from '../posts/postsHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 import { getChatsGroupedByDate } from './utils/sidebarUtils'
 
@@ -16,18 +15,6 @@ export const useChatHistoryForSidebarPostV2 = () => {
       select: (data) => {
         return getChatsGroupedByDate(data)
       },
-    },
-  )
-}
-
-export const useChatHistoryForSidebarPostDELME = (postId?: string) => {
-  const errorHandler = useErrorHandler()
-  const { data: workspace } = useCurrentWorkspace()
-  return api.sidebar.chatHistoryForSidebar.useQuery(
-    { postId: postId!, workspaceId: workspace?.id! },
-    {
-      onError: errorHandler(),
-      enabled: !!postId && !!workspace?.id,
     },
   )
 }
@@ -74,11 +61,6 @@ export const useInfoCardForSidebar = () => {
       enabled: !!workspace?.id,
     },
   )
-}
-
-export const useStandaloneChats = () => {
-  const { data: post } = useDefaultPost()
-  return useChatHistoryForSidebarPostDELME(post?.id)
 }
 
 export const useSidebarButtonLikeStyles = (isSelected = false) => {

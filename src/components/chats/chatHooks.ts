@@ -33,8 +33,7 @@ export const useCreateChatForApp = () => {
   return api.chats.createChat.useMutation({
     onError: errorHandler(),
     onSuccess: (chat) => {
-      void utils.sidebar.postsForSidebar.invalidate()
-      void utils.sidebar.chatHistoryForSidebar.invalidate()
+      void utils.sidebar.invalidate()
       void navigation.push(`/p/:postId/c/:chatId`, {
         postId: chat.postId,
         chatId: chat.id,
@@ -52,7 +51,7 @@ export const useCreateStandaloneChat = () => {
   const { mutate, ...obj } = api.chats.createChat.useMutation({
     onError: errorHandler(),
     onSuccess: (chat) => {
-      void utils.sidebar.chatHistoryForSidebar.invalidate()
+      void utils.sidebar.invalidate()
       void navigation.push(`/c/:chatId`, {
         chatId: chat.id,
       })
@@ -131,7 +130,7 @@ export const usePrompt = (chatId?: string) => {
       setIsLoading(false)
       setVercelMessages([])
       // Expects the title to be generated
-      void utils.sidebar.chatHistoryForSidebar.invalidate()
+      void utils.sidebar.chatHistoryForSidebarV2.invalidate()
     },
 
     onError: (error) => {
@@ -307,7 +306,7 @@ export const useUpdateChat = (debounceMs = 0) => {
     onError: errorHandler(),
     onSuccess: () => {
       void utils.sidebar.postsForSidebar.invalidate()
-      void utils.sidebar.chatHistoryForSidebar.invalidate()
+      void utils.sidebar.chatHistoryForSidebarV2.invalidate()
     },
   })
 
@@ -322,8 +321,8 @@ export const useUpdateChat = (debounceMs = 0) => {
     mutate: debounce((params: Params, options?: Options) => {
       if (!post || !workspace) return
 
-      chatHistoryForSidebar.setData(
-        { postId: post.id, workspaceId: workspace.id },
+      sidebar.chatHistoryForSidebarV2.setData(
+        { workspaceId: workspace.id },
         (previous) => {
           if (!previous) return previous
 
