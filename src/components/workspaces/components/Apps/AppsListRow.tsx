@@ -36,8 +36,8 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
     <div
       onClick={handleCreateChat}
       className={cn(
-        'group grid grid-cols-12 rounded-lg  py-3',
-        'cursor-pointer transition delay-0 duration-75 hover:bg-zinc-200 ',
+        'group grid grid-cols-12 rounded-lg py-3',
+        'cursor-pointer bg-zinc-50 transition delay-0 duration-75 hover:bg-zinc-200 ',
       )}
     >
       <div className="flex items-start justify-center">
