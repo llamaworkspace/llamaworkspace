@@ -37,7 +37,7 @@ const handleCaseChatRunsExist = async (
       ),
     },
     include: {
-      chatRun: {
+      chatRuns: {
         select: { id: true },
         take: 1,
       },
@@ -51,7 +51,7 @@ const handleCaseChatRunsExist = async (
     return { url: `/c/new?workspaceId=${workspaceId}` }
   }
 
-  const latestPrivateChatHasRuns = !!latestPrivateChat.chatRun.length
+  const latestPrivateChatHasRuns = !!latestPrivateChat.chatRuns.length
 
   if (latestPrivateChatHasRuns) {
     return { url: `/c/new?workspaceId=${workspaceId}` }
