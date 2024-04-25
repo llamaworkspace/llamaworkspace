@@ -144,6 +144,21 @@ export const useDeleteSharedChat = () => {
   }
 }
 
+export const useDeleteChat = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+
+  const { mutate: createChat } = useCreatePrivateChat()
+
+  return api.chats.deleteChat.useMutation({
+    onError: errorHandler(),
+    onSuccess: async () => {
+      await utils.sidebar.invalidate()
+      createChat()
+    },
+  })
+}
+
 export const useUpdatePostConfigForStandaloneChat = () => {
   const errorHandler = useErrorHandler()
 
