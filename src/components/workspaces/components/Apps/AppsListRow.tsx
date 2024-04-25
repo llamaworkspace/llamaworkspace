@@ -1,4 +1,4 @@
-import { useCreateSharedChat } from '@/components/chats/chatHooks'
+import { useCreateChat } from '@/components/chats/chatHooks'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +22,7 @@ interface AppsListRowProps {
 }
 
 export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
-  const { mutate: createChat } = useCreateSharedChat()
+  const { mutate: createChat } = useCreateChat()
 
   const handleCreateChat = () => {
     createChat({ postId: post.id })

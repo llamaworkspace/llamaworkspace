@@ -25,7 +25,7 @@ export const useChatById = (chatId?: string) => {
   )
 }
 
-export const useCreateSharedChat = () => {
+export const useCreateChat = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
   const navigation = useNavigation()

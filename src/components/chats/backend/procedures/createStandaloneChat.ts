@@ -14,12 +14,6 @@ export const createStandaloneChat = protectedProcedure
 
     const userId = ctx.session.user.id
 
-    // await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-    //   PermissionAction.Use,
-    //   userId,
-    //   postId,
-    // )
-
     const post = await ctx.prisma.post.findUniqueOrThrow({
       where: {
         id: postId,
