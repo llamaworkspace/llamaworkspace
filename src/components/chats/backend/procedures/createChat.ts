@@ -1,7 +1,6 @@
-import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { createChatService } from '@/server/chats/services/createChat.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
 
 const zInput = z.object({
@@ -15,37 +14,17 @@ export const createChat = protectedProcedure
 
     const userId = ctx.session.user.id
 
-    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-      PermissionAction.Use,
+    const post = await ctx.prisma.post.findFirstOrThrow({
+      where: {
+        id: postId,
+      },
+    })
+
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      post.workspaceId,
       userId,
-      postId,
     )
 
-    return await prismaAsTrx(ctx.prisma, async (prisma) => {
-      const chat = await prisma.chat.create({
-        data: {
-          ...input,
-          authorId: userId,
-        },
-      })
-
-      await prisma.postsOnUsers.upsert({
-        where: {
-          userId_postId: {
-            postId: input.postId,
-            userId,
-          },
-        },
-        update: {
-          lastVisitedAt: new Date(),
-        },
-        create: {
-          postId: input.postId,
-          userId,
-          lastVisitedAt: new Date(),
-        },
-      })
-
-      return chat
-    })
+    return await createChatService(ctx.prisma, context, input)
   })

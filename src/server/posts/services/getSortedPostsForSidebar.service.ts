@@ -18,15 +18,16 @@ export const getSortedPostsForSidebarService = async function (
       "Post"."id" as "id",
       "Post"."title" as "title",
       "Post"."emoji" as "emoji",
-      max("PostsOnUsers"."lastVisitedAt") as "lastVisitedAt"
+      "PostsOnUsers"."position" as "position",
+      max("PostsOnUsers"."updatedAt") as "updatedAt"
     FROM "Post"
     LEFT JOIN "PostsOnUsers" ON "Post"."id" = "PostsOnUsers"."postId"
     WHERE "Post"."workspaceId" = ${workspaceId}
     AND "Post"."isDefault" = false
     AND "PostsOnUsers"."userId" = ${userId}
-    AND "PostsOnUsers"."lastVisitedAt" IS NOT NULL
-    GROUP BY 1
-    ORDER BY "lastVisitedAt" DESC
+    AND "PostsOnUsers"."position" IS NOT NULL
+    GROUP BY 1,2,3,4
+    ORDER BY "position" ASC
   `
   return result as PostIdWithLastVisitedAt[]
 }
