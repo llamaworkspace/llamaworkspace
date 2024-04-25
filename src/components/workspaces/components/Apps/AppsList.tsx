@@ -15,7 +15,7 @@ export const AppsList = () => {
       <SectionsHeader>Workspace GPTs</SectionsHeader>
       <Section>
         <SectionBody className="space-y-4">
-          <AppsListCreateThing />
+          <CreateAppSection />
           <AppsListTable />
         </SectionBody>
       </Section>
@@ -23,7 +23,7 @@ export const AppsList = () => {
   )
 }
 
-const AppsListCreateThing = () => {
+const CreateAppSection = () => {
   const { data: workspace } = useCurrentWorkspace()
   const { mutateAsync: createPost } = useCreatePost()
 

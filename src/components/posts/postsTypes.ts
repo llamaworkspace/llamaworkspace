@@ -1,5 +1,5 @@
 import type { RootRouter } from '@/server/trpc/rootRouter'
-import type { Post, PostSort, Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import type { inferRouterInputs } from '@trpc/server'
 
 export type PostWithChatIds = Prisma.PostGetPayload<{
@@ -18,5 +18,3 @@ export type PostUpdateParams = Omit<PostUpdateInput, 'id'>
 export interface ComponentWithPostId {
   postId: string
 }
-
-export type PostSortWithPost = PostSort & { post: Post }

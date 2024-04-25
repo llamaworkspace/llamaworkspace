@@ -1,15 +1,13 @@
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { useCallback } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
-import { useDefaultPost } from '../posts/postsHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 import { getChatsGroupedByDate } from './utils/sidebarUtils'
 
-export const useChatHistoryForSidebarPostV2 = () => {
+export const useChatHistoryForSidebar = () => {
   const errorHandler = useErrorHandler()
   const { data: workspace } = useCurrentWorkspace()
-  return api.sidebar.chatHistoryForSidebarV2.useQuery(
+  return api.sidebar.chatHistoryForSidebar.useQuery(
     { workspaceId: workspace?.id! },
     {
       onError: errorHandler(),
@@ -21,22 +19,10 @@ export const useChatHistoryForSidebarPostV2 = () => {
   )
 }
 
-export const useChatHistoryForSidebarPost = (postId?: string) => {
-  const errorHandler = useErrorHandler()
-  const { data: workspace } = useCurrentWorkspace()
-  return api.sidebar.chatHistoryForSidebar.useQuery(
-    { postId: postId!, workspaceId: workspace?.id! },
-    {
-      onError: errorHandler(),
-      enabled: !!postId && !!workspace?.id,
-    },
-  )
-}
-
 export const usePostsForSidebar = (workspaceId: string | undefined) => {
   const errorHandler = useErrorHandler()
 
-  const postsForSidebarQuery = api.sidebar.postsForSidebar.useQuery(
+  return api.sidebar.postsForSidebar.useQuery(
     {
       workspaceId: workspaceId!,
     },
@@ -45,82 +31,6 @@ export const usePostsForSidebar = (workspaceId: string | undefined) => {
       enabled: !!workspaceId,
     },
   )
-
-  return {
-    sortedPosts: postsForSidebarQuery.data,
-  }
-}
-
-export const usePostsForSidebarV2 = (workspaceId: string | undefined) => {
-  const errorHandler = useErrorHandler()
-
-  return api.sidebar.postsForSidebarV2.useQuery(
-    {
-      workspaceId: workspaceId!,
-    },
-    {
-      onError: errorHandler(),
-      enabled: !!workspaceId,
-    },
-  )
-}
-
-export const useUpdatePostSorting = (workspaceId: string | undefined) => {
-  const errorHandler = useErrorHandler()
-  const utils = api.useContext()
-
-  const { sortedPosts } = usePostsForSidebar(workspaceId)
-
-  const { mutate } = api.sidebar.updatePostSortingForSidebar.useMutation({
-    onError: errorHandler(),
-    onSuccess: () => {
-      void utils.sidebar.postsForSidebar.invalidate()
-    },
-  })
-
-  const movePostBefore = useCallback(
-    (postId: string, pivotPostId: string) => {
-      if (sortedPosts) {
-        const newSortedPostIds = sortedPosts
-          .filter((post) => post.id !== postId)
-          .map((post) => post.id)
-        const pivotPostIndex = newSortedPostIds.findIndex(
-          (currentPostId) => currentPostId === pivotPostId,
-        )
-
-        newSortedPostIds.splice(pivotPostIndex, 0, postId)
-
-        mutate({
-          workspaceId: workspaceId!,
-          sortedPosts: newSortedPostIds,
-        })
-      }
-    },
-    [sortedPosts, workspaceId, mutate],
-  )
-
-  const movePostAfter = useCallback(
-    (postId: string, pivotPostId: string) => {
-      if (sortedPosts) {
-        const newSortedPostIds = sortedPosts
-          .map((post) => post.id)
-          .filter((currentPostId) => currentPostId !== postId)
-        const pivotPostIndex = newSortedPostIds.findIndex(
-          (currentPostId) => currentPostId === pivotPostId,
-        )
-
-        newSortedPostIds.splice(pivotPostIndex + 1, 0, postId)
-
-        mutate({
-          workspaceId: workspaceId!,
-          sortedPosts: newSortedPostIds,
-        })
-      }
-    },
-    [sortedPosts, workspaceId, mutate],
-  )
-
-  return { movePostBefore, movePostAfter }
 }
 
 export const useInfoCardForSidebar = () => {
@@ -133,11 +43,6 @@ export const useInfoCardForSidebar = () => {
       enabled: !!workspace?.id,
     },
   )
-}
-
-export const useStandaloneChats = () => {
-  const { data: post } = useDefaultPost()
-  return useChatHistoryForSidebarPost(post?.id)
 }
 
 export const useSidebarButtonLikeStyles = (isSelected = false) => {

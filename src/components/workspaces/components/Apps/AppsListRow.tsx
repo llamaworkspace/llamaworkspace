@@ -1,4 +1,4 @@
-import { useCreateSharedChat } from '@/components/chats/chatHooks'
+import { useCreateChatForApp } from '@/components/chats/chatHooks'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +22,7 @@ interface AppsListRowProps {
 }
 
 export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
-  const { mutate: createChat } = useCreateSharedChat()
+  const { mutate: createChat } = useCreateChatForApp()
 
   const handleCreateChat = () => {
     createChat({ postId: post.id })
@@ -52,6 +52,7 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
       <div className="col-span-9 flex flex-col justify-center">
         <div className="font-semibold">{post.title ?? 'Untitled'}</div>
 
+        {/* Description text. If, when needed */}
         {/* <div className="line-clamp-2 text-sm">
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odio fugit
           incidunt accusantium, minima, eligendi accusamus magnam non reiciendis

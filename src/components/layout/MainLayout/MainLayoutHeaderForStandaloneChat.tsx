@@ -4,11 +4,10 @@ import {
   useUpdatePostConfigForStandaloneChat,
 } from '@/components/chats/chatHooks'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
 import { useMemo } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { useGlobalState } from '../../global/globalState'
-import { SidebarToggleIcon } from '../../sidebar/components/SidebarToggleIcon'
+import { SidebarToggleIcon } from '../../sidebar/components/Sidebar/SidebarToggleIcon'
 
 export function MainLayoutHeaderForStandaloneChat({
   chatId,
@@ -41,17 +40,6 @@ export function MainLayoutHeaderForStandaloneChat({
       </div>
       {/* Desktop header */}
       <div className="hidden h-8 w-full items-center lg:flex">
-        <button
-          type="button"
-          className={cn(
-            'ml-6 h-8 w-8 text-zinc-700',
-            isDesktopSidebarOpen && 'hidden',
-          )}
-          onClick={toggleDesktopSidebar}
-        >
-          <span className="sr-only">Open sidebar</span>
-          <SidebarToggleIcon />
-        </button>
         <div className="flex w-full justify-between px-6">
           <div id="header-left" className="flex grow items-center text-sm">
             {chatId ? (

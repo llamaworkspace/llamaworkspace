@@ -58,7 +58,7 @@ function SidebarDesktopHeaderWorkspacesDropdownSub() {
   )
 }
 
-export function SidebarDesktopHeaderDropdownBody() {
+export function SidebarFooterUserSettingsMenu() {
   const navigation = useNavigation()
   const signOut = useSignOut()
   const { data: workspaces } = useWorkspaces()
@@ -90,7 +90,7 @@ export function SidebarDesktopHeaderDropdownBody() {
     : '#'
 
   return (
-    <DropdownMenuContent className="ml-4 w-56">
+    <DropdownMenuContent align="start" className="w-64">
       <DropdownMenuGroup>
         <DropdownMenuLabel>Workspace</DropdownMenuLabel>
 

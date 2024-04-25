@@ -16,7 +16,8 @@ CREATE TABLE "PostsOnUsers" (
 CREATE UNIQUE INDEX "PostsOnUsers_userId_postId_key" ON "PostsOnUsers"("userId", "postId");
 
 -- CreateIndex (manually updated to make it partial)
-CREATE UNIQUE INDEX "PostsOnUsers_userId_postId_position_key" ON "PostsOnUsers"("userId", "postId", "position") WHERE ("position" IS NOT NULL);
+-- CREATE UNIQUE INDEX "PostsOnUsers_userId_postId_position_key" ON "PostsOnUsers"("userId", "postId", "position") WHERE ("position" IS NOT NULL);
+CREATE UNIQUE INDEX "PostsOnUsers_userId_postId_position_key" ON "PostsOnUsers"("userId", "postId", "position");
 
 -- AddForeignKey
 ALTER TABLE "PostsOnUsers" ADD CONSTRAINT "PostsOnUsers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

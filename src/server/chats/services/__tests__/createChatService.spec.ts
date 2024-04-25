@@ -1,19 +1,19 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import * as updatePostSortingV2ServiceWrapper from '@/server/posts/services/updatePostSortingV2.service'
+import * as updatePostSortingServiceWrapper from '@/server/posts/services/updatePostSorting.service'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import type { Post, User, Workspace } from '@prisma/client'
 import { createChatService } from '../createChat.service'
 
-jest.mock('@/server/posts/services/updatePostSortingV2.service', () => {
+jest.mock('@/server/posts/services/updatePostSorting.service', () => {
   const original = jest.requireActual(
-    '@/server/posts/services/updatePostSortingV2.service',
-  ) as unknown as typeof updatePostSortingV2ServiceWrapper
+    '@/server/posts/services/updatePostSorting.service',
+  ) as unknown as typeof updatePostSortingServiceWrapper
 
   return {
-    updatePostSortingV2Service: jest.fn(original.updatePostSortingV2Service),
+    updatePostSortingService: jest.fn(original.updatePostSortingService),
   }
 })
 
@@ -71,11 +71,44 @@ describe('createChatService', () => {
     expect(dbPostsOnUsers.id).toBeDefined()
   })
 
-  it('invokes updatePostSortingV2Service', async () => {
+  it('invokes updatePostSortingService', async () => {
     await subject(workspace.id, user.id, post.id)
 
     expect(
-      updatePostSortingV2ServiceWrapper.updatePostSortingV2Service,
+      updatePostSortingServiceWrapper.updatePostSortingService,
     ).toHaveBeenCalled()
+  })
+
+  describe('when the post is default', () => {
+    let defaultPost: Post
+
+    beforeEach(async () => {
+      defaultPost = await PostFactory.create(prisma, {
+        userId: user.id,
+        workspaceId: workspace.id,
+        isDefault: true,
+      })
+    })
+
+    it('creates a postConfigVersion', async () => {
+      const result = await subject(workspace.id, user.id, defaultPost.id)
+
+      const dbPostConfigVersion =
+        await prisma.postConfigVersion.findFirstOrThrow({
+          where: {
+            postId: defaultPost.id,
+          },
+        })
+
+      expect(result.postConfigVersionId).toEqual(dbPostConfigVersion.id)
+      expect(dbPostConfigVersion.model).toEqual('openai/gpt-3.5-turbo')
+    })
+
+    it('does not update post sorting', async () => {
+      await subject(workspace.id, user.id, defaultPost.id)
+      expect(
+        updatePostSortingServiceWrapper.updatePostSortingService,
+      ).not.toHaveBeenCalled()
+    })
   })
 })

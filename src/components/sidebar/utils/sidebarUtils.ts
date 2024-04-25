@@ -19,7 +19,7 @@ type PostsForSidebar = RouterOutputs['sidebar']['postsForSidebar']
 type PostForSidebar = PostsForSidebar extends Array<infer Item> ? Item : never
 
 type ChatHistoryForSidebarOutput =
-  RouterOutputs['sidebar']['chatHistoryForSidebarV2']
+  RouterOutputs['sidebar']['chatHistoryForSidebar']
 
 export const getSortedPosts = (
   posts: PostsForSidebar,

@@ -1,14 +1,14 @@
-import { usePostsForSidebarV2 } from '@/components/sidebar/sidebarHooks'
+import { usePostsForSidebar } from '@/components/sidebar/sidebarHooks'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { SidebarMainAppItem } from './SidebarMainAppItem'
 import { SidebarMainExploreButton } from './SidebarMainExploreButton'
 
 export const SidebarMainApps = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const { data: posts } = usePostsForSidebarV2(workspace?.id)
+  const { data: posts } = usePostsForSidebar(workspace?.id)
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <div className="px-2 text-xs font-bold text-zinc-400">GPTs</div>
 
       <div className="space-y-0.5">

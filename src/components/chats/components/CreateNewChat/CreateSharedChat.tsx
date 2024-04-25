@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react'
 import { DocumentIcon } from '@heroicons/react/24/outline'
-import { useCreateSharedChat } from '../../chatHooks'
+import { useCreateChatForApp } from '../../chatHooks'
 import { NewChatProps } from './createNewChatTypes'
 import { useCanCreateChat } from './useCanCreateChat'
 
@@ -9,7 +9,7 @@ export const CreateSharedChat = ({
   chatId,
   onSuccess,
 }: NewChatProps) => {
-  const { mutate: createChat } = useCreateSharedChat()
+  const { mutate: createChat } = useCreateChatForApp()
   const canCreateChat = useCanCreateChat(postId, chatId)
 
   const handleCreateChat = () => {

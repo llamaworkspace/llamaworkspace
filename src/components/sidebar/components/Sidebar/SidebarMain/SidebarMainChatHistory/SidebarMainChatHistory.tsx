@@ -1,12 +1,12 @@
-import { useChatHistoryForSidebarPostV2 } from '@/components/sidebar/sidebarHooks'
+import { useChatHistoryForSidebar } from '@/components/sidebar/sidebarHooks'
 import type { RouterOutputs } from '@/lib/api'
 import { SidebarMainChatHistoryTimeBlock } from './SidebarMainChatHistoryTimeBlock'
 
 type ChatHistoryForSidebarOutput =
-  RouterOutputs['sidebar']['chatHistoryForSidebarV2']
+  RouterOutputs['sidebar']['chatHistoryForSidebar']
 
 export const SidebarMainChatHistory = () => {
-  const { data: chats } = useChatHistoryForSidebarPostV2()
+  const { data: chats } = useChatHistoryForSidebar()
 
   return (
     <div className="space-y-6">
