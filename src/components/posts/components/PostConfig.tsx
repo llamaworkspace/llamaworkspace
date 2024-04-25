@@ -1,4 +1,4 @@
-import { useCreateChat } from '@/components/chats/chatHooks'
+import { useCreateChatForApp } from '@/components/chats/chatHooks'
 import { useErrorHandler } from '@/components/global/errorHandlingHooks'
 import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
 import {
@@ -37,7 +37,7 @@ export function PostConfig({ postId }: PostConfigProps) {
   const returnToChatRoute = router.asPath.replace(`/configuration`, '')
   const { data: postConfig } = useLatestPostConfigVersionForPost(postId)
   const { mutate: updatePostConfigVersion } = usePostConfigUpdate()
-  const { mutateAsync: createChat } = useCreateChat()
+  const { mutateAsync: createChat } = useCreateChatForApp()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
   const { can: canEdit } = useCanExecuteActionForPost(

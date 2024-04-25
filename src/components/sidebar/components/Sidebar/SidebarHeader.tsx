@@ -1,4 +1,4 @@
-import { useCreatePrivateChat } from '@/components/chats/chatHooks'
+import { useCreateStandaloneChat } from '@/components/chats/chatHooks'
 import { cn } from '@/lib/utils'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
 
@@ -11,7 +11,7 @@ export function SidebarHeader() {
 }
 
 const NewChatButton = () => {
-  const { mutate: createChat } = useCreatePrivateChat()
+  const { mutate: createChat } = useCreateStandaloneChat()
   return (
     <div className="flex max-h-[48px] ">
       <button

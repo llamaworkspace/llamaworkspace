@@ -1,4 +1,4 @@
-import { useCreateChat } from '@/components/chats/chatHooks'
+import { useCreateChatForApp } from '@/components/chats/chatHooks'
 import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import { useNavigation } from '@/lib/frontend/useNavigation'
@@ -12,7 +12,7 @@ interface AppItemProps {
 
 export const SidebarMainAppItem = ({ postId, title, emoji }: AppItemProps) => {
   const navigation = useNavigation()
-  const { mutate: createChat } = useCreateChat()
+  const { mutate: createChat } = useCreateChatForApp()
   const isActive = navigation.query.post_id === postId
 
   return (

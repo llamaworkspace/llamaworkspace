@@ -25,7 +25,7 @@ export const useChatById = (chatId?: string) => {
   )
 }
 
-export const useCreateChat = () => {
+export const useCreateChatForApp = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
   const navigation = useNavigation()
@@ -43,13 +43,13 @@ export const useCreateChat = () => {
   })
 }
 
-export const useCreatePrivateChat = () => {
+export const useCreateStandaloneChat = () => {
   const errorHandler = useErrorHandler()
   const { data: defaultPost } = useDefaultPost()
 
   const utils = api.useContext()
   const navigation = useNavigation()
-  const { mutate, ...obj } = api.chats.createStandaloneChat.useMutation({
+  const { mutate, ...obj } = api.chats.createChat.useMutation({
     onError: errorHandler(),
     onSuccess: (chat) => {
       void utils.sidebar.chatHistoryForSidebar.invalidate()
@@ -64,10 +64,13 @@ export const useCreatePrivateChat = () => {
 
   return {
     ...obj,
-    mutate: (options?: MutateArgs[1]) => {
-      if (!defaultPostId) return
-      mutate({ postId: defaultPostId }, options)
-    },
+    mutate: useCallback(
+      (options?: MutateArgs[1]) => {
+        if (!defaultPostId) return
+        mutate({ postId: defaultPostId }, options)
+      },
+      [defaultPostId, mutate],
+    ),
   }
 }
 
@@ -75,7 +78,7 @@ export const useDeleteChat = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
-  const { mutate: createChat } = useCreatePrivateChat()
+  const { mutate: createChat } = useCreateStandaloneChat()
 
   return api.chats.deleteChat.useMutation({
     onError: errorHandler(),
