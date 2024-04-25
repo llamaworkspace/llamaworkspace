@@ -1,5 +1,5 @@
 import { useGlobalState } from '@/components/global/globalState'
-import { SidebarToggleIcon } from '../../SidebarToggleIcon'
+import { SidebarToggleIcon } from '../SidebarToggleIcon'
 import { SidebarFooterUserSettingsDropdown } from './SidebarFooterUserSettingsDropdown'
 
 export function SidebarFooter() {
