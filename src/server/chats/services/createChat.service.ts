@@ -1,7 +1,7 @@
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { updatePostSortingV2Service } from '@/server/posts/services/updatePostSortingV2.service'
+import { updatePostSortingService } from '@/server/posts/services/updatePostSorting.service'
 import { Author, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import type {
   PrismaClientOrTrxClient,
@@ -54,7 +54,7 @@ export const createChatService = async function (
     })
 
     if (!post.isDefault) {
-      await updatePostSortingV2Service(prisma, uowContext, postId)
+      await updatePostSortingService(prisma, uowContext, postId)
     }
 
     return chat

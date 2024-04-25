@@ -4,7 +4,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import type { Post, User, Workspace } from '@prisma/client'
-import { updatePostSortingV2Service } from '../updatePostSortingV2.service'
+import { updatePostSortingService } from '../updatePostSorting.service'
 
 const subject = async (workspaceId: string, userId: string, postId: string) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -12,10 +12,10 @@ const subject = async (workspaceId: string, userId: string, postId: string) => {
     workspaceId,
     userId,
   )
-  return await updatePostSortingV2Service(prisma, uowContext, postId)
+  return await updatePostSortingService(prisma, uowContext, postId)
 }
 
-describe('updatePostSortingV2Service', () => {
+describe('updatePostSortingService', () => {
   let workspace: Workspace
   let user: User
   let post1: Post

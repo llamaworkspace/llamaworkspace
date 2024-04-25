@@ -6,7 +6,7 @@ import type {
 } from '@/shared/globalTypes'
 import { scopePostByWorkspace } from '../postUtils'
 
-export const updatePostSortingV2Service = async (
+export const updatePostSortingService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   postIdToPushToPosition1: string,
