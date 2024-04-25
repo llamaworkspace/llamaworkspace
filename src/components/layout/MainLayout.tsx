@@ -56,10 +56,10 @@ export function MainLayout({
 }
 
 const SidebarToggler = () => {
-  const { toggleMobileSidebar, toggleDesktopSidebar, state } = useGlobalState()
+  const { toggleDesktopSidebar, state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
   return (
-    <div className="absolute flex h-full items-center pl-1">
+    <div className="absolute  hidden h-full items-center pl-1 lg:flex">
       <button
         onClick={toggleDesktopSidebar}
         className="group z-40 flex h-6 w-6 cursor-pointer flex-col items-center "

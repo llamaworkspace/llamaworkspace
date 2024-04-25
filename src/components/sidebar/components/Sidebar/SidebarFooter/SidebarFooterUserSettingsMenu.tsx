@@ -90,7 +90,7 @@ export function SidebarFooterUserSettingsMenu() {
     : '#'
 
   return (
-    <DropdownMenuContent className="ml-4 w-56">
+    <DropdownMenuContent align="start" className="w-64">
       <DropdownMenuGroup>
         <DropdownMenuLabel>Workspace</DropdownMenuLabel>
 
