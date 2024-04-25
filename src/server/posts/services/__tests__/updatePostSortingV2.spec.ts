@@ -34,7 +34,7 @@ describe('updatePostSortingV2Service', () => {
   })
 
   describe('when it is the first post with position', () => {
-    it('executes updatePostSortingForNullPreviousId service', async () => {
+    it('adds position 1', async () => {
       await subject(workspace.id, user.id, post1.id)
       const postOnUser = await prisma.postsOnUsers.findFirstOrThrow({
         where: {
@@ -61,7 +61,7 @@ describe('updatePostSortingV2Service', () => {
       })
     })
 
-    it('executes updatePostSortingForNullPreviousId service', async () => {
+    it('adds position 1, moves position up for others', async () => {
       await subject(workspace.id, user.id, post2.id)
       await subject(workspace.id, user.id, post3.id)
       await subject(workspace.id, user.id, post1.id)
@@ -114,7 +114,7 @@ describe('updatePostSortingV2Service', () => {
       })
     })
 
-    it('executes updatePostSortingForNullPreviousId service', async () => {
+    it('removes item previously in position 5', async () => {
       await subject(workspace.id, user.id, post6.id)
       await subject(workspace.id, user.id, post5.id)
       await subject(workspace.id, user.id, post4.id)
@@ -146,6 +146,47 @@ describe('updatePostSortingV2Service', () => {
       expect(
         postOnUsers.find((pou) => pou.postId === post6.id)?.position,
       ).toBeNull()
+    })
+  })
+
+  describe('when the post already has a position', () => {
+    let post2: Post
+    let post3: Post
+
+    beforeEach(async () => {
+      post2 = await PostFactory.create(prisma, {
+        userId: user.id,
+        workspaceId: workspace.id,
+      })
+    })
+
+    it('does not update positions', async () => {
+      await subject(workspace.id, user.id, post2.id)
+      await subject(workspace.id, user.id, post1.id)
+
+      const postOnUsers = await prisma.postsOnUsers.findMany({
+        where: {
+          userId: user.id,
+        },
+      })
+
+      expect(postOnUsers.find((pou) => pou.postId === post1.id)?.position).toBe(
+        1,
+      )
+      expect(postOnUsers.find((pou) => pou.postId === post2.id)?.position).toBe(
+        2,
+      )
+      await subject(workspace.id, user.id, post2.id)
+
+      const postOnUsers2 = await prisma.postsOnUsers.findMany({
+        where: {
+          userId: user.id,
+        },
+      })
+
+      expect(
+        postOnUsers2.find((pou) => pou.postId === post2.id)?.position,
+      ).toBe(2)
     })
   })
 })

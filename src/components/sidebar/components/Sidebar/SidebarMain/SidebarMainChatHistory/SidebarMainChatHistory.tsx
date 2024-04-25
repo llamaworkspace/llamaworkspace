@@ -9,7 +9,7 @@ export const SidebarMainChatHistory = () => {
   const { data: chats } = useChatHistoryForSidebarPostV2()
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {chats &&
         Object.entries<ChatHistoryForSidebarOutput>(chats).map(
           ([title, chats]) => {

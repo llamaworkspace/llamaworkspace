@@ -23,6 +23,23 @@ export const updatePostSortingV2Service = async (
       ),
     })
 
+    const existingPostsWithPosition = await prisma.postsOnUsers.findFirst({
+      where: {
+        userId,
+        postId: postIdToPushToPosition1,
+        position: {
+          not: null,
+        },
+      },
+      select: {
+        postId: true,
+      },
+    })
+
+    if (existingPostsWithPosition) {
+      return
+    }
+
     await nullifyPostsWithPositionGte5(prisma, userId)
     await updateExistingPositions(prisma, userId)
     await pushPostToPosition1(prisma, userId, postIdToPushToPosition1)
