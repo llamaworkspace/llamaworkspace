@@ -4,7 +4,7 @@ import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 import { getChatsGroupedByDate } from './utils/sidebarUtils'
 
-export const useChatHistoryForSidebarPost = () => {
+export const useChatHistoryForSidebar = () => {
   const errorHandler = useErrorHandler()
   const { data: workspace } = useCurrentWorkspace()
   return api.sidebar.chatHistoryForSidebar.useQuery(
