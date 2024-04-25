@@ -64,7 +64,6 @@ model User {
     invites          Invite[]
     workspaces       UsersOnWorkspaces[]
     authoredChats    Chat[]
-    postSorts        PostSort[]
     workspaceInvites WorkspaceInvite[]
     postsMeta        PostsOnUsers[]
 }
@@ -76,7 +75,6 @@ model Workspace {
     updatedAt        DateTime            @updatedAt
     users            UsersOnWorkspaces[]
     posts            Post[]
-    postSorts        PostSort[]
     workspaceInvites WorkspaceInvite[]
     aiProvider       AiProvider[]
 }
@@ -166,19 +164,6 @@ model Share {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-}
-
-model PostSort {
-    id          String    @id @default(cuid())
-    sortedPosts Json
-    userId      String
-    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    workspaceId String
-    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-
-    @@unique([userId, workspaceId])
 }
 
 model Invite {
