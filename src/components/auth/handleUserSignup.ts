@@ -16,6 +16,8 @@ export const handleUserSignup = async (
   try {
     await prismaAsTrx(prisma, async (prisma) => {
       const workspace = await createWorkspaceForUserService(prisma, userId)
+
+      // TODO: The user here should be the admin of the workspace, preparing the WS for the user
       const context = await createUserOnWorkspaceContext(
         prisma,
         workspace.id,
@@ -23,7 +25,9 @@ export const handleUserSignup = async (
       )
 
       await setDefaultsForWorkspaceService(prisma, context)
-      await addUserToWorkspaceService(prisma, context)
+      await addUserToWorkspaceService(prisma, context, {
+        invitedUserId: userId,
+      })
       await settlePostSharesForNewUserService(prisma, userId)
       await settleWorkspaceInvitesForNewUserService(prisma, context)
       await createDefaultsForNewUserService(prisma, context)
