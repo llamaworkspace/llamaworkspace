@@ -26,7 +26,7 @@ export const SidebarMainItemShell = ({
 
   const body = (
     <div
-      className={cn(baseStyles, 'py-2 text-[14px] font-bold')}
+      className={cn(baseStyles, 'py-2 text-[14px] font-semibold')}
       onClick={() => onClick?.()}
     >
       <div className="w-[24px] min-w-[24px]">{icon}</div>

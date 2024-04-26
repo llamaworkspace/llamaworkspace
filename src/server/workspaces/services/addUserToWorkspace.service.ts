@@ -1,18 +1,27 @@
-import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import {
+  createUserOnWorkspaceContext,
+  type UserOnWorkspaceContext,
+} from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { createDefaultPostService } from '@/server/posts/services/createDefaultPost.service'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
+interface AddUserToWorkspacePayload {
+  invitedUserId: string
+}
+
 export const addUserToWorkspaceService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
+  payload: AddUserToWorkspacePayload,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
-    const { workspaceId, userId } = uowContext
+    const { workspaceId } = uowContext
+    const { invitedUserId } = payload
     const existingMembership = await prisma.usersOnWorkspaces.findUnique({
       where: {
         userId_workspaceId: {
-          userId,
+          userId: invitedUserId,
           workspaceId,
         },
       },
@@ -24,12 +33,18 @@ export const addUserToWorkspaceService = async (
 
     await prisma.usersOnWorkspaces.create({
       data: {
-        userId,
+        userId: invitedUserId,
         workspaceId,
       },
     })
 
-    await createDefaultPostService(prisma, uowContext)
+    const createDefaultPostServiceContext = await createUserOnWorkspaceContext(
+      prisma,
+      workspaceId,
+      invitedUserId,
+    )
+
+    await createDefaultPostService(prisma, createDefaultPostServiceContext)
     return true
   })
 }
