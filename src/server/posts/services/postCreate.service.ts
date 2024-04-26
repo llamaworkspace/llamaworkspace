@@ -8,6 +8,7 @@ import {
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
+import { updatePostSortingService } from './updatePostSorting.service'
 
 interface PostCreateServiceInputProps {
   title?: string
@@ -59,6 +60,10 @@ export const postCreateService = async (
         authorId: userId,
       },
     })
+
+    if (!post.isDefault) {
+      await updatePostSortingService(prisma, uowContext, post.id)
+    }
 
     return { ...post, firstChatId: chat.id }
   })

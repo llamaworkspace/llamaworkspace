@@ -13,7 +13,7 @@ export function SidebarHeader() {
 const NewChatButton = () => {
   const { mutate: createChat } = useCreateStandaloneChat()
   return (
-    <div className="flex max-h-[48px] ">
+    <div className="flex max-h-[45px]">
       <button
         onClick={() => createChat()}
         className="group flex grow basis-0 items-center justify-between gap-x-2 rounded-lg bg-zinc-100 px-2 py-3 text-[14px] font-bold text-zinc-950 transition-with-margin hover:bg-zinc-200 active:m-0.5 active:bg-zinc-200 active:duration-75 active:ease-in "
