@@ -111,7 +111,6 @@ model Post {
     emoji                  String?
     userId                 String
     workspaceId            String
-    previousId             String?             @unique
     isDefault              Boolean             @default(false)
     isDemo                 Boolean             @default(false)
     hideEmptySettingsAlert Boolean             @default(false)
@@ -119,8 +118,6 @@ model Post {
     updatedAt              DateTime            @updatedAt
     user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
     workspace              Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    previous               Post?               @relation("PostLinkedList", fields: [previousId], references: [id], onDelete: SetNull)
-    next                   Post?               @relation("PostLinkedList")
     chats                  Chat[]
     postShares             PostShare[]
     postConfigVersions     PostConfigVersion[]
