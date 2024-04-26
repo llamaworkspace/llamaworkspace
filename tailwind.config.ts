@@ -23,10 +23,8 @@ module.exports = {
           mid: '#80A89C',
           dark: '#0E7657',
         },
-        sand: {
-          lightest: '#FCFAF8',
-          light: '#F8F5F1',
-          mid: '#EFEAE2',
+        zinc: {
+          '10': '#FCFCFC',
         },
       },
       keyframes: {
@@ -42,6 +40,10 @@ module.exports = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      transitionProperty: {
+        'with-margin':
+          'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, margin', // Used in "New chat" button, search for: transition-with-margin
       },
     },
   },

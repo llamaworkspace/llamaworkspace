@@ -1,3 +1,4 @@
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -5,9 +6,10 @@ import { Promise } from 'bluebird'
 
 export const settleWorkspaceInvitesForNewUserService = async (
   prisma: PrismaClientOrTrxClient,
-  userId: string,
+  uowContext: UserOnWorkspaceContext,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
+    const { userId } = uowContext
     const user = await prisma.user.findUniqueOrThrow({
       where: {
         id: userId,
@@ -28,7 +30,7 @@ export const settleWorkspaceInvitesForNewUserService = async (
     const workspaceIds = invites.map((invite) => invite.workspaceId)
 
     await Promise.map(workspaceIds, async (workspaceId) => {
-      await addUserToWorkspaceService(prisma, userId, workspaceId)
+      await addUserToWorkspaceService(prisma, uowContext)
     })
 
     // Remove invites

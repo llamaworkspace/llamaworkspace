@@ -22,7 +22,7 @@ export const getDefaultPostService = async (
   // This scenario should never happen, but this is just
   // defensive code to generate a default post as a last resort
   if (!post) {
-    return await createDefaultPostService(prisma, workspaceId, userId)
+    return await createDefaultPostService(prisma, uowContext)
   }
   return post
 }

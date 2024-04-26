@@ -1,4 +1,5 @@
-import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { postCreateService } from '@/server/posts/services/postCreate.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -11,9 +12,14 @@ export const postsCreate = protectedProcedure
   .input(zCreateInput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-    const { workspaceId } = input
 
-    return await postCreateRepo(ctx.prisma, workspaceId, userId, {
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      input.workspaceId,
+      userId,
+    )
+
+    return await postCreateService(ctx.prisma, context, {
       title: input.title ?? undefined,
     })
   })

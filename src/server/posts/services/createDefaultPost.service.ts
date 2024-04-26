@@ -1,15 +1,17 @@
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { DEFAULT_POST_NAME } from '../postConstants'
-import { postCreateRepo } from '../repositories/postsCreateRepo'
+import { postCreateService } from './postCreate.service'
 
 export const createDefaultPostService = async (
   prisma: PrismaClientOrTrxClient,
-  workspaceId: string,
-  userId: string,
+  uowContext: UserOnWorkspaceContext,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
-    const post = await postCreateRepo(prisma, workspaceId, userId, {
+    const { userId } = uowContext
+
+    const post = await postCreateService(prisma, uowContext, {
       title: DEFAULT_POST_NAME,
       isDefault: true,
       hideEmptySettingsAlert: true,

@@ -9,7 +9,6 @@ import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import _ from 'underscore'
 import { useMessages, usePrompt } from '../chatHooks'
-import { CreateNewChat } from './CreateNewChat/CreateNewChat'
 
 const MAX_HEIGHT = 200
 
@@ -124,11 +123,6 @@ export function Chatbox({
     setTextAreaExpectedHeight(targetHeight)
   }
 
-  const handleReset = () => {
-    setValue('')
-    textareaRef.current?.focus()
-  }
-
   const showSkeleton = !chatId
 
   return (
@@ -147,7 +141,7 @@ export function Chatbox({
         <form onSubmit={handleSubmit} ref={formRef}>
           <div
             className={cn(
-              'flex items-center gap-x-2 rounded-md border border-sand-mid bg-white p-2',
+              'flex items-center gap-x-2 rounded-md border border-zinc-200 bg-white p-2',
               !canUse && 'cursor-not-allowed bg-zinc-100',
               _.isNull(canUse) && 'cursor-not-allowed border-zinc-200 bg-white',
             )}
@@ -196,21 +190,11 @@ export function Chatbox({
           </div>
         </form>
       )}
-      <div className="mt-2 flex justify-between text-xs tracking-tight">
-        <CreateNewChat
-          postId={postId}
-          chatId={chatId}
-          loading={showSkeleton}
-          onSuccess={handleReset}
-        />
-        {showSkeleton ? (
-          <Skeleton className="h-4 w-40" />
-        ) : (
-          <div className="text-zinc-400">
-            <span className="font-semibold">Shift + Enter</span> &nbsp;to add a
-            new line
-          </div>
-        )}
+      <div className="mt-2 flex justify-end text-xs tracking-tight">
+        <div className="text-zinc-400">
+          <span className="font-semibold">Shift + Enter</span> &nbsp;to add a
+          new line
+        </div>
       </div>
     </div>
   )

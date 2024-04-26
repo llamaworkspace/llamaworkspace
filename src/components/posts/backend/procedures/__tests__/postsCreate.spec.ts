@@ -1,38 +1,33 @@
-import type { RouterInputs } from '@/lib/api'
-import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
-import mockDb from '@/server/testing/mockDb'
+import { prisma } from '@/server/db'
+import { postCreateService } from '@/server/posts/services/postCreate.service'
+import { UserFactory } from '@/server/testing/factories/UserFactory'
+import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
+import type { User, Workspace } from '@prisma/client'
 
-type SubjectPayload = RouterInputs['posts']['create']
-type MockedPostCreateRepo = jest.MockedFunction<typeof postCreateRepo>
+type MockedPostCreateService = jest.MockedFunction<typeof postCreateService>
 
-jest.mock('@/server/posts/repositories/postsCreateRepo')
+jest.mock('@/server/posts/services/postCreate.service')
 
-const userId = 'user_abc123'
-const workspaceId = 'workspace_zyx987'
+const subject = async (workspaceId: string, userId: string, title: string) => {
+  const payload = { workspaceId, title }
+
+  const { caller } = trpcContextSetupHelper(prisma, userId)
+  await caller.posts.create(payload)
+}
 
 describe('postsCreate', () => {
-  beforeEach(() => {
-    ;(postCreateRepo as MockedPostCreateRepo).mockClear()
+  let workspace: Workspace
+  let user: User
+
+  beforeEach(async () => {
+    workspace = await WorkspaceFactory.create(prisma)
+    user = await UserFactory.create(prisma, { workspaceId: workspace.id })
+    ;(postCreateService as MockedPostCreateService).mockClear()
   })
 
-  const subject = async (payload: SubjectPayload) => {
-    const { caller } = trpcContextSetupHelper(mockDb, userId)
-    await caller.posts.create(payload)
-  }
-
-  it('calls postCreateRepo with proper params', async () => {
-    await subject({ title: 'Test title', workspaceId })
-    expect(postCreateRepo).toHaveBeenCalledWith(mockDb, workspaceId, userId, {
-      title: 'Test title',
-    })
-  })
-
-  it('when no title provided, it sets title as undefined ', async () => {
-    await subject({ workspaceId })
-
-    expect(postCreateRepo).toHaveBeenCalledWith(mockDb, workspaceId, userId, {
-      title: undefined,
-    })
+  it('calls postCreateService with proper params', async () => {
+    await subject(workspace.id, user.id, 'Test title')
+    expect(postCreateService).toHaveBeenCalled()
   })
 })

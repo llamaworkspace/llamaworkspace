@@ -1,8 +1,7 @@
-import { cn } from '@/lib/utils'
 import { ChatHeaderPostLinks } from '../../chats/components/ChatHeaderPostLinks'
 import { ChatHeaderPostTitle } from '../../chats/components/ChatHeaderPostTitle'
 import { useGlobalState } from '../../global/globalState'
-import { SidebarToggleIcon } from '../../sidebar/SidebarToggleIcon'
+import { SidebarToggleIcon } from '../../sidebar/components/Sidebar/SidebarToggleIcon'
 
 export function MainLayoutHeaderForChatbot({ postId }: { postId?: string }) {
   const { toggleMobileSidebar, toggleDesktopSidebar, state } = useGlobalState()
@@ -30,17 +29,6 @@ export function MainLayoutHeaderForChatbot({ postId }: { postId?: string }) {
       </div>
       {/* Desktop header */}
       <div className="hidden h-8 w-full items-center lg:flex">
-        <button
-          type="button"
-          className={cn(
-            'ml-6 h-8 w-8 text-zinc-700',
-            isDesktopSidebarOpen && 'hidden',
-          )}
-          onClick={toggleDesktopSidebar}
-        >
-          <span className="sr-only">Open sidebar</span>
-          <SidebarToggleIcon />
-        </button>
         <div className="flex w-full justify-between px-6">
           <div id="header-left" className="flex grow items-center text-sm">
             <ChatHeaderPostTitle postId={postId} />

@@ -64,8 +64,8 @@ model User {
     invites          Invite[]
     workspaces       UsersOnWorkspaces[]
     authoredChats    Chat[]
-    postSorts        PostSort[]
     workspaceInvites WorkspaceInvite[]
+    postsMeta        PostsOnUsers[]
 }
 
 model Workspace {
@@ -75,7 +75,6 @@ model Workspace {
     updatedAt        DateTime            @updatedAt
     users            UsersOnWorkspaces[]
     posts            Post[]
-    postSorts        PostSort[]
     workspaceInvites WorkspaceInvite[]
     aiProvider       AiProvider[]
 }
@@ -112,7 +111,6 @@ model Post {
     emoji                  String?
     userId                 String
     workspaceId            String
-    previousId             String?             @unique
     isDefault              Boolean             @default(false)
     isDemo                 Boolean             @default(false)
     hideEmptySettingsAlert Boolean             @default(false)
@@ -120,12 +118,26 @@ model Post {
     updatedAt              DateTime            @updatedAt
     user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
     workspace              Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    previous               Post?               @relation("PostLinkedList", fields: [previousId], references: [id], onDelete: SetNull)
-    next                   Post?               @relation("PostLinkedList")
     chats                  Chat[]
     postShares             PostShare[]
     postConfigVersions     PostConfigVersion[]
     shares                 Share[]
+    usersMeta              PostsOnUsers[]
+}
+
+model PostsOnUsers {
+    id            String    @id @default(cuid())
+    userId        String
+    user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    postId        String
+    post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    position      Int?
+    pinnedAt      DateTime?
+    lastVisitedAt DateTime?
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+
+    @@unique([userId, postId])
 }
 
 model PostShare {
@@ -148,19 +160,6 @@ model Share {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-}
-
-model PostSort {
-    id          String    @id @default(cuid())
-    sortedPosts Json
-    userId      String
-    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    workspaceId String
-    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-
-    @@unique([userId, workspaceId])
 }
 
 model Invite {
@@ -187,7 +186,7 @@ model Chat {
     messages            Message[]
     createdAt           DateTime           @default(now())
     updatedAt           DateTime           @updatedAt
-    chatRun             ChatRun[]
+    chatRuns            ChatRun[]
 }
 
 model Message {

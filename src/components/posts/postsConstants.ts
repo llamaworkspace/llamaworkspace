@@ -1,1 +1,1 @@
-export const EMPTY_POST_NAME = 'Unnamed chatbot'
+export const EMPTY_POST_NAME = 'Untitled GPT'

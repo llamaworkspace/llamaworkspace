@@ -1,7 +1,7 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { inviteToWorkspaceService } from '@/server/workspaces/services/inviteToWorkspace.service'
 import { z } from 'zod'
-import { workspaceEditionFilter } from '../workspacesBackendUtils'
 
 const zInput = z.object({
   workspaceId: z.string(),
@@ -13,21 +13,11 @@ export const workspacesInviteUserToWorkspace = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const invitingUserId = ctx.session.user.id
 
-    // has this user access to this workspace?
-    await ctx.prisma.workspace.findUniqueOrThrow({
-      select: {
-        id: true,
-      },
-      where: {
-        id: input.workspaceId,
-        ...workspaceEditionFilter(invitingUserId),
-      },
-    })
-
-    await inviteToWorkspaceService(
+    const context = await createUserOnWorkspaceContext(
       ctx.prisma,
       input.workspaceId,
       invitingUserId,
-      input.email,
     )
+
+    await inviteToWorkspaceService(ctx.prisma, context, input.email)
   })

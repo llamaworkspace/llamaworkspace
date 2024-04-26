@@ -2,8 +2,8 @@ import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiMode
 import {
   Section,
   SectionBody,
-  SectionWrapper,
-  SectionWrapperTitle,
+  SectionsHeader,
+  SectionsShell,
 } from '@/components/ui/Section'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { Field, Form as FinalForm } from 'react-final-form'
@@ -15,8 +15,8 @@ export function Profile() {
   const successToast = useSuccessToast()
 
   return (
-    <SectionWrapper>
-      <SectionWrapperTitle>Profile</SectionWrapperTitle>
+    <SectionsShell>
+      <SectionsHeader>Profile</SectionsHeader>
       <Section>
         <SectionBody>
           <FinalForm
@@ -51,6 +51,6 @@ export function Profile() {
           />
         </SectionBody>
       </Section>
-    </SectionWrapper>
+    </SectionsShell>
   )
 }
