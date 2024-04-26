@@ -16,7 +16,6 @@ export const handleUserSignup = async (
   try {
     await prismaAsTrx(prisma, async (prisma) => {
       const workspace = await createWorkspaceForUserService(prisma, userId)
-      console.log(111, workspace)
       const context = await createUserOnWorkspaceContext(
         prisma,
         workspace.id,

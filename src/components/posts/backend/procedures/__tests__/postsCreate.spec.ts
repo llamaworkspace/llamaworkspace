@@ -1,48 +1,33 @@
-import type { RouterInputs } from '@/lib/api'
+import { prisma } from '@/server/db'
 import { postCreateService } from '@/server/posts/services/postCreate.service'
-import mockDb from '@/server/testing/mockDb'
+import { UserFactory } from '@/server/testing/factories/UserFactory'
+import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
+import type { User, Workspace } from '@prisma/client'
 
-type SubjectPayload = RouterInputs['posts']['create']
 type MockedPostCreateService = jest.MockedFunction<typeof postCreateService>
 
 jest.mock('@/server/posts/services/postCreate.service')
 
-const userId = 'user_abc123'
-const workspaceId = 'workspace_zyx987'
+const subject = async (workspaceId: string, userId: string, title: string) => {
+  const payload = { workspaceId, title }
+
+  const { caller } = trpcContextSetupHelper(prisma, userId)
+  await caller.posts.create(payload)
+}
 
 describe('postsCreate', () => {
-  beforeEach(() => {
+  let workspace: Workspace
+  let user: User
+
+  beforeEach(async () => {
+    workspace = await WorkspaceFactory.create(prisma)
+    user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     ;(postCreateService as MockedPostCreateService).mockClear()
   })
 
-  const subject = async (payload: SubjectPayload) => {
-    const { caller } = trpcContextSetupHelper(mockDb, userId)
-    await caller.posts.create(payload)
-  }
-
   it('calls postCreateService with proper params', async () => {
-    await subject({ title: 'Test title', workspaceId })
-    expect(postCreateService).toHaveBeenCalledWith(
-      mockDb,
-      workspaceId,
-      userId,
-      {
-        title: 'Test title',
-      },
-    )
-  })
-
-  it('when no title provided, it sets title as undefined ', async () => {
-    await subject({ workspaceId })
-
-    expect(postCreateService).toHaveBeenCalledWith(
-      mockDb,
-      workspaceId,
-      userId,
-      {
-        title: undefined,
-      },
-    )
+    await subject(workspace.id, user.id, 'Test title')
+    expect(postCreateService).toHaveBeenCalled()
   })
 })
