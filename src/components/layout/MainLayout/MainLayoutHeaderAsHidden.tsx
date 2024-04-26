@@ -1,10 +1,8 @@
-import { cn } from '@/lib/utils'
 import { useGlobalState } from '../../global/globalState'
 import { SidebarToggleIcon } from '../../sidebar/components/Sidebar/SidebarToggleIcon'
 
 export function MainLayoutHeaderAsHidden({ postId }: { postId?: string }) {
-  const { toggleMobileSidebar, toggleDesktopSidebar, state } = useGlobalState()
-  const { isDesktopSidebarOpen } = state
+  const { toggleMobileSidebar } = useGlobalState()
 
   return (
     <div className="relative">
@@ -16,20 +14,6 @@ export function MainLayoutHeaderAsHidden({ postId }: { postId?: string }) {
               type="button"
               className="text-zinc-700"
               onClick={() => void toggleMobileSidebar()}
-            >
-              <span className="sr-only">Open sidebar</span>
-              <SidebarToggleIcon />
-            </button>
-          </div>
-          {/* Desktop header */}
-          <div className="hidden h-8 w-full items-center lg:flex">
-            <button
-              type="button"
-              className={cn(
-                'ml-6 h-8 w-8 text-zinc-700',
-                isDesktopSidebarOpen && 'hidden',
-              )}
-              onClick={toggleDesktopSidebar}
             >
               <span className="sr-only">Open sidebar</span>
               <SidebarToggleIcon />

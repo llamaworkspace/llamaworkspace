@@ -30,7 +30,9 @@ export const settleWorkspaceInvitesForNewUserService = async (
     const workspaceIds = invites.map((invite) => invite.workspaceId)
 
     await Promise.map(workspaceIds, async (workspaceId) => {
-      await addUserToWorkspaceService(prisma, uowContext)
+      await addUserToWorkspaceService(prisma, uowContext, {
+        invitedUserId: userId,
+      })
     })
 
     // Remove invites

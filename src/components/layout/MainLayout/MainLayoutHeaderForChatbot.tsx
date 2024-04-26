@@ -4,8 +4,8 @@ import { useGlobalState } from '../../global/globalState'
 import { SidebarToggleIcon } from '../../sidebar/components/Sidebar/SidebarToggleIcon'
 
 export function MainLayoutHeaderForChatbot({ postId }: { postId?: string }) {
-  const { toggleMobileSidebar, toggleDesktopSidebar, state } = useGlobalState()
-  const { isDesktopSidebarOpen } = state
+  const { toggleMobileSidebar, state } = useGlobalState()
+
   return (
     <header className="flex h-12 max-h-12 flex-row items-center justify-between border-b border-zinc-200/50 py-2.5 lg:px-0">
       {/* Mobile button */}

@@ -1,6 +1,6 @@
 import { workspaceEditionFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { env } from '@/env.mjs'
-import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -61,7 +61,10 @@ const handleUserExists = async (
       message: 'You cannot invite yourself',
     })
   }
-  const result = await addUserToWorkspaceService(prisma, uowContext)
+
+  const result = await addUserToWorkspaceService(prisma, uowContext, {
+    invitedUserId,
+  })
 
   if (!result) {
     throw new TRPCError({
