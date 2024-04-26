@@ -39,6 +39,17 @@ export const AppsListTable = () => {
     setDeleteModalTargetPostId(null)
   }
 
+  if (posts && !posts.length) {
+    return (
+      <>
+        <div className="pt-16 text-center text-zinc-600">
+          You currently don&apos;t have any GPTs. Go ahead and create your first
+          one.
+        </div>
+      </>
+    )
+  }
+
   return (
     <div className="space-y-1">
       {posts?.map((post) => {
