@@ -1,3 +1,5 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { onboardingCreateService } from '@/server/onboarding/services/onboardingCreate.service'
 import { createDefaultsForNewUserService } from '@/server/users/services/createDefaultsForNewUser.service'
 import { createWorkspaceForUserService } from '@/server/users/services/createWorkspaceForUser.service'
@@ -12,14 +14,21 @@ export const handleUserSignup = async (
   userId: string,
 ) => {
   try {
-    await prisma.$transaction(async (prisma) => {
+    await prismaAsTrx(prisma, async (prisma) => {
       const workspace = await createWorkspaceForUserService(prisma, userId)
-      await setDefaultsForWorkspaceService(prisma, workspace.id)
-      await addUserToWorkspaceService(prisma, userId, workspace.id)
+      console.log(111, workspace)
+      const context = await createUserOnWorkspaceContext(
+        prisma,
+        workspace.id,
+        userId,
+      )
+
+      await setDefaultsForWorkspaceService(prisma, context)
+      await addUserToWorkspaceService(prisma, context)
       await settlePostSharesForNewUserService(prisma, userId)
-      await settleWorkspaceInvitesForNewUserService(prisma, userId)
-      await createDefaultsForNewUserService(prisma, workspace.id, userId)
-      await onboardingCreateService(prisma, workspace.id, userId)
+      await settleWorkspaceInvitesForNewUserService(prisma, context)
+      await createDefaultsForNewUserService(prisma, context)
+      await onboardingCreateService(prisma, context)
     })
   } catch (error) {
     await prisma.user.delete({

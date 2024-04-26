@@ -1,4 +1,5 @@
 import { workspaceEditionFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
@@ -18,11 +19,11 @@ interface PostCreateServiceInputProps {
 
 export const postCreateService = async (
   prisma: PrismaClientOrTrxClient,
-  workspaceId: string,
-  userId: string,
+  uowContext: UserOnWorkspaceContext,
   input: PostCreateServiceInputProps,
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
+    const { userId, workspaceId } = uowContext
     const user = await prisma.user.findUniqueOrThrow({
       where: {
         id: userId,

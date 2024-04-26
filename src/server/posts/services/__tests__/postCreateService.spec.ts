@@ -1,3 +1,4 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { postCreateService } from '@/server/posts/services/postCreate.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
@@ -10,7 +11,12 @@ describe('postCreateService', () => {
   it('creates a new post', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    await postCreateService(prisma, workspace.id, user.id, input)
+    const uowContext = await createUserOnWorkspaceContext(
+      prisma,
+      workspace.id,
+      user.id,
+    )
+    await postCreateService(prisma, uowContext, input)
 
     const post = await prisma.post.findFirstOrThrow({
       where: {

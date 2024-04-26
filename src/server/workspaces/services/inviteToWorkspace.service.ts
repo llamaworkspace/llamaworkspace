@@ -1,5 +1,6 @@
 import { workspaceEditionFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { env } from '@/env.mjs'
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -9,12 +10,12 @@ import { addUserToWorkspaceService } from './addUserToWorkspace.service'
 
 export const inviteToWorkspaceService = async (
   prisma: PrismaClientOrTrxClient,
-  workspaceId: string,
-  invitingUserId: string,
+  uowContext: UserOnWorkspaceContext,
   invitedUserEmail: string,
   source: WorkspaceInviteSources = WorkspaceInviteSources.Direct,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
+    const { workspaceId, userId: invitingUserId } = uowContext
     const workspace = await prisma.workspace.findUniqueOrThrow({
       select: {
         id: true,
@@ -36,12 +37,7 @@ export const inviteToWorkspaceService = async (
     })
 
     if (invitedUser) {
-      return await handleUserExists(
-        prisma,
-        workspace.id,
-        invitingUserId,
-        invitedUser.id,
-      )
+      return await handleUserExists(prisma, uowContext, invitedUser.id)
     }
     return await handleUserDoesNotExist(
       prisma,
@@ -55,21 +51,17 @@ export const inviteToWorkspaceService = async (
 
 const handleUserExists = async (
   prisma: PrismaClientOrTrxClient,
-  workspaceId: string,
-  invitingUserId: string,
+  uowContext: UserOnWorkspaceContext,
   invitedUserId: string,
 ) => {
+  const { workspaceId, userId: invitingUserId } = uowContext
   if (invitingUserId === invitedUserId) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'You cannot invite yourself',
     })
   }
-  const result = await addUserToWorkspaceService(
-    prisma,
-    invitedUserId,
-    workspaceId,
-  )
+  const result = await addUserToWorkspaceService(prisma, uowContext)
 
   if (!result) {
     throw new TRPCError({
