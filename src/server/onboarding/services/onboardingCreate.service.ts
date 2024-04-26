@@ -1,4 +1,4 @@
-import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
+import { postCreateService } from '@/server/posts/services/postCreate.service'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { onboardingTexts } from './onboardingTexts'
 
@@ -7,7 +7,7 @@ export const onboardingCreateService = async (
   workspaceId: string,
   userId: string,
 ) => {
-  const post = await postCreateRepo(prisma, workspaceId, userId, {
+  const post = await postCreateService(prisma, workspaceId, userId, {
     title: `Joia's fun facts teller`,
     emoji: '1f920', // Cowboy emoji 🤠
     isDemo: true,

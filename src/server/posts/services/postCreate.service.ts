@@ -8,7 +8,7 @@ import {
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
 
-interface PostCreateRepoInputProps {
+interface PostCreateServiceInputProps {
   title?: string
   emoji?: string
   isDefault?: boolean
@@ -16,11 +16,11 @@ interface PostCreateRepoInputProps {
   hideEmptySettingsAlert?: boolean
 }
 
-export const postCreateRepo = async (
+export const postCreateService = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
   userId: string,
-  input: PostCreateRepoInputProps,
+  input: PostCreateServiceInputProps,
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const user = await prisma.user.findUniqueOrThrow({
@@ -68,7 +68,7 @@ const createPost = async (
   workspaceId: string,
   userId: string,
   targetModel: string,
-  input: PostCreateRepoInputProps,
+  input: PostCreateServiceInputProps,
 ) => {
   return await prisma.post.create({
     data: {

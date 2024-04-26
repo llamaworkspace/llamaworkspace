@@ -1,16 +1,16 @@
 import { prisma } from '@/server/db'
-import { postCreateRepo } from '@/server/posts/repositories/postsCreateRepo'
+import { postCreateService } from '@/server/posts/services/postCreate.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { ShareScope } from '@/shared/globalTypes'
 
-describe('postCreateRepo', () => {
+describe('postCreateService', () => {
   const input = { title: 'Test Post' }
 
   it('creates a new post', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    await postCreateRepo(prisma, workspace.id, user.id, input)
+    await postCreateService(prisma, workspace.id, user.id, input)
 
     const post = await prisma.post.findFirstOrThrow({
       where: {
@@ -26,7 +26,7 @@ describe('postCreateRepo', () => {
   it('creates a new chat for the post', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    const post = await postCreateRepo(prisma, workspace.id, user.id, input)
+    const post = await postCreateService(prisma, workspace.id, user.id, input)
 
     const chat = await prisma.chat.findFirstOrThrow({
       where: {
@@ -41,7 +41,7 @@ describe('postCreateRepo', () => {
   it('creates an Everybody-based share for the post', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    const post = await postCreateRepo(prisma, workspace.id, user.id, input)
+    const post = await postCreateService(prisma, workspace.id, user.id, input)
 
     const share = await prisma.share.findMany({
       where: {
@@ -65,7 +65,7 @@ describe('postCreateRepo', () => {
       workspaceId: workspace.id,
     })
 
-    const post = await postCreateRepo(prisma, workspace.id, user.id, input)
+    const post = await postCreateService(prisma, workspace.id, user.id, input)
 
     const postShare = await prisma.postConfigVersion.findFirstOrThrow({
       where: {
