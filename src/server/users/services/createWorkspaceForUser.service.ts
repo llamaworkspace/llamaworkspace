@@ -1,4 +1,5 @@
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
+import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
 const buildName = (name?: string | null) => {
@@ -16,7 +17,7 @@ export const createWorkspaceForUserService = async (
       },
     })
 
-    return await prisma.workspace.create({
+    const workspace = await prisma.workspace.create({
       data: {
         name: buildName(user?.name),
         users: {
@@ -28,5 +29,9 @@ export const createWorkspaceForUserService = async (
         },
       },
     })
+
+    await setDefaultsForWorkspaceService(prisma, workspace.id)
+
+    return workspace
   })
 }
