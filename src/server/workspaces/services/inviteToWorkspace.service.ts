@@ -73,44 +73,11 @@ const handleUserExists = async (
     })
   }
 
-  const [invitedUser, invitingUser, workspace] = await Promise.all([
-    await prisma.user.findUniqueOrThrow({
-      select: {
-        email: true,
-      },
-      where: {
-        id: invitedUserId,
-      },
-    }),
-    await prisma.user.findUniqueOrThrow({
-      select: {
-        email: true,
-        name: true,
-      },
-      where: {
-        id: invitingUserId,
-      },
-    }),
-    await prisma.workspace.findUniqueOrThrow({
-      select: {
-        name: true,
-      },
-      where: {
-        id: workspaceId,
-      },
-    }),
-  ])
-
-  if (!invitedUser.email) return
-
-  const invitingUserOrEmail = invitingUser.name ?? invitingUser.email!
-
-  await sendEmailToInvitedUser(
-    workspaceId,
-    invitingUserOrEmail,
-    invitedUser.email,
-    workspace.name,
-  )
+  throw new TRPCError({
+    code: 'BAD_REQUEST',
+    message:
+      'This person cannot be invited because they already have an account with us.',
+  })
 }
 
 const handleUserDoesNotExist = async (
