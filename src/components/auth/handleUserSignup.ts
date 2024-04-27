@@ -1,10 +1,9 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { onboardingCreateService } from '@/server/onboarding/services/onboardingCreate.service'
+import { workspaceOnboardingCreationService } from '@/server/onboarding/services/workspaceOnboardingCreation.service'
 import { createDefaultsForNewUserService } from '@/server/users/services/createDefaultsForNewUser.service'
 import { createWorkspaceForUserService } from '@/server/users/services/createWorkspaceForUser.service'
-import { settlePostSharesForNewUserService } from '@/server/users/services/settlePostSharesForNewUser.service'
-import { settleWorkspaceInvitesForNewUserService } from '@/server/users/services/settleWorkspaceInvitesForNewUser.service'
+import { settleWorkspaceInvitesForNewUserService as settleWorkspaceInvitesForNewUserServiceUPDATEME } from '@/server/users/services/settleWorkspaceInvitesForNewUser.service'
 import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
 import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import type { PrismaClient } from '@prisma/client'
@@ -15,23 +14,25 @@ export const handleUserSignup = async (
 ) => {
   try {
     await prismaAsTrx(prisma, async (prisma) => {
+      // Workspace setup start
       const workspace = await createWorkspaceForUserService(prisma, userId)
+      await setDefaultsForWorkspaceService(prisma, workspace.id)
+      await createDefaultsForNewUserService(prisma, userId)
+      // Workspace setup end
 
-      // TODO: The user here should be the admin of the workspace, preparing the WS for the user
       const context = await createUserOnWorkspaceContext(
         prisma,
         workspace.id,
         userId,
       )
 
-      await setDefaultsForWorkspaceService(prisma, context)
       await addUserToWorkspaceService(prisma, context, {
         invitedUserId: userId,
       })
-      await settlePostSharesForNewUserService(prisma, userId)
-      await settleWorkspaceInvitesForNewUserService(prisma, context)
-      await createDefaultsForNewUserService(prisma, context)
-      await onboardingCreateService(prisma, context)
+
+      // await settlePostSharesForNewUserService(prisma, userId)
+      await settleWorkspaceInvitesForNewUserServiceUPDATEME(prisma, context)
+      await workspaceOnboardingCreationService(prisma, context)
     })
   } catch (error) {
     await prisma.user.delete({

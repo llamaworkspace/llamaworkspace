@@ -1,5 +1,5 @@
 import { prisma } from '@/server/db'
-import { onboardingCreateService } from '@/server/onboarding/services/onboardingCreate.service'
+import { workspaceOnboardingCreationService } from '@/server/onboarding/services/workspaceOnboardingCreation.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { createDefaultsForNewUserService } from '@/server/users/services/createDefaultsForNewUser.service'
 import * as createWorkspaceForUserServiceWrapper from '@/server/users/services/createWorkspaceForUser.service'
@@ -63,7 +63,7 @@ describe('handleUserSignup', () => {
 
   it('executes onboardingCreate service', async () => {
     await subject()
-    expect(onboardingCreateService).toHaveBeenCalled()
+    expect(workspaceOnboardingCreationService).toHaveBeenCalled()
   })
 
   it('executes createDefaultsForNewUser service', async () => {

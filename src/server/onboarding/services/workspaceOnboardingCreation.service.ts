@@ -1,23 +1,13 @@
-import {
-  createUserOnWorkspaceContext,
-  type UserOnWorkspaceContext,
-} from '@/server/auth/userOnWorkspaceContext'
+import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { postCreateService } from '@/server/posts/services/postCreate.service'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { onboardingTexts } from './onboardingTexts'
 
-export const onboardingCreateService = async (
+export const workspaceOnboardingCreationService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
 ) => {
-  const { workspaceId, userId } = uowContext
-  const context = await createUserOnWorkspaceContext(
-    prisma,
-    workspaceId,
-    userId,
-  )
-
-  const post = await postCreateService(prisma, context, {
+  const post = await postCreateService(prisma, uowContext, {
     title: `Joia's fun facts teller`,
     emoji: '1f920', // Cowboy emoji 🤠
     isDemo: true,
