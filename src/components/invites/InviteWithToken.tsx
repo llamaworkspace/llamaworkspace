@@ -1,5 +1,5 @@
+import { SignInButtons } from '@/components/auth/components/SignInButtons'
 import Image from 'next/image'
-import { ReusableLoginButtons } from '../auth/sign-in'
 
 interface InviteWithTokenProps {
   token: string
@@ -36,7 +36,7 @@ export default function InviteWithToken({
           <div className="space-y-2">
             <h3>To accept the invitation, proceed by signing up.</h3>
 
-            <ReusableLoginButtons callbackUrl={callbackUrl} />
+            <SignInButtons callbackUrl={callbackUrl} />
           </div>
         </div>
       </div>
