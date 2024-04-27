@@ -3,7 +3,6 @@ import { workspaceOnboardingCreationService } from '@/server/onboarding/services
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { createDefaultsForNewUserService } from '@/server/users/services/createDefaultsForNewUser.service'
 import * as createWorkspaceForUserServiceWrapper from '@/server/users/services/createWorkspaceForUser.service'
-import { settlePostSharesForNewUserService } from '@/server/users/services/settlePostSharesForNewUser.service'
 import { settleWorkspaceInvitesForNewUserService } from '@/server/users/services/settleWorkspaceInvitesForNewUser.service'
 import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import { handleUserSignup } from '../handleUserSignup'
@@ -49,11 +48,6 @@ describe('handleUserSignup', () => {
     expect(
       createWorkspaceForUserServiceWrapper.createWorkspaceForUserService,
     ).toHaveBeenCalled()
-  })
-
-  it('executes settlePostSharesForNewUser service', async () => {
-    await subject()
-    expect(settlePostSharesForNewUserService).toHaveBeenCalled()
   })
 
   it('executes settleWorkspaceInvitesForNewUser service', async () => {

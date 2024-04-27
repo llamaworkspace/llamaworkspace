@@ -30,7 +30,6 @@ export const handleUserSignup = async (
         invitedUserId: userId,
       })
 
-      // await settlePostSharesForNewUserService(prisma, userId)
       await settleWorkspaceInvitesForNewUserServiceUPDATEME(prisma, context)
       await workspaceOnboardingCreationService(prisma, context)
     })
