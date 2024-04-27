@@ -1,10 +1,17 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { sendEmail } from '@/server/mailer/mailer'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { faker } from '@faker-js/faker'
 import type { User, Workspace } from '@prisma/client'
 import { inviteToWorkspaceService } from '../inviteToWorkspace.service'
+
+jest.mock('@/server/mailer/mailer', () => {
+  return {
+    sendEmail: jest.fn(),
+  }
+})
 
 const subject = async (
   workspaceId: string,
@@ -25,6 +32,8 @@ describe('inviteToWorkspaceService', () => {
   let invitingUser: User
 
   beforeEach(async () => {
+    jest.clearAllMocks()
+
     workspace = await WorkspaceFactory.create(prisma)
     invitingUser = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
@@ -46,6 +55,19 @@ describe('inviteToWorkspaceService', () => {
       workspaceId: workspace.id,
       email,
       invitedById: invitingUser.id,
+    })
+  })
+
+  it('sends an invite email', async () => {
+    const email = faker.internet.email()
+    await subject(workspace.id, invitingUser.id, email)
+    expect(sendEmail).toHaveBeenCalledWith({
+      fromName: `${invitingUser.name} - via Joia`,
+      to: email,
+      subject: `Your invitation to the workspace "${workspace.name}"`,
+      body: expect.stringContaining(
+        `${invitingUser.name} has invited you to the following workspace at Joia: ${workspace.name}`,
+      ) as string,
     })
   })
 
@@ -94,6 +116,7 @@ describe('inviteToWorkspaceService', () => {
           }),
         ]),
       )
+      expect(sendEmail).toHaveBeenCalledTimes(2)
     })
   })
 

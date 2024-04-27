@@ -54,7 +54,7 @@ const handleUserExists = async (
   uowContext: UserOnWorkspaceContext,
   invitedUserId: string,
 ) => {
-  const { workspaceId, userId: invitingUserId } = uowContext
+  const { userId: invitingUserId } = uowContext
   if (invitingUserId === invitedUserId) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
@@ -62,6 +62,7 @@ const handleUserExists = async (
     })
   }
 
+  // This ain't tested!
   const result = await addUserToWorkspaceService(prisma, uowContext, {
     invitedUserId,
   })
