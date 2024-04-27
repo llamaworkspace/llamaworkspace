@@ -29,7 +29,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   } catch (error) {
     // Todo: handle cases. Understand if sentry picks this up by default.
-    return { notFound: true }
+    // return { notFound: true }
+    return { props: {} }
   }
 }
 
@@ -51,7 +52,6 @@ export default function InviteWithTokenPage({
       token={token}
       invitingUserEmail={invitingUserEmail}
       invitingUserName={invitingUserName}
-      targetPostName={targetPostName}
     />
   )
 }
