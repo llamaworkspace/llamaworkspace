@@ -13,14 +13,6 @@ export const handleUserSignup = async (
       await createDefaultsForNewUserService(prisma, userId)
       // Workspace setup
       await createWorkspaceForUserService(prisma, userId)
-
-      // This should go on invite flow success, and not happen here.
-      // await addUserToWorkspaceService(prisma, context, {
-      //   invitedUserId: userId,
-      // })
-
-      // This should go only on handle flow success, and be modified to act as it should "addUserToWorkspaceService", and happen always
-      // await settleWorkspaceInvitesForNewUserServiceUPDATEME(prisma, context)
     })
   } catch (error) {
     await prisma.user.delete({
