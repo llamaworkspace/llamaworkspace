@@ -7,7 +7,6 @@ import { sendEmail } from '@/server/mailer/mailer'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
 import { WorkspaceInviteSources } from '../workspaceTypes'
-import { addUserToWorkspaceService } from './addUserToWorkspace.service'
 
 export const inviteToWorkspaceService = async (
   prisma: PrismaClientOrTrxClient,
@@ -55,7 +54,7 @@ const handleUserExists = async (
   uowContext: UserOnWorkspaceContext,
   invitedUserId: string,
 ) => {
-  const { userId: invitingUserId } = uowContext
+  const { userId: invitingUserId, workspaceId } = uowContext
   if (invitingUserId === invitedUserId) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
@@ -63,13 +62,16 @@ const handleUserExists = async (
     })
   }
 
-  // This ain't tested!!!!
-  const result = await addUserToWorkspaceService(prisma, {
-    userId: invitedUserId,
-    workspaceId: uowContext.workspaceId,
+  const existingMembership = await prisma.usersOnWorkspaces.findUnique({
+    where: {
+      userId_workspaceId: {
+        userId: invitedUserId,
+        workspaceId,
+      },
+    },
   })
 
-  if (!result) {
+  if (existingMembership) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'The user is already a member of this workspace',
