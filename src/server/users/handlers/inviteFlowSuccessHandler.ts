@@ -8,6 +8,7 @@ import Joi from 'joi'
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { withMiddleware } from '../../middlewares/withMiddleware'
+import { inviteSuccessOrchestrationService } from '../services/inviteSuccessOrchestration.service'
 
 const schema = Joi.object({
   token: Joi.string(),
@@ -30,13 +31,23 @@ const inviteFlowSuccessHandler = async (
     throw createHttpError(404)
   }
 
-  const token = req.query.token as string
+  const inviteToken = req.query.token as string
   const session = await getServerSession(req, res, authOptions)
-  const sessionUserEmail = session?.user?.email
 
-  const invite = await invitesFindByTokenService(prisma, token)
+  if (!session) {
+    throw createHttpError(401)
+  }
+  const sessionUserEmail = session.user.email
+  const userId = session.user.id
+
+  // inviteSuccessOrchestrationService
+  await inviteSuccessOrchestrationService(prisma, userId, inviteToken)
+
+  return res.status(200).send(`ok`)
+
+  const invite = await invitesFindByTokenService(prisma, inviteToken)
   if (invite && invite.email === sessionUserEmail && !invite.completedAt) {
-    await invitesMarkAsCompletedService(prisma, token)
+    await invitesMarkAsCompletedService(prisma, inviteToken)
   }
 
   res.redirect('/p')

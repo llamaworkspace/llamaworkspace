@@ -21,8 +21,13 @@ export const inviteSuccessOrchestrationService = async (
       },
     })
 
-    const invite =
-      user.email && (await getWorkspaceInvite(prisma, inviteToken, user.email))
+    if (!user.email) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'User does not have an email.',
+      })
+    }
+    const invite = await getWorkspaceInvite(prisma, inviteToken, user.email)
 
     if (!invite) {
       return
@@ -40,6 +45,11 @@ export const inviteSuccessOrchestrationService = async (
       userId,
     )
     await addUserToWorkspaceService(prisma, context, { invitedUserId: userId })
+
+    // Dnd me he quedado:
+
+    await removeUsedInvite(prisma, user.email)
+    // - Falta ejecutar correctament el settleWs
     // settleWorkspaceInvitesForNewUserService; whatever that means now
 
     return 'ok'
@@ -94,6 +104,17 @@ const getWorkspaceInvite = async (
     where: {
       token: inviteToken,
       email,
+    },
+  })
+}
+
+const removeUsedInvite = async (
+  prisma: PrismaTrxClient,
+  invitedUserEmail: string,
+) => {
+  await prisma.workspaceInvite.deleteMany({
+    where: {
+      email: invitedUserEmail,
     },
   })
 }

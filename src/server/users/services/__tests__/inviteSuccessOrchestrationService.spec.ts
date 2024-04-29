@@ -65,6 +65,24 @@ describe('inviteSuccessOrchestrationService', () => {
     )
   })
 
+  it('removes the user invites', async () => {
+    const invitesBefore = await prisma.workspaceInvite.findMany({
+      where: {
+        email,
+      },
+    })
+    expect(invitesBefore).toHaveLength(1)
+
+    await subject(invitedUser.id, workspaceInvite.token)
+
+    const invitesAfter = await prisma.workspaceInvite.findMany({
+      where: {
+        email,
+      },
+    })
+    expect(invitesAfter).toHaveLength(0)
+  })
+
   describe('when target workspace has more than one user (edge case)', () => {
     it('throws an error', async () => {
       await UserFactory.create(prisma, {
