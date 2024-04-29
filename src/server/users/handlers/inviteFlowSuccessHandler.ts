@@ -35,15 +35,12 @@ const inviteFlowSuccessHandler = async (
   if (!session) {
     throw createHttpError(401)
   }
-  const sessionUserEmail = session.user.email
+
   const userId = session.user.id
 
-  // inviteSuccessOrchestrationService
   await inviteSuccessOrchestrationService(prisma, userId, inviteToken)
 
-  return res.status(200).send(`ok`)
-
-  res.redirect('/p')
+  return res.redirect('/p')
 }
 
 // export
