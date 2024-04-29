@@ -1,18 +1,27 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { workspaceOnboardingCreationService } from '@/server/onboarding/services/workspaceOnboardingCreation.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import type { User } from '@prisma/client'
-import { createWorkspaceForUserService } from '../createWorkspaceForUser.service'
+import { addUserToWorkspaceService } from '../addUserToWorkspace.service'
 
 jest.mock('@/server/workspaces/services/setDefaultsForWorkspace.service')
-jest.mock('@/server/onboarding/services/workspaceOnboardingCreation.service')
 
-const subject = async (userId: string) => {
-  return await createWorkspaceForUserService(prisma, userId)
+const subject = async (
+  workspaceId: string,
+  invitingUserId: string,
+  invitedUserId: string,
+) => {
+  const uowContext = await createUserOnWorkspaceContext(
+    prisma,
+    workspaceId,
+    invitingUserId,
+  )
+
+  return await addUserToWorkspaceService(prisma, uowContext, { invitedUserId })
 }
 
-describe('createWorkspaceForUserService', () => {
+describe('addUserToWorkspaceService', () => {
   let user: User
 
   beforeEach(async () => {
@@ -36,10 +45,5 @@ describe('createWorkspaceForUserService', () => {
   it('executes setDefaultsForWorkspace service', async () => {
     await subject(user.id)
     expect(setDefaultsForWorkspaceService).toHaveBeenCalled()
-  })
-
-  it('executes workspaceOnboardingCreation service', async () => {
-    await subject(user.id)
-    expect(workspaceOnboardingCreationService).toHaveBeenCalled()
   })
 })

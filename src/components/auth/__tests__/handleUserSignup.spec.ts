@@ -1,5 +1,4 @@
 import { prisma } from '@/server/db'
-import { workspaceOnboardingCreationService } from '@/server/onboarding/services/workspaceOnboardingCreation.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { createDefaultsForNewUserService } from '@/server/users/services/createDefaultsForNewUser.service'
 import * as createWorkspaceForUserServiceWrapper from '@/server/users/services/createWorkspaceForUser.service'
@@ -21,9 +20,7 @@ jest.mock('@/server/users/services/createWorkspaceForUser.service', () => {
 })
 
 jest.mock('@/server/workspaces/services/addUserToWorkspace.service')
-jest.mock('@/server/users/services/settlePostSharesForNewUser.service')
 jest.mock('@/server/users/services/settleWorkspaceInvitesForNewUser.service')
-jest.mock('@/server/onboarding/services/onboardingCreate.service')
 jest.mock('@/server/users/services/createDefaultsForNewUser.service')
 
 describe('handleUserSignup', () => {
@@ -38,6 +35,11 @@ describe('handleUserSignup', () => {
     return user
   }
 
+  it('executes createDefaultsForNewUser service', async () => {
+    await subject()
+    expect(createDefaultsForNewUserService).toHaveBeenCalled()
+  })
+
   it('executes createWorkspaceForUserService service', async () => {
     await subject()
     expect(
@@ -48,15 +50,5 @@ describe('handleUserSignup', () => {
   it('executes settleWorkspaceInvitesForNewUser service', async () => {
     await subject()
     expect(settleWorkspaceInvitesForNewUserService).toHaveBeenCalled()
-  })
-
-  it('executes onboardingCreate service', async () => {
-    await subject()
-    expect(workspaceOnboardingCreationService).toHaveBeenCalled()
-  })
-
-  it('executes createDefaultsForNewUser service', async () => {
-    await subject()
-    expect(createDefaultsForNewUserService).toHaveBeenCalled()
   })
 })

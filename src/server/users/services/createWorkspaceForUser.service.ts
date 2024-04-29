@@ -1,4 +1,6 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
+import { workspaceOnboardingCreationService } from '@/server/onboarding/services/workspaceOnboardingCreation.service'
 import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
@@ -30,7 +32,14 @@ export const createWorkspaceForUserService = async (
       },
     })
 
+    // Side effects
+    const context = await createUserOnWorkspaceContext(
+      prisma,
+      workspace.id,
+      userId,
+    )
     await setDefaultsForWorkspaceService(prisma, workspace.id)
+    await workspaceOnboardingCreationService(prisma, context)
 
     return workspace
   })

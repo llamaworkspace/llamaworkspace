@@ -1,11 +1,6 @@
-import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { workspaceOnboardingCreationService } from '@/server/onboarding/services/workspaceOnboardingCreation.service'
 import { createDefaultsForNewUserService } from '@/server/users/services/createDefaultsForNewUser.service'
 import { createWorkspaceForUserService } from '@/server/users/services/createWorkspaceForUser.service'
-import { settleWorkspaceInvitesForNewUserService as settleWorkspaceInvitesForNewUserServiceUPDATEME } from '@/server/users/services/settleWorkspaceInvitesForNewUser.service'
-import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
-import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import type { PrismaClient } from '@prisma/client'
 
 export const handleUserSignup = async (
@@ -14,24 +9,18 @@ export const handleUserSignup = async (
 ) => {
   try {
     await prismaAsTrx(prisma, async (prisma) => {
-      // Workspace setup start
-      const workspace = await createWorkspaceForUserService(prisma, userId)
-      await setDefaultsForWorkspaceService(prisma, workspace.id)
+      // User setup
       await createDefaultsForNewUserService(prisma, userId)
-      // Workspace setup end
+      // Workspace setup
+      await createWorkspaceForUserService(prisma, userId)
 
-      const context = await createUserOnWorkspaceContext(
-        prisma,
-        workspace.id,
-        userId,
-      )
+      // This should go on invite flow success, and not happen here.
+      // await addUserToWorkspaceService(prisma, context, {
+      //   invitedUserId: userId,
+      // })
 
-      await addUserToWorkspaceService(prisma, context, {
-        invitedUserId: userId,
-      })
-
-      await settleWorkspaceInvitesForNewUserServiceUPDATEME(prisma, context)
-      await workspaceOnboardingCreationService(prisma, context)
+      // This should go only on handle flow success, and be modified to act as it should "addUserToWorkspaceService", and happen always
+      // await settleWorkspaceInvitesForNewUserServiceUPDATEME(prisma, context)
     })
   } catch (error) {
     await prisma.user.delete({
