@@ -1,7 +1,5 @@
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
-import { invitesFindByTokenService } from '@/server/invites/services/invitesFindByToken.service'
-import { invitesMarkAsCompletedService } from '@/server/invites/services/invitesMarkAsCompleted.service'
 import { joiPayloadValidateMiddleware } from '@/server/middlewares/custom/joiPayloadValidateMiddleware'
 import createHttpError from 'http-errors'
 import Joi from 'joi'
@@ -44,11 +42,6 @@ const inviteFlowSuccessHandler = async (
   await inviteSuccessOrchestrationService(prisma, userId, inviteToken)
 
   return res.status(200).send(`ok`)
-
-  const invite = await invitesFindByTokenService(prisma, inviteToken)
-  if (invite && invite.email === sessionUserEmail && !invite.completedAt) {
-    await invitesMarkAsCompletedService(prisma, inviteToken)
-  }
 
   res.redirect('/p')
 }
