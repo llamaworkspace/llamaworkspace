@@ -63,9 +63,10 @@ const handleUserExists = async (
     })
   }
 
-  // This ain't tested!
-  const result = await addUserToWorkspaceService(prisma, uowContext, {
-    invitedUserId,
+  // This ain't tested!!!!
+  const result = await addUserToWorkspaceService(prisma, {
+    userId: invitedUserId,
+    workspaceId: uowContext.workspaceId,
   })
 
   if (!result) {
@@ -141,27 +142,33 @@ const handleUserDoesNotExist = async (
 
   const invitingUserOrEmail = invitingUser.name ?? invitingUser.email!
 
-  await sendEmailToInvitedUser(
+  await sendEmailToInvitedUser({
     workspaceId,
-    invitingUserOrEmail,
+    invitingUserName: invitingUserOrEmail,
     invitedUserEmail,
-    workspace.name,
-  )
+    workspaceName: workspace.name,
+    token: invite.token,
+  })
 
   return invite
 }
 
-const sendEmailToInvitedUser = async (
-  workspaceId: string,
-  invitingUserName: string,
-  invitedUserEmail: string,
-  workspaceName: string,
-) => {
+interface SendEmailToInvitedUserParams {
+  workspaceId: string
+  invitingUserName: string
+  invitedUserEmail: string
+  workspaceName: string
+  token: string
+}
+
+const sendEmailToInvitedUser = async (params: SendEmailToInvitedUserParams) => {
+  const { invitingUserName, invitedUserEmail, workspaceName, token } = params
+
   const fromName = invitingUserName ? `${invitingUserName} - via Joia` : 'Joia'
 
   const subject = `Your invitation to the workspace "${workspaceName}"`
 
-  const workspaceUrl = `${env.NEXT_PUBLIC_FRONTEND_URL}/w/${workspaceId}`
+  const workspaceUrl = `${env.NEXT_PUBLIC_FRONTEND_URL}/invite/${token}`
 
   await sendEmail({
     fromName,

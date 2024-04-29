@@ -5,6 +5,7 @@ import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 type WorkspaceInviteFactoryFields = {
   workspaceId: string
   email: string
+  invitedById: string
 } & Partial<WorkspaceInvite>
 
 const generateDefaults = () => {

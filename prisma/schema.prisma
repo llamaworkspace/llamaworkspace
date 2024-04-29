@@ -96,14 +96,16 @@ model WorkspaceInvite {
     email       String
     token       String
     source      String    @default("direct")
-    invitedById String?
-    invitedBy   User?     @relation(fields: [invitedById], references: [id], onDelete: SetNull)
+    invitedById String
+    invitedBy   User      @relation(fields: [invitedById], references: [id], onDelete: Cascade)
     workspaceId String
     workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt
 
     @@unique([email, workspaceId])
+    @@index([token])
+    @@index([email])
 }
 
 model Post {

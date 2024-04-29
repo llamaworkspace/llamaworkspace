@@ -1,4 +1,3 @@
-import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { createDefaultPostService } from '@/server/posts/services/createDefaultPost.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
@@ -8,18 +7,11 @@ import { addUserToWorkspaceService } from '../addUserToWorkspace.service'
 
 jest.mock('@/server/posts/services/createDefaultPost.service')
 
-const subject = async (
-  workspaceId: string,
-  invitingUserId: string,
-  invitedUserId: string,
-) => {
-  const uowContext = await createUserOnWorkspaceContext(
-    prisma,
+const subject = async (workspaceId: string, invitedUserId: string) => {
+  return await addUserToWorkspaceService(prisma, {
     workspaceId,
-    invitingUserId,
-  )
-
-  return await addUserToWorkspaceService(prisma, uowContext, { invitedUserId })
+    userId: invitedUserId,
+  })
 }
 
 describe('addUserToWorkspaceService', () => {
@@ -38,7 +30,7 @@ describe('addUserToWorkspaceService', () => {
   })
 
   it('creates a new workspace linked to the user', async () => {
-    await subject(workspace.id, invitingUser.id, invitedUser.id)
+    await subject(workspace.id, invitedUser.id)
 
     const workspaceInDb = await prisma.usersOnWorkspaces.findMany({
       where: {
@@ -51,7 +43,7 @@ describe('addUserToWorkspaceService', () => {
   })
 
   it('executes createDefaultPostService service', async () => {
-    await subject(workspace.id, invitingUser.id, invitedUser.id)
+    await subject(workspace.id, invitedUser.id)
     expect(createDefaultPostService).toHaveBeenCalled()
   })
 })

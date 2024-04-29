@@ -22,6 +22,7 @@ const subject = async (invitedUserId: string, inviteToken: string) => {
 
 describe('inviteSuccessOrchestrationService', () => {
   let workspace: Workspace
+  let invitedUserWorkspace: Workspace
   let invitedUser: User
   let email: string
   let workspaceInvite: WorkspaceInvite
@@ -29,40 +30,43 @@ describe('inviteSuccessOrchestrationService', () => {
   beforeEach(async () => {
     jest.clearAllMocks()
     workspace = await WorkspaceFactory.create(prisma)
+    invitedUserWorkspace = await WorkspaceFactory.create(prisma)
+    const invitingUser = await UserFactory.create(prisma, {
+      workspaceId: workspace.id,
+    })
 
     email = faker.internet.email()
     invitedUser = await UserFactory.create(prisma, {
       email,
-      workspaceId: workspace.id,
+      workspaceId: invitedUserWorkspace.id,
     })
 
     workspaceInvite = await WorkspaceInviteFactory.create(prisma, {
       workspaceId: workspace.id,
       email,
+      invitedById: invitingUser.id,
     })
   })
 
   it('deletes default workspace for the user', async () => {
     const workspaceInDb = await prisma.usersOnWorkspaces.findMany({
       where: {
-        workspaceId: workspace.id,
+        workspaceId: invitedUserWorkspace.id,
         userId: invitedUser.id,
       },
     })
     expect(workspaceInDb).toHaveLength(1)
+
     await subject(invitedUser.id, workspaceInvite.token)
     expect(deleteWorkspaceService).toHaveBeenCalled()
   })
 
   it('adds user to workspace', async () => {
     await subject(invitedUser.id, workspaceInvite.token)
-    expect(addUserToWorkspaceService).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.anything(),
-      {
-        invitedUserId: invitedUser.id,
-      },
-    )
+    expect(addUserToWorkspaceService).toHaveBeenCalledWith(expect.anything(), {
+      userId: invitedUser.id,
+      workspaceId: workspace.id,
+    })
   })
 
   it('removes the user invites', async () => {
@@ -83,10 +87,10 @@ describe('inviteSuccessOrchestrationService', () => {
     expect(invitesAfter).toHaveLength(0)
   })
 
-  describe('when target workspace has more than one user (edge case)', () => {
+  describe('when previous user workspace has more than one user (edge case)', () => {
     it('throws an error', async () => {
       await UserFactory.create(prisma, {
-        workspaceId: workspace.id,
+        workspaceId: invitedUserWorkspace.id,
       })
 
       await expect(

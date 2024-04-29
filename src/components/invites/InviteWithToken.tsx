@@ -5,14 +5,16 @@ interface InviteWithTokenProps {
   token: string
   invitingUserName: string
   invitingUserEmail: string
+  workspaceName: string
 }
 
 export default function InviteWithToken({
   token,
-  invitingUserName = 'Pepe Juan',
+  invitingUserName,
   invitingUserEmail,
+  workspaceName,
 }: InviteWithTokenProps) {
-  const callbackUrl = `/api/invite-flow-success?token=${token}`
+  const callbackUrl = `/api/auth/invite-flow-success?token=${token}`
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-zinc-100 py-12 sm:px-6 lg:px-8">
@@ -30,7 +32,7 @@ export default function InviteWithToken({
             <strong>
               {invitingUserName ? invitingUserName : invitingUserEmail}
             </strong>{' '}
-            has invited you to join the <strong>Something Whatever</strong>{' '}
+            has invited you to join the <strong>{workspaceName}</strong>{' '}
             workspace
           </h2>
           <div className="space-y-2">

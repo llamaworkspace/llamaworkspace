@@ -1,4 +1,3 @@
-import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
 import { deleteWorkspaceService } from '@/server/workspaces/services/deleteWorkspace.service'
@@ -36,23 +35,14 @@ export const inviteSuccessOrchestrationService = async (
     // Delete the initial workspace for the user
     await deleteDefaultWorkspaceForUser(prisma, userId)
 
-    // Add user to the workspace...
-    // 1. Find the target workspace
-    // 2. Add the user to the workspace
-    const context = await createUserOnWorkspaceContext(
-      prisma,
-      invite.workspaceId,
-      userId,
-    )
-    await addUserToWorkspaceService(prisma, context, { invitedUserId: userId })
+    // Add user to the invited workspace
+    await addUserToWorkspaceService(prisma, {
+      userId: userId,
+      workspaceId: invite.workspaceId,
+    })
 
-    // Dnd me he quedado:
-
+    // Clear invites
     await removeUsedInvite(prisma, user.email)
-    // - Falta ejecutar correctament el settleWs
-    // settleWorkspaceInvitesForNewUserService; whatever that means now
-
-    return 'ok'
   })
 }
 
@@ -91,7 +81,7 @@ const deleteDefaultWorkspaceForUser = async (
         message: 'Cannot delete workspace with more than one user.',
       })
     }
-    await deleteWorkspaceService(prisma, userOnWorkspace.id)
+    await deleteWorkspaceService(prisma, userOnWorkspace.workspaceId)
   })
 }
 
