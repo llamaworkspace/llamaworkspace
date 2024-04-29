@@ -1,18 +1,45 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
+import { addUserToWorkspaceService } from '@/server/workspaces/services/addUserToWorkspace.service'
 import { deleteWorkspaceService } from '@/server/workspaces/services/deleteWorkspace.service'
-import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import type {
+  PrismaClientOrTrxClient,
+  PrismaTrxClient,
+} from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
 import Promise from 'bluebird'
 
 export const inviteSuccessOrchestrationService = async (
   prisma: PrismaClientOrTrxClient,
   userId: string,
+  inviteToken: string,
 ) => {
   return prismaAsTrx(prisma, async (prisma) => {
+    const user = await prisma.user.findFirstOrThrow({
+      where: {
+        id: userId,
+      },
+    })
+
+    const invite =
+      user.email && (await getWorkspaceInvite(prisma, inviteToken, user.email))
+
+    if (!invite) {
+      return
+    }
+
     // Delete the initial workspace for the user
     await deleteDefaultWorkspaceForUser(prisma, userId)
 
-    // addUserToWorkspaceService
+    // Add user to the workspace...
+    // 1. Find the target workspace
+    // 2. Add the user to the workspace
+    const context = await createUserOnWorkspaceContext(
+      prisma,
+      invite.workspaceId,
+      userId,
+    )
+    await addUserToWorkspaceService(prisma, context, { invitedUserId: userId })
     // settleWorkspaceInvitesForNewUserService; whatever that means now
 
     return 'ok'
@@ -55,5 +82,18 @@ const deleteDefaultWorkspaceForUser = async (
       })
     }
     await deleteWorkspaceService(prisma, userOnWorkspace.id)
+  })
+}
+
+const getWorkspaceInvite = async (
+  prisma: PrismaTrxClient,
+  inviteToken: string,
+  email: string,
+) => {
+  return await prisma.workspaceInvite.findFirst({
+    where: {
+      token: inviteToken,
+      email,
+    },
   })
 }

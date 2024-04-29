@@ -48,24 +48,24 @@ model VerificationToken {
 }
 
 model User {
-    id               String              @id @default(cuid())
-    name             String?
-    username         String?             @unique
-    email            String?             @unique
-    emailVerified    DateTime?
-    image            String?
-    defaultModel     String?
-    createdAt        DateTime            @default(now())
-    updatedAt        DateTime            @updatedAt
-    accounts         Account[]
-    posts            Post[]
-    sessions         Session[]
-    postShares       PostShare[]
-    invites          Invite[]
-    workspaces       UsersOnWorkspaces[]
-    authoredChats    Chat[]
-    workspaceInvites WorkspaceInvite[]
-    postsMeta        PostsOnUsers[]
+    id                   String              @id @default(cuid())
+    name                 String?
+    username             String?             @unique
+    email                String?             @unique
+    emailVerified        DateTime?
+    image                String?
+    defaultModel         String?
+    createdAt            DateTime            @default(now())
+    updatedAt            DateTime            @updatedAt
+    accounts             Account[]
+    posts                Post[]
+    sessions             Session[]
+    postShares           PostShare[]
+    invites              Invite[]
+    workspaces           UsersOnWorkspaces[]
+    authoredChats        Chat[]
+    workspaceInvitesSent WorkspaceInvite[]
+    postsMeta            PostsOnUsers[]
 }
 
 model Workspace {
@@ -94,6 +94,7 @@ model UsersOnWorkspaces {
 model WorkspaceInvite {
     id          String    @id @default(cuid())
     email       String
+    token       String
     source      String    @default("direct")
     invitedById String?
     invitedBy   User?     @relation(fields: [invitedById], references: [id], onDelete: SetNull)

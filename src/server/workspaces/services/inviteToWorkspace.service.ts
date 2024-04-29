@@ -1,5 +1,6 @@
 import { workspaceEditionFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { env } from '@/env.mjs'
+import { generateToken } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
@@ -132,6 +133,7 @@ const handleUserDoesNotExist = async (
     data: {
       invitedById: invitingUserId,
       email: invitedUserEmail,
+      token: generateToken(64),
       workspaceId: workspaceId,
       source,
     },
