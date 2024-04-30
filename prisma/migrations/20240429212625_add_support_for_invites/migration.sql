@@ -9,6 +9,7 @@
 ALTER TABLE "WorkspaceInvite" DROP CONSTRAINT "WorkspaceInvite_invitedById_fkey";
 
 -- AlterTable
+DELETE FROM "WorkspaceInvite";
 ALTER TABLE "WorkspaceInvite" ADD COLUMN     "token" TEXT NOT NULL,
 ALTER COLUMN "invitedById" SET NOT NULL;
 

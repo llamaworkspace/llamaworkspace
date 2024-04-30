@@ -1,2 +1,2 @@
 #!/bin/bash
-npm run production:build
+npm run production:deploy
