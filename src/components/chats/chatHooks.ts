@@ -1,7 +1,10 @@
 import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
-import { useChat as useVercelChat } from 'ai/react'
+import {
+  useAssistant as useVercelAssistant,
+  useChat as useVercelChat,
+} from 'ai/react'
 import { produce } from 'immer'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
@@ -121,26 +124,36 @@ export const usePrompt = (chatId?: string) => {
   const errorHandler = useErrorHandler()
   const [isLoading, setIsLoading] = useState(false)
   const {
-    messages: vercelMessages,
-    append,
-    setMessages: setVercelMessages,
+    messages: vercelChatMessages,
+    append: chatAppend,
+    setMessages: setVercelChatMessages,
   } = useVercelChat({
     api: '/api/chat',
     onFinish: () => {
       setIsLoading(false)
-      setVercelMessages([])
+      setVercelChatMessages([])
       // Expects the title to be generated
       void utils.sidebar.chatHistoryForSidebar.invalidate()
     },
 
     onError: (error) => {
       setIsLoading(false)
-      setVercelMessages([])
+      setVercelChatMessages([])
       return errorHandler()(error)
     },
   })
 
-  const targetMessage = vercelMessages?.[1]?.content
+  const {
+    messages: vercelAssistantMessages,
+    setMessages: setVercelAssistantMessages,
+    append: assistantAppend,
+    status: assistantStatus,
+    error: assistantError,
+  } = useVercelAssistant({
+    api: '/api/assistant',
+  })
+
+  const targetMessage = vercelAssistantMessages?.[1]?.content
 
   useEffect(() => {
     if (!chatId || !targetMessage) return
@@ -236,18 +249,29 @@ export const usePrompt = (chatId?: string) => {
                     },
                   )
 
-                  setVercelMessages([])
+                  setVercelChatMessages([])
+                  setVercelAssistantMessages([])
 
-                  void append(
+                  // void chatAppend(
+                  //   {
+                  //     id: assistantMessage.id,
+                  //     role: Author.User,
+                  //     content: '',
+                  //   },
+                  //   {
+                  //     options: {
+                  //       body: { chatId },
+                  //     },
+                  //   },
+                  // )
+                  void assistantAppend(
                     {
                       id: assistantMessage.id,
                       role: Author.User,
                       content: '',
                     },
                     {
-                      options: {
-                        body: { chatId },
-                      },
+                      data: { chatId },
                     },
                   )
                 },
@@ -264,7 +288,16 @@ export const usePrompt = (chatId?: string) => {
         },
       )
     },
-    [append, createMessage, setVercelMessages, utils, errorHandler, chatId],
+    [
+      // chatAppend,
+      createMessage,
+      setVercelChatMessages,
+      utils,
+      errorHandler,
+      chatId,
+      assistantAppend,
+      setVercelAssistantMessages,
+    ],
   )
 
   return {

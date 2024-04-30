@@ -1,7 +1,5 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
-import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
-import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
-import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
+import { env } from '@/env.mjs'
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
@@ -12,22 +10,21 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message } from '@prisma/client'
-import { StreamingTextResponse } from 'ai'
+import { AssistantResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
+import OpenAI from 'openai'
+import type { MessageCreateParams } from 'openai/resources/beta/threads/messages'
 import { chain } from 'underscore'
-import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
 import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 
-interface VoidIncomingMessage {
-  role: string
-  content: string
-}
+const ASSISTANT_ID = 'asst_38XDIcKNFjMDvp5p7tNoCq06'
 
 interface BodyPayload {
-  chatId: string
-  messages: VoidIncomingMessage[]
+  data: {
+    chatId: string
+  }
 }
 
 async function handler(req: Request) {
@@ -36,6 +33,7 @@ async function handler(req: Request) {
 
   try {
     const { chatId } = await getParsedBody(req)
+    console.log(111, chatId)
     const userId = await getRequestUserId()
 
     const [chat, postConfigVersion, messages] = await Promise.all([
@@ -47,11 +45,6 @@ async function handler(req: Request) {
     const workspaceId = chat.post.workspaceId
 
     await validateUserPermissionsOrThrow(userId, chatId)
-    await validateModelIsEnabledOrThrow(
-      workspaceId,
-      userId,
-      postConfigVersion.model,
-    )
 
     const allUnprocessedMessages = [...postConfigVersion.messages, ...messages]
 
@@ -73,53 +66,42 @@ async function handler(req: Request) {
 
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
-    // Method to extract provider from model
-    const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
-      postConfigVersion.model,
-    )
+    // const onFinal = async (final: string) => {
+    //   await updateMessage(assistantTargetMessage.id, final)
+    //   await saveTokenCountForChatRunService(prisma, chatRun.id)
+    // }
 
-    const providerKVs = await getAiProviderKVsService(
-      prisma,
-      workspaceId,
-      userId,
-      providerSlug,
-    )
+    // const onToken = (token: string) => {
+    //   tokenResponse += token
+    // }
 
-    const onFinal = async (final: string) => {
-      await updateMessage(targetMessage.id, final)
-      await saveTokenCountForChatRunService(prisma, chatRun.id)
-    }
+    // const onError = async (error: Error) => {
+    //   await deleteMessage(assistantTargetMessage.id)
+    //   errorLogger(error)
+    // }
+    return await assistantsHandler(allMessages, targetMessage.id)
 
-    const onToken = (token: string) => {
-      tokenResponse += token
-    }
+    // const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
-    const onError = async (error: Error) => {
-      await deleteMessage(targetMessage.id)
-      errorLogger(error)
-    }
+    // if (!provider) {
+    //   throw new Error(`Provider ${providerSlug} not found`)
+    // }
 
-    const provider = aiProvidersFetcherService.getProvider(providerSlug)
+    // const stream = await provider.executeAsStream(
+    //   {
+    //     provider: providerSlug,
+    //     model,
+    //     messages: allMessages,
+    //     onToken,
+    //     onFinal,
+    //   },
+    //   providerKVs,
+    // )
 
-    if (!provider) {
-      throw new Error(`Provider ${providerSlug} not found`)
-    }
-
-    const stream = await provider.executeAsStream(
-      {
-        provider: providerSlug,
-        model,
-        messages: allMessages,
-        onToken,
-        onFinal,
-      },
-      providerKVs,
-    )
-
-    const headers = {
-      'Content-Type': 'text/event-stream',
-    }
-    return new StreamingTextResponse(stream, { headers })
+    // const headers = {
+    //   'Content-Type': 'text/event-stream',
+    // }
+    // return new StreamingTextResponse(stream, { headers })
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && targetMessageId) {
@@ -149,47 +131,6 @@ const validateUserPermissionsOrThrow = async (
     userId,
     chat.postId,
   )
-
-  return true
-}
-
-const validateModelIsEnabledOrThrow = async (
-  workspaceId: string,
-  userId: string,
-  fullSlug: string,
-) => {
-  const providersMeta = await aiProvidersFetcherService.getFullAiProvidersMeta(
-    workspaceId,
-    userId,
-  )
-  const { provider: providerName, model: modelName } =
-    getProviderAndModelFromFullSlug(fullSlug)
-  const provider = providersMeta.find(
-    (providerMeta) => providerMeta.slug === providerName,
-  )
-  if (!provider) throw new Error('Provider not found')
-  const targetModel = provider.models.find((model) => model.slug === modelName)
-
-  if (!targetModel) {
-    throw createHttpError(
-      403,
-      `The model ${fullSlug} no longer exists. Please select another one.`,
-    )
-  }
-
-  if (!targetModel.isEnabled) {
-    throw createHttpError(
-      403,
-      `The model "${targetModel.fullPublicName}" is currently not enabled. Please select another one.`,
-    )
-  }
-
-  if (!targetModel.isSetupOk) {
-    throw createHttpError(
-      403,
-      `The model "${targetModel.fullPublicName}" is not setup correctly. Please select another one.`,
-    )
-  }
 
   return true
 }
@@ -329,7 +270,8 @@ const transformMessageModelToPayload = (
 }
 
 const getParsedBody = async (req: Request) => {
-  return (await req.json()) as BodyPayload
+  const json = (await req.json()) as BodyPayload
+  return json.data
 }
 // Utility function to ensure we're working with a proper Error object
 const ensureError = (err: unknown): Error => {
@@ -346,4 +288,50 @@ const ensureError = (err: unknown): Error => {
   return new Error(String(err))
 }
 
-export const chatStreamedResponseHandler = withMiddlewareForAppRouter(handler)
+export const experimental_assistantStreamedResponseHandler =
+  withMiddlewareForAppRouter(handler)
+
+const assistantsHandler = async (
+  aiRegistryMessages: AiRegistryMessage[],
+  targetMessageId: string,
+) => {
+  const openai = new OpenAI({
+    apiKey: env.INTERNAL_OPENAI_API_KEY,
+  })
+  const messages = aiRegistryMessages.filter(
+    (message) => message.role !== 'system',
+  ) as MessageCreateParams[]
+
+  const thread = await openai.beta.threads.create({
+    messages,
+  })
+  const threadId = thread.id
+
+  return AssistantResponse(
+    {
+      threadId,
+      messageId: targetMessageId,
+    },
+    async ({ forwardStream, sendDataMessage }) => {
+      const runStream = openai.beta.threads.runs.stream(threadId, {
+        assistant_id: ASSISTANT_ID,
+      })
+
+      // sendDataMessage({
+      //   role: 'data',
+      //   data: {
+      //     lorem: 'Ipsum gromenauer',
+      //   },
+      // })
+
+      // forward run status would stream message deltas
+      const runResult = await forwardStream(runStream)
+
+      // status can be: queued, in_progress, requires_action, cancelling, cancelled, failed, completed, or expired
+
+      // while (runResult?.status === 'requires_action') {
+      //   console.log('runResult', runResult)
+      // }
+    },
+  )
+}
