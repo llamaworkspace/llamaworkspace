@@ -1,12 +1,12 @@
 import { workspaceEditionFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { env } from '@/env.mjs'
+import { generateToken } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
 import { WorkspaceInviteSources } from '../workspaceTypes'
-import { addUserToWorkspaceService } from './addUserToWorkspace.service'
 
 export const inviteToWorkspaceService = async (
   prisma: PrismaClientOrTrxClient,
@@ -54,7 +54,7 @@ const handleUserExists = async (
   uowContext: UserOnWorkspaceContext,
   invitedUserId: string,
 ) => {
-  const { workspaceId, userId: invitingUserId } = uowContext
+  const { userId: invitingUserId, workspaceId } = uowContext
   if (invitingUserId === invitedUserId) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
@@ -62,55 +62,27 @@ const handleUserExists = async (
     })
   }
 
-  const result = await addUserToWorkspaceService(prisma, uowContext, {
-    invitedUserId,
+  const existingMembership = await prisma.usersOnWorkspaces.findUnique({
+    where: {
+      userId_workspaceId: {
+        userId: invitedUserId,
+        workspaceId,
+      },
+    },
   })
 
-  if (!result) {
+  if (existingMembership) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: 'The user is already a member of this workspace',
     })
   }
 
-  const [invitedUser, invitingUser, workspace] = await Promise.all([
-    await prisma.user.findUniqueOrThrow({
-      select: {
-        email: true,
-      },
-      where: {
-        id: invitedUserId,
-      },
-    }),
-    await prisma.user.findUniqueOrThrow({
-      select: {
-        email: true,
-        name: true,
-      },
-      where: {
-        id: invitingUserId,
-      },
-    }),
-    await prisma.workspace.findUniqueOrThrow({
-      select: {
-        name: true,
-      },
-      where: {
-        id: workspaceId,
-      },
-    }),
-  ])
-
-  if (!invitedUser.email) return
-
-  const invitingUserOrEmail = invitingUser.name ?? invitingUser.email!
-
-  await sendEmailToInvitedUser(
-    workspaceId,
-    invitingUserOrEmail,
-    invitedUser.email,
-    workspace.name,
-  )
+  throw new TRPCError({
+    code: 'BAD_REQUEST',
+    message:
+      'This person cannot be invited because they already have an account with us.',
+  })
 }
 
 const handleUserDoesNotExist = async (
@@ -164,6 +136,7 @@ const handleUserDoesNotExist = async (
     data: {
       invitedById: invitingUserId,
       email: invitedUserEmail,
+      token: generateToken(64),
       workspaceId: workspaceId,
       source,
     },
@@ -171,27 +144,33 @@ const handleUserDoesNotExist = async (
 
   const invitingUserOrEmail = invitingUser.name ?? invitingUser.email!
 
-  await sendEmailToInvitedUser(
+  await sendEmailToInvitedUser({
     workspaceId,
-    invitingUserOrEmail,
+    invitingUserName: invitingUserOrEmail,
     invitedUserEmail,
-    workspace.name,
-  )
+    workspaceName: workspace.name,
+    token: invite.token,
+  })
 
   return invite
 }
 
-const sendEmailToInvitedUser = async (
-  workspaceId: string,
-  invitingUserName: string,
-  invitedUserEmail: string,
-  workspaceName: string,
-) => {
+interface SendEmailToInvitedUserParams {
+  workspaceId: string
+  invitingUserName: string
+  invitedUserEmail: string
+  workspaceName: string
+  token: string
+}
+
+const sendEmailToInvitedUser = async (params: SendEmailToInvitedUserParams) => {
+  const { invitingUserName, invitedUserEmail, workspaceName, token } = params
+
   const fromName = invitingUserName ? `${invitingUserName} - via Joia` : 'Joia'
 
   const subject = `Your invitation to the workspace "${workspaceName}"`
 
-  const workspaceUrl = `${env.NEXT_PUBLIC_FRONTEND_URL}/w/${workspaceId}`
+  const workspaceUrl = `${env.NEXT_PUBLIC_FRONTEND_URL}/invite/${token}`
 
   await sendEmail({
     fromName,

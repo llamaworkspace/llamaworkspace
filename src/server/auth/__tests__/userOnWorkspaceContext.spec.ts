@@ -18,11 +18,11 @@ jest.mock('@/shared/globalTypes', () => ({
   })),
 }))
 
-describe('createUserOnWorkspaceContext function', () => {
-  const subject = async (workspaceId: string, userId: string) => {
-    return await createUserOnWorkspaceContext(mockDb, workspaceId, userId)
-  }
+const subject = async (workspaceId: string, userId: string) => {
+  return await createUserOnWorkspaceContext(mockDb, workspaceId, userId)
+}
 
+describe('createUserOnWorkspaceContext function', () => {
   let workspace: Workspace, user: User, userOnWorkspace: UsersOnWorkspaces
 
   beforeEach(() => {

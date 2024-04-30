@@ -1,13 +1,12 @@
 import { authOptions } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
-import { invitesFindByTokenService } from '@/server/invites/services/invitesFindByToken.service'
-import { invitesMarkAsCompletedService } from '@/server/invites/services/invitesMarkAsCompleted.service'
 import { joiPayloadValidateMiddleware } from '@/server/middlewares/custom/joiPayloadValidateMiddleware'
 import createHttpError from 'http-errors'
 import Joi from 'joi'
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { withMiddleware } from '../../middlewares/withMiddleware'
+import { inviteSuccessOrchestrationService } from '../services/inviteSuccessOrchestration.service'
 
 const schema = Joi.object({
   token: Joi.string(),
@@ -30,16 +29,18 @@ const inviteFlowSuccessHandler = async (
     throw createHttpError(404)
   }
 
-  const token = req.query.token as string
+  const inviteToken = req.query.token as string
   const session = await getServerSession(req, res, authOptions)
-  const sessionUserEmail = session?.user?.email
 
-  const invite = await invitesFindByTokenService(prisma, token)
-  if (invite && invite.email === sessionUserEmail && !invite.completedAt) {
-    await invitesMarkAsCompletedService(prisma, token)
+  if (!session) {
+    throw createHttpError(401)
   }
 
-  res.redirect('/p')
+  const userId = session.user.id
+
+  await inviteSuccessOrchestrationService(prisma, userId, inviteToken)
+
+  return res.redirect('/p')
 }
 
 // export

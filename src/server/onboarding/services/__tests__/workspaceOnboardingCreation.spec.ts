@@ -2,10 +2,10 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { onboardingCreateService } from '../onboardingCreate.service'
 import { onboardingTexts } from '../onboardingTexts'
+import { workspaceOnboardingCreationService } from '../workspaceOnboardingCreation.service'
 
-describe('onboardingCreate', () => {
+describe('workspaceOnboardingCreationService', () => {
   const subject = async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
@@ -14,7 +14,7 @@ describe('onboardingCreate', () => {
       workspace.id,
       user.id,
     )
-    await onboardingCreateService(prisma, uowContext)
+    await workspaceOnboardingCreationService(prisma, uowContext)
     return user
   }
 

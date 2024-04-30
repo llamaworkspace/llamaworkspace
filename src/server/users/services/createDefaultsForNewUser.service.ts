@@ -1,4 +1,3 @@
-import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
 import type {
@@ -8,10 +7,9 @@ import type {
 
 export const createDefaultsForNewUserService = async (
   prisma: PrismaClientOrTrxClient,
-  uowContext: UserOnWorkspaceContext,
+  userId: string,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
-    const { userId } = uowContext
     await setDefaultModelForUser(prisma, userId)
   })
 }
