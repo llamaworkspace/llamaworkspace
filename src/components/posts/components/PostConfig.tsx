@@ -107,7 +107,7 @@ export function PostConfig({ postId }: PostConfigProps) {
               <PostConfigSettings disabled={!canEdit} />
               <div
                 className={cn(
-                  'absolute bottom-0 left-0 right-0 z-50 ml-72  space-x-4 border-t-2 border-zinc-300 bg-zinc-50 px-8 py-4 text-right ease-in-out',
+                  'absolute bottom-0 left-0 right-0 z-50 space-x-4 border-t-2 border-zinc-300 bg-zinc-50 px-8 py-4 text-right ease-in-out',
                   pristine ? 'hidden' : 'block',
                 )}
               >
