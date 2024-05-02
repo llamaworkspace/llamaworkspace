@@ -17,7 +17,7 @@ export const PostConfigForGPTSystemPrompt = ({ disabled = false }) => {
   const focusQueryStringEl = navigation.query?.focus
 
   useEffect(() => {
-    if (ref.current && focusQueryStringEl === 'system_message' && !disabled) {
+    if (ref.current && focusQueryStringEl === 'systemMessage' && !disabled) {
       ref.current.focus()
     }
   }, [focusQueryStringEl, disabled])
@@ -31,7 +31,7 @@ export const PostConfigForGPTSystemPrompt = ({ disabled = false }) => {
       <SectionBody>
         <div>
           <Field
-            name="system_message"
+            name="systemMessage"
             render={({ input }) => {
               return (
                 <>
