@@ -18,7 +18,7 @@ export const ChatNoSettingsAlert = ({
   postId,
   chatId,
 }: ChatNoSettingsAlertProps) => {
-  const href = `/p/${postId}/c/${chatId}/configuration?focus=system_message`
+  const href = `/p/${postId}/c/${chatId}/configuration?focus=systemMessage`
   const shouldDisplay = useShouldDisplayEmptySettingsAlert(postId, chatId)
   const { mutate: updatePost } = useUpdatePost()
 

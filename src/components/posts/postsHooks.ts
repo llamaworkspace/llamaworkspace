@@ -48,7 +48,7 @@ export const useCreatePost = () => {
           chatId: post.firstChatId,
         },
         {
-          focus: 'system_message',
+          focus: 'systemMessage',
           backButton: false,
         },
       )

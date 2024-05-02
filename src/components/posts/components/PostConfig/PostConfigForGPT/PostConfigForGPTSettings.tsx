@@ -22,7 +22,7 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
       <SectionBody className="space-y-8">
         <div>
           <Field
-            name="initial_message"
+            name="initialMessage"
             render={({ input }) => {
               return (
                 <>

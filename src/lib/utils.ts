@@ -71,13 +71,22 @@ export const mergeRefs = <T>(
   }
 }
 
-const numberToUsdConverter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-})
-
-export const numberToUsd = (number: number) =>
-  numberToUsdConverter.format(number)
+export const numberToUsd = (
+  number: number,
+  minDecimals = 2,
+  maxDecimals?: number,
+) => {
+  if (maxDecimals && minDecimals > maxDecimals) {
+    maxDecimals = minDecimals
+  }
+  const numberToUsdConverter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: minDecimals,
+    maximumFractionDigits: maxDecimals,
+  })
+  return numberToUsdConverter.format(number)
+}
 
 // Utility function to ensure we're working with a proper Error object
 export const ensureError = (err: unknown): Error => {
