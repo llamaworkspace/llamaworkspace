@@ -79,15 +79,16 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
 
   return (
     <SectionsShell>
+      {!hideBackButton && (
+        <div className="mb-8">
+          <Link href={returnToChatRoute}>
+            <Button variant="outline">&larr; Back to chat</Button>
+          </Link>
+        </div>
+      )}
+      <SectionsHeader>GPT configuration</SectionsHeader>
       <Section>
         <SectionBody>
-          {!hideBackButton && (
-            <SectionsHeader>
-              <Link href={returnToChatRoute}>
-                <Button variant="outline">&larr; Back to chat</Button>
-              </Link>
-            </SectionsHeader>
-          )}
           <FinalForm
             onSubmit={handleSubmit}
             initialValues={{
