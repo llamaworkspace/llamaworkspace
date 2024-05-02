@@ -18,3 +18,7 @@ export type PostUpdateParams = Omit<PostUpdateInput, 'id'>
 export interface ComponentWithPostId {
   postId: string
 }
+
+export enum PostType {
+  Chat = 'chat',
+}
