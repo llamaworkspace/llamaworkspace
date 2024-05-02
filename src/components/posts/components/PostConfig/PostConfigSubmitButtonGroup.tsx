@@ -1,19 +1,37 @@
+import { useCreateChatForApp } from '@/components/chats/chatHooks'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useRouter } from 'next/router'
 
 interface PostConfigSubmitButtonGroupProps {
+  postId?: string
   pristine: boolean
   submitting: boolean
-  handleSubmit: () => void
-  handleSubmitAndRedirect: () => void
+  onSave: () => Promise<void>
 }
 
 export const PostConfigSubmitButtonGroup = ({
+  postId,
   pristine,
   submitting,
-  handleSubmit,
-  handleSubmitAndRedirect,
+  onSave,
 }: PostConfigSubmitButtonGroupProps) => {
+  const router = useRouter()
+  const returnToChatRoute = router.asPath.replace(`/configuration`, '')
+  const { mutateAsync: createChat } = useCreateChatForApp()
+
+  const onSaveAndRedirect = () => {
+    async function run() {
+      await Promise.resolve(onSave())
+      if (router.query.chat_id) {
+        return void router.push(returnToChatRoute)
+      }
+      if (!postId) return
+      await createChat({ postId })
+    }
+    void run()
+  }
+
   return (
     <div
       className={cn(
@@ -22,14 +40,14 @@ export const PostConfigSubmitButtonGroup = ({
       )}
     >
       <Button
-        onClick={() => void handleSubmit()}
+        onClick={() => void onSave()}
         disabled={submitting}
         variant="outline"
       >
         Save
       </Button>
       <Button
-        onClick={() => void handleSubmitAndRedirect()}
+        onClick={() => void onSaveAndRedirect()}
         disabled={submitting}
         variant="primary"
       >

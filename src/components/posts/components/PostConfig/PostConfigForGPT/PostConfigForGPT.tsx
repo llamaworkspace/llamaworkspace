@@ -19,9 +19,10 @@ import {
   useLatestPostConfigVersionForPost,
   usePostConfigUpdate,
 } from '../../../postsHooks'
-import { PostConfigSubmitButtonGroup } from '../../PostConfigSubmitButtonGroup'
+import { PostConfigSubmitButtonGroup } from '../PostConfigSubmitButtonGroup'
 import { PostConfigForGPTSettings } from './PostConfigForGPTSettings'
 import { PostConfigForGPTSystemPrompt } from './PostConfigForGPTSystemPrompt'
+PostConfigSubmitButtonGroup
 
 interface PostConfigProps {
   postId?: string
@@ -97,16 +98,8 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
               model: postConfig?.model,
             }}
             render={({ handleSubmit, pristine, submitting }) => {
-              const handleSubmitAndRedirect = () => {
-                async function run() {
-                  await handleSubmit()
-                  if (router.query.chat_id) {
-                    return void router.push(returnToChatRoute)
-                  }
-                  if (!postId) return
-                  await createChat({ postId })
-                }
-                void run()
+              const handleSave = async () => {
+                await handleSubmit()
               }
               return (
                 <>
@@ -116,8 +109,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
                   <PostConfigSubmitButtonGroup
                     pristine={pristine}
                     submitting={submitting}
-                    handleSubmit={() => void handleSubmit()}
-                    handleSubmitAndRedirect={handleSubmitAndRedirect}
+                    onSave={handleSave}
                   />
                 </>
               )
