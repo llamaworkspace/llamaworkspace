@@ -78,3 +78,18 @@ const numberToUsdConverter = new Intl.NumberFormat('en-US', {
 
 export const numberToUsd = (number: number) =>
   numberToUsdConverter.format(number)
+
+// Utility function to ensure we're working with a proper Error object
+export const ensureError = (err: unknown): Error => {
+  if (err instanceof Error) {
+    return err
+  }
+
+  // If the thrown value isn't an Error but has an error-like structure
+  if (typeof err === 'object' && err && 'message' in err) {
+    return Object.assign(new Error((err as { message: string }).message), err)
+  }
+
+  // For other cases, such as when a string or number is thrown
+  return new Error(String(err))
+}

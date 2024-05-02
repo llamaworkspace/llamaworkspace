@@ -5,7 +5,7 @@ import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { Field } from 'react-final-form'
 
-export const PostConfigSettings = ({ disabled = false }) => {
+export const PostConfigForGPTSettings = ({ disabled = false }) => {
   const { data: workspace } = useCurrentWorkspace()
 
   const profileUrl = `/w/${workspace?.id}/profile`

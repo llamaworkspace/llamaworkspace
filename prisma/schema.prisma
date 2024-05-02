@@ -114,6 +114,7 @@ model Post {
     emoji                  String?
     userId                 String
     workspaceId            String
+    type                   String?
     isDefault              Boolean             @default(false)
     isDemo                 Boolean             @default(false)
     hideEmptySettingsAlert Boolean             @default(false)

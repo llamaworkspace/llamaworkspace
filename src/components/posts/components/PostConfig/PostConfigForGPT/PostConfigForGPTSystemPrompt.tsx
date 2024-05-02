@@ -10,7 +10,7 @@ For example:
 Act as a public speaker and write compelling speeches that can be used to inspire people to take action.
 `
 
-export const PostConfigSystemPrompt = ({ disabled = false }) => {
+export const PostConfigForGPTSystemPrompt = ({ disabled = false }) => {
   const navigation = useNavigation()
   const ref = useRef<HTMLTextAreaElement>(null)
 

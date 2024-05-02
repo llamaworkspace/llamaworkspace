@@ -1,6 +1,6 @@
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
-import { PostConfig } from '@/components/posts/components/PostConfig'
+import { PostConfig } from '@/components/posts/components/PostConfig/PostConfig'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 
 export default function PostConfigPage() {

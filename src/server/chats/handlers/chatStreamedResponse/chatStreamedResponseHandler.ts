@@ -1,4 +1,5 @@
 import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
+import { ensureError } from '@/lib/utils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
@@ -331,20 +332,6 @@ const transformMessageModelToPayload = (
 
 const getParsedBody = async (req: Request) => {
   return (await req.json()) as BodyPayload
-}
-// Utility function to ensure we're working with a proper Error object
-const ensureError = (err: unknown): Error => {
-  if (err instanceof Error) {
-    return err
-  }
-
-  // If the thrown value isn't an Error but has an error-like structure
-  if (typeof err === 'object' && err && 'message' in err) {
-    return Object.assign(new Error((err as { message: string }).message), err)
-  }
-
-  // For other cases, such as when a string or number is thrown
-  return new Error(String(err))
 }
 
 export const chatStreamedResponseHandler = withMiddlewareForAppRouter(handler)
