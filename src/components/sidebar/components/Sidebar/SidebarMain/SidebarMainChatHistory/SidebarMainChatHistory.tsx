@@ -1,27 +1,20 @@
 import { useChatHistoryForSidebar } from '@/components/sidebar/sidebarHooks'
-import type { RouterOutputs } from '@/lib/api'
 import { SidebarMainChatHistoryTimeBlock } from './SidebarMainChatHistoryTimeBlock'
 
-type ChatHistoryForSidebarOutput =
-  RouterOutputs['sidebar']['chatHistoryForSidebar']
-
 export const SidebarMainChatHistory = () => {
-  const { data: chats } = useChatHistoryForSidebar()
+  const { data: sortedChats } = useChatHistoryForSidebar()
 
   return (
     <div className="space-y-6">
-      {chats &&
-        Object.entries<ChatHistoryForSidebarOutput>(chats).map(
-          ([title, chats]) => {
-            return (
-              <SidebarMainChatHistoryTimeBlock
-                key={title}
-                title={title}
-                chats={chats}
-              />
-            )
-          },
-        )}
+      {sortedChats?.map(({ label, chats }) => {
+        return (
+          <SidebarMainChatHistoryTimeBlock
+            key={label}
+            title={label}
+            chats={chats}
+          />
+        )
+      })}
     </div>
   )
 }
