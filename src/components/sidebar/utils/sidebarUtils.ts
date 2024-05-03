@@ -38,15 +38,6 @@ export const getSortedPosts = (
   ]
 }
 
-// export enum ChatsGroupedByDateRanges {
-//   Today = 'today',
-//   Yesterday = 'yesterday',
-//   Previous7Days = 'previous 7 days',
-//   Previous30Days = 'previous 30 days',
-//   Month = 'month',
-//   Year = 'year',
-// }
-
 export const getChatsGroupedByDate = (chats: ChatHistoryForSidebarOutput) => {
   const today = new Date()
   return chain(chats)
@@ -92,10 +83,11 @@ export const getChatsGroupedByDate = (chats: ChatHistoryForSidebarOutput) => {
           end: today,
         }).reverse()
 
-        let monthIndex = 10
+        let monthIndex = 100
 
         for (const month of months) {
           monthIndex++
+
           if (
             isSameYear(month, createdAt) &&
             createdAt.getMonth() === month.getMonth()
@@ -105,9 +97,8 @@ export const getChatsGroupedByDate = (chats: ChatHistoryForSidebarOutput) => {
         }
       }
 
-      let yearIndex = 1000
       // Yearly buckets for anything older than past 12 months
-      return `${'6'}|${getYear(createdAt).toString()}`
+      return `${10000 - getYear(createdAt)}|${getYear(createdAt).toString()}`
     })
     .map((group, key) => {
       return {
@@ -115,7 +106,7 @@ export const getChatsGroupedByDate = (chats: ChatHistoryForSidebarOutput) => {
         group,
       }
     })
-    .sortBy((group) => group.key.split('|')[0])
+    .sortBy((group) => Number(group.key.split('|')[0]))
     .map((groupItem) => {
       return { label: groupItem.key.split('|')[1]!, chats: groupItem.group }
     })

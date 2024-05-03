@@ -2,10 +2,13 @@ import { getChatsGroupedByDate } from '../sidebarUtils'
 
 const NOW_DATE = new Date('2024-01-01T11:30:00Z')
 
-const subject = (dates: Date[]) => {
+const subject = (dates: Date[], nowDate?: Date) => {
+  if (nowDate) jest.setSystemTime(nowDate.getTime())
+
   const chats = dates.map((date, index) => {
     return { id: (index + 1).toString(), title: 't', createdAt: date }
   })
+
   return getChatsGroupedByDate(chats)
 }
 
@@ -150,19 +153,99 @@ describe('sidebarUtils', () => {
     })
 
     describe('position', () => {
-      it('when date is today, it returns "today"', () => {
-        const result = subject([new Date('2024-01-01T10:30:00Z')])
+      it('when yesterday and today are combined, today is returned first', () => {
+        const dateYesterday = new Date('2023-12-31T10:30:00Z')
+        const dateToday = new Date('2024-01-01T10:30:00Z')
+        const result = subject([dateYesterday, dateToday])
 
-        const firstElement = result[0]!
-
-        expect(firstElement).toEqual(
+        expect(result).toEqual([
           expect.objectContaining({
             label: 'Today',
+            chats: [expect.objectContaining({ createdAt: dateToday })],
           }),
+          expect.objectContaining({
+            label: 'Yesterday',
+            chats: [expect.objectContaining({ createdAt: dateYesterday })],
+          }),
+        ])
+      })
+
+      it('when last 28 days and today are combined, today is returned first', () => {
+        const date28dAgo = new Date('2023-12-03T10:30:00Z')
+        const dateToday = new Date('2024-01-01T10:30:00Z')
+        const result = subject([date28dAgo, dateToday])
+
+        expect(result).toEqual([
+          expect.objectContaining({
+            label: 'Today',
+            chats: [expect.objectContaining({ createdAt: dateToday })],
+          }),
+          expect.objectContaining({
+            label: 'Previous 30 days',
+            chats: [expect.objectContaining({ createdAt: date28dAgo })],
+          }),
+        ])
+      })
+
+      it('when days, months and years are combined, it returns the correct order', () => {
+        const dateToday = new Date('2024-02-15T10:30:00Z')
+        const date28dAgo = new Date('2024-01-17T10:30:00Z')
+        const datePreviousMonth = new Date('2024-01-05T10:30:00Z')
+        const dateLastMonthPreviousYear = new Date('2023-12-03T10:30:00Z')
+        const date364DaysAgo = new Date('2023-02-16T10:30:00Z')
+        const date11MonthsAgo = new Date('2023-03-01T10:30:00Z')
+        const date366DaysAgo = new Date('2023-02-14T10:30:00Z')
+        const date2YearsAgo = new Date('2022-01-20T10:30:00Z')
+
+        const result = subject(
+          [
+            date11MonthsAgo,
+            date28dAgo,
+            dateToday,
+            date364DaysAgo,
+            datePreviousMonth,
+            date2YearsAgo,
+            date366DaysAgo,
+            dateLastMonthPreviousYear,
+          ],
+          dateToday,
         )
-        expect(firstElement.chats).toEqual(
-          expect.arrayContaining([expect.objectContaining({ id: '1' })]),
-        )
+        console.log(result)
+        expect(result).toEqual([
+          expect.objectContaining({
+            label: 'Today',
+            chats: [expect.objectContaining({ createdAt: dateToday })],
+          }),
+          expect.objectContaining({
+            label: 'Previous 30 days',
+            chats: [expect.objectContaining({ createdAt: date28dAgo })],
+          }),
+          expect.objectContaining({
+            label: 'January',
+            chats: [expect.objectContaining({ createdAt: datePreviousMonth })],
+          }),
+          expect.objectContaining({
+            label: 'December',
+            chats: [
+              expect.objectContaining({ createdAt: dateLastMonthPreviousYear }),
+            ],
+          }),
+          expect.objectContaining({
+            label: 'March',
+            chats: [expect.objectContaining({ createdAt: date11MonthsAgo })],
+          }),
+          expect.objectContaining({
+            label: '2023',
+            chats: [
+              expect.objectContaining({ createdAt: date364DaysAgo }),
+              expect.objectContaining({ createdAt: date366DaysAgo }),
+            ],
+          }),
+          expect.objectContaining({
+            label: '2022',
+            chats: [expect.objectContaining({ createdAt: date2YearsAgo })],
+          }),
+        ])
       })
     })
   })
