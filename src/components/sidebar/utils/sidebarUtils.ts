@@ -13,7 +13,7 @@ import {
   subDays,
   subMonths,
 } from 'date-fns'
-import { groupBy, sortBy } from 'underscore'
+import { chain, sortBy } from 'underscore'
 
 type PostsForSidebar = RouterOutputs['sidebar']['postsForSidebar']
 type PostForSidebar = PostsForSidebar extends Array<infer Item> ? Item : never
@@ -38,71 +38,77 @@ export const getSortedPosts = (
   ]
 }
 
-// export enum ChatsGroupedByDateRanges {
-//   Today = 'today',
-//   Yesterday = 'yesterday',
-//   Previous7Days = 'previous 7 days',
-//   Previous30Days = 'previous 30 days',
-//   Month = 'month',
-//   Year = 'year',
-// }
-
 export const getChatsGroupedByDate = (chats: ChatHistoryForSidebarOutput) => {
   const today = new Date()
+  return chain(chats)
+    .groupBy((chat) => {
+      const createdAt = chat.createdAt
 
-  return groupBy(chats, (chat) => {
-    const createdAt = chat.createdAt
+      // Today
+      if (isToday(createdAt)) return '1|Today'
 
-    // Today
-    if (isToday(createdAt)) return 'Today'
+      // Yesterday
+      if (isYesterday(createdAt)) return '2|Yesterday'
 
-    // Yesterday
-    if (isYesterday(createdAt)) return 'Yesterday'
+      // Last 7 days
+      if (
+        isWithinInterval(createdAt, {
+          start: startOfDay(subDays(today, 7)),
+          end: endOfDay(today),
+        })
+      ) {
+        return '3|Previous 7 days'
+      }
 
-    // Last 7 days
-    if (
-      isWithinInterval(createdAt, {
-        start: startOfDay(subDays(today, 7)),
-        end: endOfDay(today),
-      })
-    ) {
-      return 'Previous 7 days'
-    }
+      // Last 30 days
+      if (
+        isWithinInterval(createdAt, {
+          start: startOfDay(subDays(today, 30)),
+          end: endOfDay(today),
+        })
+      ) {
+        return '4|Previous 30 days'
+      }
 
-    // Last 30 days
-    if (
-      isWithinInterval(createdAt, {
-        start: startOfDay(subDays(today, 30)),
-        end: endOfDay(today),
-      })
-    ) {
-      return 'Previous 30 days'
-    }
+      // Monthly buckets within the last year
+      const startOfThisMonth = startOfMonth(today)
+      if (
+        isWithinInterval(createdAt, {
+          start: subMonths(startOfThisMonth, 12),
+          end: endOfDay(today),
+        })
+      ) {
+        const months = eachMonthOfInterval({
+          start: subMonths(startOfThisMonth, 11),
+          end: today,
+        }).reverse()
 
-    // Monthly buckets within the last year
-    const startOfThisMonth = startOfMonth(today)
-    if (
-      isWithinInterval(createdAt, {
-        start: subMonths(startOfThisMonth, 12),
-        end: endOfDay(today),
-      })
-    ) {
-      const months = eachMonthOfInterval({
-        start: subMonths(startOfThisMonth, 11),
-        end: today,
-      }).reverse()
+        let monthIndex = 100
 
-      for (const month of months) {
-        if (
-          isSameYear(month, createdAt) &&
-          createdAt.getMonth() === month.getMonth()
-        ) {
-          return createdAt.toLocaleString('default', { month: 'long' })
+        for (const month of months) {
+          monthIndex++
+
+          if (
+            isSameYear(month, createdAt) &&
+            createdAt.getMonth() === month.getMonth()
+          ) {
+            return `${monthIndex}|${createdAt.toLocaleString('default', { month: 'long' })}`
+          }
         }
       }
-    }
 
-    // Yearly buckets for anything older than past 12 months
-    return getYear(createdAt).toString()
-  })
+      // Yearly buckets for anything older than past 12 months
+      return `${10000 - getYear(createdAt)}|${getYear(createdAt).toString()}`
+    })
+    .map((group, key) => {
+      return {
+        key,
+        group,
+      }
+    })
+    .sortBy((group) => Number(group.key.split('|')[0]))
+    .map((groupItem) => {
+      return { label: groupItem.key.split('|')[1]!, chats: groupItem.group }
+    })
+    .value()
 }

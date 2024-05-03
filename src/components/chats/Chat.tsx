@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils'
-import { ChatAuthor } from '@/shared/aiTypesAndMappers'
+import { cn, getEnumByValue } from '@/lib/utils'
+import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isBoolean } from 'underscore'
@@ -126,12 +126,15 @@ export function Chat({ postId, chatId }: ChatProps) {
           <div className="h-4 "></div>
           {messages
             ?.map((message, index) => {
+              const author = getEnumByValue(Author, message.author) as
+                | Author.User
+                | Author.Assistant
+
               return (
                 <ChatMessage
-                  variant={getVariant(message.author)}
                   key={index} // Keep index, otherwise changes in message.id (temp vs final) trigger a re-mount that causes a flicker
                   message={message.message ?? ''}
-                  author={getAuthor(message.author) ?? ''}
+                  author={author}
                   onLineHeightChange={
                     index ? undefined : handleLineHeightChange
                   }

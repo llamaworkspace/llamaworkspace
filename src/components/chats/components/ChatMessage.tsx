@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils'
-import { useEffect, useRef } from 'react'
+import { Author } from '@/shared/aiTypesAndMappers'
+import { Fragment, useEffect, useMemo, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 interface ChatMessageProps {
-  variant: 'user' | 'assistant'
-  author: string
+  author: Author.User | Author.Assistant
   message: string
   onLineHeightChange?: (height: number) => void
 }
@@ -13,7 +13,6 @@ interface ChatMessageProps {
 export function ChatMessage({
   author,
   message,
-  variant,
   onLineHeightChange,
 }: ChatMessageProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -28,17 +27,49 @@ export function ChatMessage({
     }
   }, [message, onLineHeightChange])
 
+  const formattedMessage = useMemo(() => {
+    if (author !== Author.User) return null
+    return messageWithLineBreaks(message)
+  }, [message, author])
+
+  const authorValue = author === Author.User ? 'You' : 'Assistant'
+
   return (
     <div ref={ref} className="space-y-1">
-      <div className="font-bold tracking-tight text-black">{author}</div>
+      <div className="font-bold tracking-tight text-zinc-950">
+        {authorValue}
+      </div>
       <div
         className={cn(
-          'prose max-w-none text-zinc-900',
-          variant === 'assistant' && 'rounded bg-zinc-100/50 p-2 lg:p-4',
+          'prose max-w-none text-zinc-950',
+          author === Author.Assistant && 'rounded bg-zinc-100/50 p-2 lg:p-4',
         )}
       >
-        <ReactMarkdown remarkPlugins={[]}>{message || ''}</ReactMarkdown>
+        {author === Author.User && <>{formattedMessage}</>}
+        {author === Author.Assistant && (
+          <>
+            {!message.length && (
+              <div className="animate-blink text-xl text-zinc-600">
+                &#10073;
+              </div>
+            )}
+            {!!message.length && (
+              <ReactMarkdown remarkPlugins={[]}>{message || ''}</ReactMarkdown>
+            )}
+          </>
+        )}
       </div>
     </div>
   )
+}
+
+const messageWithLineBreaks = (message: string) => {
+  return message.split('\n').map((line, index) => {
+    return (
+      <Fragment key={index}>
+        {line}
+        <br />
+      </Fragment>
+    )
+  })
 }
