@@ -25,14 +25,16 @@ export const SidebarMainChatHistoryTimeBlock = ({
       <div className="w-full space-y-0.5">
         {chats.map((chat) => {
           return (
-            <SidebarMainChatHistoryItem
-              key={chat.id}
-              chatId={chat.id}
-              title={chat.title}
-              isActive={
-                isIndividualChatPage && navigation.query.chat_id === chat.id
-              }
-            />
+            // Keep this div here for the space-y to be respected
+            <div key={chat.id}>
+              <SidebarMainChatHistoryItem
+                chatId={chat.id}
+                title={chat.title}
+                isActive={
+                  isIndividualChatPage && navigation.query.chat_id === chat.id
+                }
+              />
+            </div>
           )
         })}
       </div>
