@@ -145,7 +145,6 @@ describe('inviteToWorkspaceService', () => {
         workspaceId: otherWorkspace.id,
       })
 
-      console.log('other', otherWorkspace.id)
       await expect(
         subject(workspace.id, invitingUser.id, email),
       ).rejects.toThrow(

@@ -210,7 +210,7 @@ describe('sidebarUtils', () => {
           ],
           dateToday,
         )
-        console.log(result)
+
         expect(result).toEqual([
           expect.objectContaining({
             label: 'Today',
