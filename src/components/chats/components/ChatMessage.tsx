@@ -41,13 +41,22 @@ export function ChatMessage({
       </div>
       <div
         className={cn(
-          'prose max-w-none text-zinc-900',
+          'prose max-w-none text-zinc-950',
           author === Author.Assistant && 'rounded bg-zinc-100/50 p-2 lg:p-4',
         )}
       >
         {author === Author.User && <>{formattedMessage}</>}
-        {author !== Author.User && (
-          <ReactMarkdown remarkPlugins={[]}>{message || ''}</ReactMarkdown>
+        {author === Author.Assistant && (
+          <>
+            {!message.length && (
+              <div className="animate-blink text-xl text-zinc-600">
+                &#10073;
+              </div>
+            )}
+            {!!message.length && (
+              <ReactMarkdown remarkPlugins={[]}>{message || ''}</ReactMarkdown>
+            )}
+          </>
         )}
       </div>
     </div>
