@@ -20,7 +20,7 @@ export function MainLayoutHeader({
   return (
     <div key={`${postId}-${chatId}`}>
       {variant === HeaderVariants.Chatbot && (
-        <MainLayoutHeaderForChatbot postId={postId} />
+        <MainLayoutHeaderForChatbot postId={postId} chatId={chatId} />
       )}
 
       {variant === HeaderVariants.Chat && (

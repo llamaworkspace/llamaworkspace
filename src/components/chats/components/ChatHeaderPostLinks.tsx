@@ -6,11 +6,16 @@ import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { Cog6ToothIcon as Cog6ToothIconSolid } from '@heroicons/react/24/solid'
 import Link from 'next/link'
 
-export const ChatHeaderPostLinks = () => {
-  const navigation = useNavigation()
+interface ChatHeaderPostLinksProps {
+  postId?: string
+  chatId?: string
+}
 
-  const postId = navigation.query.post_id as string | undefined
-  const chatId = navigation.query.chat_id as string | undefined
+export const ChatHeaderPostLinks = ({
+  postId,
+  chatId,
+}: ChatHeaderPostLinksProps) => {
+  const navigation = useNavigation()
 
   const activeTab = getTabForRoute(navigation.route)
 
