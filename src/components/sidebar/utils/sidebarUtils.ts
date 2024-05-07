@@ -40,6 +40,7 @@ export const getSortedPosts = (
 
 export const getChatsGroupedByDate = (chats: ChatHistoryForSidebarOutput) => {
   const today = new Date()
+
   return chain(chats)
     .groupBy((chat) => {
       const createdAt = chat.createdAt
@@ -108,7 +109,9 @@ export const getChatsGroupedByDate = (chats: ChatHistoryForSidebarOutput) => {
     })
     .sortBy((group) => Number(group.key.split('|')[0]))
     .map((groupItem) => {
-      return { label: groupItem.key.split('|')[1]!, chats: groupItem.group }
+      const chats = sortBy(groupItem.group, (chat) => !chat.createdAt)
+
+      return { label: groupItem.key.split('|')[1]!, chats }
     })
     .value()
 }
