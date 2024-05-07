@@ -103,7 +103,10 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
               }
               return (
                 <div className="space-y-8">
-                  <PostConfigForGPTNameAndDescription disabled={!canEdit} />
+                  <PostConfigForGPTNameAndDescription
+                    disabled={!canEdit}
+                    postId={postId}
+                  />
                   <PostConfigForGPTSettings disabled={!canEdit} />
                   <PostConfigSubmitButtonGroup
                     pristine={pristine}

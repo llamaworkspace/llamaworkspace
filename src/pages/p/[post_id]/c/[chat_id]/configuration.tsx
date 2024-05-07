@@ -8,8 +8,14 @@ export default function PostConfigPage() {
   const query = navigation.query
 
   const postId = query.post_id as string | undefined
+  const chatId = query.chat_id as string | undefined
+
   return (
-    <MainLayout postId={postId} variant={HeaderVariants.Chatbot}>
+    <MainLayout
+      postId={postId}
+      chatId={chatId}
+      variant={HeaderVariants.Chatbot}
+    >
       <PostConfig postId={postId} />
     </MainLayout>
   )

@@ -33,7 +33,11 @@ export default function ChatPage() {
   }, [chat?.postId, chat?.id, defaultPost?.id, navigation])
 
   return (
-    <MainLayout postId={postId} variant={HeaderVariants.Chatbot}>
+    <MainLayout
+      postId={postId}
+      chatId={chatId}
+      variant={HeaderVariants.Chatbot}
+    >
       {/* Apply a key to force full remounts; otherwise nested effects might not work... Nextjs related */}
       {!isPostOrChatInvalid && (
         <Chat postId={postId} chatId={chatId} key={navigation.asPath} />
