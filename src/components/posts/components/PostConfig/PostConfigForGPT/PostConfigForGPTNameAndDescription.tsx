@@ -6,8 +6,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import EmojiPicker, { Emoji, EmojiClickData } from 'emoji-picker-react'
-import { useState } from 'react'
+import { useNavigation } from '@/lib/frontend/useNavigation'
+import EmojiPicker, { Emoji, type EmojiClickData } from 'emoji-picker-react'
+import { useEffect, useRef, useState } from 'react'
 import { Field } from 'react-final-form'
 
 export const PostConfigForGPTNameAndDescription = ({
@@ -15,6 +16,16 @@ export const PostConfigForGPTNameAndDescription = ({
 }: {
   disabled: boolean
 }) => {
+  const navigation = useNavigation()
+
+  const titleRef = useRef<HTMLInputElement>(null)
+  const focusQueryStringEl = navigation.query?.focus
+  useEffect(() => {
+    if (titleRef.current && focusQueryStringEl === 'title' && !disabled) {
+      titleRef.current.focus()
+    }
+  }, [focusQueryStringEl, disabled])
+
   const [isEmojiEditable, setIsEmojiEditable] = useState(false)
 
   return (
@@ -59,6 +70,7 @@ export const PostConfigForGPTNameAndDescription = ({
           return (
             <>
               <InputField
+                ref={titleRef}
                 label="Name"
                 placeholder="Give it a name to help you identify this bot."
                 disabled={disabled}

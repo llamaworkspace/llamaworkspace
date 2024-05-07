@@ -49,6 +49,7 @@ export const useCreatePost = () => {
         },
         {
           backButton: false,
+          focus: 'title',
         },
       )
     },
