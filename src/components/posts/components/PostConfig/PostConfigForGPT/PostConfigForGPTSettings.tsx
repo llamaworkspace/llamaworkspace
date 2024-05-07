@@ -1,5 +1,4 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
-import { Section, SectionBody } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
@@ -32,45 +31,41 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
     </>
   )
   return (
-    <Section>
-      <SectionBody className="space-y-8">
-        <div>
-          <Field
-            name="systemMessage"
-            render={({ input }) => {
-              return (
-                <>
-                  <TextAreaField
-                    ref={ref}
-                    label="Instructions for the AI"
-                    helperText='This content is known as the "system prompt". Use it to tell the AI what should do and how to behave. The more precise the instructions are, the better the AI will perform.'
-                    rows={10}
-                    placeholder={placeholderMessage}
-                    disabled={disabled}
-                    {...input}
-                  />
-                </>
-              )
-            }}
-          />
-        </div>
-        <div className="grid md:grid-cols-2">
-          <Field
-            name="model"
-            render={({ input }) => {
-              return (
-                <SelectAiModelsFormField
-                  {...input}
-                  placeholder="Select a model"
-                  label="AI model"
-                  helperText={modelHelperText}
-                  disabled={disabled}
-                />
-              )
-            }}
-          />
-        </div>
-      </SectionBody>
-    </Section>
+    <>
+      <Field
+        name="systemMessage"
+        render={({ input }) => {
+          return (
+            <>
+              <TextAreaField
+                ref={ref}
+                label="Instructions for the AI"
+                helperText='This content is known as the "system prompt". Use it to tell the AI what should do and how to behave. The more precise the instructions are, the better the AI will perform.'
+                rows={10}
+                placeholder={placeholderMessage}
+                disabled={disabled}
+                {...input}
+              />
+            </>
+          )
+        }}
+      />
+      <div className="grid md:grid-cols-2">
+        <Field
+          name="model"
+          render={({ input }) => {
+            return (
+              <SelectAiModelsFormField
+                {...input}
+                placeholder="Select a model"
+                label="AI model"
+                helperText={modelHelperText}
+                disabled={disabled}
+              />
+            )
+          }}
+        />
+      </div>
+    </>
   )
 }
