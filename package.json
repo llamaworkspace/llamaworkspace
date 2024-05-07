@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "build": "next build",
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "preinstall": "npx only-allow npm",
     "postinstall": "prisma generate",
     "lint": "next lint",

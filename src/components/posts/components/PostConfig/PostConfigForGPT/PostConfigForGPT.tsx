@@ -17,6 +17,7 @@ import {
   useLatestPostConfigVersionForPost,
   usePostById,
   usePostConfigUpdate,
+  useUpdatePost,
 } from '../../../postsHooks'
 import { PostConfigSubmitButtonGroup } from '../PostConfigSubmitButtonGroup'
 import { PostConfigForGPTNameAndDescription } from './PostConfigForGPTNameAndDescription'
@@ -27,6 +28,8 @@ interface PostConfigProps {
 }
 
 interface SubmitProps {
+  emoji: string
+  title: string
   systemMessage?: string
   description?: string
   model: OpenAiModelEnum
@@ -39,7 +42,8 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
   const { data: post } = usePostById(postId)
   const { data: postConfig } = useLatestPostConfigVersionForPost(postId)
 
-  const { mutate: updatePostConfigVersion } = usePostConfigUpdate()
+  const { mutateAsync: updatePostConfigVersion } = usePostConfigUpdate()
+  const { mutateAsync: updatePost } = useUpdatePost()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
   const { can: canEdit } = useCanExecuteActionForPost(
@@ -50,31 +54,30 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
   const hideBackButton = router.query?.backButton === 'false'
 
   const handleSubmit = async (values: SubmitProps) => {
-    const { systemMessage, description, model } = values
-    if (!postConfig) {
-      return Promise.resolve()
+    const { emoji, title, systemMessage, description, model } = values
+    if (!postConfig || !post) {
+      return
     }
 
-    return new Promise((resolve, reject) => {
-      updatePostConfigVersion(
-        {
+    try {
+      await Promise.all([
+        updatePost({
+          id: post?.id,
+          emoji: emoji ?? null,
+          title: title ?? null,
+        }),
+        updatePostConfigVersion({
           id: postConfig?.id,
           systemMessage: systemMessage ?? null,
           description: description ?? null,
           model,
-        },
-        {
-          onSuccess: (postConfig) => {
-            toast('Success', 'Your changes have been saved.')
-            resolve(postConfig)
-          },
-          onError: (error) => {
-            errorHandler()(error)
-            reject(error)
-          },
-        },
-      )
-    })
+        }),
+      ])
+    } catch (error) {
+      errorHandler()(error)
+    }
+
+    toast('Success', 'Your changes have been saved.')
   }
 
   return (
@@ -104,10 +107,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
               }
               return (
                 <div className="space-y-8">
-                  <PostConfigForGPTNameAndDescription
-                    disabled={!canEdit}
-                    postId={postId}
-                  />
+                  <PostConfigForGPTNameAndDescription disabled={!canEdit} />
                   <PostConfigForGPTSettings disabled={!canEdit} />
                   <PostConfigSubmitButtonGroup
                     pristine={pristine}

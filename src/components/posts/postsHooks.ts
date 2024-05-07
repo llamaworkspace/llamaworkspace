@@ -48,7 +48,6 @@ export const useCreatePost = () => {
           chatId: post.firstChatId,
         },
         {
-          focus: 'systemMessage',
           backButton: false,
         },
       )
@@ -71,8 +70,6 @@ export const useCreatePost = () => {
   }
 }
 
-// Todo: Decouple from postsForSidebar; via events maybe??
-// https://chat.openai.com/c/a06effd9-c3bd-4b15-bfad-697133cb02b6
 export const useUpdatePost = (debounceMs = 0) => {
   const errorHandler = useErrorHandler()
   const { sidebar: sidebarRouter, posts: postsRouter } = api.useContext()
@@ -81,9 +78,14 @@ export const useUpdatePost = (debounceMs = 0) => {
   const { getById: getPostById } = postsRouter
   const postsForSidebarRef = useRef(postsForSidebar)
   const getPostByIdRef = useRef(getPostById)
+  const utils = api.useContext()
 
   const { mutate, ...rest } = api.posts.update.useMutation({
     onError: errorHandler(),
+    onSuccess: async () => {
+      await utils.sidebar.invalidate()
+      await utils.posts.invalidate()
+    },
   })
   const { data: workspace } = useCurrentWorkspace()
 
