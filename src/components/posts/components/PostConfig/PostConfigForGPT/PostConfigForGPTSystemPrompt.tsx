@@ -1,6 +1,8 @@
-import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
+import { Section, SectionBody } from '@/components/ui/Section'
+import { InputField } from '@/components/ui/forms/InputField'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useNavigation } from '@/lib/frontend/useNavigation'
+import { Emoji } from 'emoji-picker-react'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
 
@@ -24,22 +26,36 @@ export const PostConfigForGPTSystemPrompt = ({ disabled = false }) => {
 
   return (
     <Section>
-      <SectionHeader
-        title="Instructions"
-        description={`Define what this chatbot should do by providing concise instructions to the AI. Your instructions will be passed to the AI as a system message.`}
-      />
       <SectionBody>
-        <div>
+        <div className="space-y-6">
+          <div>
+            <Emoji unified={'1f920'} size={54} />
+          </div>
           <Field
-            name="systemMessage"
+            name="name"
+            render={({ input }) => {
+              return (
+                <>
+                  <InputField
+                    label="Name"
+                    placeholder="Give it a name to help you identify this bot."
+                    disabled={disabled}
+                    {...input}
+                  />
+                </>
+              )
+            }}
+          />
+          <Field
+            name="Description"
             render={({ input }) => {
               return (
                 <>
                   <TextAreaField
-                    ref={ref}
-                    label="Instructions"
-                    rows={10}
-                    placeholder={placeholderMessage}
+                    label="Description"
+                    rows={4}
+                    placeholder="Describe what this GPT does and help users understand how to interact with it."
+                    helperText="This text will not be used to guide the behaviour of the GPT."
                     disabled={disabled}
                     {...input}
                   />

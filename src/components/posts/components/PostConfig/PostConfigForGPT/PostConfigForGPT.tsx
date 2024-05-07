@@ -4,7 +4,6 @@ import { useCanExecuteActionForPost } from '@/components/permissions/permissions
 import {
   Section,
   SectionBody,
-  SectionDivider,
   SectionsHeader,
   SectionsShell,
 } from '@/components/ui/Section'
@@ -104,7 +103,6 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
               return (
                 <>
                   <PostConfigForGPTSystemPrompt disabled={!canEdit} />
-                  <SectionDivider />
                   <PostConfigForGPTSettings disabled={!canEdit} />
                   <PostConfigSubmitButtonGroup
                     pristine={pristine}
