@@ -28,7 +28,7 @@ interface PostConfigProps {
 
 interface SubmitProps {
   systemMessage?: string
-  initialMessage?: string
+  description?: string
   model: OpenAiModelEnum
   redirect?: boolean
 }
@@ -50,7 +50,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
   const hideBackButton = router.query?.backButton === 'false'
 
   const handleSubmit = async (values: SubmitProps) => {
-    const { systemMessage, initialMessage, model } = values
+    const { systemMessage, description, model } = values
     if (!postConfig) {
       return Promise.resolve()
     }
@@ -60,7 +60,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
         {
           id: postConfig?.id,
           systemMessage: systemMessage ?? null,
-          initialMessage: initialMessage ?? null,
+          description: description ?? null,
           model,
         },
         {
@@ -94,7 +94,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
             initialValues={{
               title: post?.title,
               systemMessage: postConfig?.systemMessage,
-              initialMessage: postConfig?.initialMessage,
+              description: postConfig?.description,
               model: postConfig?.model,
             }}
             render={({ handleSubmit, pristine, submitting }) => {

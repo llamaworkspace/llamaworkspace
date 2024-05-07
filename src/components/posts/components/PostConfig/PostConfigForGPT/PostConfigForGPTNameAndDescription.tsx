@@ -25,7 +25,7 @@ export const PostConfigForGPTNameAndDescription = ({ disabled = false }) => {
         }}
       />
       <Field
-        name="initialMessage"
+        name="description"
         render={({ input }) => {
           return (
             <>

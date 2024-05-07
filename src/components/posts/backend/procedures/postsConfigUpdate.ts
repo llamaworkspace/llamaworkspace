@@ -8,7 +8,7 @@ import { postEditionFilter } from '../postsBackendUtils'
 
 const zUpdate = z.object({
   id: z.string(),
-  initialMessage: z.string().nullish(),
+  description: z.string().nullish(),
   systemMessage: z.string().nullish(),
   model: z.string().optional(),
 })
