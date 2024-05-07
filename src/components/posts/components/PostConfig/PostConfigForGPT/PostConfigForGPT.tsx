@@ -93,6 +93,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
             onSubmit={handleSubmit}
             initialValues={{
               title: post?.title,
+              emoji: post?.emoji,
               systemMessage: postConfig?.systemMessage,
               description: postConfig?.description,
               model: postConfig?.model,
