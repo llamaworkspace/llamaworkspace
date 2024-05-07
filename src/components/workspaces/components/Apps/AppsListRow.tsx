@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { DropdownMenuItemLink } from '@/components/ui/extensions/dropdown-menu'
 import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
+import type { RouterOutputs } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import {
   PencilIcon,
@@ -14,10 +15,9 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline'
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
-import type { Post } from '@prisma/client'
 
 interface AppsListRowProps {
-  post: Post
+  post: RouterOutputs['posts']['getForAppsList'][0]
   onRowDelete: (postId: string) => void
 }
 
@@ -53,12 +53,11 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
         <div className="font-semibold">{post.title ?? 'Untitled'}</div>
 
         {/* Description text. If, when needed */}
-        {/* <div className="line-clamp-2 text-sm">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odio fugit
-          incidunt accusantium, minima, eligendi accusamus magnam non reiciendis
-          voluptate quam a nam modi nesciunt cupiditate sequi eos, facere
-          veritatis dolor?
-        </div> */}
+        {post.latestConfig.description && (
+          <div className="line-clamp-2 text-sm">
+            {post.latestConfig.description}
+          </div>
+        )}
       </div>
       <div className="col-span-2 flex items-center justify-end gap-x-2 pr-2">
         <div

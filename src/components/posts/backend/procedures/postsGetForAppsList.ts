@@ -7,7 +7,7 @@ const zInput = z.object({
   workspaceId: z.string(),
 })
 
-export const postsGetAll = protectedProcedure
+export const postsGetForAppsList = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
@@ -18,5 +18,7 @@ export const postsGetAll = protectedProcedure
       userId,
     )
 
-    return await getPostsListService(ctx.prisma, context)
+    return await getPostsListService(ctx.prisma, context, {
+      includeLatestConfig: true,
+    })
   })

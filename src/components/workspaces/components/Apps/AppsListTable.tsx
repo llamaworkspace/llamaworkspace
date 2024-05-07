@@ -1,11 +1,14 @@
-import { useDeletePost, usePosts } from '@/components/posts/postsHooks'
+import {
+  useDeletePost,
+  usePostsForAppsList,
+} from '@/components/posts/postsHooks'
 import { DeleteConfirmationDialog } from '@/components/ui/DeleteConfirmationDialog'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useState } from 'react'
 import { AppsListRow } from './AppsListRow'
 
 export const AppsListTable = () => {
-  const { data: posts } = usePosts()
+  const { data: posts } = usePostsForAppsList()
   const [deleteModalTargetPostId, setDeleteModalTargetPostId] = useState<
     string | null
   >(null)
@@ -35,10 +38,6 @@ export const AppsListTable = () => {
     void _doPostDeletion()
   }
 
-  const handlePostDeletionCancellation = () => {
-    setDeleteModalTargetPostId(null)
-  }
-
   if (posts && !posts.length) {
     return (
       <>
@@ -66,7 +65,7 @@ export const AppsListTable = () => {
         description="Are you sure you want to delete this GPT? This action cannot be
               undone."
         isOpen={!!deleteModalTargetPostId}
-        onCancel={handlePostDeletionCancellation}
+        onCancel={() => setDeleteModalTargetPostId(null)}
         onConfirm={handlePostDelete}
       />
     </div>
