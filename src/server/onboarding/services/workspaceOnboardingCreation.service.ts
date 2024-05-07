@@ -30,7 +30,7 @@ export const workspaceOnboardingCreationService = async (
       id: postConfigVersion.id,
     },
     data: {
-      initialMessage: onboardingTexts.initialMessage,
+      description: onboardingTexts.description,
     },
   })
 

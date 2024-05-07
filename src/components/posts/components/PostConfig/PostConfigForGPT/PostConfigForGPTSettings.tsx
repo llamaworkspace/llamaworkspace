@@ -1,13 +1,27 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
-import { Section, SectionBody, SectionHeader } from '@/components/ui/Section'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
+import { useNavigation } from '@/lib/frontend/useNavigation'
+import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
 
-export const PostConfigForGPTSettings = ({ disabled = false }) => {
-  const { data: workspace } = useCurrentWorkspace()
+const placeholderMessage = `Write a message to help the AI understand what you are trying to achieve. The more details and context you provide, the better will be ChatGPT's outcome.
 
+For example:
+Act as a public speaker and write compelling speeches that can be used to inspire people to take action.
+`
+
+export const PostConfigForGPTSettings = ({ disabled = false }) => {
+  const navigation = useNavigation()
+  const { data: workspace } = useCurrentWorkspace()
+  const ref = useRef<HTMLTextAreaElement>(null)
+  const focusQueryStringEl = navigation.query?.focus
+  useEffect(() => {
+    if (ref.current && focusQueryStringEl === 'systemMessage' && !disabled) {
+      ref.current.focus()
+    }
+  }, [focusQueryStringEl, disabled])
   const profileUrl = `/w/${workspace?.id}/profile`
 
   const modelHelperText = (
@@ -17,45 +31,41 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
     </>
   )
   return (
-    <Section>
-      <SectionHeader title="Settings" />
-      <SectionBody className="space-y-8">
-        <div>
-          <Field
-            name="initialMessage"
-            render={({ input }) => {
-              return (
-                <>
-                  <TextAreaField
-                    label="Initial user message"
-                    rows={4}
-                    placeholder="Help users understand how to interact with this bot by providing some initial instructions."
-                    helperText="This message will not be sent to ChatGPT. Use it exclusively to guide users on how to interact with this bot."
-                    disabled={disabled}
-                    {...input}
-                  />
-                </>
-              )
-            }}
-          />
-        </div>
-        <div className="grid md:grid-cols-2">
-          <Field
-            name="model"
-            render={({ input }) => {
-              return (
-                <SelectAiModelsFormField
-                  {...input}
-                  placeholder="Select a model"
-                  label="AI model"
-                  helperText={modelHelperText}
-                  disabled={disabled}
-                />
-              )
-            }}
-          />
-        </div>
-      </SectionBody>
-    </Section>
+    <>
+      <Field
+        name="systemMessage"
+        render={({ input }) => {
+          return (
+            <>
+              <TextAreaField
+                ref={ref}
+                label="Instructions for the AI"
+                helperText='This content is known as the "system prompt". Use it to tell the AI what should do and how to behave. The more precise the instructions are, the better the AI will perform.'
+                rows={10}
+                placeholder={placeholderMessage}
+                disabled={disabled}
+                {...input}
+              />
+            </>
+          )
+        }}
+      />
+      <div className="grid md:grid-cols-2">
+        <Field
+          name="model"
+          render={({ input }) => {
+            return (
+              <SelectAiModelsFormField
+                {...input}
+                placeholder="Select a model"
+                label="AI model"
+                helperText={modelHelperText}
+                disabled={disabled}
+              />
+            )
+          }}
+        />
+      </div>
+    </>
   )
 }

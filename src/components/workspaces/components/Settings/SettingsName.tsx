@@ -47,7 +47,7 @@ export const SettingsName = () => {
 
             return (
               <div className="space-y-2">
-                <div className="grid md:grid-cols-3">
+                <div className="grid md:grid-cols-2">
                   <Field
                     name="name"
                     render={({ input }) => {

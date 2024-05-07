@@ -12,7 +12,7 @@ export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
   const { data: messages } = useMessages(chatId)
 
   const isLoading = !postConfig || !chat || !post || !messages
-  const hasTitleOrInitialMessage = post?.title ?? postConfig?.initialMessage
+  const hasTitleOrInitialMessage = post?.title ?? postConfig?.description
 
   if (isLoading || messages.length) {
     return null
@@ -47,9 +47,9 @@ export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
             <Skeleton className="h-4 w-3/6" />
           </div>
         )}
-        {!isLoading && postConfig?.initialMessage && (
+        {!isLoading && postConfig?.description && (
           <ReactMarkdown remarkPlugins={[]}>
-            {postConfig.initialMessage}
+            {postConfig.description}
           </ReactMarkdown>
         )}
       </div>

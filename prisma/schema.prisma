@@ -208,15 +208,15 @@ model Message {
 }
 
 model PostConfigVersion {
-    id             String    @id @default(cuid())
-    postId         String
-    post           Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-    initialMessage String?
-    model          String
-    createdAt      DateTime  @default(now())
-    updatedAt      DateTime  @updatedAt
-    chats          Chat[]
-    messages       Message[]
+    id          String    @id @default(cuid())
+    postId      String
+    post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    description String?
+    model       String
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    chats       Chat[]
+    messages    Message[]
 }
 
 model ChatRun {

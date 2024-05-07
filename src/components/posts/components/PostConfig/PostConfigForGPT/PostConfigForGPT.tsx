@@ -1,10 +1,8 @@
-import { useCreateChatForApp } from '@/components/chats/chatHooks'
 import { useErrorHandler } from '@/components/global/errorHandlingHooks'
 import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
 import {
   Section,
   SectionBody,
-  SectionDivider,
   SectionsHeader,
   SectionsShell,
 } from '@/components/ui/Section'
@@ -17,20 +15,23 @@ import { useRouter } from 'next/router'
 import { Form as FinalForm } from 'react-final-form'
 import {
   useLatestPostConfigVersionForPost,
+  usePostById,
   usePostConfigUpdate,
+  useUpdatePost,
 } from '../../../postsHooks'
 import { PostConfigSubmitButtonGroup } from '../PostConfigSubmitButtonGroup'
+import { PostConfigForGPTNameAndDescription } from './PostConfigForGPTNameAndDescription'
 import { PostConfigForGPTSettings } from './PostConfigForGPTSettings'
-import { PostConfigForGPTSystemPrompt } from './PostConfigForGPTSystemPrompt'
-PostConfigSubmitButtonGroup
 
 interface PostConfigProps {
   postId?: string
 }
 
 interface SubmitProps {
+  emoji: string
+  title: string
   systemMessage?: string
-  initialMessage?: string
+  description?: string
   model: OpenAiModelEnum
   redirect?: boolean
 }
@@ -38,9 +39,11 @@ interface SubmitProps {
 export function PostConfigForGPT({ postId }: PostConfigProps) {
   const router = useRouter()
   const returnToChatRoute = router.asPath.replace(`/configuration`, '')
+  const { data: post } = usePostById(postId)
   const { data: postConfig } = useLatestPostConfigVersionForPost(postId)
-  const { mutate: updatePostConfigVersion } = usePostConfigUpdate()
-  const { mutateAsync: createChat } = useCreateChatForApp()
+
+  const { mutateAsync: updatePostConfigVersion } = usePostConfigUpdate()
+  const { mutateAsync: updatePost } = useUpdatePost()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
   const { can: canEdit } = useCanExecuteActionForPost(
@@ -51,31 +54,30 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
   const hideBackButton = router.query?.backButton === 'false'
 
   const handleSubmit = async (values: SubmitProps) => {
-    const { systemMessage, initialMessage, model } = values
-    if (!postConfig) {
-      return Promise.resolve()
+    const { emoji, title, systemMessage, description, model } = values
+    if (!postConfig || !post) {
+      return
     }
 
-    return new Promise((resolve, reject) => {
-      updatePostConfigVersion(
-        {
+    try {
+      await Promise.all([
+        updatePost({
+          id: post?.id,
+          emoji: emoji ?? null,
+          title: title ?? null,
+        }),
+        updatePostConfigVersion({
           id: postConfig?.id,
           systemMessage: systemMessage ?? null,
-          initialMessage: initialMessage ?? null,
+          description: description ?? null,
           model,
-        },
-        {
-          onSuccess: (postConfig) => {
-            toast('Success', 'Your changes have been saved.')
-            resolve(postConfig)
-          },
-          onError: (error) => {
-            errorHandler()(error)
-            reject(error)
-          },
-        },
-      )
-    })
+        }),
+      ])
+    } catch (error) {
+      errorHandler()(error)
+    }
+
+    toast('Success', 'Your changes have been saved.')
   }
 
   return (
@@ -93,8 +95,10 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
           <FinalForm
             onSubmit={handleSubmit}
             initialValues={{
+              title: post?.title,
+              emoji: post?.emoji,
               systemMessage: postConfig?.systemMessage,
-              initialMessage: postConfig?.initialMessage,
+              description: postConfig?.description,
               model: postConfig?.model,
             }}
             render={({ handleSubmit, pristine, submitting }) => {
@@ -102,16 +106,15 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
                 await handleSubmit()
               }
               return (
-                <>
-                  <PostConfigForGPTSystemPrompt disabled={!canEdit} />
-                  <SectionDivider />
+                <div className="space-y-8">
+                  <PostConfigForGPTNameAndDescription disabled={!canEdit} />
                   <PostConfigForGPTSettings disabled={!canEdit} />
                   <PostConfigSubmitButtonGroup
                     pristine={pristine}
                     submitting={submitting}
                     onSave={handleSave}
                   />
-                </>
+                </div>
               )
             }}
           />

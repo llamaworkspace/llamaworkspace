@@ -48,7 +48,7 @@ describe('workspaceOnboardingCreationService', () => {
     })
 
     expect(postConfigVersion).toMatchObject({
-      initialMessage: onboardingTexts.initialMessage,
+      description: onboardingTexts.description,
     })
   })
 

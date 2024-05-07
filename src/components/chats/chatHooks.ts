@@ -285,7 +285,7 @@ export const useShouldDisplayEmptySettingsAlert = (
 
   if (postConfig && post) {
     if (
-      !postConfig.initialMessage &&
+      !postConfig.description &&
       !postConfig.systemMessage &&
       !hasMessages &&
       !isDismissed

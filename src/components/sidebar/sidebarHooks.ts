@@ -2,7 +2,6 @@ import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
-import { getChatsGroupedByDate } from './utils/sidebarUtils'
 
 export const useChatHistoryForSidebar = () => {
   const errorHandler = useErrorHandler()
@@ -12,9 +11,6 @@ export const useChatHistoryForSidebar = () => {
     {
       onError: errorHandler(),
       enabled: !!workspace?.id,
-      select: (data) => {
-        return getChatsGroupedByDate(data)
-      },
     },
   )
 }
