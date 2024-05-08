@@ -7,7 +7,13 @@ export const up: MigrationFn = async () => {
     select: {
       id: true,
     },
+    where: {
+      shares: {
+        none: {},
+      },
+    },
   })
+
   await prisma.share.createMany({
     data: posts.map((post) => ({
       postId: post.id,

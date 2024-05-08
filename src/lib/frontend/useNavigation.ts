@@ -19,6 +19,7 @@ export type ApplicationPaths =
   | '/p/:postId'
   | '/p/:postId/history'
   | '/p/:postId/publishing'
+  | '/p/:postId/configuration'
   | '/p/:postId/c'
   | '/p/:postId/c/new'
   | '/p/:postId/c/:chatId'

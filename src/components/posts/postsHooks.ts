@@ -42,10 +42,9 @@ export const useCreatePost = () => {
       // Important: Invalidate the entire sidebar cache!
       void utils.sidebar.invalidate()
       void navigation.push(
-        `/p/:postId/c/:chatId/configuration`,
+        `/p/:postId/configuration`,
         {
           postId: post.id,
-          chatId: post.firstChatId,
         },
         {
           backButton: false,

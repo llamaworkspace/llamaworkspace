@@ -119,6 +119,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
                   <PostConfigForGPTNameAndDescription disabled={!canEdit} />
                   <PostConfigForGPTSettings disabled={!canEdit} />
                   <PostConfigSubmitButtonGroup
+                    postId={postId}
                     pristine={pristine}
                     submitting={submitting}
                     onSave={handleSave}
