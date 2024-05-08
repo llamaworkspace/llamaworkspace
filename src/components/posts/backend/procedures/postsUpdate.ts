@@ -8,7 +8,6 @@ const zUpdateInput = z.object({
   id: z.string(),
   title: z.optional(z.nullable(z.string())),
   emoji: z.optional(z.nullable(z.string())),
-  hideEmptySettingsAlert: z.optional(z.boolean()),
 })
 
 export const postsUpdate = protectedProcedure

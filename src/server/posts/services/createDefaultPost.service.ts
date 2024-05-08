@@ -14,7 +14,6 @@ export const createDefaultPostService = async (
     const post = await postCreateService(prisma, uowContext, {
       title: DEFAULT_POST_NAME,
       isDefault: true,
-      hideEmptySettingsAlert: true,
     })
 
     await prisma.chat.deleteMany({
