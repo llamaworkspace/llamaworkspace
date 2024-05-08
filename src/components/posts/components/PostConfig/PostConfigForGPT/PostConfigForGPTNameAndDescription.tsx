@@ -69,15 +69,13 @@ export const PostConfigForGPTNameAndDescription = ({
         name="title"
         validate={stringOrNumberRequired}
         render={({ input, meta }) => {
-          const error = meta.submitFailed ? (meta.error as string) : undefined
-
           return (
             <InputField
               ref={titleRef}
+              meta={meta}
               label="Name"
               placeholder="Give it a name to help you identify this bot."
               disabled={disabled}
-              error={error}
               {...input}
             />
           )

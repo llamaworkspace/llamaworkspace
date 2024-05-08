@@ -43,7 +43,7 @@ export const PostConfigSubmitButtonGroup = ({
     >
       <div className="flex items-center justify-end gap-x-2">
         {showSubmitError && (
-          <div className="text-sm text-red-600">
+          <div className="rounded bg-red-100 px-1 py-0.5 text-sm text-red-600">
             Cannot save. There are required fields that are either missing or
             invalid.
           </div>

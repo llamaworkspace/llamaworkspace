@@ -1,23 +1,22 @@
 import { forwardRef } from 'react'
+import type { FieldMetaState } from 'react-final-form'
 import { Input, type InputProps } from '../input'
 import { FormFieldWrapper } from './FormFieldWrapper'
 import type { DefaultFormInputProps } from './formTypes'
 
-type InputFieldProps = DefaultFormInputProps & InputProps
+type BaseInputFieldProps = DefaultFormInputProps & InputProps
+
+interface InputFieldProps extends BaseInputFieldProps {
+  meta?: FieldMetaState<unknown>
+}
 
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   function InputFieldFunc(
-    {
-      label,
-      placeholder,
-      helperText,
-      onValueChange,
-      required,
-      error,
-      ...input
-    },
+    { label, placeholder, helperText, onValueChange, required, meta, ...input },
     externalRef,
   ) {
+    const error = meta && meta.submitFailed ? (meta.error as string) : undefined
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
       input.onChange?.(e)
