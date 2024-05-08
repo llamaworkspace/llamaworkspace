@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import type { PropsWithChildren } from 'react'
 import { Badge } from '../badge'
 import type { DefaultFormInputProps } from './formTypes'
@@ -6,14 +7,23 @@ import type { DefaultFormInputProps } from './formTypes'
 export const FormFieldWrapper = ({
   label,
   helperText,
-  required: isRequired,
+  required,
+  error,
   children,
 }: Omit<DefaultFormInputProps, 'name'> & PropsWithChildren) => {
   return (
     <FormControl>
-      {label && <FormLabel isRequired={isRequired}>{label}</FormLabel>}
+      {label && (
+        <FormLabel isError={!!error} isRequired={required}>
+          {label}
+        </FormLabel>
+      )}
       {children}
-      {helperText && <FormHelperText>{helperText}</FormHelperText>}
+      {
+        <FormHelperText isError={!!error}>
+          {error ? error : helperText}
+        </FormHelperText>
+      }
     </FormControl>
   )
 }
@@ -22,12 +32,23 @@ const FormControl = ({ children }: PropsWithChildren) => {
   return <div className="space-y-1">{children}</div>
 }
 
+interface FormLabelProps extends PropsWithChildren {
+  isRequired?: boolean
+  isError?: boolean
+}
+
 const FormLabel = ({
   children,
   isRequired,
-}: { isRequired?: boolean } & PropsWithChildren) => {
+  isError = false,
+}: FormLabelProps) => {
   return (
-    <label className={`block text-sm font-semibold text-zinc-800`}>
+    <label
+      className={cn(
+        `flex items-center text-sm font-semibold`,
+        isError && 'text-red-600',
+      )}
+    >
       {children}
       {isRequired && (
         <Badge
@@ -42,6 +63,20 @@ const FormLabel = ({
   )
 }
 
-const FormHelperText = ({ children }: PropsWithChildren) => {
-  return <p className="text-xs text-zinc-500">{children}</p>
+interface FormHelperTextProps extends PropsWithChildren {
+  isError?: boolean
+}
+
+const FormHelperText = ({ isError, children }: FormHelperTextProps) => {
+  return (
+    <p
+      className={cn(
+        'text-sm',
+        !isError && 'text-zinc-500',
+        isError && 'text-red-600',
+      )}
+    >
+      {children}
+    </p>
+  )
 }

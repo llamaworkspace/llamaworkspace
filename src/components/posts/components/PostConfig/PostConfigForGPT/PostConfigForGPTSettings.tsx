@@ -2,6 +2,7 @@ import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiMode
 import { StyledLink } from '@/components/ui/StyledLink'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
+import { stringOrNumberRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
@@ -34,11 +35,13 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
     <>
       <Field
         name="systemMessage"
-        render={({ input }) => {
+        validate={stringOrNumberRequired}
+        render={({ input, meta }) => {
           return (
             <>
               <TextAreaField
                 ref={ref}
+                meta={meta}
                 label="Instructions for the AI"
                 helperText='This content is known as the "system prompt". Use it to tell the AI what should do and how to behave. The more precise the instructions are, the better the AI will perform.'
                 rows={10}

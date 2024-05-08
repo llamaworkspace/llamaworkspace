@@ -7,16 +7,11 @@ type InputFieldProps = DefaultFormInputProps & InputProps
 
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   function InputFieldFunc(
-    {
-      label,
-      placeholder,
-      helperText,
-      onValueChange,
-      required: isRequired,
-      ...input
-    },
+    { label, placeholder, helperText, onValueChange, required, meta, ...input },
     externalRef,
   ) {
+    const error = meta && meta.submitFailed ? (meta.error as string) : undefined
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
       input.onChange?.(e)
@@ -30,13 +25,15 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       <FormFieldWrapper
         label={label}
         helperText={helperText}
-        required={isRequired}
+        required={required}
+        error={error}
       >
         <Input
           ref={externalRef}
           {...input}
           onChange={handleChange}
           placeholder={placeholder}
+          colorScheme={error ? 'danger' : 'default'}
         />
       </FormFieldWrapper>
     )

@@ -6,12 +6,19 @@ const inputVariants = cva('', {
   variants: {
     variant: {
       default:
-        'flex h-9 w-full rounded-md border border-zinc-200 bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:placeholder:text-zinc-400 dark:focus-visible:ring-zinc-300',
+        'flex h-9 w-full rounded-md border bg-transparent px-3 py-1 shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 placeholder:text-zinc-400 dark:placeholder:text-zinc-400',
       unstyled: '',
+    },
+    colorScheme: {
+      default:
+        'border-zinc-200 text-zinc-900 dark:text-zinc-50 focus-visible:ring-zinc-950 dark:border-zinc-800  dark:focus-visible:ring-zinc-300',
+      danger:
+        'border-red-600 text-zinc-900 dark:text-red-50 focus-visible:ring-red-950 dark:border-red-800 dark:focus-visible:ring-red-300',
     },
   },
   defaultVariants: {
     variant: 'default',
+    colorScheme: 'default',
   },
 })
 
@@ -24,7 +31,15 @@ export interface InputProps
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    { className, type, onEnterKeyDown, focusOnMount, variant, ...props },
+    {
+      className,
+      type,
+      onEnterKeyDown,
+      focusOnMount,
+      variant,
+      colorScheme,
+      ...props
+    },
     ref,
   ) => {
     const internalRef = useRef<HTMLInputElement>(null)
@@ -49,7 +64,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <input
         type={type}
-        className={cn(inputVariants({ variant }), className)}
+        className={cn(inputVariants({ variant, colorScheme }), className)}
         ref={mergeRefs([internalRef, ref])}
         {...props}
         onKeyDown={handleKeyDown}

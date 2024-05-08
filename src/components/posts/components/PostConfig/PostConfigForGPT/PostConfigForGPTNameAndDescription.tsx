@@ -6,6 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { stringOrNumberRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import EmojiPicker, { Emoji, type EmojiClickData } from 'emoji-picker-react'
 import { useEffect, useRef, useState } from 'react'
@@ -66,17 +67,17 @@ export const PostConfigForGPTNameAndDescription = ({
       />
       <Field
         name="title"
-        render={({ input }) => {
+        validate={stringOrNumberRequired}
+        render={({ input, meta }) => {
           return (
-            <>
-              <InputField
-                ref={titleRef}
-                label="Name"
-                placeholder="Give it a name to help you identify this bot."
-                disabled={disabled}
-                {...input}
-              />
-            </>
+            <InputField
+              ref={titleRef}
+              meta={meta}
+              label="Name"
+              placeholder="Give it a name to help you identify this bot."
+              disabled={disabled}
+              {...input}
+            />
           )
         }}
       />
