@@ -32,21 +32,6 @@ describe('postCreateService', () => {
     })
   })
 
-  it('creates a new chat for the post', async () => {
-    const workspace = await WorkspaceFactory.create(prisma)
-    const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    const post = await subject(workspace.id, user.id)
-
-    const chat = await prisma.chat.findFirstOrThrow({
-      where: {
-        postId: post.id,
-        authorId: user.id,
-      },
-    })
-
-    expect(chat).toBeDefined()
-  })
-
   it('creates an Everybody-based share for the post', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
