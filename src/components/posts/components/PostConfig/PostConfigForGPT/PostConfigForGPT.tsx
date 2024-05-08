@@ -101,7 +101,10 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
               description: postConfig?.description,
               model: postConfig?.model,
             }}
-            render={({ handleSubmit, pristine, submitting }) => {
+            render={({ handleSubmit, pristine, submitting, ...props }) => {
+              const shouldDisplayGlobalError =
+                props.submitFailed && props.hasValidationErrors
+
               const handleSave = async () => {
                 await handleSubmit()
               }
@@ -113,6 +116,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
                     pristine={pristine}
                     submitting={submitting}
                     onSave={handleSave}
+                    showSubmitError={shouldDisplayGlobalError}
                   />
                 </div>
               )
