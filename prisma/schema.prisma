@@ -66,6 +66,8 @@ model User {
     authoredChats        Chat[]
     workspaceInvitesSent WorkspaceInvite[]
     postsMeta            PostsOnUsers[]
+    sharedTargets        ShareTarget[]
+    sharingTargets       ShareTarget[]       @relation("sharingUser")
 }
 
 model Workspace {
@@ -92,16 +94,17 @@ model UsersOnWorkspaces {
 }
 
 model WorkspaceInvite {
-    id          String    @id @default(cuid())
+    id          String        @id @default(cuid())
     email       String
     token       String
-    source      String    @default("direct")
+    source      String        @default("direct")
     invitedById String
-    invitedBy   User      @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+    invitedBy   User          @relation(fields: [invitedById], references: [id], onDelete: Cascade)
     workspaceId String
-    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+    workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    ShareTarget ShareTarget[]
 
     @@unique([email, workspaceId])
     @@index([token])
@@ -157,12 +160,32 @@ model PostShare {
 }
 
 model Share {
-    id        String   @id @default(cuid())
-    postId    String
-    scope     String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+    id           String        @id @default(cuid())
+    postId       String
+    scope        String
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    post         Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+    shareTargets ShareTarget[]
+}
+
+model ShareTarget {
+    id                String           @id @default(cuid())
+    shareId           String
+    sharerId          String
+    userId            String?
+    workspaceInviteId String?
+    accessLevel       String
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    share             Share            @relation(fields: [shareId], references: [id], onDelete: Cascade)
+    sharer            User             @relation("sharingUser", fields: [sharerId], references: [id], onDelete: Cascade)
+    user              User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    workspaceInvite   WorkspaceInvite? @relation(fields: [workspaceInviteId], references: [id], onDelete: Cascade)
+
+    @@unique([shareId, userId])
+    @@unique([shareId, workspaceInviteId])
+    @@index(workspaceInviteId)
 }
 
 model Invite {
