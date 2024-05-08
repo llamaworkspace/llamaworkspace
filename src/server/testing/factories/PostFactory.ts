@@ -1,3 +1,4 @@
+import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { faker } from '@faker-js/faker'
 import type { Post, PrismaClient } from '@prisma/client'
 import { WorkspaceFactory } from './WorkspaceFactory'
@@ -24,10 +25,30 @@ export const PostFactory = {
 
   create: async (prisma: PrismaClient, overrides: PostFactoryFields) => {
     const { workspaceId, ...rest } = PostFactory.build(overrides)
+    const sharesPayload = {
+      create: [
+        {
+          scope: ShareScope.User,
+          shareTargets: {
+            create: [
+              {
+                sharerId: rest.userId,
+                userId: rest.userId,
+                accessLevel: UserAccessLevel.Owner,
+              },
+            ],
+          },
+        },
+      ],
+    }
 
     if (workspaceId) {
       return await prisma.post.create({
-        data: { workspaceId, ...PostFactory.build(rest) },
+        data: {
+          workspaceId,
+          shares: sharesPayload,
+          ...PostFactory.build(rest),
+        },
       })
     }
 
@@ -37,6 +58,7 @@ export const PostFactory = {
       data: {
         ...rest,
         workspaceId: workspace.id,
+        shares: sharesPayload,
       },
     })
   },
