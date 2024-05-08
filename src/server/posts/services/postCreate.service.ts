@@ -50,21 +50,11 @@ export const postCreateService = async (
       input,
     )
 
-    const chat = await prisma.chat.findFirstOrThrow({
-      select: {
-        id: true,
-      },
-      where: {
-        postId: post.id,
-        authorId: userId,
-      },
-    })
-
     if (!post.isDefault) {
       await updatePostSortingService(prisma, uowContext, post.id)
     }
 
-    return { ...post, firstChatId: chat.id }
+    return post
   })
 }
 
@@ -84,13 +74,6 @@ const createPost = async (
         create: [
           {
             scope: ShareScope.Everybody,
-          },
-        ],
-      },
-      chats: {
-        create: [
-          {
-            authorId: userId,
           },
         ],
       },
