@@ -21,4 +21,5 @@ export interface ComponentWithPostId {
 
 export enum PostType {
   Chat = 'chat',
+  Assistant = 'assistant',
 }
