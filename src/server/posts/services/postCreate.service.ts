@@ -15,7 +15,6 @@ interface PostCreateServiceInputProps {
   emoji?: string
   isDefault?: boolean
   isDemo?: boolean
-  hideEmptySettingsAlert?: boolean
 }
 
 export const postCreateService = async (

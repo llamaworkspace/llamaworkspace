@@ -8,7 +8,6 @@ import { useIsDefaultPost } from '../posts/postsHooks'
 import { useMessages } from './chatHooks'
 import { ChatMessage } from './components/ChatMessage'
 import { ChatMessageInitial } from './components/ChatMessageInitial'
-import { ChatNoSettingsAlert } from './components/ChatNoSettingsAlert'
 import { Chatbox } from './components/Chatbox'
 
 interface ChatProps {
@@ -116,8 +115,6 @@ export function Chat({ postId, chatId }: ChatProps) {
       className="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden"
     >
       <div className="mx-auto h-full w-full max-w-4xl px-4 lg:px-0">
-        <ChatNoSettingsAlert postId={postId} chatId={chatId} />
-
         {isBoolean(isDefaultPost) && !isDefaultPost && (
           <ChatMessageInitial chatId={chatId} />
         )}

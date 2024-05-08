@@ -6,7 +6,7 @@ import { produce } from 'immer'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
 import { useErrorHandler } from '../global/errorHandlingHooks'
-import { useDefaultPost, usePostById } from '../posts/postsHooks'
+import { useDefaultPost } from '../posts/postsHooks'
 import { useErrorToast } from '../ui/toastHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
@@ -273,35 +273,9 @@ export const usePrompt = (chatId?: string) => {
   }
 }
 
-export const useShouldDisplayEmptySettingsAlert = (
-  postId?: string,
-  chatId?: string,
-) => {
-  const { data: messages } = useMessages(chatId)
-  const { data: postConfig } = usePostConfigForChat(chatId)
-  const { data: post } = usePostById(postId)
-  const hasMessages = messages && messages.length > 0
-  const isDismissed = post && post.hideEmptySettingsAlert
-
-  if (postConfig && post) {
-    if (
-      !postConfig.description &&
-      !postConfig.systemMessage &&
-      !hasMessages &&
-      !isDismissed
-    ) {
-      return true
-    }
-  }
-
-  return false
-}
-
 export const useUpdateChat = (debounceMs = 0) => {
   const errorHandler = useErrorHandler()
-  const { sidebar } = api.useContext()
   const utils = api.useContext()
-  const { chatHistoryForSidebar } = sidebar
 
   const { mutate, ...rest } = api.chats.updateChatTitle.useMutation({
     onError: errorHandler(),
@@ -322,7 +296,7 @@ export const useUpdateChat = (debounceMs = 0) => {
     mutate: debounce((params: Params, options?: Options) => {
       if (!post || !workspace) return
 
-      sidebar.chatHistoryForSidebar.setData(
+      utils.sidebar.chatHistoryForSidebar.setData(
         { workspaceId: workspace.id },
         (previous) => {
           if (!previous) return previous
