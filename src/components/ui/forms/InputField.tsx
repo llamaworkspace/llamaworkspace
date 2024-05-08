@@ -1,14 +1,9 @@
 import { forwardRef } from 'react'
-import type { FieldMetaState } from 'react-final-form'
 import { Input, type InputProps } from '../input'
 import { FormFieldWrapper } from './FormFieldWrapper'
 import type { DefaultFormInputProps } from './formTypes'
 
-type BaseInputFieldProps = DefaultFormInputProps & InputProps
-
-interface InputFieldProps extends BaseInputFieldProps {
-  meta?: FieldMetaState<unknown>
-}
+type InputFieldProps = DefaultFormInputProps & InputProps
 
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   function InputFieldFunc(

@@ -41,6 +41,7 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
             <>
               <TextAreaField
                 ref={ref}
+                meta={meta}
                 label="Instructions for the AI"
                 helperText='This content is known as the "system prompt". Use it to tell the AI what should do and how to behave. The more precise the instructions are, the better the AI will perform.'
                 rows={10}
