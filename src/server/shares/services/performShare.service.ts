@@ -75,6 +75,7 @@ const handleInvitedUserDoesNotExist = async (
       prisma,
       uowContext,
       email,
+      true,
       WorkspaceInviteSources.Share,
     )
 

@@ -150,10 +150,9 @@ describe('postsSharePerformService', () => {
       })
     })
 
-    it.skip('invites the user, without sending the original invite email', async () => {
+    it('invites the user, without sending the original invite email', async () => {
       await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
       expect(inviteToWorkspaceService).toHaveBeenCalledWith(
-        expect.anything(),
         expect.anything(),
         expect.anything(),
         expect.anything(),

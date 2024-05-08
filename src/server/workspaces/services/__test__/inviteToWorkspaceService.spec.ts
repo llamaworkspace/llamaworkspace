@@ -78,7 +78,7 @@ describe('inviteToWorkspaceService', () => {
       await expect(
         subject(workspace.id, invitingUser.id, email),
       ).rejects.toThrow(
-        'The user is already invited to the workspace, but has not yet accepted the invitation.',
+        'The user has already been invited to the workspace but has not yet accepted the invitation.',
       )
     })
   })
