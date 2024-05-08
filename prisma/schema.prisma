@@ -110,7 +110,7 @@ model WorkspaceInvite {
 
 model Post {
     id                     String              @id @default(cuid())
-    title                  String
+    title                  String?
     emoji                  String?
     userId                 String
     workspaceId            String
