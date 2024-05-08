@@ -12,7 +12,8 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       placeholder,
       helperText,
       onValueChange,
-      required: isRequired,
+      required,
+      error,
       ...input
     },
     externalRef,
@@ -30,13 +31,15 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       <FormFieldWrapper
         label={label}
         helperText={helperText}
-        required={isRequired}
+        required={required}
+        error={error}
       >
         <Input
           ref={externalRef}
           {...input}
           onChange={handleChange}
           placeholder={placeholder}
+          colorScheme={error ? 'danger' : 'default'}
         />
       </FormFieldWrapper>
     )
