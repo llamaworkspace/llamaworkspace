@@ -167,12 +167,12 @@ export const usePostById = (postId?: string) => {
   )
 }
 
-export const usePosts = () => {
+export const usePostsForAppsList = () => {
   const errorHandler = useErrorHandler()
   const { data: workspace } = useCurrentWorkspace()
   const workspaceId = workspace?.id
 
-  return api.posts.getAll.useQuery(
+  return api.posts.getForAppsList.useQuery(
     {
       workspaceId: workspaceId ?? '',
     },
