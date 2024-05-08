@@ -183,8 +183,8 @@ model ShareTarget {
     user              User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
     workspaceInvite   WorkspaceInvite? @relation(fields: [workspaceInviteId], references: [id], onDelete: Cascade)
 
-    @@unique([shareId, userId])
-    @@unique([shareId, workspaceInviteId])
+    // @@unique([shareId, userId])
+    // @@unique([shareId, workspaceInviteId])
     @@index(workspaceInviteId)
 }
 
