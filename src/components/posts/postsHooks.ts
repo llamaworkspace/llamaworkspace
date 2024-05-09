@@ -222,7 +222,7 @@ export const usePostSharePerform = () => {
   return api.posts.share.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.posts.getShares.invalidate()
+      void utils.posts.getShare.invalidate()
     },
     retry: false,
   })
@@ -233,7 +233,7 @@ export const usePostShareUpdate = () => {
   return api.posts.updateShare.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.posts.getShares.invalidate()
+      void utils.posts.getShare.invalidate()
     },
   })
 }
@@ -244,7 +244,7 @@ export const usePostShareUpdateAccessLevel = () => {
   return api.posts.updateShareAccessLevel.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.posts.getShares.invalidate()
+      void utils.posts.getShare.invalidate()
     },
   })
 }

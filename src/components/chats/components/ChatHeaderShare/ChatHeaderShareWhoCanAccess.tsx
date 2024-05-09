@@ -9,7 +9,7 @@ interface FormShape {
 }
 
 const generalAccessOptions = [
-  { value: ShareScope.User.toString(), label: 'Specific users' },
+  { value: ShareScope.User.toString(), label: 'Specific people' },
   {
     value: ShareScope.Everybody.toString(),
     label: 'Everyone in the Workspace',
