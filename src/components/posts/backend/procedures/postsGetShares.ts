@@ -7,17 +7,22 @@ const zInput = z.object({
   postId: z.string(),
 })
 
-const zOutput = z.array(
+const zShareTargets = z.array(
   z.object({
     id: z.string(),
-    postId: z.string(),
-    scope: z.string(),
     email: z.string(),
     accessLevel: z.string(),
     userId: z.string().nullable(),
     workspaceInviteId: z.string().nullable(),
   }),
 )
+
+const zOutput = z.object({
+  id: z.string(),
+  postId: z.string(),
+  scope: z.string(),
+  shareTargets: zShareTargets,
+})
 
 export const postsGetShares = protectedProcedure
   .input(zInput)
