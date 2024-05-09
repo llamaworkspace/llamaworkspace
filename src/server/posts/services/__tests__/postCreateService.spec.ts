@@ -3,7 +3,7 @@ import { prisma } from '@/server/db'
 import { postCreateService } from '@/server/posts/services/postCreate.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { ShareScope } from '@/shared/globalTypes'
+import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 
 const subject = async (workspaceId: string, userId: string) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -61,14 +61,44 @@ describe('postCreateService', () => {
 
     const post = await subject(workspace.id, user.id)
 
-    const postShare = await prisma.postConfigVersion.findFirstOrThrow({
+    const postConfigVersion = await prisma.postConfigVersion.findFirstOrThrow({
       where: {
         postId: post.id,
       },
     })
 
-    expect(postShare).toMatchObject({
+    expect(postConfigVersion).toMatchObject({
       model: weirdModel,
+    })
+  })
+
+  it('creates the default share', async () => {
+    const workspace = await WorkspaceFactory.create(prisma)
+    const user = await UserFactory.create(prisma, {
+      workspaceId: workspace.id,
+    })
+
+    const post = await subject(workspace.id, user.id)
+
+    const share = await prisma.share.findFirstOrThrow({
+      where: {
+        postId: post.id,
+      },
+      include: {
+        shareTargets: true,
+      },
+    })
+
+    expect(share).toMatchObject({
+      postId: post.id,
+      scope: ShareScope.Everybody,
+      shareTargets: [
+        expect.objectContaining({
+          sharerId: user.id,
+          userId: user.id,
+          accessLevel: UserAccessLevel.Owner,
+        }),
+      ],
     })
   })
 })

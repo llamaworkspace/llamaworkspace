@@ -5,6 +5,7 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
 import {
   ShareScope,
+  UserAccessLevel,
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
@@ -50,6 +51,8 @@ export const postCreateService = async (
       input,
     )
 
+    await createDefaultShare(prisma, post.id, userId)
+
     if (!post.isDefault) {
       await updatePostSortingService(prisma, uowContext, post.id)
     }
@@ -70,13 +73,6 @@ const createPost = async (
       workspaceId,
       userId,
       ...input,
-      shares: {
-        create: [
-          {
-            scope: ShareScope.Everybody,
-          },
-        ],
-      },
       postConfigVersions: {
         create: [
           {
@@ -88,6 +84,28 @@ const createPost = async (
                 },
               ],
             },
+          },
+        ],
+      },
+    },
+  })
+}
+
+const createDefaultShare = async (
+  prisma: PrismaTrxClient,
+  postId: string,
+  userId: string,
+) => {
+  return await prisma.share.create({
+    data: {
+      postId: postId,
+      scope: ShareScope.Everybody,
+      shareTargets: {
+        create: [
+          {
+            sharerId: userId,
+            userId: userId,
+            accessLevel: UserAccessLevel.Owner,
           },
         ],
       },
