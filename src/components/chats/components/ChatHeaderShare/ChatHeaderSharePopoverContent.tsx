@@ -148,13 +148,6 @@ export const ChatHeaderSharePopoverContent = ({
                 <div className="flex items-center gap-x-2">
                   <div className="text-zinc-700">Restricted</div>
                 </div>
-                {/* <ChatHeaderShareAccessLevelPopover
-                  postId={postId}
-                  shareId={share.id}
-                  activeAccessLevel={
-                    share.accessLevel as UserAccessLevelActions
-                  }
-                /> */}
               </div>
             </div>
           </div>

@@ -9,7 +9,7 @@ type ShareFactoryFields = {
 type ShareTargetFactoryFields = {
   sharerId: string
   workspaceInviteId?: string
-  userId: string
+  userId?: string
 }
 
 type OverridesPayload = ShareFactoryFields & ShareTargetFactoryFields
