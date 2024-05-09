@@ -6,7 +6,7 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { WorkspaceInviteFactory } from '@/server/testing/factories/WorkspaceInviteFactory'
 import { inviteToWorkspaceService } from '@/server/workspaces/services/inviteToWorkspace.service'
-import { UserAccessLevel } from '@/shared/globalTypes'
+import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { faker } from '@faker-js/faker'
 import type { Post, User, Workspace, WorkspaceInvite } from '@prisma/client'
 import { performShareService } from '../performShare.service'
@@ -73,21 +73,23 @@ describe('postsSharePerformService', () => {
     })
 
     it('shares the post', async () => {
-      const createdShare = await subject(
+      const result = await subject(
         invitingUser.id,
         workspace.id,
         post.id,
         invitedUser.email!,
       )
-      const shares = await prisma.share.findMany({
-        where: { postId: post.id },
-        include: { shareTargets: true },
-      })
 
-      expect(shares).toHaveLength(2)
-      expect(shares.find((s) => s.id === createdShare.id)).toMatchObject({
+      expect(result).toMatchObject({
         postId: post.id,
+        scope: ShareScope.User,
         shareTargets: [
+          expect.objectContaining({
+            sharerId: invitingUser.id,
+            userId: invitingUser.id,
+            workspaceInviteId: null,
+            accessLevel: UserAccessLevel.Owner,
+          }),
           expect.objectContaining({
             sharerId: invitingUser.id,
             userId: invitedUser.id,
@@ -96,6 +98,17 @@ describe('postsSharePerformService', () => {
           }),
         ],
       })
+    })
+
+    it('persists in the db only once', async () => {
+      await subject(invitingUser.id, workspace.id, post.id, invitedUser.email!)
+
+      const shares = await prisma.share.findMany({
+        where: { postId: post.id },
+        include: { shareTargets: true },
+      })
+
+      expect(shares).toHaveLength(1)
     })
 
     describe('and the user is self', () => {
@@ -248,13 +261,13 @@ describe('postsSharePerformService', () => {
       const invitedUser2 = await UserFactory.create(prisma, {
         workspaceId: workspace.id,
       })
-      const createdShare1 = await subject(
+      const result1 = await subject(
         invitingUser.id,
         workspace.id,
         post.id,
         invitedUser.email!,
       )
-      const createdShare2 = await subject(
+      const result2 = await subject(
         invitingUser.id,
         workspace.id,
         post.id,
@@ -266,21 +279,23 @@ describe('postsSharePerformService', () => {
         include: { shareTargets: true },
       })
 
-      expect(shares).toHaveLength(3)
-      expect(shares.find((s) => s.id === createdShare1.id)).toMatchObject({
+      expect(shares).toHaveLength(1)
+      expect(shares[0]!.shareTargets).toHaveLength(3)
+      expect(shares[0]).toMatchObject({
         postId: post.id,
         shareTargets: [
+          expect.objectContaining({
+            sharerId: invitingUser.id,
+            userId: invitingUser.id,
+            workspaceInviteId: null,
+            accessLevel: UserAccessLevel.Owner,
+          }),
           expect.objectContaining({
             sharerId: invitingUser.id,
             userId: invitedUser.id,
             workspaceInviteId: null,
             accessLevel: UserAccessLevel.Use,
           }),
-        ],
-      })
-      expect(shares.find((s) => s.id === createdShare2.id)).toMatchObject({
-        postId: post.id,
-        shareTargets: [
           expect.objectContaining({
             sharerId: invitingUser.id,
             userId: invitedUser2.id,
@@ -289,11 +304,6 @@ describe('postsSharePerformService', () => {
           }),
         ],
       })
-      // expect(shares.find((s) => s.id === createdShare2.id)).toMatchObject({
-      //   sharerId: invitingUser.id,
-      //   userId: invitedUser2.id,
-      //   workspaceInviteId: null,
-      // })
     })
 
     describe('and there are non existing users', () => {
