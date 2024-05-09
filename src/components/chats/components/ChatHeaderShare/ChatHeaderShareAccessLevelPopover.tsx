@@ -91,14 +91,11 @@ export const ChatHeaderShareAccessLevelPopover = ({
               <div className="flex items-center gap-x-1 text-xs text-zinc-400">
                 {targetOption?.title}
 
-                <ChevronDownIcon
-                  className={cn(
-                    'h-3 w-3',
-                    open && 'rotate-180 transform',
-                    activeAccessLevel === UserAccessLevelActions.Owner &&
-                      'invisible',
-                  )}
-                />
+                {activeAccessLevel !== UserAccessLevelActions.Owner && (
+                  <ChevronDownIcon
+                    className={cn('h-3 w-3', open && 'rotate-180 transform')}
+                  />
+                )}
               </div>
             </Popover.Button>
             <Transition
