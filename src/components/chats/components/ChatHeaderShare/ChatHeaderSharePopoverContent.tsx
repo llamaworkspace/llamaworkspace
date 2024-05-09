@@ -107,7 +107,6 @@ export const ChatHeaderSharePopoverContent = ({
               )}
               {shares?.map((share, index) => {
                 const isUser = !!share.userId
-                const email = isUser ? share.user?.email : share.invite?.email
 
                 return (
                   <div
@@ -121,7 +120,7 @@ export const ChatHeaderSharePopoverContent = ({
                       <div
                         className={isUser ? 'text-zinc-700' : 'text-zinc-400'}
                       >
-                        {email}
+                        {share.email}
                       </div>
                       {!isUser && (
                         <div>

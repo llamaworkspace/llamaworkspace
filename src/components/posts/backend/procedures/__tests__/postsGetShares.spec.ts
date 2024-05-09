@@ -9,10 +9,6 @@ import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import type { Post, Share, User, Workspace } from '@prisma/client'
 
-type MockedGetPostSharesService = jest.MockedFunction<
-  typeof getPostSharesService
->
-
 jest.mock('@/server/shares/services/getPostShares.service.ts', () => {
   const original = jest.requireActual(
     '@/server/shares/services/getPostShares.service',
