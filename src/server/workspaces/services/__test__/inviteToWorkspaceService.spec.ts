@@ -17,6 +17,7 @@ const subject = async (
   workspaceId: string,
   userId: string,
   invitedUserEmail: string,
+  disableInvitationEmail = false,
 ) => {
   const context = await createUserOnWorkspaceContext(
     prisma,
@@ -24,7 +25,12 @@ const subject = async (
     userId,
   )
 
-  return await inviteToWorkspaceService(prisma, context, invitedUserEmail)
+  return await inviteToWorkspaceService(
+    prisma,
+    context,
+    invitedUserEmail,
+    disableInvitationEmail,
+  )
 }
 
 describe('inviteToWorkspaceService', () => {
@@ -78,7 +84,7 @@ describe('inviteToWorkspaceService', () => {
       await expect(
         subject(workspace.id, invitingUser.id, email),
       ).rejects.toThrow(
-        'The user is already invited to the workspace, but has not yet accepted the invitation.',
+        'The user has already been invited to the workspace but has not yet accepted the invitation.',
       )
     })
   })
@@ -150,6 +156,14 @@ describe('inviteToWorkspaceService', () => {
       ).rejects.toThrow(
         'This person cannot be invited because they already have an account with us.',
       )
+    })
+  })
+
+  describe('when disableInvitationEmail is true', () => {
+    it('does not send an email', async () => {
+      const email = faker.internet.email()
+      await subject(workspace.id, invitingUser.id, email, true)
+      expect(sendEmail).not.toHaveBeenCalled()
     })
   })
 })

@@ -19,5 +19,5 @@ export const workspacesInviteUserToWorkspace = protectedProcedure
       invitingUserId,
     )
 
-    await inviteToWorkspaceService(ctx.prisma, context, input.email)
+    await inviteToWorkspaceService(ctx.prisma, context, input.email, false)
   })

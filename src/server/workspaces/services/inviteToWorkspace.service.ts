@@ -12,6 +12,7 @@ export const inviteToWorkspaceService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   invitedUserEmail: string,
+  disableInvitationEmail = false,
   source: WorkspaceInviteSources = WorkspaceInviteSources.Direct,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
@@ -37,13 +38,15 @@ export const inviteToWorkspaceService = async (
     })
 
     if (invitedUser) {
-      return await handleUserExists(prisma, uowContext, invitedUser.id)
+      await handleUserExists(prisma, uowContext, invitedUser.id)
+      return null
     }
     return await handleUserDoesNotExist(
       prisma,
       workspace.id,
       invitingUserId,
       invitedUserEmail,
+      disableInvitationEmail,
       source,
     )
   })
@@ -90,6 +93,7 @@ const handleUserDoesNotExist = async (
   workspaceId: string,
   invitingUserId: string,
   invitedUserEmail: string,
+  disableInvitationEmail: boolean,
   source: WorkspaceInviteSources,
 ) => {
   const existingInvite = await prisma.workspaceInvite.findUnique({
@@ -108,7 +112,7 @@ const handleUserDoesNotExist = async (
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message:
-        'The user is already invited to the workspace, but has not yet accepted the invitation.',
+        'The user has already been invited to the workspace but has not yet accepted the invitation.',
     })
   }
 
@@ -144,13 +148,15 @@ const handleUserDoesNotExist = async (
 
   const invitingUserOrEmail = invitingUser.name ?? invitingUser.email!
 
-  await sendEmailToInvitedUser({
-    workspaceId,
-    invitingUserName: invitingUserOrEmail,
-    invitedUserEmail,
-    workspaceName: workspace.name,
-    token: invite.token,
-  })
+  if (!disableInvitationEmail) {
+    await sendEmailToInvitedUser({
+      workspaceId,
+      invitingUserName: invitingUserOrEmail,
+      invitedUserEmail,
+      workspaceName: workspace.name,
+      token: invite.token,
+    })
+  }
 
   return invite
 }
