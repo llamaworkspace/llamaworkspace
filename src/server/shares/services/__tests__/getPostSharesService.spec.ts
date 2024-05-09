@@ -1,7 +1,6 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
-import { ShareFactory } from '@/server/testing/factories/ShareFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
@@ -98,31 +97,18 @@ describe('getPostSharesService', () => {
 
   describe('when scope is "everybody"', () => {
     it('returns the share with scope Everybody', async () => {
-      const resultBefore = await subject(sharedUser.id, workspace.id, post.id)
-
-      expect(resultBefore).toEqual(
-        expect.objectContaining({
-          scope: ShareScope.User,
-        }),
-      )
-      await ShareFactory.create(prisma, {
-        postId: post.id,
-        sharerId: userPostOwner.id,
-        userId: sharedUser.id,
-        scope: ShareScope.Everybody,
-      })
-
-      const shares = await prisma.share.findMany({
+      await prisma.share.update({
         where: {
           postId: post.id,
         },
+        data: {
+          scope: ShareScope.Everybody,
+        },
       })
 
-      expect(shares).toHaveLength(2)
+      const result = await subject(sharedUser.id, workspace.id, post.id)
 
-      const resultAfter = await subject(sharedUser.id, workspace.id, post.id)
-
-      expect(resultAfter).toEqual(
+      expect(result).toEqual(
         expect.objectContaining({
           scope: ShareScope.Everybody,
         }),
