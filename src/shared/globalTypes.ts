@@ -8,6 +8,14 @@ export enum UserAccessLevel {
   View = 'view',
 }
 
+export enum UserAccessLevelActions {
+  Owner = 'owner',
+  EditAndShare = 'edit_and_share',
+  Use = 'use',
+  View = 'view',
+  Remove = 'remove',
+}
+
 export enum ShareScope {
   Everybody = 'everybody',
   User = 'user',
@@ -16,8 +24,6 @@ export enum ShareScope {
 export enum SidebarInfoCardType {
   Onboarding = 'onboarding',
 }
-
-export type Primitive = string | number | boolean | bigint | symbol
 
 export type PrismaTrxClient = Omit<
   PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
