@@ -91,7 +91,7 @@ describe('postCreateService', () => {
 
     expect(share).toMatchObject({
       postId: post.id,
-      scope: ShareScope.Everybody,
+      scope: ShareScope.User,
       shareTargets: [
         expect.objectContaining({
           sharerId: user.id,
