@@ -9,11 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { ChatHeaderShareBody } from './ChatHeaderShareBody'
 
@@ -35,28 +30,12 @@ export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
           </DialogDescription>
         </DialogHeader>
-        <ChatHeaderShareBody postId={postId} />
+        <div className="-mx-3 max-h-[400px] overflow-y-auto ">
+          <div className="mx-3">
+            <ChatHeaderShareBody postId={postId} />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
-  )
-
-  return (
-    <Popover>
-      <div>
-        {canShare && (
-          <Button size="sm" variant="ghost" className="text-sm" asChild>
-            <PopoverTrigger className="cursor-pointer font-medium">
-              Share
-            </PopoverTrigger>
-          </Button>
-        )}
-
-        <div className="relative z-50 text-sm">
-          <PopoverContent align="end" className="w-[500px]">
-            <ChatHeaderShareBody postId={postId} />
-          </PopoverContent>
-        </div>
-      </div>
-    </Popover>
   )
 }

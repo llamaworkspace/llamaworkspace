@@ -52,9 +52,11 @@ export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
           }
         }
         return (
-          <div className="space-y-8 text-sm">
-            <div className="space-y-1">
-              <div className="font-semibold tracking-tight">Invite people</div>
+          <div className="space-y-2 text-sm">
+            <div className="space-y-2">
+              <div className="font-semibold tracking-tight">
+                People with access
+              </div>
               <Field
                 name="email"
                 validate={composeValidators(stringOrNumberRequired, email)}
@@ -94,10 +96,8 @@ export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
                 }}
               />
             </div>
+
             <div>
-              <div className="font-semibold tracking-tight">
-                People with access
-              </div>
               {!share?.shareTargets?.length && (
                 <div className="mt-2 text-sm text-zinc-500">
                   No one else has access

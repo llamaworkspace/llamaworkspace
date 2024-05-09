@@ -5,7 +5,7 @@ import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactor
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
-import type { Post, Share, User, Workspace } from '@prisma/client'
+import type { Post, User, Workspace } from '@prisma/client'
 import { getPostSharesService } from '../getPostShares.service'
 
 const subject = async (userId: string, workspaceId: string, postId: string) => {
@@ -22,7 +22,6 @@ describe('getPostSharesService', () => {
   let userPostOwner: User
   let sharedUser: User
   let post: Post
-  let shareXXXXXXX: Share
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
