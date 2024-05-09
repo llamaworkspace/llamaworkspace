@@ -5,7 +5,7 @@ import { UserAccessLevelActions } from '@/shared/globalTypes'
 import { z } from 'zod'
 
 const zInput = z.object({
-  shareId: z.string(),
+  shareTargetId: z.string(),
   accessLevel: z.nativeEnum(UserAccessLevelActions),
 })
 
@@ -16,7 +16,11 @@ export const postsShareUpdateAccessLevel = protectedProcedure
 
     const share = await ctx.prisma.share.findFirstOrThrow({
       where: {
-        id: input.shareId,
+        shareTargets: {
+          some: {
+            id: input.shareTargetId,
+          },
+        },
       },
       include: {
         post: {
