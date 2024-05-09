@@ -57,24 +57,23 @@ describe('postsGetShares', () => {
   it('returns a schema specific response', async () => {
     const response = await subject(invitingUser.id, post.id)
 
-    expect(response).toEqual([
+    expect(response).toEqual(
       expect.objectContaining({
         postId: post.id,
         scope: ShareScope.User,
-        email: invitingUser.email,
-        accessLevel: UserAccessLevel.Owner,
-        userId: invitingUser.id,
-        workspaceInviteId: null,
       }),
-      {
-        id: share.id,
-        postId: post.id,
-        scope: ShareScope.User,
-        email: invitedUser.email,
-        accessLevel: UserAccessLevel.Use,
-        userId: invitedUser.id,
-        workspaceInviteId: null,
-      },
-    ])
+    )
+
+    expect(response.shareTargets).toHaveLength(1)
+    expect(response.shareTargets).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          email: invitingUser.email,
+          accessLevel: UserAccessLevel.Owner,
+          userId: invitingUser.id,
+          workspaceInviteId: null,
+        }),
+      ]),
+    )
   })
 })
