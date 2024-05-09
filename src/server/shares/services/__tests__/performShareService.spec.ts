@@ -175,31 +175,34 @@ describe('postsSharePerformService', () => {
     })
 
     it('creates the share', async () => {
-      const createdShare = await subject(
-        invitingUser.id,
-        workspace.id,
-        post.id,
-        fakeEmail,
-      )
+      await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
 
       const shares = await prisma.share.findMany({
         where: { postId: post.id },
         include: { shareTargets: true },
       })
 
-      expect(shares).toHaveLength(2)
+      expect(shares).toHaveLength(1)
+      const share = shares[0]!
 
-      expect(shares.find((s) => s.id === createdShare.id)).toMatchObject({
+      expect(share).toMatchObject({
         postId: post.id,
-        shareTargets: [
-          expect.objectContaining({
-            sharerId: invitingUser.id,
-            userId: null,
-            workspaceInviteId: workspaceInvite.id,
-            accessLevel: UserAccessLevel.Use,
-          }),
-        ],
+        scope: ShareScope.User,
       })
+      expect(share.shareTargets).toEqual([
+        expect.objectContaining({
+          sharerId: invitingUser.id,
+          userId: invitingUser.id,
+          workspaceInviteId: null,
+          accessLevel: UserAccessLevel.Owner,
+        }),
+        expect.objectContaining({
+          sharerId: invitingUser.id,
+          userId: null,
+          workspaceInviteId: workspaceInvite.id,
+          accessLevel: UserAccessLevel.Use,
+        }),
+      ])
     })
 
     it('sends a custom invite', async () => {
@@ -261,18 +264,8 @@ describe('postsSharePerformService', () => {
       const invitedUser2 = await UserFactory.create(prisma, {
         workspaceId: workspace.id,
       })
-      const result1 = await subject(
-        invitingUser.id,
-        workspace.id,
-        post.id,
-        invitedUser.email!,
-      )
-      const result2 = await subject(
-        invitingUser.id,
-        workspace.id,
-        post.id,
-        invitedUser2.email!,
-      )
+      await subject(invitingUser.id, workspace.id, post.id, invitedUser.email!)
+      await subject(invitingUser.id, workspace.id, post.id, invitedUser2.email!)
 
       const shares = await prisma.share.findMany({
         where: { postId: post.id },
@@ -352,7 +345,9 @@ describe('postsSharePerformService', () => {
           )
         })
 
-        expect(shares).toHaveLength(3)
+        expect(shares).toHaveLength(1)
+        const share = shares[0]!
+        expect(share.shareTargets).toHaveLength(3)
         expect(workspaceInviteIds).toEqual(dbWorkspaceInviteIds.filter(Boolean))
       })
 
@@ -367,9 +362,12 @@ describe('postsSharePerformService', () => {
 
         const shares = await prisma.share.findMany({
           where: { postId: post.id },
+          include: { shareTargets: true },
         })
 
-        expect(shares).toHaveLength(3)
+        expect(shares).toHaveLength(1)
+        const share = shares[0]!
+        expect(share.shareTargets).toHaveLength(3)
       })
     })
   })

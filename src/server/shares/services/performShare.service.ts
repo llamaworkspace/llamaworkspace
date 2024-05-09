@@ -89,7 +89,7 @@ const handleInvitedUserDoesNotExist = async (
     }
   }
 
-  const existingShare = await prisma.share.findFirst({
+  const shareForInvitedUser = await prisma.share.findFirst({
     where: {
       postId,
       shareTargets: {
@@ -100,26 +100,21 @@ const handleInvitedUserDoesNotExist = async (
     },
   })
 
-  if (existingShare) {
+  if (shareForInvitedUser) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: USER_ALREADY_INVITED_ERROR,
     })
   }
 
-  const share = await prisma.share.create({
+  const share = await getOrCreateShare(prisma, postId)
+
+  await prisma.shareTarget.create({
     data: {
-      postId,
-      shareTargets: {
-        create: [
-          {
-            sharerId: invitingUserId,
-            workspaceInviteId: workspaceInvite.id,
-            accessLevel: UserAccessLevel.Use,
-          },
-        ],
-      },
-      scope: ShareScope.User,
+      shareId: share.id,
+      sharerId: invitingUserId,
+      workspaceInviteId: workspaceInvite.id,
+      accessLevel: UserAccessLevel.Use,
     },
   })
 
@@ -131,7 +126,7 @@ const handleInvitedUserDoesNotExist = async (
 
   await sendShareNotificationEmail(invitingUser?.name, email, postId)
 
-  return share
+  return await getPostSharesService(prisma, uowContext, { postId })
 }
 
 const handleInvitedUserExists = async (
@@ -165,29 +160,11 @@ const handleInvitedUserExists = async (
     })
   }
 
-  const shares = await prisma.share.findMany({
-    where: {
-      postId,
-    },
-  })
-
-  // If share with .use already exists, add invited user to it
-  // else create it first
-  let shareUseScope = shares.find(
-    (share) => share.scope === ShareScope.User.toString(),
-  )
-  if (!shareUseScope) {
-    shareUseScope = await prisma.share.create({
-      data: {
-        postId,
-        scope: ShareScope.User,
-      },
-    })
-  }
+  const share = await getOrCreateShare(prisma, postId)
 
   await prisma.shareTarget.create({
     data: {
-      shareId: shareUseScope.id,
+      shareId: share.id,
       sharerId: invitingUserId,
       userId: invitedUserId,
       accessLevel: UserAccessLevel.Use,
@@ -214,6 +191,27 @@ const handleInvitedUserExists = async (
   )
 
   return await getPostSharesService(prisma, uowContext, { postId })
+}
+
+const getOrCreateShare = async (prisma: PrismaTrxClient, postId: string) => {
+  const shares = await prisma.share.findMany({
+    where: {
+      postId,
+    },
+  })
+
+  let shareUseScope = shares.find(
+    (share) => share.scope === ShareScope.User.toString(),
+  )
+  if (!shareUseScope) {
+    shareUseScope = await prisma.share.create({
+      data: {
+        postId,
+        scope: ShareScope.User,
+      },
+    })
+  }
+  return shareUseScope
 }
 
 const sendShareNotificationEmail = async (
