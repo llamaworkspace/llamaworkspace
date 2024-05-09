@@ -1,4 +1,3 @@
-import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
 import {
   usePostSharePerform,
   usePostShares,
@@ -7,28 +6,24 @@ import type { ComponentWithPostId } from '@/components/posts/postsTypes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
   composeValidators,
   email,
   stringOrNumberRequired,
 } from '@/lib/frontend/finalFormValidations'
 import { cn } from '@/lib/utils'
 import type { UserAccessLevelActions } from '@/shared/globalTypes'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { FormApi } from 'final-form'
 import { Field, Form as FinalForm, type FieldMetaState } from 'react-final-form'
-import { useSuccessToast } from '../../ui/toastHooks'
+import { useSuccessToast } from '../../../ui/toastHooks'
 import { ChatHeaderShareAccessLevelPopover } from './ChatHeaderShareAccessLevelPopover'
 
 interface FormShape {
   email: string
 }
 
-const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
+export const ChatHeaderSharePopoverContent = ({
+  postId,
+}: ComponentWithPostId) => {
   const toast = useSuccessToast()
 
   const { data: shares } = usePostShares(postId)
@@ -166,31 +161,5 @@ const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
         )
       }}
     />
-  )
-}
-
-export const ChatHeaderSharePopover = ({ postId }: ComponentWithPostId) => {
-  const { can: canShare } = useCanExecuteActionForPost(
-    PermissionAction.Share,
-    postId,
-  )
-  return (
-    <Popover>
-      <div>
-        {canShare && (
-          <Button size="sm" variant="ghost" className="text-sm" asChild>
-            <PopoverTrigger className="cursor-pointer font-medium">
-              Share
-            </PopoverTrigger>
-          </Button>
-        )}
-
-        <div className="relative z-50 text-sm">
-          <PopoverContent align="end" className="w-[500px]">
-            <SharePopoverContent postId={postId} />
-          </PopoverContent>
-        </div>
-      </div>
-    </Popover>
   )
 }

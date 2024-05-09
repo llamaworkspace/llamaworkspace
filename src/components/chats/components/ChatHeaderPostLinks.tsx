@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { Cog6ToothIcon as Cog6ToothIconSolid } from '@heroicons/react/24/solid'
 import Link from 'next/link'
-import { ChatHeaderSharePopover } from './ChatHeaderSharePopover'
+import { ChatHeaderShare } from './ChatHeaderShare/ChatHeaderShare'
 
 export const ChatHeaderPostLinks = () => {
   const navigation = useNavigation()
@@ -26,7 +26,7 @@ export const ChatHeaderPostLinks = () => {
         <>
           <ul className="flex items-center">
             <li className="mr-4 flex items-center text-zinc-700">
-              <ChatHeaderSharePopover postId={postId} />
+              <ChatHeaderShare postId={postId} />
             </li>
             <Link
               href={activeTab === TabEnum.Configuration ? chatLink : configLink}
