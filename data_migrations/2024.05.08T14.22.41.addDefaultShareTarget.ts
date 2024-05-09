@@ -7,6 +7,11 @@ export const up: MigrationFn = async () => {
     include: {
       post: true,
     },
+    where: {
+      shareTargets: {
+        none: {},
+      },
+    },
   })
 
   await prisma.shareTarget.createMany({
