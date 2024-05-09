@@ -1,7 +1,4 @@
-import {
-  usePostSharePerform,
-  usePostShareUpdate,
-} from '@/components/posts/postsHooks'
+import { usePostShare, usePostShareUpdate } from '@/components/posts/postsHooks'
 import { SelectField } from '@/components/ui/forms/SelectField'
 import { ShareScope } from '@/shared/globalTypes'
 import { Field, Form as FinalForm } from 'react-final-form'
@@ -20,21 +17,21 @@ const generalAccessOptions = [
 ]
 
 interface ChatHeaderShareWhoCanAccessProps {
-  shareId: string
+  postId: string
 }
 
 export const ChatHeaderShareWhoCanAccess = ({
-  shareId,
+  postId,
 }: ChatHeaderShareWhoCanAccessProps) => {
   const toast = useSuccessToast()
+  const { data: share } = usePostShare(postId)
 
-  // const { data: shares } = usePostShares(postId)
-  const { mutate: performShare } = usePostSharePerform()
   const { mutateAsync: updateShare } = usePostShareUpdate()
 
   const handleSubmit = async ({ scope }: FormShape) => {
+    if (!share) return
     await updateShare(
-      { shareId, scope },
+      { shareId: share.id, scope },
       {
         onSuccess: () => {
           toast(undefined, `Access level updated`)
@@ -46,6 +43,7 @@ export const ChatHeaderShareWhoCanAccess = ({
   return (
     <FinalForm
       onSubmit={handleSubmit}
+      initialValues={{ scope: share?.scope }}
       render={({ handleSubmit }) => {
         return (
           <div className="space-y-8 text-sm">

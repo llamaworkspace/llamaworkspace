@@ -24,7 +24,7 @@ const zOutput = z.object({
   shareTargets: zShareTargets,
 })
 
-export const postsGetShares = protectedProcedure
+export const postsGetShare = protectedProcedure
   .input(zInput)
   .output(zOutput)
   .query(async ({ ctx, input }) => {
@@ -52,22 +52,20 @@ export const postsGetShares = protectedProcedure
     //   input.postId,
     // )
 
-    const shares = await getPostSharesService(ctx.prisma, context, { postId })
+    const share = await getPostSharesService(ctx.prisma, context, { postId })
 
-    return shares.flatMap((share) => {
-      return share.shareTargets.map((shareTarget) => {
-        const email =
-          shareTarget.user?.email ?? shareTarget.workspaceInvite?.email!
-
+    return {
+      id: share.id,
+      postId: share.postId,
+      scope: share.scope,
+      shareTargets: share.shareTargets.map((shareTarget) => {
         return {
-          id: share.id,
-          postId: share.postId,
-          scope: share.scope,
-          email,
+          id: shareTarget.id,
+          email: shareTarget.user?.email ?? shareTarget.workspaceInvite?.email!,
           accessLevel: shareTarget.accessLevel,
           userId: shareTarget.userId,
           workspaceInviteId: shareTarget.workspaceInviteId,
         }
-      })
-    })
+      }),
+    }
   })

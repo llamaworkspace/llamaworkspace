@@ -1,7 +1,4 @@
-import {
-  usePostSharePerform,
-  usePostShares,
-} from '@/components/posts/postsHooks'
+import { usePostSharePerform } from '@/components/posts/postsHooks'
 import type { ComponentWithPostId } from '@/components/posts/postsTypes'
 import { Button } from '@/components/ui/button'
 import { SelectField } from '@/components/ui/forms/SelectField'
@@ -31,7 +28,7 @@ const generalAccessOptions = [
 export const ChatHeaderShareBody = ({ postId }: ComponentWithPostId) => {
   const toast = useSuccessToast()
 
-  const { data: shares } = usePostShares(postId)
+  // const { data: share } = usePostShare(postId)
   const { mutate: performShare } = usePostSharePerform()
 
   const handleSubmit = ({ email }: FormShape, form: FormApi<FormShape>) => {
@@ -48,7 +45,7 @@ export const ChatHeaderShareBody = ({ postId }: ComponentWithPostId) => {
 
   return (
     <div>
-      <ChatHeaderShareWhoCanAccess shareId={shares![0]!.id} />
+      <ChatHeaderShareWhoCanAccess postId={postId} />
       <FinalForm
         onSubmit={handleSubmit}
         render={({ handleSubmit, values, submitting }) => {
@@ -143,12 +140,12 @@ export const ChatHeaderShareBody = ({ postId }: ComponentWithPostId) => {
               <div className="font-semibold tracking-tight">
                 People with access
               </div>
-              {!shares?.length && (
+              {!share?.length && (
                 <div className="mt-2 text-sm text-zinc-500">
                   No one else has access
                 </div>
               )}
-              {shares?.map((share, index) => {
+              {share?.map((share, index) => {
                 const isUser = !!share.userId
 
                 return (
@@ -156,7 +153,7 @@ export const ChatHeaderShareBody = ({ postId }: ComponentWithPostId) => {
                     key={share.id}
                     className={cn(
                       'flex items-center justify-between py-3',
-                      index + 1 !== shares.length && 'border-b',
+                      index + 1 !== share.length && 'border-b',
                     )}
                   >
                     <div className="flex items-center gap-x-2">

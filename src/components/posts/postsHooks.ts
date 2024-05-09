@@ -179,10 +179,10 @@ export const usePostsForAppsList = () => {
   )
 }
 
-export const usePostShares = (postId?: string) => {
+export const usePostShare = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
-  return api.posts.getShares.useQuery(
+  return api.posts.getShare.useQuery(
     { postId: postId! },
     {
       onError: errorHandler(),

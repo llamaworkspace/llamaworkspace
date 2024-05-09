@@ -4,7 +4,7 @@ import {
   canForAccessLevel,
   type PermissionAction,
 } from '@/shared/permissions/permissionDefinitions'
-import { usePostShares } from '../posts/postsHooks'
+import { usePostShare } from '../posts/postsHooks'
 import { useSelf } from '../users/usersHooks'
 import { WorkspaceMemberRole } from '../workspaces/backend/workspacesBackendUtils'
 import { useWorkspaceMembers } from '../workspaces/workspaceMembersHooks'
@@ -14,7 +14,7 @@ export const useAccessLevelForPost = (postId?: string) => {
   const { data: user } = useSelf()
   const { data: workspace } = useCurrentWorkspace()
   const { workspaceMembers } = useWorkspaceMembers(workspace?.id)
-  const { data: postShares } = usePostShares(postId)
+  const { data: postShares } = usePostShare(postId)
 
   const loading = !workspace || !workspaceMembers || !user || !postShares
 
