@@ -97,12 +97,14 @@ describe('updateShareAccessLevelService', () => {
           share: { postId: post.id },
         },
       })
+
       expect(shareTargetsBefore).toHaveLength(2)
 
       const shareTargetOfTheInvitedUserInDb =
         await prisma.shareTarget.findFirstOrThrow({
           where: {
             shareId: share.id,
+            accessLevel: UserAccessLevel.Use.toString(),
           },
         })
       await subject(
@@ -118,6 +120,28 @@ describe('updateShareAccessLevelService', () => {
         },
       })
       expect(shareTargetsAfter).toHaveLength(1)
+    })
+
+    describe('and the target is the owner', () => {
+      it('throws an error', async () => {
+        const shareTargetInDb = await prisma.shareTarget.findFirstOrThrow({
+          where: {
+            accessLevel: UserAccessLevel.Owner.toString(),
+            share: {
+              postId: post.id,
+            },
+          },
+        })
+
+        await expect(
+          subject(
+            userCreatingPost.id,
+            workspace.id,
+            shareTargetInDb.id,
+            UserAccessLevelActions.Remove,
+          ),
+        ).rejects.toThrow('Owner cannot be removed')
+      })
     })
 
     describe('and the share is an invite (not a user)', () => {

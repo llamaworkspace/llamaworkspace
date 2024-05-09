@@ -2,11 +2,13 @@ import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { WorkspaceInviteSources } from '@/server/workspaces/workspaceTypes'
 import {
+  UserAccessLevel,
   UserAccessLevelActions,
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
-import { ShareTarget } from '@prisma/client'
+import type { ShareTarget } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
 import { scopeShareByWorkspace } from '../shareUtils'
 
 interface UpdateShareAccessLevelPayload {
@@ -36,21 +38,15 @@ export const updateShareAccessLevelService = async (
     })
 
     if (accessLevel === UserAccessLevelActions.Remove) {
-      return await deleteShareAccessLevel(prisma, workspaceId, shareTarget)
+      return await deleteShareAccessLevel(prisma, shareTarget)
     }
 
-    return await updateShareAccessLevel(
-      prisma,
-      workspaceId,
-      shareTargetId,
-      accessLevel,
-    )
+    return await updateShareAccessLevel(prisma, shareTargetId, accessLevel)
   })
 }
 
 const deleteShareAccessLevel = async (
   prisma: PrismaTrxClient,
-  workspaceId: string,
   shareTarget: ShareTarget,
 ) => {
   // Share is linked to an invite
@@ -85,6 +81,12 @@ const deleteShareAccessLevel = async (
     }
   }
 
+  if (shareTarget.accessLevel === UserAccessLevel.Owner.toString()) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Owner cannot be removed',
+    })
+  }
   await prisma.shareTarget.delete({
     where: {
       id: shareTarget.id,
@@ -94,7 +96,6 @@ const deleteShareAccessLevel = async (
 
 const updateShareAccessLevel = async (
   prisma: PrismaTrxClient,
-  workspaceId: string,
   shareTargetId: string,
   accessLevel: UserAccessLevelActions,
 ) => {
