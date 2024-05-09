@@ -4,6 +4,7 @@ import {
 } from '@/components/posts/postsHooks'
 import type { ComponentWithPostId } from '@/components/posts/postsTypes'
 import { Button } from '@/components/ui/button'
+import { SelectField } from '@/components/ui/forms/SelectField'
 import { Input } from '@/components/ui/input'
 import {
   composeValidators,
@@ -16,14 +17,18 @@ import type { FormApi } from 'final-form'
 import { Field, Form as FinalForm, type FieldMetaState } from 'react-final-form'
 import { useSuccessToast } from '../../../ui/toastHooks'
 import { ChatHeaderShareAccessLevelPopover } from './ChatHeaderShareAccessLevelPopover'
+import { ChatHeaderShareWhoCanAccess } from './ChatHeaderShareWhoCanAccess'
 
 interface FormShape {
   email: string
 }
 
-export const ChatHeaderSharePopoverContent = ({
-  postId,
-}: ComponentWithPostId) => {
+const generalAccessOptions = [
+  { value: 'restricted', label: 'Specific users' },
+  { value: 'general', label: 'Everyone in the Workspace' },
+]
+
+export const ChatHeaderShareBody = ({ postId }: ComponentWithPostId) => {
   const toast = useSuccessToast()
 
   const { data: shares } = usePostShares(postId)
@@ -40,6 +45,44 @@ export const ChatHeaderSharePopoverContent = ({
       },
     )
   }
+
+  return (
+    <div>
+      <ChatHeaderShareWhoCanAccess shareId={shares![0]!.id} />
+      <FinalForm
+        onSubmit={handleSubmit}
+        render={({ handleSubmit, values, submitting }) => {
+          const isSubmitDisabled = !values.email || submitting
+
+          const handleKeyDown = (event: React.KeyboardEvent) => {
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              void handleSubmit()
+            }
+          }
+
+          return (
+            <div className="space-y-8 text-sm">
+              <Field
+                name="title"
+                render={({ input, meta }) => {
+                  return (
+                    <SelectField
+                      options={generalAccessOptions}
+                      meta={meta}
+                      label="Who can access"
+                      onChangeCapture={handleSubmit}
+                      {...input}
+                    />
+                  )
+                }}
+              />
+            </div>
+          )
+        }}
+      />
+    </div>
+  )
 
   return (
     <FinalForm

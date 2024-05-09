@@ -227,18 +227,26 @@ export const usePostSharePerform = () => {
     retry: false,
   })
 }
-export const usePostShareUpdateAccessLevel = () => {
+export const usePostShareUpdate = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
-  const { mutate } = api.posts.updateShareAccessLevel.useMutation({
+  return api.posts.updateShare.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
       void utils.posts.getShares.invalidate()
     },
   })
-  return {
-    mutate,
-  }
+}
+
+export const usePostShareUpdateAccessLevel = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+  return api.posts.updateShareAccessLevel.useMutation({
+    onError: errorHandler(),
+    onSuccess: () => {
+      void utils.posts.getShares.invalidate()
+    },
+  })
 }
 
 export const useLatestPost = (workspaceId?: string) => {
