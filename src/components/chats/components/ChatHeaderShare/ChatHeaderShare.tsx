@@ -1,4 +1,3 @@
-import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
 import type { ComponentWithPostId } from '@/components/posts/postsTypes'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,15 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { ChatHeaderShareBody } from './ChatHeaderShareBody'
 
 export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
-  const { can: canShare } = useCanExecuteActionForPost(
-    PermissionAction.Share,
-    postId,
-  )
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -27,7 +20,7 @@ export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
         <DialogHeader>
           <DialogTitle>Share GPT</DialogTitle>
           <DialogDescription>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            Collaborate with your team by granting them access to this GPT
           </DialogDescription>
         </DialogHeader>
         <div className="-mx-3 max-h-[400px] overflow-y-auto ">
