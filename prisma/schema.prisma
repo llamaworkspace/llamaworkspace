@@ -161,7 +161,7 @@ model PostShare {
 
 model Share {
     id           String        @id @default(cuid())
-    postId       String
+    postId       String        @unique
     scope        String
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt
