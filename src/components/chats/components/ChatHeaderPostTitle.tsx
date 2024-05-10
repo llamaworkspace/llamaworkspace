@@ -16,8 +16,8 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
       <div className="relative text-xl">
         <div>
           {post?.emoji ? (
-            <div className="w-8">
-              <Emoji unified={post.emoji} size={28} />
+            <div className="w-12">
+              <Emoji unified={post.emoji} size={36} />
             </div>
           ) : (
             <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center text-[1.1rem] text-zinc-300">
@@ -26,7 +26,7 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
           )}
         </div>
       </div>
-      <div className="text-lg font-semibold tracking-tighter">
+      <div className="text-xl font-bold tracking-tight">
         {post?.title ?? EMPTY_POST_NAME}
       </div>
     </div>
