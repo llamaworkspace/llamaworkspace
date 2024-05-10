@@ -4,8 +4,12 @@ import { PencilSquareIcon } from '@heroicons/react/24/outline'
 
 export function SidebarHeader() {
   return (
-    <div className="flex h-14 max-h-14 w-full items-center px-2">
-      <NewChatButton />
+    // Keep this double div, otherwise the height won't be respected and
+    // the button will stick to the top of the viewport.
+    <div>
+      <div className="flex h-14 max-h-14 w-full items-center px-2">
+        <NewChatButton />
+      </div>
     </div>
   )
 }
