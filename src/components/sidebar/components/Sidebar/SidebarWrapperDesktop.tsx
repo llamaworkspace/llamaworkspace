@@ -13,7 +13,7 @@ export function SidebarWrapperDesktop() {
         isDesktopSidebarOpen ? 'w-72' : 'w-0',
       )}
     >
-      <div className="flex h-full grow flex-col overflow-hidden border-r border-zinc-300 bg-zinc-10">
+      <div className="flex h-full grow flex-col overflow-hidden bg-zinc-10">
         <SidebarContent />
       </div>
     </div>

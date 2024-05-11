@@ -15,7 +15,7 @@ export function MainLayoutHeaderForChatbot({
   const { toggleMobileSidebar } = useGlobalState()
 
   return (
-    <header className="flex h-12 max-h-12 flex-row items-center justify-between border-b border-zinc-200/50 py-2.5 lg:px-0">
+    <header className="flex h-14 max-h-14 flex-row items-center justify-between py-2.5 lg:px-0">
       {/* Mobile button */}
       <div className="flex w-full px-2 py-5 lg:hidden">
         <button

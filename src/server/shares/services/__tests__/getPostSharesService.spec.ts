@@ -92,8 +92,6 @@ describe('getPostSharesService', () => {
     })
   })
 
-  describe.skip('when there are users not in the workspace', () => {})
-
   describe('when scope is "everybody"', () => {
     it('returns the share with scope Everybody', async () => {
       await prisma.share.update({
@@ -114,4 +112,6 @@ describe('getPostSharesService', () => {
       )
     })
   })
+
+  describe.skip('when there are users not in the workspace', () => {})
 })
