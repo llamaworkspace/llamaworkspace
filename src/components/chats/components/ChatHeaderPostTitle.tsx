@@ -26,7 +26,7 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
           )}
         </div>
       </div>
-      <div className="text-xl font-bold tracking-tight">
+      <div className="line-clamp-1 text-lg font-bold tracking-tight md:text-xl">
         {post?.title ?? EMPTY_POST_NAME}
       </div>
     </div>

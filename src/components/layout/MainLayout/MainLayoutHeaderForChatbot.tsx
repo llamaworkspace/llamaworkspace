@@ -26,22 +26,22 @@ export function MainLayoutHeaderForChatbot({
           <span className="sr-only">Open sidebar</span>
           <SidebarToggleIcon />
         </button>
-        <div className="flex w-full justify-between px-2 md:px-6">
-          <div id="header-left" className="flex grow items-center text-sm">
+        <div className="flex w-full justify-between px-2">
+          <div className="flex grow items-center text-sm">
             <ChatHeaderPostTitle postId={postId} />
           </div>
-          <div id="header-left" className="items-center text-sm">
+          <div className="items-center text-sm">
             <ChatHeaderPostLinks postId={postId} chatId={chatId} />
           </div>
         </div>
       </div>
       {/* Desktop header */}
-      <div className="hidden h-8 w-full items-center lg:flex">
-        <div className="flex w-full justify-between px-6">
-          <div id="header-left" className="flex grow items-center text-sm">
+      <div className="hidden h-8 w-full items-center  lg:flex">
+        <div className="flex w-full justify-between gap-x-2 px-6">
+          <div className="flex grow items-center text-sm">
             <ChatHeaderPostTitle postId={postId} />
           </div>
-          <div id="header-left" className="items-center text-sm">
+          <div className="items-center text-sm">
             <ChatHeaderPostLinks postId={postId} chatId={chatId} />
           </div>
         </div>
