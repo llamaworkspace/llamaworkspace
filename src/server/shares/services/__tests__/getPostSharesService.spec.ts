@@ -4,7 +4,9 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { WorkspaceInviteFactory } from '@/server/testing/factories/WorkspaceInviteFactory'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
+import { faker } from '@faker-js/faker'
 import type { Post, User, Workspace } from '@prisma/client'
 import { getPostSharesService } from '../getPostShares.service'
 
@@ -113,5 +115,45 @@ describe('getPostSharesService', () => {
     })
   })
 
-  describe.skip('when there are users not in the workspace', () => {})
+  describe('when there are users not in the workspace', () => {
+    it('returns the invitees', async () => {
+      const share = await prisma.share.findFirstOrThrow({
+        where: {
+          postId: post.id,
+        },
+      })
+
+      const invitedMember = await WorkspaceInviteFactory.create(prisma, {
+        workspaceId: workspace.id,
+        email: faker.internet.email(),
+        invitedById: userPostOwner.id,
+      })
+
+      await ShareTargetFactory.create(prisma, {
+        shareId: share.id,
+        sharerId: userPostOwner.id,
+        workspaceInviteId: invitedMember.id,
+      })
+
+      const result = await subject(sharedUser.id, workspace.id, post.id)
+
+      expect(result.shareTargets).toHaveLength(2)
+      expect(result.shareTargets).toEqual([
+        expect.objectContaining({
+          shareId: share.id,
+          sharerId: userPostOwner.id,
+          userId: userPostOwner.id,
+          workspaceInviteId: null,
+          accessLevel: UserAccessLevel.Owner.toString(),
+        }),
+        expect.objectContaining({
+          shareId: share.id,
+          sharerId: userPostOwner.id,
+          userId: null,
+          workspaceInviteId: invitedMember.id,
+          accessLevel: UserAccessLevel.Use.toString(),
+        }),
+      ])
+    })
+  })
 })
