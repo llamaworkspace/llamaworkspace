@@ -238,7 +238,7 @@ export const usePostShareUpdate = () => {
   })
 }
 
-export const usePostShareUpdateAccessLevel = () => {
+export const useUpdateShareAccessLevelForPost = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
   return api.posts.updateShareAccessLevel.useMutation({

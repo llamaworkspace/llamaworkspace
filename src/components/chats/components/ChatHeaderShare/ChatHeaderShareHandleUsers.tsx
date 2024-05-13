@@ -129,8 +129,7 @@ export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
                       )}
                     </div>
                     <ChatHeaderShareAccessLevelPopover
-                      postId={postId}
-                      shareId={shareTarget.id}
+                      shareTargetId={shareTarget.id}
                       activeAccessLevel={
                         shareTarget.accessLevel as UserAccessLevelActions
                       }
