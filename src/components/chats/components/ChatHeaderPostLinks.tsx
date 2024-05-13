@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { Cog6ToothIcon as Cog6ToothIconSolid } from '@heroicons/react/24/solid'
 import Link from 'next/link'
-import { ChatHeaderShare } from './ChatHeaderShare/ChatHeaderShare'
 
 interface ChatHeaderPostLinksProps {
   postId?: string
@@ -30,9 +29,9 @@ export const ChatHeaderPostLinks = ({
       {postId && (
         <>
           <ul className="flex items-center gap-x-4">
-            <li>
+            {/* <li>
               <ChatHeaderShare postId={postId} />
-            </li>
+            </li> */}
             <Link
               href={activeTab === TabEnum.Configuration ? chatLink : configLink}
             >
