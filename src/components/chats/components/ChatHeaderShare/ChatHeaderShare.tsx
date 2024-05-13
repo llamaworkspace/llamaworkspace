@@ -18,7 +18,7 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { ChatHeaderShareBody } from './ChatHeaderShareBody'
 
 export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
-  const { data: canUse, isLoading } = useCanPerformActionForPost(
+  const { data: canInvite, isLoading } = useCanPerformActionForPost(
     PermissionAction.Invite,
     postId,
   )
@@ -45,7 +45,7 @@ export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>{canUse ? button : tooltip}</DialogTrigger>
+      <DialogTrigger asChild>{canInvite ? button : tooltip}</DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Share GPT access</DialogTitle>

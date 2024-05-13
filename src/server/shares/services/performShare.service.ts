@@ -2,6 +2,7 @@ import { env } from '@/env.mjs'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { sendEmail } from '@/server/mailer/mailer'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { inviteToWorkspaceService } from '@/server/workspaces/services/inviteToWorkspace.service'
 import { WorkspaceInviteSources } from '@/server/workspaces/workspaceTypes'
 import {
@@ -10,6 +11,7 @@ import {
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { WorkspaceInvite } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { getPostSharesService } from './getPostShares.service'
@@ -30,6 +32,12 @@ export const performShareService = async (
   const { email, postId } = payload
 
   return await prismaAsTrx(prisma, async (prisma) => {
+    await new PermissionsVerifier(prisma).passOrThrowTrpcError(
+      PermissionAction.Invite,
+      invitingUserId,
+      postId,
+    )
+
     const invitedUser = await prisma.user.findFirst({
       where: {
         email,

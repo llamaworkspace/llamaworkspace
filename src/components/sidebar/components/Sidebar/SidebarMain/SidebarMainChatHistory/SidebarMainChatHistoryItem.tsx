@@ -56,7 +56,7 @@ const EllipsisDropdown = ({ onDelete }: EllipsisDropdownProps) => {
           <EllipsisHorizontalIcon className="hidden h-5 w-5 text-zinc-950 transition duration-100 group-hover:block" />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-60">
+      <DropdownMenuContent align="start" className="w-48">
         <DropdownMenuItem
           onClick={(ev) => {
             ev.stopPropagation()
