@@ -1,4 +1,6 @@
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { protectedProcedure } from '@/server/trpc/trpc'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
 import { postVisibilityFilter } from '../postsBackendUtils'
 
@@ -10,10 +12,17 @@ export const postsGetById = protectedProcedure
   .input(zByIdInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
+    const postId = input.id
+
+    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
+      PermissionAction.Use,
+      userId,
+      postId,
+    )
 
     return await ctx.prisma.post.findFirstOrThrow({
       where: {
-        id: input.id,
+        id: postId,
         ...postVisibilityFilter(userId),
       },
       include: {
