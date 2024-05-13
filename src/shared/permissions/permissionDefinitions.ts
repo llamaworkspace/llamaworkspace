@@ -9,37 +9,50 @@ export enum PermissionAction {
 }
 
 export interface PermissionActionKind {
-  view?: boolean
-  use?: boolean
-  update?: boolean
-  share?: boolean
-  delete?: boolean
+  view: boolean
+  use: boolean
+  update: boolean
+  share: boolean
+  delete: boolean
+}
+
+const buildPermissionKind = (
+  partialKind: Partial<PermissionActionKind>,
+): PermissionActionKind => {
+  return {
+    view: false,
+    use: false,
+    update: false,
+    share: false,
+    delete: false,
+    ...partialKind,
+  }
 }
 
 export const PermissionsByAccessLevel: Record<
   UserAccessLevel,
   PermissionActionKind
 > = {
-  [UserAccessLevel.Owner]: {
+  [UserAccessLevel.Owner]: buildPermissionKind({
     view: true,
     use: true,
     update: true,
     share: true,
     delete: true,
-  },
-  [UserAccessLevel.EditAndShare]: {
+  }),
+  [UserAccessLevel.EditAndShare]: buildPermissionKind({
     view: true,
     use: true,
     update: true,
     share: true,
-  },
-  [UserAccessLevel.Use]: {
+  }),
+  [UserAccessLevel.Use]: buildPermissionKind({
     view: true,
     use: true,
-  },
-  [UserAccessLevel.View]: {
+  }),
+  [UserAccessLevel.View]: buildPermissionKind({
     view: true,
-  },
+  }),
 }
 
 export const canForAccessLevel = (

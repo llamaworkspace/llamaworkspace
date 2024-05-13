@@ -13,7 +13,7 @@ export class PermissionsVerifier {
   constructor(private prisma: PrismaClientOrTrxClient) {}
 
   async call(action: PermissionAction, userId: string, postId: string) {
-    const userAccessLevel = await this.getAccessLevelForPost(postId, userId)
+    const userAccessLevel = await this.getUserAccessLevelToPost(userId, postId)
     if (!userAccessLevel) {
       return false
     }
@@ -37,7 +37,36 @@ export class PermissionsVerifier {
     return result
   }
 
-  async getAccessLevelForPost(postId: string, userId: string) {
+  async getUserAccessLevelToPost(userId: string, postId: string) {
+    const shareTargets = await this.prisma.shareTarget.findMany({
+      where: {
+        share: {
+          postId,
+        },
+        userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    // Handle this case
+    if (!shareTargets.length) {
+      return null
+    }
+
+    // Handle this case
+    if (shareTargets.length > 1) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Multiple share targets found for the same user and post',
+      })
+    }
+
+    const shareTarget = shareTargets[0]!
+
+    return getEnumByValue(UserAccessLevel, shareTarget.accessLevel)
+
     const postShare = await this.prisma.postShare.findFirst({
       where: {
         postId,
