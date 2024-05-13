@@ -21,7 +21,7 @@ export class PermissionsVerifier {
     return canForAccessLevel(action, userAccessLevel)
   }
 
-  async callOrThrowTrpcError(
+  async passOrThrowTrpcError(
     action: PermissionAction,
     userId: string,
     postId: string,

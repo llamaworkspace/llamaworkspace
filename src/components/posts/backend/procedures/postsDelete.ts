@@ -15,7 +15,7 @@ export const postsDelete = protectedProcedure
 
     const { id } = input
 
-    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
+    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
       PermissionAction.Delete,
       userId,
       id,

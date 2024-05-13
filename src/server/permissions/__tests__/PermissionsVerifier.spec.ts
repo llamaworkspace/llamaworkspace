@@ -250,5 +250,36 @@ describe('PermissionsVerifier ', () => {
         ).toBe(true)
       })
     })
+
+    describe('when the user is not related to the post', () => {
+      let targetUser: User
+      beforeEach(async () => {
+        workspace = await WorkspaceFactory.create(prisma)
+
+        targetUser = await UserFactory.create(prisma, {
+          workspaceId: workspace.id,
+        })
+      })
+      it('does not allow update', async () => {
+        expect(
+          await subject(PermissionAction.Update, targetUser.id, post.id),
+        ).toBe(false)
+      })
+      it('does not allow delete', async () => {
+        expect(
+          await subject(PermissionAction.Delete, targetUser.id, post.id),
+        ).toBe(false)
+      })
+      it('does not allow invite', async () => {
+        expect(
+          await subject(PermissionAction.Invite, targetUser.id, post.id),
+        ).toBe(false)
+      })
+      it('does not allow user', async () => {
+        expect(
+          await subject(PermissionAction.Use, targetUser.id, post.id),
+        ).toBe(false)
+      })
+    })
   })
 })

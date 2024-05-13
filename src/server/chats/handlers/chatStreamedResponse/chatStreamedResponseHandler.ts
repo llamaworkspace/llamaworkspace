@@ -146,7 +146,7 @@ const validateUserPermissionsOrThrow = async (
     },
   })
 
-  await new PermissionsVerifier(prisma).callOrThrowTrpcError(
+  await new PermissionsVerifier(prisma).passOrThrowTrpcError(
     PermissionAction.Use,
     userId,
     chat.postId,

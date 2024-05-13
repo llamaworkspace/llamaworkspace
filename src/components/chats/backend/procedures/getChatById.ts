@@ -22,7 +22,7 @@ export const getChatById = protectedProcedure
       },
     })
 
-    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
+    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
       PermissionAction.View,
       userId,
       chat.postId,

@@ -30,7 +30,7 @@ export const postsConfigUpdate = protectedProcedure
         },
       })
 
-    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
+    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
       PermissionAction.Update,
       userId,
       postConfigVersion.postId,

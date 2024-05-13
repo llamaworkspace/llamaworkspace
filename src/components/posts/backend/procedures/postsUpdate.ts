@@ -17,7 +17,7 @@ export const postsUpdate = protectedProcedure
 
     const { id, ...data } = input
 
-    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
+    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
       PermissionAction.Update,
       userId,
       id,

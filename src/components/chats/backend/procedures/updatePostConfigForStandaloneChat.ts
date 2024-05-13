@@ -22,7 +22,7 @@ export const updatePostConfigForStandaloneChat = protectedProcedure
       },
     })
 
-    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
+    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
       PermissionAction.Use,
       userId,
       chat.postId,
