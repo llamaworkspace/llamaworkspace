@@ -50,7 +50,9 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
         </div>
       </div>
       <div className="col-span-9 flex flex-col justify-center">
-        <div className="font-semibold">{post.title ?? 'Untitled'}</div>
+        <div className="line-clamp-1 font-semibold">
+          {post.title ?? 'Untitled'}
+        </div>
 
         {/* Description text. If, when needed */}
         {post.latestConfig.description && (

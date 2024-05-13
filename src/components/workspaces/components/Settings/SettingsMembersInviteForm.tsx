@@ -92,7 +92,7 @@ export const SettingsMembersInviteForm = () => {
                         data-lpignore="true"
                         autoComplete="off"
                         disabled={submitting}
-                        className="w-64"
+                        className="w-64 text-sm"
                         {...input}
                       />
                     )
