@@ -64,19 +64,21 @@ export const ChatHeaderShareAccessLevelPopover = ({
       {({ open, close }) => {
         const handleClickFor =
           (clickedAccessLevel: UserAccessLevelActions) => () => {
-            updateAccessLevel(
-              { shareId, accessLevel: clickedAccessLevel },
-              {
-                onSuccess: () => {
-                  if (clickedAccessLevel === UserAccessLevelActions.Remove) {
-                    toast(undefined, 'Access removed')
-                  } else {
-                    toast(undefined, 'Access level updated')
-                  }
-                  close()
-                },
-              },
-            )
+            // To be implemented
+            return
+            // updateAccessLevel(
+            //   { shareId, accessLevel: clickedAccessLevel },
+            //   {
+            //     onSuccess: () => {
+            //       if (clickedAccessLevel === UserAccessLevelActions.Remove) {
+            //         toast(undefined, 'Access removed')
+            //       } else {
+            //         toast(undefined, 'Access level updated')
+            //       }
+            //       close()
+            //     },
+            //   },
+            // )
           }
 
         const targetOption = permissionLevelOptions.find((option) => {
