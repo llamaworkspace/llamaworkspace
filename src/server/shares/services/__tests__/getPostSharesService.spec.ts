@@ -1,10 +1,13 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
-import { ShareFactory } from '@/server/testing/factories/ShareFactory'
+import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { Post, Share, User, Workspace } from '@prisma/client'
+import { WorkspaceInviteFactory } from '@/server/testing/factories/WorkspaceInviteFactory'
+import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
+import { faker } from '@faker-js/faker'
+import type { Post, User, Workspace } from '@prisma/client'
 import { getPostSharesService } from '../getPostShares.service'
 
 const subject = async (userId: string, workspaceId: string, postId: string) => {
@@ -21,7 +24,6 @@ describe('getPostSharesService', () => {
   let userPostOwner: User
   let sharedUser: User
   let post: Post
-  let share: Share
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -38,33 +40,120 @@ describe('getPostSharesService', () => {
       userId: userPostOwner.id,
       workspaceId: workspace.id,
     })
+  })
 
-    share = await ShareFactory.create(prisma, {
-      postId: post.id,
-      sharerId: userPostOwner.id,
-      userId: sharedUser.id,
+  describe('when scope is "user"', () => {
+    it('returns the share with scope User', async () => {
+      const share = await prisma.share.findFirstOrThrow({
+        where: {
+          postId: post.id,
+        },
+      })
+
+      const otherSharedUser = await UserFactory.create(prisma, {
+        workspaceId: workspace.id,
+      })
+
+      await ShareTargetFactory.create(prisma, {
+        shareId: share.id,
+        sharerId: userPostOwner.id,
+        userId: sharedUser.id,
+      })
+      await ShareTargetFactory.create(prisma, {
+        shareId: share.id,
+        sharerId: userPostOwner.id,
+        userId: otherSharedUser.id,
+      })
+
+      const result = await subject(sharedUser.id, workspace.id, post.id)
+
+      expect(result.shareTargets).toHaveLength(3)
+      expect(result.shareTargets).toEqual([
+        expect.objectContaining({
+          shareId: share.id,
+          sharerId: userPostOwner.id,
+          userId: userPostOwner.id,
+          workspaceInviteId: null,
+          accessLevel: UserAccessLevel.Owner.toString(),
+        }),
+        expect.objectContaining({
+          shareId: share.id,
+          sharerId: userPostOwner.id,
+          userId: sharedUser.id,
+          workspaceInviteId: null,
+          accessLevel: UserAccessLevel.Use.toString(),
+        }),
+        expect.objectContaining({
+          shareId: share.id,
+          sharerId: userPostOwner.id,
+          userId: otherSharedUser.id,
+          workspaceInviteId: null,
+          accessLevel: UserAccessLevel.Use.toString(),
+        }),
+      ])
     })
   })
 
-  it('returns the post shares', async () => {
-    const otherSharedUser = await UserFactory.create(prisma, {
-      workspaceId: workspace.id,
+  describe('when scope is "everybody"', () => {
+    it('returns the share with scope Everybody', async () => {
+      await prisma.share.update({
+        where: {
+          postId: post.id,
+        },
+        data: {
+          scope: ShareScope.Everybody,
+        },
+      })
+
+      const result = await subject(sharedUser.id, workspace.id, post.id)
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          scope: ShareScope.Everybody,
+        }),
+      )
     })
+  })
 
-    const secondShare = await ShareFactory.create(prisma, {
-      postId: post.id,
-      sharerId: userPostOwner.id,
-      userId: otherSharedUser.id,
+  describe('when there are users not in the workspace', () => {
+    it('returns the invitees', async () => {
+      const share = await prisma.share.findFirstOrThrow({
+        where: {
+          postId: post.id,
+        },
+      })
+
+      const invitedMember = await WorkspaceInviteFactory.create(prisma, {
+        workspaceId: workspace.id,
+        email: faker.internet.email(),
+        invitedById: userPostOwner.id,
+      })
+
+      await ShareTargetFactory.create(prisma, {
+        shareId: share.id,
+        sharerId: userPostOwner.id,
+        workspaceInviteId: invitedMember.id,
+      })
+
+      const result = await subject(sharedUser.id, workspace.id, post.id)
+
+      expect(result.shareTargets).toHaveLength(2)
+      expect(result.shareTargets).toEqual([
+        expect.objectContaining({
+          shareId: share.id,
+          sharerId: userPostOwner.id,
+          userId: userPostOwner.id,
+          workspaceInviteId: null,
+          accessLevel: UserAccessLevel.Owner.toString(),
+        }),
+        expect.objectContaining({
+          shareId: share.id,
+          sharerId: userPostOwner.id,
+          userId: null,
+          workspaceInviteId: invitedMember.id,
+          accessLevel: UserAccessLevel.Use.toString(),
+        }),
+      ])
     })
-
-    const result = await subject(sharedUser.id, workspace.id, post.id)
-
-    expect(result).toHaveLength(3)
-    expect(result).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(share),
-        expect.objectContaining(secondShare),
-      ]),
-    )
   })
 })

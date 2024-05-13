@@ -28,31 +28,26 @@ export const ChatHeaderPostLinks = ({
       {!postId && <Skeleton className="h-3 w-36" />}
       {postId && (
         <>
-          <ul className="flex items-center">
-            {/* <li className={cn('mr-4 flex items-center text-zinc-700')}>
-              <ChatHeaderSharePopover postId={postId} />
+          <ul className="flex items-center gap-x-4">
+            {/* <li>
+              <ChatHeaderShare postId={postId} />
             </li> */}
             <Link
               href={activeTab === TabEnum.Configuration ? chatLink : configLink}
             >
-              <li
-                className={cn(
-                  'rounded p-1 transition hover:bg-zinc-200/80',
-                  activeTab === TabEnum.Configuration && 'bg-zinc-200',
-                )}
-              >
+              <li>
                 <div
                   className={cn(
-                    'cursor-pointer rounded-full border p-1',
+                    'cursor-pointer rounded-full border border-zinc-200 bg-transparent p-1.5 shadow-sm hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-50',
                     activeTab === TabEnum.Configuration
                       ? 'border-zinc-600 bg-zinc-200'
-                      : 'border-zinc-500',
+                      : 'border-zinc-300',
                   )}
                 >
                   {activeTab === TabEnum.Configuration ? (
-                    <Cog6ToothIconSolid className="h-4 w-4 text-zinc-600" />
+                    <Cog6ToothIconSolid className="h-5 w-5 text-zinc-900" />
                   ) : (
-                    <Cog6ToothIcon className="h-4 w-4 text-zinc-500" />
+                    <Cog6ToothIcon className="h-5 w-5 text-zinc-700" />
                   )}
                 </div>
               </li>

@@ -14,25 +14,18 @@ export const getPostSharesService = async (
   const { workspaceId } = uowContext
   const { postId } = payload
 
-  const sharedWithUsers = await prisma.share.findMany({
+  return await prisma.share.findFirstOrThrow({
     where: {
-      post: scopePostByWorkspace(
-        {
-          id: postId,
-        },
-        workspaceId,
-      ),
+      postId,
+      post: scopePostByWorkspace({}, workspaceId),
     },
     include: {
       shareTargets: {
-        select: {
-          user: true,
+        include: {
           workspaceInvite: true,
-          accessLevel: true,
+          user: true,
         },
       },
     },
   })
-
-  return sharedWithUsers
 }

@@ -1,40 +1,43 @@
 import { useAccessLevelForPost } from '@/components/permissions/permissionsHooks'
 import { usePostShareUpdateAccessLevel } from '@/components/posts/postsHooks'
+import {
+  PopoverContent,
+  Popover as PopoverShadcn,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { cn } from '@/lib/utils'
-import { UserAccessLevel } from '@/shared/globalTypes'
+import { UserAccessLevelActions } from '@/shared/globalTypes'
 import { Popover, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { CheckIcon } from '@heroicons/react/24/solid'
 
-type UserAccessLevelWithRemove = UserAccessLevel | 'remove'
-
 const permissionLevelOptions = [
   {
     title: 'Owner',
-    value: UserAccessLevel.Owner,
+    value: UserAccessLevelActions.Owner,
     description: 'All permissions, including deletion',
     disabled: true,
   },
   {
     title: 'Edit and share',
-    value: UserAccessLevel.EditAndShare,
+    value: UserAccessLevelActions.EditAndShare,
     description: 'Use, edit and share with others',
   },
   {
     title: 'Use',
-    value: UserAccessLevel.Use,
+    value: UserAccessLevelActions.Use,
     description: 'Create and run chats',
   },
   {
     title: 'View',
-    value: UserAccessLevel.View,
+    value: UserAccessLevelActions.View,
     description: 'View existing chats only',
   },
   {
     title: 'Remove',
     description: "Remove this person's access",
-    value: 'remove' as const,
+    value: UserAccessLevelActions.Remove,
   },
 ]
 
@@ -44,7 +47,7 @@ export const ChatHeaderShareAccessLevelPopover = ({
   activeAccessLevel,
 }: {
   postId: string
-  activeAccessLevel: UserAccessLevel
+  activeAccessLevel: UserAccessLevelActions
   shareId: string
 }) => {
   const { mutate: updateAccessLevel } = usePostShareUpdateAccessLevel()
@@ -60,20 +63,22 @@ export const ChatHeaderShareAccessLevelPopover = ({
     <Popover>
       {({ open, close }) => {
         const handleClickFor =
-          (clickedAccessLevel: UserAccessLevelWithRemove) => () => {
-            updateAccessLevel(
-              { shareId, accessLevel: clickedAccessLevel },
-              {
-                onSuccess: () => {
-                  if (clickedAccessLevel === 'remove') {
-                    toast(undefined, 'Access removed')
-                  } else {
-                    toast(undefined, 'Access level updated')
-                  }
-                  close()
-                },
-              },
-            )
+          (clickedAccessLevel: UserAccessLevelActions) => () => {
+            // To be implemented
+            return
+            // updateAccessLevel(
+            //   { shareId, accessLevel: clickedAccessLevel },
+            //   {
+            //     onSuccess: () => {
+            //       if (clickedAccessLevel === UserAccessLevelActions.Remove) {
+            //         toast(undefined, 'Access removed')
+            //       } else {
+            //         toast(undefined, 'Access level updated')
+            //       }
+            //       close()
+            //     },
+            //   },
+            // )
           }
 
         const targetOption = permissionLevelOptions.find((option) => {
@@ -81,24 +86,87 @@ export const ChatHeaderShareAccessLevelPopover = ({
         })
 
         return (
+          <PopoverShadcn>
+            <PopoverTrigger>
+              <div className="flex items-center gap-x-1 text-xs text-zinc-400">
+                {targetOption?.title}
+
+                {activeAccessLevel !== UserAccessLevelActions.Owner && (
+                  <ChevronDownIcon
+                    className={cn('h-3 w-3', open && 'rotate-180 transform')}
+                  />
+                )}
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="max-w-64 space-y-1 p-1" side="right">
+              {permissionLevelOptions.map((option) => {
+                const isActive = activeAccessLevel === option.value
+
+                return (
+                  <div
+                    key={option.title}
+                    onClick={
+                      option.disabled
+                        ? () => {
+                            handleClickFor // dummy function to avoid eslint error
+                          }
+                        : handleClickFor(option.value)
+                    }
+                    className={cn(
+                      'flex items-center justify-between rounded px-2 py-1',
+                      isActive && 'bg-zinc-100',
+                      !option.disabled && 'cursor-pointer hover:bg-zinc-200',
+                      option.disabled && 'cursor-not-allowed opacity-50',
+                    )}
+                  >
+                    <div>
+                      <div
+                        className={cn(
+                          'text-sm font-medium',
+                          option.value === UserAccessLevelActions.Remove
+                            ? 'text-red-600'
+                            : 'text-zinc-600',
+                        )}
+                      >
+                        {option.title}
+                      </div>
+                      <div
+                        className={cn(
+                          'text-xs',
+                          option.value === UserAccessLevelActions.Remove
+                            ? 'text-red-400'
+                            : 'text-zinc-400',
+                        )}
+                      >
+                        {option.description}
+                      </div>
+                    </div>
+                    {isActive && <CheckIcon className="h-5 w-5" />}
+                  </div>
+                )
+              })}
+            </PopoverContent>
+          </PopoverShadcn>
+        )
+
+        return (
           <>
             <Popover.Button
               className={cn(
                 'font-medium',
-                activeAccessLevel === UserAccessLevel.Owner && 'cursor-default',
+                activeAccessLevel === UserAccessLevelActions.Owner &&
+                  'cursor-default',
               )}
-              disabled={activeAccessLevel === UserAccessLevel.Owner}
+              disabled={activeAccessLevel === UserAccessLevelActions.Owner}
             >
               <div className="flex items-center gap-x-1 text-xs text-zinc-400">
                 {targetOption?.title}
 
-                <ChevronDownIcon
-                  className={cn(
-                    'h-3 w-3',
-                    open && 'rotate-180 transform',
-                    activeAccessLevel === UserAccessLevel.Owner && 'invisible',
-                  )}
-                />
+                {activeAccessLevel !== UserAccessLevelActions.Owner && (
+                  <ChevronDownIcon
+                    className={cn('h-3 w-3', open && 'rotate-180 transform')}
+                  />
+                )}
               </div>
             </Popover.Button>
             <Transition
@@ -137,7 +205,7 @@ export const ChatHeaderShareAccessLevelPopover = ({
                         <div
                           className={cn(
                             'font-medium',
-                            option.value === 'remove'
+                            option.value === UserAccessLevelActions.Remove
                               ? 'text-red-600'
                               : 'text-zinc-600',
                           )}
@@ -147,7 +215,7 @@ export const ChatHeaderShareAccessLevelPopover = ({
                         <div
                           className={cn(
                             'text-xs',
-                            option.value === 'remove'
+                            option.value === UserAccessLevelActions.Remove
                               ? 'text-red-400'
                               : 'text-zinc-400',
                           )}

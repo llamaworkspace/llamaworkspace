@@ -179,10 +179,10 @@ export const usePostsForAppsList = () => {
   )
 }
 
-export const usePostShares = (postId?: string) => {
+export const usePostShare = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
-  return api.posts.getShares.useQuery(
+  return api.posts.getShare.useQuery(
     { postId: postId! },
     {
       onError: errorHandler(),
@@ -222,23 +222,31 @@ export const usePostSharePerform = () => {
   return api.posts.share.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.posts.getShares.invalidate()
+      void utils.posts.getShare.invalidate()
     },
     retry: false,
   })
 }
+export const usePostShareUpdate = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+  return api.posts.updateShare.useMutation({
+    onError: errorHandler(),
+    onSuccess: () => {
+      void utils.posts.getShare.invalidate()
+    },
+  })
+}
+
 export const usePostShareUpdateAccessLevel = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
-  const { mutate } = api.posts.updateShareAccessLevel.useMutation({
+  return api.posts.updateShareAccessLevel.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.posts.getShares.invalidate()
+      void utils.posts.getShare.invalidate()
     },
   })
-  return {
-    mutate,
-  }
 }
 
 export const useLatestPost = (workspaceId?: string) => {

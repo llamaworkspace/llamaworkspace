@@ -1,41 +1,34 @@
-import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
 import {
+  usePostShare,
   usePostSharePerform,
-  usePostShares,
 } from '@/components/posts/postsHooks'
 import type { ComponentWithPostId } from '@/components/posts/postsTypes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import {
   composeValidators,
   email,
   stringOrNumberRequired,
 } from '@/lib/frontend/finalFormValidations'
 import { cn } from '@/lib/utils'
-import type { UserAccessLevel } from '@/shared/globalTypes'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { type UserAccessLevelActions } from '@/shared/globalTypes'
 import type { FormApi } from 'final-form'
 import { Field, Form as FinalForm, type FieldMetaState } from 'react-final-form'
-import { useSuccessToast } from '../../ui/toastHooks'
+import { useSuccessToast } from '../../../ui/toastHooks'
 import { ChatHeaderShareAccessLevelPopover } from './ChatHeaderShareAccessLevelPopover'
 
 interface FormShape {
   email: string
 }
 
-const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
+export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
   const toast = useSuccessToast()
 
-  const { data: shares } = usePostShares(postId)
-  const { mutate: share } = usePostSharePerform()
+  const { data: share } = usePostShare(postId)
+  const { mutate: performShare } = usePostSharePerform()
 
   const handleSubmit = ({ email }: FormShape, form: FormApi<FormShape>) => {
-    share(
+    performShare(
       { email, postId },
       {
         onSuccess: () => {
@@ -59,9 +52,11 @@ const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
           }
         }
         return (
-          <div className="space-y-8 text-sm">
-            <div className="space-y-1">
-              <div className="font-semibold tracking-tight">Invite</div>
+          <div className="space-y-2 text-sm">
+            <div className="space-y-2">
+              <div className="font-semibold tracking-tight">
+                People with access
+              </div>
               <Field
                 name="email"
                 validate={composeValidators(stringOrNumberRequired, email)}
@@ -101,32 +96,29 @@ const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
                 }}
               />
             </div>
+
             <div>
-              <div className="font-semibold tracking-tight">
-                People with access
-              </div>
-              {!shares?.length && (
+              {!share?.shareTargets?.length && (
                 <div className="mt-2 text-sm text-zinc-500">
                   No one else has access
                 </div>
               )}
-              {shares?.map((share, index) => {
-                const isUser = !!share.userId
-                const email = isUser ? share.user?.email : share.invite?.email
+              {share?.shareTargets.map((shareTarget, index) => {
+                const isUser = !!shareTarget.userId
 
                 return (
                   <div
-                    key={share.id}
+                    key={shareTarget.id}
                     className={cn(
                       'flex items-center justify-between py-3',
-                      index + 1 !== shares.length && 'border-b',
+                      index + 1 !== share.shareTargets.length && 'border-b',
                     )}
                   >
                     <div className="flex items-center gap-x-2">
                       <div
                         className={isUser ? 'text-zinc-700' : 'text-zinc-400'}
                       >
-                        {email}
+                        {shareTarget.email}
                       </div>
                       {!isUser && (
                         <div>
@@ -138,8 +130,10 @@ const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
                     </div>
                     <ChatHeaderShareAccessLevelPopover
                       postId={postId}
-                      shareId={share.id}
-                      activeAccessLevel={share.accessLevel as UserAccessLevel}
+                      shareId={shareTarget.id}
+                      activeAccessLevel={
+                        shareTarget.accessLevel as UserAccessLevelActions
+                      }
                     />
                   </div>
                 )
@@ -149,31 +143,5 @@ const SharePopoverContent = ({ postId }: ComponentWithPostId) => {
         )
       }}
     />
-  )
-}
-
-export const ChatHeaderSharePopover = ({ postId }: ComponentWithPostId) => {
-  const { can: canShare } = useCanExecuteActionForPost(
-    PermissionAction.Share,
-    postId,
-  )
-  return (
-    <Popover>
-      <div>
-        {canShare && (
-          <Button size="sm" variant="ghost" className="text-sm" asChild>
-            <PopoverTrigger className="cursor-pointer font-medium">
-              Share
-            </PopoverTrigger>
-          </Button>
-        )}
-
-        <div className="relative z-50 text-sm">
-          <PopoverContent align="end" className="w-[500px]">
-            <SharePopoverContent postId={postId} />
-          </PopoverContent>
-        </div>
-      </div>
-    </Popover>
   )
 }

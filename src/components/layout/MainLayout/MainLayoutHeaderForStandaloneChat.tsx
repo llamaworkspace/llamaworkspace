@@ -28,7 +28,7 @@ export function MainLayoutHeaderForStandaloneChat({
           <span className="sr-only">Open sidebar</span>
           <SidebarToggleIcon />
         </button>
-        <div className="flex w-full justify-between px-2 md:px-6">
+        <div className="flex w-full justify-between px-2">
           <div id="header-left" className="flex grow items-center text-sm">
             {chatId ? (
               <AiModelSelector chatId={chatId} />

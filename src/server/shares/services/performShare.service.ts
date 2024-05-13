@@ -12,6 +12,7 @@ import {
 } from '@/shared/globalTypes'
 import type { WorkspaceInvite } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
+import { getPostSharesService } from './getPostShares.service'
 
 const USER_ALREADY_INVITED_ERROR = 'You have already invited this user'
 
@@ -25,7 +26,7 @@ export const performShareService = async (
   uowContext: UserOnWorkspaceContext,
   payload: PerformSharePayload,
 ) => {
-  const { userId: invitingUserId, workspaceId } = uowContext
+  const { userId: invitingUserId } = uowContext
   const { email, postId } = payload
 
   return await prismaAsTrx(prisma, async (prisma) => {
@@ -48,6 +49,7 @@ export const performShareService = async (
       prisma,
       invitingUserId,
       invitedUser.id,
+      uowContext,
       postId,
     )
   })
@@ -87,7 +89,7 @@ const handleInvitedUserDoesNotExist = async (
     }
   }
 
-  const existingShare = await prisma.share.findFirst({
+  const shareForInvitedUser = await prisma.share.findFirst({
     where: {
       postId,
       shareTargets: {
@@ -98,26 +100,21 @@ const handleInvitedUserDoesNotExist = async (
     },
   })
 
-  if (existingShare) {
+  if (shareForInvitedUser) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: USER_ALREADY_INVITED_ERROR,
     })
   }
 
-  const share = await prisma.share.create({
+  const share = await getOrCreateShare(prisma, postId)
+
+  await prisma.shareTarget.create({
     data: {
-      postId,
-      shareTargets: {
-        create: [
-          {
-            sharerId: invitingUserId,
-            workspaceInviteId: workspaceInvite.id,
-            accessLevel: UserAccessLevel.Use,
-          },
-        ],
-      },
-      scope: ShareScope.User,
+      shareId: share.id,
+      sharerId: invitingUserId,
+      workspaceInviteId: workspaceInvite.id,
+      accessLevel: UserAccessLevel.Use,
     },
   })
 
@@ -129,13 +126,14 @@ const handleInvitedUserDoesNotExist = async (
 
   await sendShareNotificationEmail(invitingUser?.name, email, postId)
 
-  return share
+  return await getPostSharesService(prisma, uowContext, { postId })
 }
 
 const handleInvitedUserExists = async (
   prisma: PrismaTrxClient,
   invitingUserId: string,
   invitedUserId: string,
+  uowContext: UserOnWorkspaceContext,
   postId: string,
 ) => {
   if (invitingUserId === invitedUserId) {
@@ -144,7 +142,7 @@ const handleInvitedUserExists = async (
       message: 'You cannot invite yourself',
     })
   }
-  const existingShare = await prisma.share.findFirst({
+  const shareForInvitedUser = await prisma.share.findFirst({
     where: {
       postId,
       shareTargets: {
@@ -155,26 +153,21 @@ const handleInvitedUserExists = async (
     },
   })
 
-  if (existingShare) {
+  if (shareForInvitedUser) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: USER_ALREADY_INVITED_ERROR,
     })
   }
 
-  const share = await prisma.share.create({
+  const share = await getOrCreateShare(prisma, postId)
+
+  await prisma.shareTarget.create({
     data: {
-      postId: postId,
-      scope: ShareScope.User,
-      shareTargets: {
-        create: [
-          {
-            sharerId: invitingUserId,
-            userId: invitedUserId,
-            accessLevel: UserAccessLevel.Use,
-          },
-        ],
-      },
+      shareId: share.id,
+      sharerId: invitingUserId,
+      userId: invitedUserId,
+      accessLevel: UserAccessLevel.Use,
     },
   })
 
@@ -197,7 +190,28 @@ const handleInvitedUserExists = async (
     postId,
   )
 
-  return share
+  return await getPostSharesService(prisma, uowContext, { postId })
+}
+
+const getOrCreateShare = async (prisma: PrismaTrxClient, postId: string) => {
+  const shares = await prisma.share.findMany({
+    where: {
+      postId,
+    },
+  })
+
+  let shareUseScope = shares.find(
+    (share) => share.scope === ShareScope.User.toString(),
+  )
+  if (!shareUseScope) {
+    shareUseScope = await prisma.share.create({
+      data: {
+        postId,
+        scope: ShareScope.User,
+      },
+    })
+  }
+  return shareUseScope
 }
 
 const sendShareNotificationEmail = async (
