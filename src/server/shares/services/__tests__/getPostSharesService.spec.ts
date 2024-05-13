@@ -1,11 +1,13 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { WorkspaceInviteFactory } from '@/server/testing/factories/WorkspaceInviteFactory'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { faker } from '@faker-js/faker'
 import type { Post, User, Workspace } from '@prisma/client'
 import { getPostSharesService } from '../getPostShares.service'
@@ -40,6 +42,20 @@ describe('getPostSharesService', () => {
       userId: userPostOwner.id,
       workspaceId: workspace.id,
     })
+  })
+
+  it('calls PermissionsVerifier', async () => {
+    const spy = jest.spyOn(
+      PermissionsVerifier.prototype,
+      'passOrThrowTrpcError',
+    )
+
+    await subject(userPostOwner.id, workspace.id, post.id)
+    expect(spy).toHaveBeenCalledWith(
+      PermissionAction.Invite,
+      expect.anything(),
+      expect.anything(),
+    )
   })
 
   describe('when scope is "user"', () => {
