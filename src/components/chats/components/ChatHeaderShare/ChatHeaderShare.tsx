@@ -14,13 +14,14 @@ export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Share</Button>
+        <Button variant="ghost">Share</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Share GPT</DialogTitle>
+          <DialogTitle>Share GPT access</DialogTitle>
           <DialogDescription>
-            Collaborate with your team by granting them access to this GPT
+            Invite team members to use this GPT. Note that only usage access is
+            granted, and individual chats are never shared.
           </DialogDescription>
         </DialogHeader>
         <div className="-mx-3 max-h-[400px] overflow-y-auto ">
