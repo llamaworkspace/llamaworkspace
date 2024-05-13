@@ -1,32 +1,29 @@
 import { UserAccessLevel } from '@/shared/globalTypes'
 
 export enum PermissionAction {
-  View = 'view',
-  Use = 'use',
   Update = 'update',
-  Share = 'share',
   Delete = 'delete',
+  Invite = 'invite',
+  Use = 'use',
 }
 
 export interface PermissionActionKind {
-  view: boolean
-  use: boolean
   update: boolean
-  share: boolean
   delete: boolean
+  invite: boolean
+  use: boolean
 }
 
+// Returns an object where all PermissionActions are false by default, unless they are set to true in the partialKind
 const buildPermissionKind = (
   partialKind: Partial<PermissionActionKind>,
 ): PermissionActionKind => {
-  return {
-    view: false,
-    use: false,
-    update: false,
-    share: false,
-    delete: false,
-    ...partialKind,
-  }
+  return Object.values(PermissionAction).reduce((acc, action) => {
+    return {
+      ...acc,
+      [action]: !!partialKind[action],
+    }
+  }, {} as PermissionActionKind)
 }
 
 export const PermissionsByAccessLevel: Record<
@@ -34,30 +31,29 @@ export const PermissionsByAccessLevel: Record<
   PermissionActionKind
 > = {
   [UserAccessLevel.Owner]: buildPermissionKind({
-    view: true,
-    use: true,
     update: true,
-    share: true,
     delete: true,
-  }),
-  [UserAccessLevel.EditAndShare]: buildPermissionKind({
-    view: true,
+    invite: true,
     use: true,
+  }),
+  [UserAccessLevel.Edit]: buildPermissionKind({
     update: true,
-    share: true,
-  }),
-  [UserAccessLevel.Use]: buildPermissionKind({
-    view: true,
+    invite: true,
     use: true,
   }),
-  [UserAccessLevel.View]: buildPermissionKind({
-    view: true,
+  [UserAccessLevel.Invite]: buildPermissionKind({
+    invite: true,
+    use: true,
+  }),
+
+  [UserAccessLevel.Use]: buildPermissionKind({
+    use: true,
   }),
 }
 
 export const canForAccessLevel = (
   action: PermissionAction,
   accessLevel: UserAccessLevel,
-) => {
+): boolean => {
   return !!PermissionsByAccessLevel[accessLevel][action]
 }

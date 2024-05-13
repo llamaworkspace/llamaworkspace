@@ -3,17 +3,16 @@ import type { DefaultArgs } from '@prisma/client/runtime/library'
 
 export enum UserAccessLevel {
   Owner = 'owner',
-  EditAndShare = 'edit_and_share',
-  EditAndShare = 'edit_and_share',
+  Edit = 'edit',
+  Invite = 'invite',
   Use = 'use',
-  View = 'view',
 }
 
 export enum UserAccessLevelActions {
-  Owner = 'owner',
-  EditAndShare = 'edit_and_share',
-  Use = 'use',
-  View = 'view',
+  Owner = UserAccessLevel.Owner,
+  Edit = UserAccessLevel.Edit,
+  Invite = UserAccessLevel.Invite,
+  Use = UserAccessLevel.Use,
   Remove = 'remove',
 }
 

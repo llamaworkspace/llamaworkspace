@@ -3,8 +3,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { UserAccessLevel } from '@/shared/globalTypes'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { Post, User, Workspace } from '@prisma/client'
+import type { Post, User, Workspace } from '@prisma/client'
 import { PermissionsVerifier } from '../PermissionsVerifier'
 
 describe('PermissionsVerifier ', () => {
@@ -13,11 +12,7 @@ describe('PermissionsVerifier ', () => {
   })
 
   describe('getAccessLevelForPost', () => {
-    const subject = async (
-      action: PermissionAction,
-      userId: string,
-      postId: string,
-    ) => {
+    const subject = async (userId: string, postId: string) => {
       return await new PermissionsVerifier(prisma).getUserAccessLevelToPost(
         userId,
         postId,
@@ -41,58 +36,41 @@ describe('PermissionsVerifier ', () => {
       })
     })
 
-    it('when the user is owner', async () => {
-      // when user is owner => Owner (for each access level, we test it)
-      // when userId and postId are not related, return null / false
-      const result = await subject(PermissionAction.Use, user.id, post.id)
-      expect(result).toBe(UserAccessLevel.Owner)
+    it('it returns the userAccessLevel', async () => {
+      expect(await subject(user.id, post.id)).toBe(UserAccessLevel.Owner)
     })
-    // it('when the user is owner', async () => {
-    //   // when user is owner => Owner (for each access level, we test it)
-    //   // when userId and postId are not related, return null / false
 
-    //   const result = await subject(PermissionAction.Use, user.id, post.id)
-    //   expect(result).toBe(UserAccessLevel.Owner)
+    describe('when there is no relation between the user and the post', () => {
+      it('it returns null', async () => {
+        const tempUser = await UserFactory.create(prisma, {
+          workspaceId: workspace.id,
+        })
 
-    //   const share = await prisma.share.findFirstOrThrow({
-    //     where: {
-    //       postId: post.id,
-    //       scope: ShareScope.User,
-    //     },
-    //   })
+        expect(await subject(tempUser.id, post.id)).toBeNull()
+      })
+    })
 
-    //   await Promise.map(Object.values(UserAccessLevel), async (accessLevel) => {
-    //     const tempUser = await UserFactory.create(prisma, {
-    //       workspaceId: workspace.id,
-    //     })
-    //     await ShareTargetFactory.create(prisma, {
-    //       shareId: share.id,
-    //       sharerId: user.id,
-    //       userId: tempUser.id,
-    //       accessLevel,
-    //     })
-    //     const result = await subject()
-    //     expect(result).toBe(UserAccessLevel.Owner)
-    //   })
-    // })
+    describe('when there are multiple shareTargets for the same post', () => {
+      it('it throws', async () => {
+        const share = await prisma.share.findFirstOrThrow({
+          where: {
+            postId: post.id,
+          },
+        })
+
+        await prisma.shareTarget.create({
+          data: {
+            userId: user.id,
+            sharerId: user.id,
+            shareId: share.id,
+            accessLevel: UserAccessLevel.Use,
+          },
+        })
+
+        await expect(subject(user.id, post.id)).rejects.toThrow(
+          'Multiple share targets found for the same user and post',
+        )
+      })
+    })
   })
-
-  // describe.skip('call', () => {
-  //   const subject = async (
-  //     action: PermissionAction,
-  //     userId: string,
-  //     postId: string,
-  //   ) => {
-  //     return await new PermissionsVerifier(mockDb).call(action, userId, postId)
-  //   }
-
-  //   beforeEach(() => {
-  //     jest.clearAllMocks()
-  //   })
-
-  //   it.only('XXXXXXXXXXXX', async () => {
-  //     const result = await subject(PermissionAction.Use, 'userId', 'postId')
-  //     expect(result).toBeFalsy()
-  //   })
-  // })
 })

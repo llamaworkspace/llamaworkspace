@@ -66,57 +66,5 @@ export class PermissionsVerifier {
     const shareTarget = shareTargets[0]!
 
     return getEnumByValue(UserAccessLevel, shareTarget.accessLevel)
-
-    const postShare = await this.prisma.postShare.findFirst({
-      where: {
-        postId,
-        userId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
-
-    if (postShare) {
-      return getEnumByValue(UserAccessLevel, postShare.accessLevel)
-    }
-
-    const workspaceWithPermission = await this.prisma.workspace.findFirst({
-      select: {
-        id: true,
-      },
-      where: {
-        users: {
-          some: {
-            userId,
-          },
-        },
-        posts: {
-          some: {
-            id: postId,
-          },
-        },
-      },
-    })
-
-    if (!workspaceWithPermission) {
-      return null
-    }
-
-    const workspaceOwner = await this.prisma.usersOnWorkspaces.findFirst({
-      select: {
-        userId: true,
-      },
-      where: {
-        workspaceId: workspaceWithPermission.id,
-      },
-      orderBy: {
-        createdAt: 'asc',
-      },
-    })
-
-    return workspaceOwner?.userId === userId
-      ? UserAccessLevel.Owner
-      : UserAccessLevel.EditAndShare
   }
 }
