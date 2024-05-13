@@ -36,16 +36,10 @@ export const ChatHeaderPostLinks = ({
             <Link
               href={activeTab === TabEnum.Configuration ? chatLink : configLink}
             >
-              <li
-              // className={cn(
-              //   'rounded p-1 transition hover:bg-zinc-200/80',
-              //   activeTab === TabEnum.Configuration && 'bg-zinc-200',
-              // )}
-              >
+              <li>
                 <div
                   className={cn(
                     'cursor-pointer rounded-full border border-zinc-200 bg-transparent p-1.5 shadow-sm hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-800 dark:hover:bg-zinc-800 dark:hover:text-zinc-50',
-                    // 'hover:bg-zinc cursor-pointer rounded-full border p-1 shadow-sm hover:bg-zinc-100',
                     activeTab === TabEnum.Configuration
                       ? 'border-zinc-600 bg-zinc-200'
                       : 'border-zinc-300',
