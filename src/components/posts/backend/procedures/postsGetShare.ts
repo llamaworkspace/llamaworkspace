@@ -47,7 +47,7 @@ export const postsGetShare = protectedProcedure
     // AcccessLevel .View is ok here because we're only checking if the user has access to the post
     // Incresing the level would fail because the frontend needs to always see the user's permissions
     // await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-    //   PermissionAction.View,
+    //   PermissionAction.Use,
     //   userId,
     //   input.postId,
     // )
