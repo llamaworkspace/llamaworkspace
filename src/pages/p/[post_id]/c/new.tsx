@@ -1,5 +1,5 @@
-import { Chat } from '@/components/chats/Chat'
 import { useCreateChatForApp } from '@/components/chats/chatHooks'
+import { Chat } from '@/components/chats/components/Chat'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
 import { useNavigation } from '@/lib/frontend/useNavigation'

@@ -1,5 +1,5 @@
-import { Chat } from '@/components/chats/Chat'
 import { useChatById } from '@/components/chats/chatHooks'
+import { Chat } from '@/components/chats/components/Chat'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { PostError } from '@/components/posts/components/PostError'
 import { useDefaultPost, usePostById } from '@/components/posts/postsHooks'

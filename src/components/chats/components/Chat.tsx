@@ -3,12 +3,12 @@ import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isBoolean } from 'underscore'
-import { useGlobalState } from '../global/globalState'
-import { useIsDefaultPost } from '../posts/postsHooks'
-import { useMessages } from './chatHooks'
-import { ChatMessage } from './components/ChatMessage'
-import { ChatMessageInitial } from './components/ChatMessageInitial'
-import { Chatbox } from './components/Chatbox'
+import { useGlobalState } from '../../global/globalState'
+import { useIsDefaultPost } from '../../posts/postsHooks'
+import { useMessages } from '../chatHooks'
+import { ChatMessage } from './ChatMessage'
+import { ChatMessageInitial } from './ChatMessageInitial'
+import { Chatbox } from './Chatbox'
 
 interface ChatProps {
   postId?: string
