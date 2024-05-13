@@ -1,5 +1,6 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
@@ -7,6 +8,7 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { WorkspaceInviteFactory } from '@/server/testing/factories/WorkspaceInviteFactory'
 import { WorkspaceInviteSources } from '@/server/workspaces/workspaceTypes'
 import { UserAccessLevel, UserAccessLevelActions } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { faker } from '@faker-js/faker'
 import type {
   Post,
@@ -87,6 +89,26 @@ describe('updateShareAccessLevelService', () => {
     })
 
     expect(nextShareTarget.accessLevel).toBe(UserAccessLevel.Edit)
+  })
+
+  it('calls PermissionsVerifier', async () => {
+    const spy = jest.spyOn(
+      PermissionsVerifier.prototype,
+      'passOrThrowTrpcError',
+    )
+
+    await subject(
+      userCreatingPost.id,
+      workspace.id,
+      shareTarget.id,
+      UserAccessLevelActions.Edit,
+    )
+
+    expect(spy).toHaveBeenCalledWith(
+      PermissionAction.Invite,
+      expect.anything(),
+      expect.anything(),
+    )
   })
 
   describe('when the access level is "remove"', () => {
