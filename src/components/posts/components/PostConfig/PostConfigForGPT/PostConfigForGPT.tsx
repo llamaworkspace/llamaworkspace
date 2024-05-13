@@ -46,7 +46,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
   const { mutateAsync: updatePost } = useUpdatePost()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
-  const { can: canEdit } = useCanPerformActionForPost(
+  const { data: canEdit } = useCanPerformActionForPost(
     PermissionAction.Update,
     postId,
   )
