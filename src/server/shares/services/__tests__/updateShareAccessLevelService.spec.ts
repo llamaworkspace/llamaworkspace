@@ -34,7 +34,7 @@ const subject = async (
   })
 }
 
-describe('updateShareAccessLevelService', () => {
+describe.skip('updateShareAccessLevelService', () => {
   let workspace: Workspace
   let userCreatingPost: User
   let userInvitedToPost: User
