@@ -8,18 +8,20 @@ import {
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopePostByWorkspace } from '../postUtils'
 
-interface PostDeleteServiceInputProps {
+interface PostUpdateServiceInputProps {
   postId: string
+  title?: string | null
+  emoji?: string | null
 }
 
-export const postDeleteService = async (
+export const postUpdateService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  input: PostDeleteServiceInputProps,
+  input: PostUpdateServiceInputProps,
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const { userId, workspaceId } = uowContext
-    const { postId } = input
+    const { postId, ...payload } = input
 
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Delete,
@@ -31,16 +33,17 @@ export const postDeleteService = async (
       where: scopePostByWorkspace(
         {
           id: postId,
-          isDefault: false, // Keep this to avoid deleting the default post.
+          isDefault: false, // Keep this to avoid updating the default post.
         },
         workspaceId,
       ),
     })
 
-    return await prisma.post.delete({
+    return await prisma.post.update({
       where: {
         id: postId,
       },
+      data: payload,
     })
   })
 }

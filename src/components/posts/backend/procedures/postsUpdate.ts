@@ -1,8 +1,7 @@
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { postUpdateService } from '@/server/posts/services/postUpdate.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
-import { postEditionFilter } from '../postsBackendUtils'
 
 const zUpdateInput = z.object({
   id: z.string(),
@@ -14,27 +13,20 @@ export const postsUpdate = protectedProcedure
   .input(zUpdateInput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-
-    const { id, ...data } = input
-
-    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
-      PermissionAction.Update,
-      userId,
-      id,
-    )
-
-    await ctx.prisma.post.findFirstOrThrow({
+    const { id } = input
+    const post = await ctx.prisma.post.findFirstOrThrow({
       where: {
         id,
-        isDefault: false, // Keep this to avoid updating the default post
-        ...postEditionFilter(userId),
       },
     })
 
-    return await ctx.prisma.post.update({
-      where: {
-        id,
-      },
-      data,
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      post.workspaceId,
+      userId,
+    )
+    return await postUpdateService(ctx.prisma, context, {
+      postId: id,
+      ...input,
     })
   })
