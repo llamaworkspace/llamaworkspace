@@ -36,10 +36,11 @@ export async function createUserOnWorkspaceContext(
   userId: string,
 ) {
   const hasAccess = await hasUserAccessToWorkspace(prisma, userId, workspaceId)
+
   if (!hasAccess) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
-      message: 'You do not have enough permissions to perform this action',
+      message: 'You do not have the permissions to perform this action',
     })
   }
   return UserOnWorkspaceContext.create(workspaceId, userId)
