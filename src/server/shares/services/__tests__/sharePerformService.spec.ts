@@ -9,7 +9,7 @@ import { inviteToWorkspaceService } from '@/server/workspaces/services/inviteToW
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { faker } from '@faker-js/faker'
 import type { Post, User, Workspace, WorkspaceInvite } from '@prisma/client'
-import { performShareService } from '../performShare.service'
+import { sharePerformService } from '../sharePerform.service'
 
 type MockedInviteToWorkspaceService = jest.MockedFunction<
   typeof inviteToWorkspaceService
@@ -39,7 +39,7 @@ const subject = async (
     workspaceId,
     userId,
   )
-  return await performShareService(prisma, context, { postId, email })
+  return await sharePerformService(prisma, context, { postId, email })
 }
 
 describe('postsSharePerformService', () => {
