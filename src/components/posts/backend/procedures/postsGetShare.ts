@@ -34,7 +34,6 @@ export const postsGetShare = protectedProcedure
     const post = await ctx.prisma.post.findFirstOrThrow({
       where: {
         id: postId,
-        userId,
       },
     })
 
@@ -43,14 +42,6 @@ export const postsGetShare = protectedProcedure
       post.workspaceId,
       userId,
     )
-
-    // AcccessLevel .View is ok here because we're only checking if the user has access to the post
-    // Incresing the level would fail because the frontend needs to always see the user's permissions
-    // await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-    //   PermissionAction.Use,
-    //   userId,
-    //   input.postId,
-    // )
 
     const share = await getPostSharesService(ctx.prisma, context, { postId })
 

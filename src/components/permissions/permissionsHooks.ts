@@ -3,6 +3,7 @@ import {
   canForAccessLevel,
   type PermissionAction,
 } from '@/shared/permissions/permissionDefinitions'
+import { useMemo } from 'react'
 import { useSelf } from '../users/usersHooks'
 
 export const useAccessLevelForPost = (postId?: string) => {
@@ -61,13 +62,15 @@ export const useCanExecuteActionForPost = (
 
   const loading = !user || loadingAccessLevel
 
-  if (!postId) {
-    return { can: null, loading: false }
-  }
+  return useMemo(() => {
+    if (!postId) {
+      return { can: null, loading: false }
+    }
 
-  if (!accessLevel) {
-    return { can: null, loading }
-  }
+    if (!accessLevel) {
+      return { can: null, loading }
+    }
 
-  return { can: canForAccessLevel(action, accessLevel), loading }
+    return { can: canForAccessLevel(action, accessLevel), loading }
+  }, [postId, accessLevel, action, loading])
 }
