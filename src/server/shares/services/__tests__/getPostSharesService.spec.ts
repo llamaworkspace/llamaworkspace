@@ -81,7 +81,7 @@ describe('getPostSharesService', () => {
         userId: otherSharedUser.id,
       })
 
-      const result = await subject(sharedUser.id, workspace.id, post.id)
+      const result = await subject(userPostOwner.id, workspace.id, post.id)
 
       expect(result.shareTargets).toHaveLength(3)
       expect(result.shareTargets).toEqual([
@@ -121,7 +121,7 @@ describe('getPostSharesService', () => {
         },
       })
 
-      const result = await subject(sharedUser.id, workspace.id, post.id)
+      const result = await subject(userPostOwner.id, workspace.id, post.id)
 
       expect(result).toEqual(
         expect.objectContaining({
@@ -151,7 +151,7 @@ describe('getPostSharesService', () => {
         workspaceInviteId: invitedMember.id,
       })
 
-      const result = await subject(sharedUser.id, workspace.id, post.id)
+      const result = await subject(userPostOwner.id, workspace.id, post.id)
 
       expect(result.shareTargets).toHaveLength(2)
       expect(result.shareTargets).toEqual([
