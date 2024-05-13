@@ -171,7 +171,7 @@ export const usePostsForAppsList = () => {
   const { data: workspace } = useCurrentWorkspace()
   const workspaceId = workspace?.id
 
-  return api.posts.getForAppsList.useQuery(
+  return api.posts.getList.useQuery(
     {
       workspaceId: workspaceId ?? '',
     },

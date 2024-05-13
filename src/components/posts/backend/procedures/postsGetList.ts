@@ -7,7 +7,7 @@ const zInput = z.object({
   workspaceId: z.string(),
 })
 
-export const postsGetForAppsList = protectedProcedure
+export const postsGetList = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id

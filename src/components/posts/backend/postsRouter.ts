@@ -5,8 +5,8 @@ import { postsCreate } from './procedures/postsCreate'
 import { postsDelete } from './procedures/postsDelete'
 import { postsGetById } from './procedures/postsGetById'
 import { postsGetDefault } from './procedures/postsGetDefault'
-import { postsGetForAppsList } from './procedures/postsGetForAppsList'
 import { postsGetLatest } from './procedures/postsGetLatest'
+import { postsGetList } from './procedures/postsGetList'
 import { postsGetShare } from './procedures/postsGetShare'
 import { postsSharePerform } from './procedures/postsSharePerform'
 import { postsShareUpdate } from './procedures/postsShareUpdate'
@@ -15,7 +15,7 @@ import { postsUpdate } from './procedures/postsUpdate'
 
 export const postsRouter = createTRPCRouter({
   getDefault: postsGetDefault,
-  getForAppsList: postsGetForAppsList,
+  getList: postsGetList,
   getById: postsGetById,
   create: postsCreate,
   update: postsUpdate,
