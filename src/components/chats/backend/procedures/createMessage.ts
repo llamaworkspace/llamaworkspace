@@ -1,7 +1,7 @@
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { createMessageService } from '@/server/chats/services/createMessage.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { Author } from '@/shared/aiTypesAndMappers'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
 
 const zInput = z.object({
@@ -12,8 +12,7 @@ const zInput = z.object({
 export const createMessage = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
-    const { chatId, author } = input
-    let { message } = input
+    const { chatId } = input
 
     const userId = ctx.session.user.id
 
@@ -22,23 +21,16 @@ export const createMessage = protectedProcedure
         id: chatId,
         authorId: userId,
       },
-    })
-
-    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
-      PermissionAction.Use,
-      userId,
-      chat.postId,
-    )
-
-    if (author === Author.Assistant && message) {
-      message = undefined
-    }
-
-    return await ctx.prisma.message.create({
-      data: {
-        chatId,
-        message,
-        author,
+      include: {
+        post: true,
       },
     })
+
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      chat.post.workspaceId,
+      userId,
+    )
+
+    return await createMessageService(ctx.prisma, context, input)
   })

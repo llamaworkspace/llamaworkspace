@@ -1,90 +1,105 @@
-import type { RouterInputs } from '@/lib/api'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { createMessageService } from '@/server/chats/services/createMessage.service'
 import { prisma } from '@/server/db'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import { Author } from '@/shared/aiTypesAndMappers'
-import { UserAccessLevel } from '@/shared/globalTypes'
-import { faker } from '@faker-js/faker'
-
-type SubjectPayload = RouterInputs['chats']['createMessage']
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import type { Chat, Post, User, Workspace } from '@prisma/client'
 
 const subject = async (
-  payloadOverrides?: Partial<SubjectPayload>,
-  permissionLevel?: string,
+  workspaceId: string,
+  userId: string,
+  payload: { chatId: string; author: Author; message?: string },
 ) => {
-  const workspace = await WorkspaceFactory.create(prisma)
-  const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-  const post = await PostFactory.create(
+  const uowContext = await createUserOnWorkspaceContext(
     prisma,
-    { userId: user.id, workspaceId: workspace.id },
-    permissionLevel
-      ? {
-          postShare: {
-            accessLevel: permissionLevel,
-          },
-        }
-      : undefined,
+    workspaceId,
+    userId,
   )
-  const chat = await ChatFactory.create(prisma, {
-    postId: post.id,
-    authorId: user.id,
-  })
-  const messageContent = faker.lorem.sentence()
-
-  const { caller } = trpcContextSetupHelper(prisma, user.id)
-
-  const message = await caller.chats.createMessage({
-    chatId: chat.id,
-    message: messageContent,
-    author: Author.User,
-    ...payloadOverrides,
-  })
-
-  return { user, post, chat, message, messageContent }
+  return await createMessageService(prisma, uowContext, payload)
 }
 
-describe('createMessage', () => {
-  it('creates the message', async () => {
-    const { chat, messageContent } = await subject()
+describe('createMessageService', () => {
+  let workspace: Workspace
+  let user: User
+  let post: Post
+  let chat: Chat
+
+  beforeEach(async () => {
+    workspace = await WorkspaceFactory.create(prisma)
+    user = await UserFactory.create(prisma, { workspaceId: workspace.id })
+    post = await PostFactory.create(prisma, {
+      userId: user.id,
+      workspaceId: workspace.id,
+    })
+    chat = await ChatFactory.create(prisma, {
+      authorId: user.id,
+      postId: post.id,
+    })
+  })
+
+  it('creates a new message', async () => {
+    const payload = {
+      chatId: chat.id,
+      author: Author.User,
+      message: 'Hello, world!',
+    }
+    await subject(workspace.id, user.id, payload)
+
+    const messages = await prisma.message.findMany({
+      where: {
+        chatId: chat.id,
+      },
+    })
+    expect(messages.length).toBe(1)
+    expect(messages[0]!).toMatchObject({
+      chatId: chat.id,
+      message: 'Hello, world!',
+      author: Author.User,
+    })
+  })
+
+  it('calls PermissionsVerifier', async () => {
+    const spy = jest.spyOn(
+      PermissionsVerifier.prototype,
+      'passOrThrowTrpcError',
+    )
+    const payload = {
+      chatId: chat.id,
+      author: Author.User,
+      message: 'Hello, world!',
+    }
+    await subject(workspace.id, user.id, payload)
+
+    expect(spy).toHaveBeenCalledWith(
+      PermissionAction.Use,
+      expect.anything(),
+      expect.anything(),
+    )
+  })
+
+  it('does not set message when author is Assistant', async () => {
+    const payload = {
+      chatId: chat.id,
+      author: Author.Assistant,
+      message: 'Hello, world!',
+    }
+    await subject(workspace.id, user.id, payload)
+
     const message = await prisma.message.findFirstOrThrow({
       where: {
         chatId: chat.id,
       },
     })
+
     expect(message).toMatchObject({
-      message: messageContent,
-    })
-  })
-
-  describe('when the author is Assistant', () => {
-    it('is created without a message', async () => {
-      const { message } = await subject({
-        author: Author.Assistant,
-      })
-
-      expect(message).toMatchObject({
-        message: null,
-        author: Author.Assistant,
-      })
-    })
-  })
-
-  describe.skip('permissions', () => {
-    describe('when is View', () => {
-      it('throws an error', async () => {
-        await expect(subject(undefined, UserAccessLevel.View)).rejects.toThrow()
-      })
-    })
-
-    describe('when is Use (or higher)', () => {
-      it('does not throw an error', async () => {
-        await expect(
-          subject(undefined, UserAccessLevel.Use),
-        ).resolves.not.toThrow()
-      })
+      chatId: chat.id,
+      message: null,
+      author: Author.Assistant,
     })
   })
 })
