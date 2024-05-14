@@ -1,12 +1,14 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { sendEmail } from '@/server/mailer/mailer'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { WorkspaceInviteFactory } from '@/server/testing/factories/WorkspaceInviteFactory'
 import { inviteToWorkspaceService } from '@/server/workspaces/services/inviteToWorkspace.service'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { faker } from '@faker-js/faker'
 import type { Post, User, Workspace, WorkspaceInvite } from '@prisma/client'
 import { sharePerformService } from '../sharePerform.service'
@@ -61,6 +63,25 @@ describe('postsSharePerformService', () => {
       userId: invitingUser.id,
       workspaceId: workspace.id,
     })
+  })
+
+  it('calls PermissionsVerifier', async () => {
+    const invitedUser = await UserFactory.create(prisma, {
+      workspaceId: workspace.id,
+    })
+
+    const spy = jest.spyOn(
+      PermissionsVerifier.prototype,
+      'passOrThrowTrpcError',
+    )
+
+    await subject(invitingUser.id, workspace.id, post.id, invitedUser.email!)
+
+    expect(spy).toHaveBeenCalledWith(
+      PermissionAction.Invite,
+      expect.anything(),
+      expect.anything(),
+    )
   })
 
   describe('when the invited user exists', () => {
