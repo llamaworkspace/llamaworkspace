@@ -1,10 +1,12 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import * as updatePostSortingServiceWrapper from '@/server/posts/services/updatePostSorting.service'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Post, User, Workspace } from '@prisma/client'
 import { createChatService } from '../createChat.service'
 
@@ -59,6 +61,20 @@ describe('createChatService', () => {
       },
     })
     expect(dbChat.id).toEqual(result.id)
+  })
+
+  it('calls PermissionsVerifier', async () => {
+    const spy = jest.spyOn(
+      PermissionsVerifier.prototype,
+      'passOrThrowTrpcError',
+    )
+    await subject(workspace.id, user.id, post.id)
+
+    expect(spy).toHaveBeenCalledWith(
+      PermissionAction.Use,
+      expect.anything(),
+      expect.anything(),
+    )
   })
 
   it('creates a postsOnUsers record', async () => {

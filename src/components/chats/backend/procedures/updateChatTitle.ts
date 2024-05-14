@@ -1,42 +1,37 @@
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { updateChatService } from '@/server/chats/services/updateChat.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
-import { chatEditionFilter } from '../chatsBackendUtils'
 
 const zInput = z.object({
   id: z.string(),
   title: z.string(),
 })
 
-export const updateChatTitle = protectedProcedure
+export const updateChat = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
-    const { id, title } = input
+    const { id } = input
 
     const chat = await ctx.prisma.chat.findFirstOrThrow({
       where: {
         id,
-        ...chatEditionFilter(userId),
+      },
+      include: {
+        post: {
+          select: {
+            workspaceId: true,
+          },
+        },
       },
     })
 
-    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
-      PermissionAction.Use,
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      chat.post.workspaceId,
       userId,
-      chat.postId,
     )
-
-    return await ctx.prisma.$transaction(async (prisma) => {
-      return await prisma.chat.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          title,
-        },
-      })
-    })
+    return await updateChatService(ctx.prisma, context, input)
   })
