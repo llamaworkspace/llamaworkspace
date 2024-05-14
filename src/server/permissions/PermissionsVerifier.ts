@@ -50,12 +50,10 @@ export class PermissionsVerifier {
       },
     })
 
-    // Handle this case
     if (!shareTargets.length) {
       return null
     }
 
-    // Handle this case
     if (shareTargets.length > 1) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
