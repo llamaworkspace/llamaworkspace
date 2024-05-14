@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/popover'
 import { stringOrNumberRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
+import { cn } from '@/lib/utils'
 import EmojiPicker, { Emoji, type EmojiClickData } from 'emoji-picker-react'
 import { useEffect, useRef, useState } from 'react'
 import { Field } from 'react-final-form'
@@ -40,18 +41,28 @@ export const PostConfigForGPTNameAndDescription = ({
             input.onChange(emoji.unified)
           }
 
+          const emojiElement = (
+            <div
+              className={cn(
+                disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+              )}
+            >
+              {currentValue ? (
+                <Emoji unified={currentValue} size={54} />
+              ) : (
+                <JoiaIcon24 className="h-12 w-12 text-zinc-300" />
+              )}
+            </div>
+          )
+
+          if (disabled) {
+            return emojiElement
+          }
+
           return (
             <Popover open={isEmojiEditable} onOpenChange={setIsEmojiEditable}>
               <div>
-                <PopoverTrigger asChild>
-                  <div className="cursor-pointer">
-                    {currentValue ? (
-                      <Emoji unified={currentValue} size={54} />
-                    ) : (
-                      <JoiaIcon24 className="h-12 w-12 text-zinc-300" />
-                    )}
-                  </div>
-                </PopoverTrigger>
+                <PopoverTrigger asChild>{emojiElement}</PopoverTrigger>
 
                 <PopoverContent align="start" className="w-[332px] p-0">
                   <EmojiPicker
