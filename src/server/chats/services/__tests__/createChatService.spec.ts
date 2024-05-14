@@ -4,6 +4,7 @@ import * as updatePostSortingServiceWrapper from '@/server/posts/services/update
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
 import type { Post, User, Workspace } from '@prisma/client'
 import { createChatService } from '../createChat.service'
 
@@ -96,12 +97,12 @@ describe('createChatService', () => {
       const dbPostConfigVersion =
         await prisma.postConfigVersion.findFirstOrThrow({
           where: {
-            postId: defaultPost.id,
+            id: result.postConfigVersionId!,
           },
         })
 
       expect(result.postConfigVersionId).toEqual(dbPostConfigVersion.id)
-      expect(dbPostConfigVersion.model).toEqual('openai/gpt-3.5-turbo')
+      expect(dbPostConfigVersion.model).toEqual(DEFAULT_AI_MODEL)
     })
 
     it('does not update post sorting', async () => {
