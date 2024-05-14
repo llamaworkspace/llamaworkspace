@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { UserAccessLevelActions } from '@/shared/globalTypes'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { CheckIcon } from '@heroicons/react/24/solid'
+import { useMemo, useState } from 'react'
 
 const permissionLevelOptions = [
   {
@@ -53,7 +54,7 @@ export const ChatHeaderShareAccessLevelPopover = ({
   activeAccessLevel,
 }: ChatHeaderShareAccessLevelPopoverProps) => {
   const { mutateAsync: updateAccessLevel } = useUpdateShareAccessLevelForPost()
-
+  const [popoverIsOpen, setPopoverIsOpen] = useState(false)
   const toast = useSuccessToast()
 
   // Me he quedado que tengo que implementar de nueveo este hook
@@ -75,22 +76,24 @@ export const ChatHeaderShareAccessLevelPopover = ({
       )
     }
 
-  // FIXME!!!!!!!!!
-  // FIXME!!!!!!!!!// FIXME!!!!!!!!!// FIXME!!!!!!!!!// FIXME!!!!!!!!!// FIXME!!!!!!!!!// FIXME!!!!!!!!!
-  const open = false
-  const targetOption = permissionLevelOptions.find((option) => {
-    return option.value === activeAccessLevel
-  })
+  const targetOption = useMemo(() => {
+    return permissionLevelOptions.find((option) => {
+      return option.value === activeAccessLevel
+    })
+  }, [activeAccessLevel])
 
   return (
-    <Popover>
+    <Popover
+      open={popoverIsOpen}
+      onOpenChange={() => setPopoverIsOpen(!popoverIsOpen)}
+    >
       <PopoverTrigger>
         <div className="flex items-center gap-x-1 text-xs text-zinc-400">
           {targetOption?.title}
 
           {activeAccessLevel !== UserAccessLevelActions.Owner && (
             <ChevronDownIcon
-              className={cn('h-3 w-3', open && 'rotate-180 transform')}
+              className={cn('h-3 w-3', popoverIsOpen && 'rotate-180 transform')}
             />
           )}
         </div>
