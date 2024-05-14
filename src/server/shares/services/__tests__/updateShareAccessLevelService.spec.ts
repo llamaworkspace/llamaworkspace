@@ -272,5 +272,42 @@ describe('updateShareAccessLevelService', () => {
     })
   })
 
-  // describe('when the user is a workspace invite')
+  describe('when the user is a workspace invite', () => {
+    let fakeEmail: string
+    let workspaceInvite: WorkspaceInvite
+    let shareOfTheInvitedUser: ShareTarget
+
+    beforeEach(async () => {
+      fakeEmail = faker.internet.email()
+      workspaceInvite = await WorkspaceInviteFactory.create(prisma, {
+        email: fakeEmail,
+        workspaceId: workspace.id,
+        source: WorkspaceInviteSources.Share,
+        invitedById: userCreatingPost.id,
+      })
+
+      shareOfTheInvitedUser = await ShareTargetFactory.create(prisma, {
+        shareId: share.id,
+        sharerId: userCreatingPost.id,
+        workspaceInviteId: workspaceInvite.id,
+      })
+    })
+
+    it('updates the access level', async () => {
+      expect(shareOfTheInvitedUser.accessLevel).toBe(UserAccessLevel.Use)
+
+      await subject(
+        userCreatingPost.id,
+        workspace.id,
+        shareOfTheInvitedUser.id,
+        UserAccessLevelActions.Edit,
+      )
+
+      const nextShareTarget = await prisma.shareTarget.findUniqueOrThrow({
+        where: { id: shareOfTheInvitedUser.id },
+      })
+
+      expect(nextShareTarget.accessLevel).toBe(UserAccessLevel.Edit)
+    })
+  })
 })
