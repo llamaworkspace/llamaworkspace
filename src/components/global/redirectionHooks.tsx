@@ -1,5 +1,4 @@
-import { useDefaultPost, useLatestPost } from '@/components/posts/postsHooks'
-import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
+import { useDefaultPost } from '@/components/posts/postsHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useCallback, useEffect, useState } from 'react'
 import {
@@ -12,11 +11,6 @@ import {
  * If there are no posts, it returns hasNoPosts=true after it finishes loading.
  */
 export function useDefaultPageRedirection() {
-  const { data: workspace, isLoading: isLoadingWorkspace } =
-    useCurrentWorkspace()
-  const { data: post, isLoading: isLoadingPage } = useLatestPost(
-    isLoadingWorkspace ? undefined : workspace?.id,
-  )
   const navigation = useNavigation()
   const { mutate: createStandaloneChat } = useCreateStandaloneChat()
   const { mutate: createChatForApp } = useCreateChatForApp()
@@ -62,12 +56,7 @@ export function useDefaultPageRedirection() {
     workspaceId,
   ])
 
-  const isLoading = isLoadingWorkspace || isLoadingPage
-  const hasNoPosts = isLoading ? undefined : !post
-
   return {
-    redirect: post && !isLoading ? redirect : undefined,
-    hasNoPosts,
-    isLoading,
+    redirect,
   }
 }

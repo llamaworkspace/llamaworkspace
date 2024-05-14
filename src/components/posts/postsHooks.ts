@@ -248,15 +248,3 @@ export const useUpdateShareAccessLevelForPost = () => {
     },
   })
 }
-
-export const useLatestPost = (workspaceId?: string) => {
-  const errorHandler = useErrorHandler()
-
-  return api.posts.getLatestPost.useQuery(
-    { workspaceId: workspaceId! },
-    {
-      onError: errorHandler(),
-      enabled: !!workspaceId,
-    },
-  )
-}
