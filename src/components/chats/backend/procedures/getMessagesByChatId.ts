@@ -1,8 +1,7 @@
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
-import { chatVisibilityFilter } from '../chatsBackendUtils'
 
 const zInput = z.object({
   chatId: z.string(),
@@ -17,25 +16,21 @@ export const getMessagesByChatId = protectedProcedure
     const chat = await ctx.prisma.chat.findFirstOrThrow({
       where: {
         id: chatId,
-        ...chatVisibilityFilter(userId),
       },
-    })
-
-    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
-      PermissionAction.Use,
-      userId,
-      chat.postId,
-    )
-
-    return await ctx.prisma.message.findMany({
-      where: {
-        chatId,
-        chat: {
-          ...chatVisibilityFilter(userId),
+      include: {
+        post: {
+          select: {
+            workspaceId: true,
+          },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
     })
+
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      userId,
+      chat.post.workspaceId,
+    )
+
+    return getMessagesByChatIdService(ctx.prisma, context, input)
   })
