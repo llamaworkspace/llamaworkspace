@@ -54,7 +54,7 @@ describe('createUserOnWorkspaceContext function', () => {
       await expect(promise).rejects.toHaveProperty('code', 'UNAUTHORIZED')
       await expect(promise).rejects.toEqual(
         expect.objectContaining({
-          message: 'You do not have enough permissions to perform this action',
+          message: 'You do not have the permissions to perform this action',
         }),
       )
     })
