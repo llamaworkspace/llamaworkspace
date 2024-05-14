@@ -7,7 +7,7 @@ import {
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { PostConfigVersion } from '@prisma/client'
+import type { PostConfigVersion } from '@prisma/client'
 import { isUndefined, omit } from 'underscore'
 import { scopePostByWorkspace } from '../postUtils'
 

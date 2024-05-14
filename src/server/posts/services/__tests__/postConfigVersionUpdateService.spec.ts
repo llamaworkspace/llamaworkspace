@@ -142,7 +142,7 @@ describe('postConfigVersionUpdateService', () => {
   })
 
   describe('when systemMessage is provided', () => {
-    it.only('updates the system message', async () => {
+    it('updates the system message', async () => {
       const postConfigVersionInDbBefore =
         await prisma.postConfigVersion.findFirstOrThrow({
           where: {
