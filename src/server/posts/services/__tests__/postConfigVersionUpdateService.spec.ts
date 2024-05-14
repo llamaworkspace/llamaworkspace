@@ -36,7 +36,7 @@ const subject = async (
 describe('postConfigVersionUpdateService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: Post & { postConfigVersions: PostConfigVersion[] }
   let postConfigVersion: PostConfigVersion
 
   beforeEach(async () => {
@@ -57,6 +57,7 @@ describe('postConfigVersionUpdateService', () => {
         postConfigVersions: true,
       },
     })
+
     postConfigVersion = post.postConfigVersions[0]!
   })
 

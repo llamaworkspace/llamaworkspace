@@ -50,7 +50,7 @@ export function Chatbox({
     stableOnChatboxHeightChange?.(textAreaExpectedHeight)
   }, [stableOnChatboxHeightChange, textAreaExpectedHeight])
 
-  const { can: canUse } = useCanPerformActionForPost(
+  const { data: canUse } = useCanPerformActionForPost(
     PermissionAction.Use,
     postId,
   )

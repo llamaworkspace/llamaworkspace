@@ -68,7 +68,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
         }),
         updatePostConfigVersion({
           id: postConfig?.id,
-          systemMessage: systemMessage ?? null,
+          systemMessage,
           description: description ?? null,
           model,
         }),

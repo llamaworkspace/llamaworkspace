@@ -19,7 +19,7 @@ import {
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
 
 interface AppsListRowProps {
-  post: RouterOutputs['posts']['getForAppsList'][0]
+  post: RouterOutputs['posts']['getList'][0]
   onRowDelete: (postId: string) => void
 }
 
