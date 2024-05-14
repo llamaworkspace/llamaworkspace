@@ -5,14 +5,14 @@ import { cn } from '@/lib/utils'
 
 const TooltipProvider = TooltipPrimitive.Provider
 
-const Tooltip = (
-  props: React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>,
-) => {
+const Tooltip = ({
+  children,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>) => {
   return (
-    <TooltipPrimitive.Root
-      delayDuration={100}
-      {...props}
-    ></TooltipPrimitive.Root>
+    <TooltipPrimitive.Root delayDuration={100} {...props}>
+      {children}
+    </TooltipPrimitive.Root>
   )
 }
 
