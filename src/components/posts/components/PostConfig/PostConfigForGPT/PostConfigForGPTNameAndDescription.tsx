@@ -44,6 +44,7 @@ export const PostConfigForGPTNameAndDescription = ({
           const emojiElement = (
             <div
               className={cn(
+                'w-14 max-w-14',
                 disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
               )}
             >
@@ -61,17 +62,15 @@ export const PostConfigForGPTNameAndDescription = ({
 
           return (
             <Popover open={isEmojiEditable} onOpenChange={setIsEmojiEditable}>
-              <div>
-                <PopoverTrigger asChild>{emojiElement}</PopoverTrigger>
+              <PopoverTrigger asChild>{emojiElement}</PopoverTrigger>
 
-                <PopoverContent align="start" className="w-[332px] p-0">
-                  <EmojiPicker
-                    width={330}
-                    previewConfig={{ showPreview: false }}
-                    onEmojiClick={handleEmojiChange}
-                  />
-                </PopoverContent>
-              </div>
+              <PopoverContent align="start" className="w-[332px] p-0">
+                <EmojiPicker
+                  width={330}
+                  previewConfig={{ showPreview: false }}
+                  onEmojiClick={handleEmojiChange}
+                />
+              </PopoverContent>
             </Popover>
           )
         }}
