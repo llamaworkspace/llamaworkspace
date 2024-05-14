@@ -28,8 +28,8 @@ export const getMessagesByChatId = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      userId,
       chat.post.workspaceId,
+      userId,
     )
 
     return getMessagesByChatIdService(ctx.prisma, context, input)

@@ -10,6 +10,7 @@ const zInput = z.object({
 export const getChatById = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
+    const userId = ctx.session.user.id
     const { chatId } = input
     const chat = await ctx.prisma.chat.findFirstOrThrow({
       where: {
@@ -26,8 +27,8 @@ export const getChatById = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      userId,
       chat.post.workspaceId,
+      userId,
     )
 
     return getChatByIdService(ctx.prisma, context, input)
