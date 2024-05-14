@@ -1,3 +1,5 @@
+import { Author } from '@/shared/aiTypesAndMappers'
+import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { faker } from '@faker-js/faker'
 import type { Post, PrismaClient } from '@prisma/client'
@@ -47,6 +49,20 @@ export const PostFactory = {
         data: {
           workspaceId,
           shares: sharesPayload,
+          postConfigVersions: {
+            create: [
+              {
+                model: DEFAULT_AI_MODEL,
+                messages: {
+                  create: [
+                    {
+                      author: Author.System,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
           ...PostFactory.build(rest),
         },
       })
