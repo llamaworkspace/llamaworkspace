@@ -162,7 +162,6 @@ describe('updateShareAccessLevelService', () => {
     describe('and the share is an invite (not a user)', () => {
       it('when the workspaceInvite source is not "share", it keeps the invite', async () => {
         const fakeEmail = faker.internet.email()
-
         const workspaceInvite = await WorkspaceInviteFactory.create(prisma, {
           email: fakeEmail,
           workspaceId: workspace.id,

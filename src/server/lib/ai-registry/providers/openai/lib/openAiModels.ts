@@ -2,6 +2,15 @@ import type { AiRegistryModel } from '../../../aiRegistryTypes'
 
 export const openAiModels: AiRegistryModel[] = [
   {
+    slug: 'gpt-4o' as const,
+    publicName: 'Chat GPT-4o' as const,
+    default: true,
+    costPerMille: {
+      request: 0.005,
+      response: 0.015,
+    },
+  },
+  {
     slug: 'gpt-4-turbo-preview' as const,
     publicName: 'Chat GPT-4 Turbo' as const,
     default: true,
