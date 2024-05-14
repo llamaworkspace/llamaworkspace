@@ -1,7 +1,11 @@
-import { useLatestPost } from '@/components/posts/postsHooks'
+import { useDefaultPost, useLatestPost } from '@/components/posts/postsHooks'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import {
+  useCreateChatForApp,
+  useCreateStandaloneChat,
+} from '../chats/chatHooks'
 
 /**
  * Hook that automatically redirects to the latest post in the current workspace.
@@ -14,21 +18,49 @@ export function useDefaultPageRedirection() {
     isLoadingWorkspace ? undefined : workspace?.id,
   )
   const navigation = useNavigation()
+  const { mutate: createStandaloneChat } = useCreateStandaloneChat()
+  const { mutate: createChatForApp } = useCreateChatForApp()
+  const { data: defaultPost } = useDefaultPost()
+
+  const postId = navigation.query?.post_id as string
+  const workspaceId = navigation.query?.workspace_id as string
+
+  const [redirectIsCalled, setRedirectIsCalled] = useState(false)
+  const [isExecuted, setIsExecuted] = useState(false)
 
   const redirect = useCallback(() => {
-    if (post) {
-      if (!post.lastChatId) {
-        void navigation.replace(`/p/:postId/c/new`, {
-          postId: post.id,
-        })
+    setRedirectIsCalled(true)
+  }, [])
+
+  useEffect(() => {
+    if (!redirectIsCalled) return
+    if (isExecuted) return
+
+    if (postId) {
+      if (!defaultPost) return
+      if (postId === defaultPost.id) {
+        setIsExecuted(true)
+        void createStandaloneChat()
       } else {
-        void navigation.replace(`/p/:postId/c/:chatId`, {
-          postId: post.id,
-          chatId: post.lastChatId,
-        })
+        void createChatForApp({ postId })
       }
+
+      return
     }
-  }, [post, navigation])
+
+    if (workspaceId) {
+      void navigation.replace(`/w/:workspaceId/settings`, { workspaceId })
+    }
+  }, [
+    redirectIsCalled,
+    isExecuted,
+    postId,
+    defaultPost,
+    createStandaloneChat,
+    createChatForApp,
+    navigation,
+    workspaceId,
+  ])
 
   const isLoading = isLoadingWorkspace || isLoadingPage
   const hasNoPosts = isLoading ? undefined : !post
