@@ -1,5 +1,5 @@
 import { prisma } from '@/server/db'
-import { performPostInviteService } from '@/server/shares/services/performPostInvite.service'
+import { performPostShareService } from '@/server/shares/services/performPostShare.service'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
@@ -10,7 +10,7 @@ jest.mock('@/server/shares/services/performPostInvite.service')
 
 const subject = async (userId: string, postId: string, email: string) => {
   const { caller } = trpcContextSetupHelper(prisma, userId)
-  return await caller.posts.invite({ postId, email })
+  return await caller.posts.share({ postId, email })
 }
 
 describe('performPostInvite', () => {
@@ -35,6 +35,6 @@ describe('performPostInvite', () => {
 
   it('invokes performShare', async () => {
     await subject(invitingUser.id, post.id, invitedUser.email!)
-    expect(performPostInviteService).toHaveBeenCalled()
+    expect(performPostShareService).toHaveBeenCalled()
   })
 })

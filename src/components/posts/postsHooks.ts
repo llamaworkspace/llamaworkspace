@@ -219,7 +219,7 @@ export const usePostPerformInvite = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
-  return api.posts.invite.useMutation({
+  return api.posts.share.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
       void utils.posts.getShare.invalidate()

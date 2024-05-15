@@ -28,14 +28,6 @@ export async function getPostsListService(
 ) {
   const { includeLatestConfig } = payload ?? {}
 
-  // Do the uow thing!?!!!
-
-  // const whereSharesFilter = {
-  //   scope: {
-  //     OR: [{ scope: ShareScope.Everybody }],
-  //   },
-  // }
-
   const whereClauseForPrivateScope = {
     userId: uowContext.userId,
     shares: {

@@ -17,15 +17,15 @@ import { getPostSharesService } from './getPostShares.service'
 
 const USER_ALREADY_INVITED_ERROR = 'You have already invited this user'
 
-interface SharePerformPayload {
+interface PerformPostShareInputPayload {
   email: string
   postId: string
 }
 
-export const performPostInviteService = async (
+export const performPostShareService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  payload: SharePerformPayload,
+  payload: PerformPostShareInputPayload,
 ) => {
   const { userId: invitingUserId } = uowContext
   const { email, postId } = payload

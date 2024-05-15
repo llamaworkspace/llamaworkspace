@@ -1,5 +1,5 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
-import { performPostInvite } from './procedures/performPostInvite'
+import { performPostShare } from './procedures/performPostShare'
 import { postsConfigGetLatestForPostId } from './procedures/postsConfigGetLatestForPostId'
 import { postsConfigUpdate } from './procedures/postsConfigUpdate'
 import { postsCreate } from './procedures/postsCreate'
@@ -19,7 +19,7 @@ export const postsRouter = createTRPCRouter({
   create: postsCreate,
   update: postsUpdate,
   delete: postsDelete,
-  invite: performPostInvite,
+  share: performPostShare,
   getShare: postsGetShare,
   updateShare: postsShareUpdate,
   updateShareAccessLevel: postsShareUpdateAccessLevel,
