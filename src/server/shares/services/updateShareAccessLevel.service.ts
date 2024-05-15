@@ -1,5 +1,6 @@
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { WorkspaceInviteSources } from '@/server/workspaces/workspaceTypes'
 import {
   UserAccessLevel,
@@ -7,6 +8,7 @@ import {
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { ShareTarget } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { scopeShareByWorkspace } from '../shareUtils'
@@ -21,15 +23,26 @@ export const updateShareAccessLevelService = async (
   uowContext: UserOnWorkspaceContext,
   payload: UpdateShareAccessLevelPayload,
 ) => {
-  const { workspaceId } = uowContext
+  const { workspaceId, userId } = uowContext
   const { shareTargetId, accessLevel } = payload
 
   return await prismaAsTrx(prisma, async (prisma) => {
-    // await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-    //   PermissionAction.Share,
-    //   userId,
-    //   share.postId,
-    // )
+    const share = await prisma.share.findFirstOrThrow({
+      where: {
+        shareTargets: {
+          some: {
+            id: shareTargetId,
+          },
+        },
+      },
+    })
+
+    await new PermissionsVerifier(prisma).passOrThrowTrpcError(
+      PermissionAction.Invite,
+      userId,
+      share.postId,
+    )
+
     const shareTarget = await prisma.shareTarget.findFirstOrThrow({
       where: {
         id: shareTargetId,

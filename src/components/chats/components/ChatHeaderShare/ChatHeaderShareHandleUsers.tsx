@@ -1,10 +1,11 @@
 import {
+  usePostPerformInvite,
   usePostShare,
-  usePostSharePerform,
 } from '@/components/posts/postsHooks'
 import type { ComponentWithPostId } from '@/components/posts/postsTypes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useSelf } from '@/components/users/usersHooks'
 import {
   composeValidators,
   email,
@@ -25,7 +26,8 @@ export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
   const toast = useSuccessToast()
 
   const { data: share } = usePostShare(postId)
-  const { mutate: performShare } = usePostSharePerform()
+  const { data: self } = useSelf()
+  const { mutate: performShare } = usePostPerformInvite()
 
   const handleSubmit = ({ email }: FormShape, form: FormApi<FormShape>) => {
     performShare(
@@ -105,6 +107,8 @@ export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
               )}
               {share?.shareTargets.map((shareTarget, index) => {
                 const isUser = !!shareTarget.userId
+                const isYourself =
+                  self && shareTarget && shareTarget.userId === self.id
 
                 return (
                   <div
@@ -120,6 +124,13 @@ export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
                       >
                         {shareTarget.email}
                       </div>
+                      {isYourself && (
+                        <div>
+                          <span className="rounded bg-yellow-100 px-1 py-0.5 text-[0.6rem] uppercase text-yellow-600">
+                            You
+                          </span>
+                        </div>
+                      )}
                       {!isUser && (
                         <div>
                           <span className="rounded bg-yellow-100 px-1 py-0.5 text-[0.6rem] uppercase text-yellow-600">
@@ -129,8 +140,7 @@ export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
                       )}
                     </div>
                     <ChatHeaderShareAccessLevelPopover
-                      postId={postId}
-                      shareId={shareTarget.id}
+                      shareTargetId={shareTarget.id}
                       activeAccessLevel={
                         shareTarget.accessLevel as UserAccessLevelActions
                       }

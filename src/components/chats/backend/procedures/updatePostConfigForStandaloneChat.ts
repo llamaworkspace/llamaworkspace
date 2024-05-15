@@ -1,12 +1,11 @@
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { postConfigVersionUpdateForDefaultPostService } from '@/server/posts/services/postConfigVersionUpdateForDefaultPost.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
-import { chatVisibilityFilter } from '../chatsBackendUtils'
 
 const zInput = z.object({
   chatId: z.string(),
-  model: z.string().optional(),
+  model: z.string(),
 })
 
 export const updatePostConfigForStandaloneChat = protectedProcedure
@@ -18,22 +17,21 @@ export const updatePostConfigForStandaloneChat = protectedProcedure
     const chat = await ctx.prisma.chat.findFirstOrThrow({
       where: {
         id: chatId,
-        ...chatVisibilityFilter(userId),
+      },
+      include: {
+        post: true,
       },
     })
 
-    await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-      PermissionAction.Use,
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      chat.post.workspaceId,
       userId,
-      chat.postId,
     )
 
-    await ctx.prisma.postConfigVersion.update({
-      where: {
-        id: chat.postConfigVersionId!,
-      },
-      data: {
-        model: input.model,
-      },
-    })
+    return await postConfigVersionUpdateForDefaultPostService(
+      ctx.prisma,
+      context,
+      input,
+    )
   })

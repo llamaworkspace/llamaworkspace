@@ -12,7 +12,7 @@ const generateDefaults = () => {
     ...generateBaseForDefaults(),
     name: faker.person.fullName(),
     image: faker.image.avatar(),
-    username: faker.internet.userName(),
+    username: faker.internet.userName() + faker.string.nanoid(),
     email: faker.string.nanoid() + faker.internet.email(),
     emailVerified: faker.date.past(),
     defaultModel: OpenAiModelEnum.GPT3_5_TURBO,

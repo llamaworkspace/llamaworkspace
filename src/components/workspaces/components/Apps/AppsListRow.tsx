@@ -1,4 +1,5 @@
 import { useCreateChatForApp } from '@/components/chats/chatHooks'
+import { useCanPerformActionForPost } from '@/components/permissions/permissionsHooks'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +10,7 @@ import { DropdownMenuItemLink } from '@/components/ui/extensions/dropdown-menu'
 import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import type { RouterOutputs } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import {
   PencilIcon,
   PencilSquareIcon,
@@ -17,7 +19,7 @@ import {
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
 
 interface AppsListRowProps {
-  post: RouterOutputs['posts']['getForAppsList'][0]
+  post: RouterOutputs['posts']['getList'][0]
   onRowDelete: (postId: string) => void
 }
 
@@ -50,7 +52,9 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
         </div>
       </div>
       <div className="col-span-9 flex flex-col justify-center">
-        <div className="font-semibold">{post.title ?? 'Untitled'}</div>
+        <div className="line-clamp-1 font-semibold">
+          {post.title ?? 'Untitled'}
+        </div>
 
         {/* Description text. If, when needed */}
         {post.latestConfig.description && (
@@ -87,6 +91,10 @@ interface EllipsisDropdownProps {
 }
 
 const EllipsisDropdown = ({ postId, onDelete }: EllipsisDropdownProps) => {
+  const { data: canDelete, isLoading } = useCanPerformActionForPost(
+    PermissionAction.Delete,
+    postId,
+  )
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -99,7 +107,7 @@ const EllipsisDropdown = ({ postId, onDelete }: EllipsisDropdownProps) => {
           <EllipsisHorizontalIcon className="h-6 w-6" />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-60">
+      <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItemLink
           onClick={(ev) => {
             ev.stopPropagation()
@@ -112,8 +120,12 @@ const EllipsisDropdown = ({ postId, onDelete }: EllipsisDropdownProps) => {
         <DropdownMenuItem
           onClick={(ev) => {
             ev.stopPropagation()
-            onDelete()
+            ev.preventDefault()
+            canDelete && onDelete()
           }}
+          className={cn(
+            !isLoading && !canDelete && 'cursor-not-allowed opacity-50',
+          )}
         >
           <TrashIcon className="mr-2 h-4 w-4" />
           <span>Delete</span>

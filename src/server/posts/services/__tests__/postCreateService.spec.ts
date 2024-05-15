@@ -32,7 +32,7 @@ describe('postCreateService', () => {
     })
   })
 
-  it('creates an User-based share for the post', async () => {
+  it('creates an Private-scope-based share for the post', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     const post = await subject(workspace.id, user.id)
@@ -46,7 +46,7 @@ describe('postCreateService', () => {
     expect(share).toMatchObject([
       {
         postId: post.id,
-        scope: ShareScope.User,
+        scope: ShareScope.Private,
       },
     ])
   })
@@ -91,7 +91,7 @@ describe('postCreateService', () => {
 
     expect(share).toMatchObject({
       postId: post.id,
-      scope: ShareScope.User,
+      scope: ShareScope.Private,
       shareTargets: [
         expect.objectContaining({
           sharerId: user.id,

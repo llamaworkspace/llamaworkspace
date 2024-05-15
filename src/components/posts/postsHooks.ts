@@ -171,7 +171,7 @@ export const usePostsForAppsList = () => {
   const { data: workspace } = useCurrentWorkspace()
   const workspaceId = workspace?.id
 
-  return api.posts.getForAppsList.useQuery(
+  return api.posts.getList.useQuery(
     {
       workspaceId: workspaceId ?? '',
     },
@@ -215,7 +215,7 @@ export const usePostConfigUpdate = () => {
   })
 }
 
-export const usePostSharePerform = () => {
+export const usePostPerformInvite = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
@@ -238,7 +238,7 @@ export const usePostShareUpdate = () => {
   })
 }
 
-export const usePostShareUpdateAccessLevel = () => {
+export const useUpdateShareAccessLevelForPost = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
   return api.posts.updateShareAccessLevel.useMutation({
@@ -247,16 +247,4 @@ export const usePostShareUpdateAccessLevel = () => {
       void utils.posts.getShare.invalidate()
     },
   })
-}
-
-export const useLatestPost = (workspaceId?: string) => {
-  const errorHandler = useErrorHandler()
-
-  return api.posts.getLatestPost.useQuery(
-    { workspaceId: workspaceId! },
-    {
-      onError: errorHandler(),
-      enabled: !!workspaceId,
-    },
-  )
 }

@@ -277,7 +277,7 @@ export const useUpdateChat = (debounceMs = 0) => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
-  const { mutate, ...rest } = api.chats.updateChatTitle.useMutation({
+  const { mutate, ...rest } = api.chats.updateChat.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
       void utils.sidebar.postsForSidebar.invalidate()

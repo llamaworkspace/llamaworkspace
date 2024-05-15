@@ -1,5 +1,6 @@
 import { getEnumByValue } from '@/lib/utils'
 import {
+  ShareScope,
   UserAccessLevel,
   type PrismaClientOrTrxClient,
 } from '@/shared/globalTypes'
@@ -8,20 +9,40 @@ import {
   type PermissionAction,
 } from '@/shared/permissions/permissionDefinitions'
 import { TRPCError } from '@trpc/server'
+import { createUserOnWorkspaceContext } from '../auth/userOnWorkspaceContext'
 
 export class PermissionsVerifier {
   constructor(private prisma: PrismaClientOrTrxClient) {}
 
   async call(action: PermissionAction, userId: string, postId: string) {
-    const userAccessLevel = await this.getAccessLevelForPost(postId, userId)
-    if (!userAccessLevel) {
-      return false
+    const scope = await this.getShareScope(postId)
+    const post = await this.prisma.post.findFirstOrThrow({
+      where: {
+        id: postId,
+      },
+    })
+
+    await this.userBelongsWorkspaceOrThrow(post.workspaceId, userId)
+
+    if (scope === ShareScope.Everybody) {
+      return true
     }
 
-    return canForAccessLevel(action, userAccessLevel)
+    if (scope === ShareScope.Private) {
+      return await this.handlePrivateScope(userId, postId)
+    }
+
+    if (scope === ShareScope.User) {
+      return await this.handleUserScope(userId, postId, action)
+    }
+
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Unknown share scope',
+    })
   }
 
-  async callOrThrowTrpcError(
+  async passOrThrowTrpcError(
     action: PermissionAction,
     userId: string,
     postId: string,
@@ -37,10 +58,15 @@ export class PermissionsVerifier {
     return result
   }
 
-  async getAccessLevelForPost(postId: string, userId: string) {
-    const postShare = await this.prisma.postShare.findFirst({
+  async getUserAccessLevelToPost(
+    userId: string,
+    postId: string,
+  ): Promise<UserAccessLevel | null> {
+    const shareTargets = await this.prisma.shareTarget.findMany({
       where: {
-        postId,
+        share: {
+          postId,
+        },
         userId,
       },
       orderBy: {
@@ -48,46 +74,58 @@ export class PermissionsVerifier {
       },
     })
 
-    if (postShare) {
-      return getEnumByValue(UserAccessLevel, postShare.accessLevel)
-    }
-
-    const workspaceWithPermission = await this.prisma.workspace.findFirst({
-      select: {
-        id: true,
-      },
-      where: {
-        users: {
-          some: {
-            userId,
-          },
-        },
-        posts: {
-          some: {
-            id: postId,
-          },
-        },
-      },
-    })
-
-    if (!workspaceWithPermission) {
+    if (!shareTargets.length) {
       return null
     }
 
-    const workspaceOwner = await this.prisma.usersOnWorkspaces.findFirst({
-      select: {
-        userId: true,
-      },
+    if (shareTargets.length > 1) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Multiple share targets found for the same user and post',
+      })
+    }
+
+    const shareTarget = shareTargets[0]!
+
+    return getEnumByValue(UserAccessLevel, shareTarget.accessLevel)
+  }
+
+  private async getShareScope(postId: string) {
+    const share = await this.prisma.share.findFirstOrThrow({
       where: {
-        workspaceId: workspaceWithPermission.id,
-      },
-      orderBy: {
-        createdAt: 'asc',
+        postId,
       },
     })
 
-    return workspaceOwner?.userId === userId
-      ? UserAccessLevel.Owner
-      : UserAccessLevel.EditAndShare
+    return getEnumByValue(ShareScope, share.scope)
+  }
+
+  private async handlePrivateScope(userId: string, postId: string) {
+    const post = await this.prisma.post.findFirstOrThrow({
+      where: {
+        id: postId,
+      },
+    })
+    return post.userId === userId
+  }
+
+  private async handleUserScope(
+    userId: string,
+    postId: string,
+    action: PermissionAction,
+  ) {
+    const userAccessLevel = await this.getUserAccessLevelToPost(userId, postId)
+    if (!userAccessLevel) {
+      return false
+    }
+
+    return canForAccessLevel(action, userAccessLevel)
+  }
+
+  private async userBelongsWorkspaceOrThrow(
+    workspaceId: string,
+    userId: string,
+  ) {
+    await createUserOnWorkspaceContext(this.prisma, workspaceId, userId)
   }
 }

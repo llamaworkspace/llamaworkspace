@@ -1,5 +1,5 @@
 import { useErrorHandler } from '@/components/global/errorHandlingHooks'
-import { useCanExecuteActionForPost } from '@/components/permissions/permissionsHooks'
+import { useCanPerformActionForPost } from '@/components/permissions/permissionsHooks'
 import {
   Section,
   SectionBody,
@@ -46,7 +46,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
   const { mutateAsync: updatePost } = useUpdatePost()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
-  const { can: canEdit } = useCanExecuteActionForPost(
+  const { data: canEdit } = useCanPerformActionForPost(
     PermissionAction.Update,
     postId,
   )
@@ -68,7 +68,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
         }),
         updatePostConfigVersion({
           id: postConfig?.id,
-          systemMessage: systemMessage ?? null,
+          systemMessage,
           description: description ?? null,
           model,
         }),

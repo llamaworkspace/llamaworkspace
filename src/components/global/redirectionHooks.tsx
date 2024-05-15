@@ -1,41 +1,71 @@
-import { useLatestPost } from '@/components/posts/postsHooks'
-import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
+import { useDefaultPost } from '@/components/posts/postsHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { useCallback } from 'react'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { useCallback, useEffect, useState } from 'react'
+import { isBoolean } from 'underscore'
+import {
+  useCreateChatForApp,
+  useCreateStandaloneChat,
+} from '../chats/chatHooks'
+import { useCanPerformActionForPost } from '../permissions/permissionsHooks'
 
 /**
  * Hook that automatically redirects to the latest post in the current workspace.
  * If there are no posts, it returns hasNoPosts=true after it finishes loading.
  */
 export function useDefaultPageRedirection() {
-  const { data: workspace, isLoading: isLoadingWorkspace } =
-    useCurrentWorkspace()
-  const { data: post, isLoading: isLoadingPage } = useLatestPost(
-    isLoadingWorkspace ? undefined : workspace?.id,
-  )
   const navigation = useNavigation()
+  const postId = navigation.query?.post_id as string
+  const workspaceId = navigation.query?.workspace_id as string
+  const { mutate: createStandaloneChat } = useCreateStandaloneChat()
+  const { mutate: createChatForApp } = useCreateChatForApp()
+  const { data: defaultPost } = useDefaultPost()
+  const { data: canUse } = useCanPerformActionForPost(
+    PermissionAction.Use,
+    postId,
+  )
+
+  const [redirectIsCalled, setRedirectIsCalled] = useState(false)
+  const [isExecuted, setIsExecuted] = useState(false)
 
   const redirect = useCallback(() => {
-    if (post) {
-      if (!post.lastChatId) {
-        void navigation.replace(`/p/:postId/c/new`, {
-          postId: post.id,
-        })
-      } else {
-        void navigation.replace(`/p/:postId/c/:chatId`, {
-          postId: post.id,
-          chatId: post.lastChatId,
-        })
-      }
-    }
-  }, [post, navigation])
+    setRedirectIsCalled(true)
+  }, [])
 
-  const isLoading = isLoadingWorkspace || isLoadingPage
-  const hasNoPosts = isLoading ? undefined : !post
+  useEffect(() => {
+    if (!redirectIsCalled) return
+    if (isExecuted) return
+
+    // When the user does not have permission access to the postId: redirect to the default
+    if (postId && isBoolean(canUse)) {
+      if (!defaultPost) return
+      setIsExecuted(true)
+
+      if (postId === defaultPost.id || !canUse) {
+        void createStandaloneChat()
+      } else {
+        void createChatForApp({ postId })
+      }
+
+      return
+    }
+
+    if (workspaceId) {
+      void navigation.replace(`/w/:workspaceId/settings`, { workspaceId })
+    }
+  }, [
+    redirectIsCalled,
+    isExecuted,
+    postId,
+    defaultPost,
+    createStandaloneChat,
+    createChatForApp,
+    navigation,
+    workspaceId,
+    canUse,
+  ])
 
   return {
-    redirect: post && !isLoading ? redirect : undefined,
-    hasNoPosts,
-    isLoading,
+    redirect,
   }
 }

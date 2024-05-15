@@ -62,7 +62,7 @@ export const SettingsMembersInviteForm = () => {
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-3">
-      <Tooltip delayDuration={100}>
+      <Tooltip>
         <TooltipTrigger asChild>
           <InformationCircleIcon className="h-5 w-5 text-zinc-600" />
         </TooltipTrigger>
@@ -92,7 +92,7 @@ export const SettingsMembersInviteForm = () => {
                         data-lpignore="true"
                         autoComplete="off"
                         disabled={submitting}
-                        className="w-64"
+                        className="w-64 text-sm"
                         {...input}
                       />
                     )

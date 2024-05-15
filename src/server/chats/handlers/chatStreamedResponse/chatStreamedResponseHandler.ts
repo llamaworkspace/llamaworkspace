@@ -4,11 +4,15 @@ import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
+import {
+  createUserOnWorkspaceContext,
+  type UserOnWorkspaceContext,
+} from '@/server/auth/userOnWorkspaceContext'
+import { getApplicablePostConfigToChatService } from '@/server/chats/services/getApplicablePostConfigToChat.service'
 import { prisma } from '@/server/db'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { withMiddlewareForAppRouter } from '@/server/middlewares/withMiddleware'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { getPostConfigForChatIdService } from '@/server/posts/services/getPostConfigForChatId.service'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
@@ -39,13 +43,19 @@ async function handler(req: Request) {
     const { chatId } = await getParsedBody(req)
     const userId = await getRequestUserId()
 
-    const [chat, postConfigVersion, messages] = await Promise.all([
-      await getChat(chatId, userId),
-      await getPostConfigVersionForChat(chatId, userId),
+    const chat = await getChat(chatId, userId)
+    const workspaceId = chat.post.workspaceId
+
+    const context = await createUserOnWorkspaceContext(
+      prisma,
+      workspaceId,
+      userId,
+    )
+
+    const [postConfigVersion, messages] = await Promise.all([
+      await getPostConfigVersionForChat(context, chatId),
       await getParsedMessagesForChat(chatId, userId),
     ])
-
-    const workspaceId = chat.post.workspaceId
 
     await validateUserPermissionsOrThrow(userId, chatId)
     await validateModelIsEnabledOrThrow(
@@ -146,7 +156,7 @@ const validateUserPermissionsOrThrow = async (
     },
   })
 
-  await new PermissionsVerifier(prisma).callOrThrowTrpcError(
+  await new PermissionsVerifier(prisma).passOrThrowTrpcError(
     PermissionAction.Use,
     userId,
     chat.postId,
@@ -212,8 +222,13 @@ const getChat = async (chatId: string, userId: string) => {
   })
 }
 
-const getPostConfigVersionForChat = async (chatId: string, userId: string) => {
-  return await getPostConfigForChatIdService(prisma, chatId, userId)
+const getPostConfigVersionForChat = async (
+  uowContext: UserOnWorkspaceContext,
+  chatId: string,
+) => {
+  return await getApplicablePostConfigToChatService(prisma, uowContext, {
+    chatId,
+  })
 }
 
 const attachPostConfigVersionToChat = async (

@@ -21,7 +21,7 @@ export const createChatService = async function (
   const { userId } = uowContext
   const { postId } = payload
 
-  await new PermissionsVerifier(prisma).callOrThrowTrpcError(
+  await new PermissionsVerifier(prisma).passOrThrowTrpcError(
     PermissionAction.Use,
     userId,
     postId,

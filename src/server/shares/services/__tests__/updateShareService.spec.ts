@@ -1,9 +1,11 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { ShareScope } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Post, Share, User, Workspace } from '@prisma/client'
 import { updateShareService } from '../updateShare.service'
 
@@ -40,13 +42,13 @@ describe('updateShareService', () => {
       userId: userCreatingPost.id,
       workspaceId: workspace.id,
     })
+    share = await prisma.share.findFirstOrThrow({
+      where: { postId: post.id },
+    })
   })
 
   it('updates the access scope', async () => {
-    const share = await prisma.share.findFirstOrThrow({
-      where: { postId: post.id },
-    })
-    expect(share.scope).toBe(ShareScope.User)
+    expect(share.scope).toBe(ShareScope.Private)
     await subject(
       userCreatingPost.id,
       workspace.id,
@@ -58,5 +60,25 @@ describe('updateShareService', () => {
       where: { id: share.id },
     })
     expect(nextShare.scope).toBe(ShareScope.Everybody)
+  })
+
+  it('calls PermissionsVerifier', async () => {
+    const spy = jest.spyOn(
+      PermissionsVerifier.prototype,
+      'passOrThrowTrpcError',
+    )
+
+    await subject(
+      userCreatingPost.id,
+      workspace.id,
+      share.id,
+      ShareScope.Everybody,
+    )
+
+    expect(spy).toHaveBeenCalledWith(
+      PermissionAction.Invite,
+      expect.anything(),
+      expect.anything(),
+    )
   })
 })

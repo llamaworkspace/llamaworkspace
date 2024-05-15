@@ -1,53 +1,126 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { PostConfigVersionFactory } from '@/server/testing/factories/PostConfigVersionFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
-import { UserFactory } from '@/server/testing/factories/UserFactory'
-import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { Post, User, Workspace } from '@prisma/client'
+import { workspaceWithUsersAndPostsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndPosts.fixture'
+import type { Post, PostConfigVersion, User, Workspace } from '@prisma/client'
 import { getPostsListService } from '../getPostsList.service'
 
-const subject = async (userId: string, workspaceId: string) => {
+type PostWithLatestConfig = Post & { latestConfig: PostConfigVersion }
+
+const subject = async (
+  userId: string,
+  workspaceId: string,
+  includeLatestConfig?: boolean,
+): Promise<Post[] | PostWithLatestConfig[]> => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
+
+  if (includeLatestConfig) {
+    return await getPostsListService(prisma, context, {
+      includeLatestConfig: true,
+    })
+  }
+
   return await getPostsListService(prisma, context)
 }
 
 describe('getPostsListService', () => {
   let workspace: Workspace
   let user: User
-  let post1: Post
-  let post2: Post
+  let otherUser: User
+  let postWithScopeUser: Post
+  let postWithScopeUserOfOtherUser: Post
+  let postWithScopeUserOfOtherUserWhereMainUserIsInvited: Post
+  let postWithScopeEverybody: Post
+  let postWithScopeEverybodyOfOtherUser: Post
+  let postWithScopePrivate: Post
+  let postWithScopePrivateOfOtherUser: Post
 
   beforeEach(async () => {
-    workspace = await WorkspaceFactory.create(prisma)
-
-    user = await UserFactory.create(prisma, {
-      workspaceId: workspace.id,
-    })
-
-    post1 = await PostFactory.create(prisma, {
-      userId: user.id,
-      workspaceId: workspace.id,
-    })
-
-    post2 = await PostFactory.create(prisma, {
-      userId: user.id,
-      workspaceId: workspace.id,
-    })
+    const fixture = await workspaceWithUsersAndPostsFixture(prisma)
+    workspace = fixture.workspace
+    user = fixture.user
+    otherUser = fixture.otherUser
+    postWithScopeUser = fixture.postWithScopeUser
+    postWithScopeUserOfOtherUser = fixture.postWithScopeUserOfOtherUser
+    postWithScopeUserOfOtherUserWhereMainUserIsInvited =
+      fixture.postWithScopeUserOfOtherUserWhereMainUserIsInvited
+    postWithScopeEverybody = fixture.postWithScopeEverybody
+    postWithScopeEverybodyOfOtherUser =
+      fixture.postWithScopeEverybodyOfOtherUser
+    postWithScopePrivate = fixture.postWithScopePrivate
+    postWithScopePrivateOfOtherUser = fixture.postWithScopePrivateOfOtherUser
   })
 
-  it('returns the posts', async () => {
+  it('returns the posts relevant to the user, in sorted form', async () => {
     const result = await subject(user.id, workspace.id)
 
-    expect(result).toHaveLength(2)
-    expect(result).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(post1),
-        expect.objectContaining(post2),
-      ]),
+    const expectedPostIdsSorted = [
+      postWithScopePrivate.id,
+      postWithScopeEverybodyOfOtherUser.id,
+      postWithScopeEverybody.id,
+      postWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
+      postWithScopeUser.id,
+    ]
+
+    expect(result).toHaveLength(expectedPostIdsSorted.length)
+
+    const resultIds = result.map((post) => post.id)
+    expect(resultIds).toEqual(expectedPostIdsSorted)
+  })
+
+  it('does not return the default post', async () => {
+    await PostFactory.create(prisma, {
+      userId: user.id,
+      workspaceId: workspace.id,
+      isDefault: true,
+    })
+    const result = await subject(user.id, workspace.id)
+    expect(result).not.toContainEqual(
+      expect.objectContaining({
+        isDefault: true,
+      }),
     )
+  })
+
+  describe('when the latestPostConfig is requested', () => {
+    let nextPostConfigForPost1: PostConfigVersion
+
+    beforeEach(async () => {
+      nextPostConfigForPost1 = await PostConfigVersionFactory.create(prisma, {
+        postId: postWithScopeUser.id,
+      })
+    })
+    it('returns the posts with the latest post config', async () => {
+      const result = (await subject(
+        user.id,
+        workspace.id,
+        true,
+      )) as PostWithLatestConfig[]
+
+      const post2ConfigVersion =
+        await prisma.postConfigVersion.findFirstOrThrow({
+          where: {
+            postId: postWithScopeEverybody.id,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        })
+
+      const resultScopeUser = result.find(
+        (post) => post.id === postWithScopeUser.id,
+      )
+      const resultScopeEverybody = result.find(
+        (post) => post.id === postWithScopeEverybody.id,
+      )
+      expect(resultScopeUser!.latestConfig.id).toBe(nextPostConfigForPost1.id)
+      expect(resultScopeEverybody!.latestConfig.id).toBe(post2ConfigVersion.id)
+      7
+    })
   })
 })

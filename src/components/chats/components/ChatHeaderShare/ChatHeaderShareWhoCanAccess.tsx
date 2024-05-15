@@ -9,11 +9,12 @@ interface FormShape {
 }
 
 const generalAccessOptions = [
-  { value: ShareScope.User.toString(), label: 'Specific people' },
+  { value: ShareScope.Private.toString(), label: 'Only me' },
   {
     value: ShareScope.Everybody.toString(),
-    label: 'Everyone in the Workspace',
+    label: 'Every workspace member',
   },
+  { value: ShareScope.User.toString(), label: 'Specific people' },
 ]
 
 interface ChatHeaderShareWhoCanAccessProps {

@@ -21,17 +21,17 @@ jest.mock('@/server/users/services/createWorkspaceForUser.service', () => {
 jest.mock('@/server/workspaces/services/addUserToWorkspace.service')
 jest.mock('@/server/users/services/createDefaultsForNewUser.service')
 
+const subject = async () => {
+  const user = await UserFactory.create(prisma, {})
+
+  await handleUserSignup(prisma, user.id)
+  return user
+}
+
 describe('handleUserSignup', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
-
-  const subject = async () => {
-    const user = await UserFactory.create(prisma, {})
-
-    await handleUserSignup(prisma, user.id)
-    return user
-  }
 
   it('executes createDefaultsForNewUser service', async () => {
     await subject()

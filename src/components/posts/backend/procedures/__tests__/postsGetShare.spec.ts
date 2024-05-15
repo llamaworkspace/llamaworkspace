@@ -1,5 +1,5 @@
 import { prisma } from '@/server/db'
-import * as getPostSharesServiceWrapper from '@/server/shares/services/getPostShares.service'
+import type * as getPostSharesServiceWrapper from '@/server/shares/services/getPostShares.service'
 import { getPostSharesService } from '@/server/shares/services/getPostShares.service'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
@@ -53,7 +53,7 @@ describe('postsGetShares', () => {
     expect(response).toEqual(
       expect.objectContaining({
         postId: post.id,
-        scope: ShareScope.User,
+        scope: ShareScope.Private,
       }),
     )
 

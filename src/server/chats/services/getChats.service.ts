@@ -20,7 +20,7 @@ export const getChatsService = async (
   return await prismaAsTrx(prisma, async (prisma) => {
     // TODO: Re-implement permissions
     // await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-    //   PermissionAction.View,
+    //   PermissionAction.Use,
     //   userId,
     //   postId,
     // )
