@@ -112,7 +112,10 @@ describe('createChatService', () => {
       const dbPostConfigVersion =
         await prisma.postConfigVersion.findFirstOrThrow({
           where: {
-            id: result.postConfigVersionId!,
+            postId: defaultPost.id,
+          },
+          orderBy: {
+            createdAt: 'desc',
           },
         })
 
