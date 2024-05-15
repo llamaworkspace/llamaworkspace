@@ -5,8 +5,8 @@ import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetch
 import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
 import {
-  UserOnWorkspaceContext,
   createUserOnWorkspaceContext,
+  type UserOnWorkspaceContext,
 } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicablePostConfigToChatService } from '@/server/chats/services/getApplicablePostConfigToChat.service'
 import { prisma } from '@/server/db'
