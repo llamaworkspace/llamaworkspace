@@ -1,8 +1,7 @@
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { deleteChatService } from '@/server/chats/services/deleteChat.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
-import { chatEditionFilter } from '../chatsBackendUtils'
 
 const zInput = z.object({
   id: z.string(),
@@ -18,19 +17,20 @@ export const deleteChat = protectedProcedure
     const chat = await ctx.prisma.chat.findFirstOrThrow({
       where: {
         id,
-        ...chatEditionFilter(userId),
+      },
+      include: {
+        post: {
+          select: {
+            workspaceId: true,
+          },
+        },
       },
     })
 
-    await new PermissionsVerifier(ctx.prisma).passOrThrowTrpcError(
-      PermissionAction.Use,
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      chat.post.workspaceId,
       userId,
-      chat.postId,
     )
-
-    return await ctx.prisma.chat.delete({
-      where: {
-        id: input.id,
-      },
-    })
+    return await deleteChatService(ctx.prisma, context, input)
   })
