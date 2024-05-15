@@ -68,7 +68,7 @@ describe('postUpdateService', () => {
     await subject(workspace.id, user.id, post.id, { title: 'A new title' })
 
     expect(spy).toHaveBeenCalledWith(
-      PermissionAction.Delete,
+      PermissionAction.Update,
       expect.anything(),
       expect.anything(),
     )

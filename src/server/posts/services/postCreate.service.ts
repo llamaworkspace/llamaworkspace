@@ -1,4 +1,3 @@
-import { workspaceEditionFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { Author } from '@/shared/aiTypesAndMappers'
@@ -33,16 +32,6 @@ export const postCreateService = async (
 
     const targetModel = user.defaultModel ?? DEFAULT_AI_MODEL
 
-    // Check edition permissions on workspace
-    await prisma.workspace.findUniqueOrThrow({
-      select: {
-        id: true,
-      },
-      where: {
-        id: workspaceId,
-        ...workspaceEditionFilter(userId),
-      },
-    })
     const post = await createPost(
       prisma,
       workspaceId,

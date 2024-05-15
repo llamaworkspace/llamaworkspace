@@ -24,7 +24,7 @@ export const postUpdateService = async (
     const { postId, ...payload } = input
 
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
-      PermissionAction.Delete,
+      PermissionAction.Update,
       userId,
       postId,
     )
