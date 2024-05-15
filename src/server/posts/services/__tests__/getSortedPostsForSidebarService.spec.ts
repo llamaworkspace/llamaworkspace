@@ -1,34 +1,22 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { PostConfigVersionFactory } from '@/server/testing/factories/PostConfigVersionFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { PostsOnUsersFactory } from '@/server/testing/factories/PostsOnUsersFactory'
 import { workspaceWithUsersAndPostsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndPosts.fixture'
-import type { Post, PostConfigVersion, User, Workspace } from '@prisma/client'
-import { getPostsListService } from '../getPostsList.service'
+import type { Post, User, Workspace } from '@prisma/client'
+import { getSortedPostsForSidebarService } from '../getSortedPostsForSidebar.service'
 
-type PostWithLatestConfig = Post & { latestConfig: PostConfigVersion }
-
-const subject = async (
-  userId: string,
-  workspaceId: string,
-  includeLatestConfig?: boolean,
-): Promise<Post[] | PostWithLatestConfig[]> => {
+const subject = async (userId: string, workspaceId: string) => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
 
-  if (includeLatestConfig) {
-    return await getPostsListService(prisma, context, {
-      includeLatestConfig: true,
-    })
-  }
-
-  return await getPostsListService(prisma, context)
+  return await getSortedPostsForSidebarService(prisma, context)
 }
 
-describe('getPostsListService', () => {
+describe('getSortedPostsForSidebarService', () => {
   let workspace: Workspace
   let user: User
   let otherUser: User
@@ -54,16 +42,35 @@ describe('getPostsListService', () => {
       fixture.postWithScopeEverybodyOfOtherUser
     postWithScopePrivate = fixture.postWithScopePrivate
     postWithScopePrivateOfOtherUser = fixture.postWithScopePrivateOfOtherUser
+
+    await PostsOnUsersFactory.create(prisma, {
+      postId: postWithScopeEverybody.id,
+      userId: user.id,
+      position: 1,
+    })
+
+    await PostsOnUsersFactory.create(prisma, {
+      postId: postWithScopeUser.id,
+      userId: user.id,
+      position: 2,
+    })
+
+    await PostsOnUsersFactory.create(prisma, {
+      postId: postWithScopeUserOfOtherUser.id,
+      userId: user.id,
+      position: 2,
+    })
+    await PostsOnUsersFactory.create(prisma, {
+      postId: postWithScopePrivateOfOtherUser.id,
+      userId: user.id,
+      position: 2,
+    })
   })
 
   it('returns the posts relevant to the user, in sorted form', async () => {
     const result = await subject(user.id, workspace.id)
-
     const expectedPostIdsSorted = [
-      postWithScopePrivate.id,
-      postWithScopeEverybodyOfOtherUser.id,
       postWithScopeEverybody.id,
-      postWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
       postWithScopeUser.id,
     ]
 
@@ -85,42 +92,5 @@ describe('getPostsListService', () => {
         isDefault: true,
       }),
     )
-  })
-
-  describe('when the latestPostConfig is requested', () => {
-    let nextPostConfigForPost1: PostConfigVersion
-
-    beforeEach(async () => {
-      nextPostConfigForPost1 = await PostConfigVersionFactory.create(prisma, {
-        postId: postWithScopeUser.id,
-      })
-    })
-    it('returns the posts with the latest post config', async () => {
-      const result = (await subject(
-        user.id,
-        workspace.id,
-        true,
-      )) as PostWithLatestConfig[]
-
-      const post2ConfigVersion =
-        await prisma.postConfigVersion.findFirstOrThrow({
-          where: {
-            postId: postWithScopeEverybody.id,
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
-        })
-
-      const resultScopeUser = result.find(
-        (post) => post.id === postWithScopeUser.id,
-      )
-      const resultScopeEverybody = result.find(
-        (post) => post.id === postWithScopeEverybody.id,
-      )
-      expect(resultScopeUser!.latestConfig.id).toBe(nextPostConfigForPost1.id)
-      expect(resultScopeEverybody!.latestConfig.id).toBe(post2ConfigVersion.id)
-      7
-    })
   })
 })
