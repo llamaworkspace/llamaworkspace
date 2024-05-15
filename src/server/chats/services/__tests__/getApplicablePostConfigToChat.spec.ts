@@ -10,7 +10,6 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type {
   Chat,
-  Message,
   Post,
   PostConfigVersion,
   User,
@@ -37,7 +36,6 @@ describe('getApplicablePostConfigToChat', () => {
   let user: User
   let post: Post
   let chat: Chat
-  let messages: Message[]
   let otherPostConfigVersion: PostConfigVersion
 
   beforeEach(async () => {
@@ -51,7 +49,7 @@ describe('getApplicablePostConfigToChat', () => {
       authorId: user.id,
       postId: post.id,
     })
-    messages = await Promise.mapSeries(
+    await Promise.mapSeries(
       Array.from({ length: 3 }),
       async () =>
         await MessageFactory.create(prisma, {

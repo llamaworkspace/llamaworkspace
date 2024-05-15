@@ -1,17 +1,30 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { PostConfigVersionFactory } from '@/server/testing/factories/PostConfigVersionFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { Post, PostConfigVersion, User, Workspace } from '@prisma/client'
 import { getPostsListService } from '../getPostsList.service'
 
-const subject = async (userId: string, workspaceId: string) => {
+type PostWithLatestConfig = Post & { latestConfig: PostConfigVersion }
+
+const subject = async (
+  userId: string,
+  workspaceId: string,
+  includeLatestConfig?: boolean,
+): Promise<Post[] | PostWithLatestConfig[]> => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
+
+  if (includeLatestConfig) {
+    return await getPostsListService(prisma, context, {
+      includeLatestConfig: true,
+    })
+  }
   return await getPostsListService(prisma, context)
 }
 
@@ -49,5 +62,35 @@ describe('getPostsListService', () => {
         expect.objectContaining(post2),
       ]),
     )
+  })
+
+  describe('when the latestPostConfig is requested', () => {
+    let nextPostConfigForPost1: PostConfigVersion
+
+    beforeEach(async () => {
+      nextPostConfigForPost1 = await PostConfigVersionFactory.create(prisma, {
+        postId: post1.id,
+      })
+    })
+    it('returns the posts with the latest post config', async () => {
+      const result = (await subject(
+        user.id,
+        workspace.id,
+        true,
+      )) as PostWithLatestConfig[]
+
+      const post2ConfigVersion =
+        await prisma.postConfigVersion.findFirstOrThrow({
+          where: {
+            postId: post2.id,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        })
+      expect(result[0]!.latestConfig.id).toBe(nextPostConfigForPost1.id)
+      expect(result[1]!.latestConfig.id).toBe(post2ConfigVersion.id)
+      7
+    })
   })
 })
