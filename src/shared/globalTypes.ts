@@ -17,8 +17,9 @@ export enum UserAccessLevelActions {
 }
 
 export enum ShareScope {
-  Everybody = 'everybody',
+  Private = 'private',
   User = 'user',
+  Everybody = 'everybody',
 }
 
 export enum SidebarInfoCardType {
