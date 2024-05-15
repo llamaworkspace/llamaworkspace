@@ -176,4 +176,24 @@ describe('postConfigVersionUpdateService', () => {
       )
     })
   })
+
+  describe('when the post is the default one', () => {
+    beforeEach(async () => {
+      await prisma.post.update({
+        where: {
+          id: post.id,
+        },
+        data: {
+          isDefault: true,
+        },
+      })
+    })
+    it('throws an error', async () => {
+      await expect(
+        subject(workspace.id, user.id, postConfigVersion.id, {
+          description: 'A new description',
+        }),
+      ).rejects.toThrow()
+    })
+  })
 })

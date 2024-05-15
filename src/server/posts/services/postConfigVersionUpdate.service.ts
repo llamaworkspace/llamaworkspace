@@ -8,6 +8,7 @@ import {
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { PostConfigVersion } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
 import { isUndefined, omit } from 'underscore'
 import { scopePostByWorkspace } from '../postUtils'
 
@@ -27,23 +28,36 @@ export const postConfigVersionUpdateService = async (
     const { userId, workspaceId } = uowContext
     const { id, systemMessage, ...payload } = input
 
-    const postConfigVersion = await prisma.postConfigVersion.findFirstOrThrow({
-      where: {
-        id,
-        post: scopePostByWorkspace({}, workspaceId),
-      },
-    })
+    const postConfigVersionWithPost =
+      await prisma.postConfigVersion.findFirstOrThrow({
+        where: {
+          id,
+          post: scopePostByWorkspace({}, workspaceId),
+        },
+        include: {
+          post: true,
+        },
+      })
+
+    const { post, ...postConfigVersion } = postConfigVersionWithPost
 
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Update,
       userId,
-      postConfigVersion.postId,
+      postConfigVersionWithPost.postId,
     )
+
+    if (post.isDefault) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Only default posts can be updated',
+      })
+    }
 
     let targetPostConfigVersion = postConfigVersion
     // If there are chats using the configversion, when we edit it, we create a new version
     // else we dont
-    const chatsCount = await getChatsCount(prisma, postConfigVersion.id)
+    const chatsCount = await getChatsCount(prisma, postConfigVersionWithPost.id)
 
     if (chatsCount) {
       targetPostConfigVersion = await duplicatePostConfigVersion(
