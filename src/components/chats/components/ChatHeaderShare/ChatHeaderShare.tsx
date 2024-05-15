@@ -7,6 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog'
 import {
   Tooltip,
@@ -44,7 +45,7 @@ export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
 
   return (
     <Dialog>
-      {/* <DialogTrigger asChild>{canInvite ? button : tooltip}</DialogTrigger> */}
+      <DialogTrigger asChild>{canInvite ? button : tooltip}</DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Share GPT access</DialogTitle>

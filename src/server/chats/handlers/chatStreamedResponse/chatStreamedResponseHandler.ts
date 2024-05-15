@@ -1,4 +1,3 @@
-import { chatEditionFilter } from '@/components/chats/backend/chatsBackendUtils'
 import { ensureError } from '@/lib/utils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
@@ -42,8 +41,8 @@ async function handler(req: Request) {
   try {
     const { chatId } = await getParsedBody(req)
     const userId = await getRequestUserId()
-
-    const chat = await getChat(chatId, userId)
+    const chat = await getChat(chatId)
+    await validateUserPermissionsOrThrow(userId, chatId)
     const workspaceId = chat.post.workspaceId
 
     const context = await createUserOnWorkspaceContext(
@@ -54,10 +53,9 @@ async function handler(req: Request) {
 
     const [postConfigVersion, messages] = await Promise.all([
       await getPostConfigVersionForChat(context, chatId),
-      await getParsedMessagesForChat(chatId, userId),
+      await getParsedMessagesForChat(chatId),
     ])
 
-    await validateUserPermissionsOrThrow(userId, chatId)
     await validateModelIsEnabledOrThrow(
       workspaceId,
       userId,
@@ -152,7 +150,9 @@ const validateUserPermissionsOrThrow = async (
   const chat = await prisma.chat.findFirstOrThrow({
     where: {
       id: chatId,
-      ...chatEditionFilter(userId),
+    },
+    include: {
+      post: true,
     },
   })
 
@@ -206,11 +206,10 @@ const validateModelIsEnabledOrThrow = async (
   return true
 }
 
-const getChat = async (chatId: string, userId: string) => {
+const getChat = async (chatId: string) => {
   return await prisma.chat.findFirstOrThrow({
     where: {
       id: chatId,
-      ...chatEditionFilter(userId),
     },
     include: {
       post: {
@@ -245,13 +244,10 @@ const attachPostConfigVersionToChat = async (
   })
 }
 
-const getParsedMessagesForChat = async (chatId: string, userId: string) => {
+const getParsedMessagesForChat = async (chatId: string) => {
   return await prisma.message.findMany({
     where: {
       chatId,
-      chat: {
-        ...chatEditionFilter(userId),
-      },
     },
     orderBy: {
       createdAt: 'asc',
