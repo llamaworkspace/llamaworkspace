@@ -6,7 +6,7 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import type { Post, User, Workspace } from '@prisma/client'
 
-jest.mock('@/server/shares/services/performPostInvite.service')
+jest.mock('@/server/shares/services/performPostShare.service')
 
 const subject = async (userId: string, postId: string, email: string) => {
   const { caller } = trpcContextSetupHelper(prisma, userId)

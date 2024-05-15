@@ -24,7 +24,7 @@ const mockedInviteToWorkspace =
 
 const mockedSendEmail = sendEmail as MockedSendEmail
 
-jest.mock('@/server/workspaces/services/performPostShare.service', () => {
+jest.mock('@/server/workspaces/services/inviteToWorkspace.service', () => {
   return {
     inviteToWorkspaceService: jest.fn(),
   }
