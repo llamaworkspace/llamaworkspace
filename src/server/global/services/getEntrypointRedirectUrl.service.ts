@@ -1,5 +1,7 @@
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { scopePostByWorkspace } from '@/server/posts/postUtils'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { getLatestWorkspaceForUserService } from '../../workspaces/services/getLatestWorkspaceForUser.service'
 
 export const getEntrypointRedirectUrlService = async (
@@ -20,7 +22,7 @@ export const getEntrypointRedirectUrlService = async (
   if (chatRuns) {
     return await handleCaseChatRunsExist(prisma, workspace.id)
   }
-  return await handleCaseNoChatRuns(prisma, workspace.id)
+  return await handleCaseNoChatRuns(prisma, workspace.id, userId)
 }
 
 const handleCaseChatRunsExist = async (
@@ -63,6 +65,7 @@ const handleCaseChatRunsExist = async (
 const handleCaseNoChatRuns = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
+  userId: string,
 ) => {
   const demoChatbot = await prisma.post.findFirst({
     where: scopePostByWorkspace(
@@ -74,7 +77,14 @@ const handleCaseNoChatRuns = async (
   })
 
   if (demoChatbot) {
-    return { url: `/p/${demoChatbot.id}` }
+    const canAccessDemoChatbot = await new PermissionsVerifier(prisma).call(
+      PermissionAction.Use,
+      userId,
+      demoChatbot.id,
+    )
+    if (canAccessDemoChatbot) {
+      return { url: `/p/${demoChatbot.id}` }
+    }
   }
 
   return { url: `/c/new?workspaceId=${workspaceId}` }
