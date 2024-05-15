@@ -73,7 +73,17 @@ export const SettingsMembersTable = () => {
           return (
             <div className="flex flex-row gap-2">
               {row.original.name}
-              {row.original.inviteId && <span>-</span>}
+              {row.original.inviteId && (
+                <>
+                  <span className="italic text-zinc-400">
+                    {row.original.email}
+                  </span>
+                  <Badge variant="yellow" size="xs">
+                    Invited
+                  </Badge>
+                </>
+              )}
+
               {row.original.role === WorkspaceMemberRole.Owner && (
                 <span className=" text-zinc-400">(Owner)</span>
               )}
@@ -89,11 +99,6 @@ export const SettingsMembersTable = () => {
           return (
             <div className="flex items-center gap-x-2">
               <div>{row.original.email}</div>
-              {row.original.inviteId && (
-                <Badge variant="yellow" size="xs">
-                  Invited
-                </Badge>
-              )}
             </div>
           )
         },

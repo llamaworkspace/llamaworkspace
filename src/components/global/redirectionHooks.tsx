@@ -1,10 +1,13 @@
 import { useDefaultPost } from '@/components/posts/postsHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { useCallback, useEffect, useState } from 'react'
+import { isBoolean } from 'underscore'
 import {
   useCreateChatForApp,
   useCreateStandaloneChat,
 } from '../chats/chatHooks'
+import { useCanPerformActionForPost } from '../permissions/permissionsHooks'
 
 /**
  * Hook that automatically redirects to the latest post in the current workspace.
@@ -12,12 +15,15 @@ import {
  */
 export function useDefaultPageRedirection() {
   const navigation = useNavigation()
+  const postId = navigation.query?.post_id as string
+  const workspaceId = navigation.query?.workspace_id as string
   const { mutate: createStandaloneChat } = useCreateStandaloneChat()
   const { mutate: createChatForApp } = useCreateChatForApp()
   const { data: defaultPost } = useDefaultPost()
-
-  const postId = navigation.query?.post_id as string
-  const workspaceId = navigation.query?.workspace_id as string
+  const { data: canUse } = useCanPerformActionForPost(
+    PermissionAction.Use,
+    postId,
+  )
 
   const [redirectIsCalled, setRedirectIsCalled] = useState(false)
   const [isExecuted, setIsExecuted] = useState(false)
@@ -30,10 +36,12 @@ export function useDefaultPageRedirection() {
     if (!redirectIsCalled) return
     if (isExecuted) return
 
-    if (postId) {
+    // When the user does not have permission access to the postId: redirect to the default
+    if (postId && isBoolean(canUse)) {
       if (!defaultPost) return
-      if (postId === defaultPost.id) {
-        setIsExecuted(true)
+      setIsExecuted(true)
+
+      if (postId === defaultPost.id || !canUse) {
         void createStandaloneChat()
       } else {
         void createChatForApp({ postId })
@@ -54,6 +62,7 @@ export function useDefaultPageRedirection() {
     createChatForApp,
     navigation,
     workspaceId,
+    canUse,
   ])
 
   return {
