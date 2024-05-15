@@ -12,7 +12,7 @@ const generalAccessOptions = [
   { value: ShareScope.Private.toString(), label: 'Only me' },
   {
     value: ShareScope.Everybody.toString(),
-    label: 'Every workspace member',
+    label: 'All workspace members',
   },
   { value: ShareScope.User.toString(), label: 'Specific people' },
 ]

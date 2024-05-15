@@ -1,8 +1,5 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
 import { workspacesCancelInvite } from './procedures/workspacesCancelInvite'
-import { workspacesGetWorkspace } from './procedures/workspacesGetWorkspace'
-import { workspacesGetWorkspaceIdForChat } from './procedures/workspacesGetWorkspaceIdForChat'
-import { workspacesGetWorkspaceIdForPost } from './procedures/workspacesGetWorkspaceIdForPost'
 import { workspacesGetWorkspaceMembers } from './procedures/workspacesGetWorkspaceMembers'
 import { workspacesGetWorkspaces } from './procedures/workspacesGetWorkspaces'
 import { workspacesInviteUserToWorkspace } from './procedures/workspacesInviteUserToWorkspace'
@@ -10,10 +7,7 @@ import { workspacesRevokeWorkspaceMemberAccess } from './procedures/workspacesRe
 import { workspacesUpdateWorkspace } from './procedures/workspacesUpdateWorkspace'
 
 export const workspacesRouter = createTRPCRouter({
-  getWorkspace: workspacesGetWorkspace,
   getWorkspaces: workspacesGetWorkspaces,
-  getWorkspaceIdForPost: workspacesGetWorkspaceIdForPost,
-  getWorkspaceIdForChat: workspacesGetWorkspaceIdForChat,
   getWorkspaceMembers: workspacesGetWorkspaceMembers,
   updateWorkspace: workspacesUpdateWorkspace,
   inviteUserToWorkspace: workspacesInviteUserToWorkspace,
