@@ -15,7 +15,7 @@ import { postsUpdate } from './procedures/postsUpdate'
 export const postsRouter = createTRPCRouter({
   getDefault: postsGetDefault,
   getList: postsGetList,
-  getById: postsGetById, // not moved to a service
+  getById: postsGetById,
   create: postsCreate,
   update: postsUpdate,
   delete: postsDelete,
