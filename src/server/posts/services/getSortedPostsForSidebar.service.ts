@@ -20,6 +20,11 @@ export const getSortedPostsForSidebarService = async function (
   const visiblePosts = await getPostsListService(prisma, uowContext)
   const visiblePostIds = visiblePosts.map((post) => post.id)
 
+  // Keep this early return to avoid Prisma.join to fail when the array is empty
+  if (!visiblePostIds.length) {
+    return []
+  }
+
   const result = await prisma.$queryRaw`
     SELECT
       "Post"."id" as "id",

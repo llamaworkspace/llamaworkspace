@@ -3,7 +3,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { UserAccessLevel } from '@/shared/globalTypes'
+import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Post, User, Workspace } from '@prisma/client'
 import { PermissionsVerifier } from '../PermissionsVerifier'
@@ -77,7 +77,16 @@ describe('PermissionsVerifier ', () => {
       action: PermissionAction,
       userId: string,
       postId: string,
+      postScope: ShareScope,
     ) => {
+      await prisma.share.update({
+        where: {
+          postId,
+        },
+        data: {
+          scope: postScope,
+        },
+      })
       return await new PermissionsVerifier(prisma).call(action, userId, postId)
     }
 
@@ -98,187 +107,489 @@ describe('PermissionsVerifier ', () => {
       })
     })
 
-    describe('when the user is owner of the post', () => {
-      it('allows update', async () => {
-        expect(await subject(PermissionAction.Update, user.id, post.id)).toBe(
-          true,
-        )
+    describe('when the share scope is User', () => {
+      describe('when the user is owner of the post', () => {
+        it('allows update', async () => {
+          expect(
+            await subject(
+              PermissionAction.Update,
+              user.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
+        it('allows delete', async () => {
+          expect(
+            await subject(
+              PermissionAction.Delete,
+              user.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
+        it('allows invite', async () => {
+          expect(
+            await subject(
+              PermissionAction.Invite,
+              user.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
+        it('allows use', async () => {
+          expect(
+            await subject(
+              PermissionAction.Use,
+              user.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
       })
-      it('allows delete', async () => {
-        expect(await subject(PermissionAction.Delete, user.id, post.id)).toBe(
-          true,
-        )
+
+      describe('when the user is editor of the post', () => {
+        let targetUser: User
+        beforeEach(async () => {
+          targetUser = await UserFactory.create(prisma, {
+            workspaceId: workspace.id,
+          })
+
+          const share = await prisma.share.findFirstOrThrow({
+            where: {
+              postId: post.id,
+            },
+          })
+
+          await ShareTargetFactory.create(prisma, {
+            sharerId: user.id,
+            shareId: share.id,
+            userId: targetUser.id,
+            accessLevel: UserAccessLevel.Edit,
+          })
+        })
+        it('allows update', async () => {
+          expect(
+            await subject(
+              PermissionAction.Update,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
+        it('does not allow delete', async () => {
+          expect(
+            await subject(
+              PermissionAction.Delete,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
+        it('allows invite', async () => {
+          expect(
+            await subject(
+              PermissionAction.Invite,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
+        it('allows use', async () => {
+          expect(
+            await subject(
+              PermissionAction.Use,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
       })
-      it('allows invite', async () => {
-        expect(await subject(PermissionAction.Invite, user.id, post.id)).toBe(
-          true,
-        )
+
+      describe('when the user is invited to the post', () => {
+        let targetUser: User
+        beforeEach(async () => {
+          targetUser = await UserFactory.create(prisma, {
+            workspaceId: workspace.id,
+          })
+
+          const share = await prisma.share.findFirstOrThrow({
+            where: {
+              postId: post.id,
+            },
+          })
+
+          await ShareTargetFactory.create(prisma, {
+            sharerId: user.id,
+            shareId: share.id,
+            userId: targetUser.id,
+            accessLevel: UserAccessLevel.Invite,
+          })
+        })
+        it('allows update', async () => {
+          expect(
+            await subject(
+              PermissionAction.Update,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
+        it('does not allow delete', async () => {
+          expect(
+            await subject(
+              PermissionAction.Delete,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
+        it('allows invite', async () => {
+          expect(
+            await subject(
+              PermissionAction.Invite,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
+        it('allows use', async () => {
+          expect(
+            await subject(
+              PermissionAction.Use,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
       })
-      it('allows user', async () => {
-        expect(await subject(PermissionAction.Use, user.id, post.id)).toBe(true)
+
+      describe('when the user is a "user" of the post', () => {
+        let targetUser: User
+        beforeEach(async () => {
+          targetUser = await UserFactory.create(prisma, {
+            workspaceId: workspace.id,
+          })
+
+          const share = await prisma.share.findFirstOrThrow({
+            where: {
+              postId: post.id,
+            },
+          })
+
+          await ShareTargetFactory.create(prisma, {
+            sharerId: user.id,
+            shareId: share.id,
+            userId: targetUser.id,
+            accessLevel: UserAccessLevel.Use,
+          })
+        })
+
+        it('allows update', async () => {
+          expect(
+            await subject(
+              PermissionAction.Update,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
+        it('does not allow delete', async () => {
+          expect(
+            await subject(
+              PermissionAction.Delete,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
+        it('allows invite', async () => {
+          expect(
+            await subject(
+              PermissionAction.Invite,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
+        it('allows use', async () => {
+          expect(
+            await subject(
+              PermissionAction.Use,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(true)
+        })
+      })
+
+      describe('when the user is not related to the post', () => {
+        let targetUser: User
+        beforeEach(async () => {
+          targetUser = await UserFactory.create(prisma, {
+            workspaceId: workspace.id,
+          })
+        })
+        it('does not allow update', async () => {
+          expect(
+            await subject(
+              PermissionAction.Update,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
+        it('does not allow delete', async () => {
+          expect(
+            await subject(
+              PermissionAction.Delete,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
+        it('does not allow invite', async () => {
+          expect(
+            await subject(
+              PermissionAction.Invite,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
+        it('does not allow user', async () => {
+          expect(
+            await subject(
+              PermissionAction.Use,
+              targetUser.id,
+              post.id,
+              ShareScope.User,
+            ),
+          ).toBe(false)
+        })
       })
     })
 
-    describe('when the user is editor of the post', () => {
-      let targetUser: User
-      beforeEach(async () => {
-        workspace = await WorkspaceFactory.create(prisma)
-
-        targetUser = await UserFactory.create(prisma, {
-          workspaceId: workspace.id,
+    describe('when the share scope is Private', () => {
+      describe('when the user is author of the post', () => {
+        it('allows update', async () => {
+          expect(
+            await subject(
+              PermissionAction.Update,
+              user.id,
+              post.id,
+              ShareScope.Private,
+            ),
+          ).toBe(true)
         })
-
-        const share = await prisma.share.findFirstOrThrow({
-          where: {
-            postId: post.id,
-          },
+        it('allows delete', async () => {
+          expect(
+            await subject(
+              PermissionAction.Delete,
+              user.id,
+              post.id,
+              ShareScope.Private,
+            ),
+          ).toBe(true)
         })
-
-        await ShareTargetFactory.create(prisma, {
-          sharerId: user.id,
-          shareId: share.id,
-          userId: targetUser.id,
-          accessLevel: UserAccessLevel.Edit,
+        it('allows invite', async () => {
+          expect(
+            await subject(
+              PermissionAction.Invite,
+              user.id,
+              post.id,
+              ShareScope.Private,
+            ),
+          ).toBe(true)
+        })
+        it('allows use', async () => {
+          expect(
+            await subject(
+              PermissionAction.Use,
+              user.id,
+              post.id,
+              ShareScope.Private,
+            ),
+          ).toBe(true)
         })
       })
-      it('allows update', async () => {
-        expect(
-          await subject(PermissionAction.Update, targetUser.id, post.id),
-        ).toBe(true)
+
+      describe('when the user is NOT author of the post', () => {
+        beforeEach(async () => {
+          user = await UserFactory.create(prisma, {
+            workspaceId: workspace.id,
+          })
+        })
+        it('does not allow update', async () => {
+          expect(
+            await subject(
+              PermissionAction.Update,
+              user.id,
+              post.id,
+              ShareScope.Private,
+            ),
+          ).toBe(false)
+        })
+        it('does not allow delete', async () => {
+          expect(
+            await subject(
+              PermissionAction.Delete,
+              user.id,
+              post.id,
+              ShareScope.Private,
+            ),
+          ).toBe(false)
+        })
+        it('does not allow invite', async () => {
+          expect(
+            await subject(
+              PermissionAction.Invite,
+              user.id,
+              post.id,
+              ShareScope.Private,
+            ),
+          ).toBe(false)
+        })
+        it('does not allow use', async () => {
+          expect(
+            await subject(
+              PermissionAction.Use,
+              user.id,
+              post.id,
+              ShareScope.Private,
+            ),
+          ).toBe(false)
+        })
       })
-      it('does not allow delete', async () => {
-        expect(
-          await subject(PermissionAction.Delete, targetUser.id, post.id),
-        ).toBe(false)
+    })
+    describe('when the share scope is Everybody', () => {
+      describe('when the user is author of the post', () => {
+        it('allows update', async () => {
+          expect(
+            await subject(
+              PermissionAction.Update,
+              user.id,
+              post.id,
+              ShareScope.Everybody,
+            ),
+          ).toBe(true)
+        })
+        it('allows delete', async () => {
+          expect(
+            await subject(
+              PermissionAction.Delete,
+              user.id,
+              post.id,
+              ShareScope.Everybody,
+            ),
+          ).toBe(true)
+        })
+        it('allows invite', async () => {
+          expect(
+            await subject(
+              PermissionAction.Invite,
+              user.id,
+              post.id,
+              ShareScope.Everybody,
+            ),
+          ).toBe(true)
+        })
+        it('allows use', async () => {
+          expect(
+            await subject(
+              PermissionAction.Use,
+              user.id,
+              post.id,
+              ShareScope.Everybody,
+            ),
+          ).toBe(true)
+        })
       })
-      it('allows invite', async () => {
-        expect(
-          await subject(PermissionAction.Invite, targetUser.id, post.id),
-        ).toBe(true)
-      })
-      it('allows user', async () => {
-        expect(
-          await subject(PermissionAction.Use, targetUser.id, post.id),
-        ).toBe(true)
+
+      describe('when the user is NOT author of the post', () => {
+        beforeEach(async () => {
+          user = await UserFactory.create(prisma, {
+            workspaceId: workspace.id,
+          })
+        })
+        it('allows update', async () => {
+          expect(
+            await subject(
+              PermissionAction.Update,
+              user.id,
+              post.id,
+              ShareScope.Everybody,
+            ),
+          ).toBe(true)
+        })
+        it('allows delete', async () => {
+          expect(
+            await subject(
+              PermissionAction.Delete,
+              user.id,
+              post.id,
+              ShareScope.Everybody,
+            ),
+          ).toBe(true)
+        })
+        it('allows invite', async () => {
+          expect(
+            await subject(
+              PermissionAction.Invite,
+              user.id,
+              post.id,
+              ShareScope.Everybody,
+            ),
+          ).toBe(true)
+        })
+        it('allows use', async () => {
+          expect(
+            await subject(
+              PermissionAction.Use,
+              user.id,
+              post.id,
+              ShareScope.Everybody,
+            ),
+          ).toBe(true)
+        })
       })
     })
 
-    describe('when the user is invited to the post', () => {
+    describe('when the user does not belong to the same workspace', () => {
       let targetUser: User
       beforeEach(async () => {
         workspace = await WorkspaceFactory.create(prisma)
-
-        targetUser = await UserFactory.create(prisma, {
-          workspaceId: workspace.id,
-        })
-
-        const share = await prisma.share.findFirstOrThrow({
-          where: {
-            postId: post.id,
-          },
-        })
-
-        await ShareTargetFactory.create(prisma, {
-          sharerId: user.id,
-          shareId: share.id,
-          userId: targetUser.id,
-          accessLevel: UserAccessLevel.Invite,
-        })
-      })
-      it('allows update', async () => {
-        expect(
-          await subject(PermissionAction.Update, targetUser.id, post.id),
-        ).toBe(false)
-      })
-      it('does not allow delete', async () => {
-        expect(
-          await subject(PermissionAction.Delete, targetUser.id, post.id),
-        ).toBe(false)
-      })
-      it('allows invite', async () => {
-        expect(
-          await subject(PermissionAction.Invite, targetUser.id, post.id),
-        ).toBe(true)
-      })
-      it('allows user', async () => {
-        expect(
-          await subject(PermissionAction.Use, targetUser.id, post.id),
-        ).toBe(true)
-      })
-    })
-
-    describe('when the user is a "user" of the post', () => {
-      let targetUser: User
-      beforeEach(async () => {
-        workspace = await WorkspaceFactory.create(prisma)
-
-        targetUser = await UserFactory.create(prisma, {
-          workspaceId: workspace.id,
-        })
-
-        const share = await prisma.share.findFirstOrThrow({
-          where: {
-            postId: post.id,
-          },
-        })
-
-        await ShareTargetFactory.create(prisma, {
-          sharerId: user.id,
-          shareId: share.id,
-          userId: targetUser.id,
-          accessLevel: UserAccessLevel.Use,
-        })
-      })
-      it('allows update', async () => {
-        expect(
-          await subject(PermissionAction.Update, targetUser.id, post.id),
-        ).toBe(false)
-      })
-      it('does not allow delete', async () => {
-        expect(
-          await subject(PermissionAction.Delete, targetUser.id, post.id),
-        ).toBe(false)
-      })
-      it('allows invite', async () => {
-        expect(
-          await subject(PermissionAction.Invite, targetUser.id, post.id),
-        ).toBe(false)
-      })
-      it('allows user', async () => {
-        expect(
-          await subject(PermissionAction.Use, targetUser.id, post.id),
-        ).toBe(true)
-      })
-    })
-
-    describe('when the user is not related to the post', () => {
-      let targetUser: User
-      beforeEach(async () => {
-        workspace = await WorkspaceFactory.create(prisma)
-
         targetUser = await UserFactory.create(prisma, {
           workspaceId: workspace.id,
         })
       })
-      it('does not allow update', async () => {
-        expect(
-          await subject(PermissionAction.Update, targetUser.id, post.id),
-        ).toBe(false)
-      })
-      it('does not allow delete', async () => {
-        expect(
-          await subject(PermissionAction.Delete, targetUser.id, post.id),
-        ).toBe(false)
-      })
-      it('does not allow invite', async () => {
-        expect(
-          await subject(PermissionAction.Invite, targetUser.id, post.id),
-        ).toBe(false)
-      })
-      it('does not allow user', async () => {
-        expect(
-          await subject(PermissionAction.Use, targetUser.id, post.id),
-        ).toBe(false)
+      it('throws an error', async () => {
+        await expect(
+          subject(
+            PermissionAction.Update,
+            targetUser.id,
+            post.id,
+            ShareScope.User,
+          ),
+        ).rejects.toThrow()
       })
     })
   })
