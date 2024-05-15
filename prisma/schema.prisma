@@ -60,8 +60,6 @@ model User {
     accounts             Account[]
     posts                Post[]
     sessions             Session[]
-    postShares           PostShare[]
-    invites              Invite[]
     workspaces           UsersOnWorkspaces[]
     authoredChats        Chat[]
     workspaceInvitesSent WorkspaceInvite[]
@@ -125,7 +123,6 @@ model Post {
     user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
     workspace          Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     chats              Chat[]
-    postShares         PostShare[]
     postConfigVersions PostConfigVersion[]
     shares             Share[]
     usersMeta          PostsOnUsers[]
@@ -144,19 +141,6 @@ model PostsOnUsers {
     updatedAt     DateTime  @updatedAt
 
     @@unique([userId, postId])
-}
-
-model PostShare {
-    id          String   @id @default(cuid())
-    postId      String
-    post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-    userId      String?
-    user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    inviteId    String?  @unique
-    invite      Invite?  @relation(fields: [inviteId], references: [id], onDelete: Cascade)
-    accessLevel String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
 }
 
 model Share {
@@ -186,18 +170,6 @@ model ShareTarget {
     // @@unique([shareId, userId])
     // @@unique([shareId, workspaceInviteId])
     @@index(workspaceInviteId)
-}
-
-model Invite {
-    id          String     @id @default(cuid())
-    email       String
-    invitedById String
-    invitedBy   User       @relation(fields: [invitedById], references: [id], onDelete: Cascade)
-    token       String     @unique
-    completedAt DateTime?
-    createdAt   DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
-    postShare   PostShare?
 }
 
 model Chat {
