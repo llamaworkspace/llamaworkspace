@@ -99,7 +99,7 @@ const createDefaultShare = async (
   return await prisma.share.create({
     data: {
       postId: postId,
-      scope: ShareScope.User,
+      scope: ShareScope.Private,
       shareTargets: {
         create: [
           {

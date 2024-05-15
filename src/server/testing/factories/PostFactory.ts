@@ -30,7 +30,7 @@ export const PostFactory = {
     const sharesPayload = {
       create: [
         {
-          scope: ShareScope.User,
+          scope: ShareScope.Private,
           shareTargets: {
             create: [
               {

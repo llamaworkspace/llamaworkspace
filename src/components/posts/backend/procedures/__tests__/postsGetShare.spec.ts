@@ -53,7 +53,7 @@ describe('postsGetShares', () => {
     expect(response).toEqual(
       expect.objectContaining({
         postId: post.id,
-        scope: ShareScope.User,
+        scope: ShareScope.Private,
       }),
     )
 

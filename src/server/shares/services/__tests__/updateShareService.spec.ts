@@ -48,7 +48,7 @@ describe('updateShareService', () => {
   })
 
   it('updates the access scope', async () => {
-    expect(share.scope).toBe(ShareScope.User)
+    expect(share.scope).toBe(ShareScope.Private)
     await subject(
       userCreatingPost.id,
       workspace.id,

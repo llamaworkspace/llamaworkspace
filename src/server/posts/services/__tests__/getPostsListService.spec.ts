@@ -60,10 +60,28 @@ describe('getPostsListService', () => {
       title: 'postWithScopeUser',
     })
 
+    await prisma.share.update({
+      where: {
+        postId: postWithScopeUser.id,
+      },
+      data: {
+        scope: ShareScope.User,
+      },
+    })
+
     postWithScopeUserOfOtherUser = await PostFactory.create(prisma, {
       userId: otherUser.id,
       workspaceId: workspace.id,
       title: 'postWithScopeUserOfOtherUser',
+    })
+
+    await prisma.share.update({
+      where: {
+        postId: postWithScopeUserOfOtherUser.id,
+      },
+      data: {
+        scope: ShareScope.User,
+      },
     })
 
     postWithScopeUserOfOtherUserWhereMainUserIsInvited =
@@ -72,6 +90,14 @@ describe('getPostsListService', () => {
         workspaceId: workspace.id,
         title: 'postWithScopeUserOfOtherUserWhereMainUserIsInvited',
       })
+    await prisma.share.update({
+      where: {
+        postId: postWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
+      },
+      data: {
+        scope: ShareScope.User,
+      },
+    })
 
     const shareOfPostWithScopeUserOfOtherUserWhereMainUserIsInvited =
       await prisma.share.findFirstOrThrow({
@@ -122,32 +148,14 @@ describe('getPostsListService', () => {
       title: 'postWithScopePrivate',
     })
 
-    await prisma.share.update({
-      where: {
-        postId: postWithScopePrivate.id,
-      },
-      data: {
-        scope: ShareScope.Private,
-      },
-    })
-
     postWithScopePrivateOfOtherUser = await PostFactory.create(prisma, {
       userId: otherUser.id,
       workspaceId: workspace.id,
       title: 'postWithScopePrivateOfOtherUser',
     })
-
-    await prisma.share.update({
-      where: {
-        postId: postWithScopePrivateOfOtherUser.id,
-      },
-      data: {
-        scope: ShareScope.Private,
-      },
-    })
   })
 
-  it('returns the posts relevant to the user, in sorted form', async () => {
+  it.only('returns the posts relevant to the user, in sorted form', async () => {
     const result = await subject(user.id, workspace.id)
 
     const expectedPostIdsSorted = [

@@ -103,7 +103,7 @@ describe('postsSharePerformService', () => {
 
       expect(result).toMatchObject({
         postId: post.id,
-        scope: ShareScope.User,
+        scope: ShareScope.Private,
         shareTargets: [
           expect.objectContaining({
             sharerId: invitingUser.id,
@@ -208,7 +208,7 @@ describe('postsSharePerformService', () => {
 
       expect(share).toMatchObject({
         postId: post.id,
-        scope: ShareScope.User,
+        scope: ShareScope.Private,
       })
       expect(share.shareTargets).toEqual([
         expect.objectContaining({

@@ -6,7 +6,6 @@ import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { inviteToWorkspaceService } from '@/server/workspaces/services/inviteToWorkspace.service'
 import { WorkspaceInviteSources } from '@/server/workspaces/workspaceTypes'
 import {
-  ShareScope,
   UserAccessLevel,
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
@@ -115,7 +114,7 @@ const handleInvitedUserDoesNotExist = async (
     })
   }
 
-  const share = await getOrCreateShare(prisma, postId)
+  const share = await getShare(prisma, postId)
 
   await prisma.shareTarget.create({
     data: {
@@ -168,7 +167,7 @@ const handleInvitedUserExists = async (
     })
   }
 
-  const share = await getOrCreateShare(prisma, postId)
+  const share = await getShare(prisma, postId)
 
   await prisma.shareTarget.create({
     data: {
@@ -201,25 +200,12 @@ const handleInvitedUserExists = async (
   return await getPostSharesService(prisma, uowContext, { postId })
 }
 
-const getOrCreateShare = async (prisma: PrismaTrxClient, postId: string) => {
-  const shares = await prisma.share.findMany({
+const getShare = async (prisma: PrismaTrxClient, postId: string) => {
+  return await prisma.share.findFirstOrThrow({
     where: {
       postId,
     },
   })
-
-  let shareUseScope = shares.find(
-    (share) => share.scope === ShareScope.User.toString(),
-  )
-  if (!shareUseScope) {
-    shareUseScope = await prisma.share.create({
-      data: {
-        postId,
-        scope: ShareScope.User,
-      },
-    })
-  }
-  return shareUseScope
 }
 
 const sendShareNotificationEmail = async (
