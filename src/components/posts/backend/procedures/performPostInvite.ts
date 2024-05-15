@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { sharePerformService } from '@/server/shares/services/sharePerform.service'
+import { performPostInviteService } from '@/server/shares/services/performPostInvite.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -8,7 +8,7 @@ const zInput = z.object({
   email: z.string().email(),
 })
 
-export const postsSharePerform = protectedProcedure
+export const performPostInvite = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const invitingUserId = ctx.session.user.id
@@ -22,7 +22,7 @@ export const postsSharePerform = protectedProcedure
       post.workspaceId,
       invitingUserId,
     )
-    return await sharePerformService(ctx.prisma, context, {
+    return await performPostInviteService(ctx.prisma, context, {
       email: input.email,
       postId: input.postId,
     })

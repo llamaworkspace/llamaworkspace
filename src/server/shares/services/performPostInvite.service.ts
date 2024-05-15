@@ -22,7 +22,7 @@ interface SharePerformPayload {
   postId: string
 }
 
-export const sharePerformService = async (
+export const performPostInviteService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   payload: SharePerformPayload,

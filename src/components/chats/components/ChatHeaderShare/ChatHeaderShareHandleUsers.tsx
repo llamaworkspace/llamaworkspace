@@ -1,6 +1,6 @@
 import {
+  usePostPerformInvite,
   usePostShare,
-  usePostSharePerform,
 } from '@/components/posts/postsHooks'
 import type { ComponentWithPostId } from '@/components/posts/postsTypes'
 import { Button } from '@/components/ui/button'
@@ -25,7 +25,7 @@ export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
   const toast = useSuccessToast()
 
   const { data: share } = usePostShare(postId)
-  const { mutate: performShare } = usePostSharePerform()
+  const { mutate: performShare } = usePostPerformInvite()
 
   const handleSubmit = ({ email }: FormShape, form: FormApi<FormShape>) => {
     performShare(
