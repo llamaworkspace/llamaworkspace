@@ -38,7 +38,7 @@ export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
       </TooltipTrigger>
       {/* mr-2 ensures that the tooltip does not stick to the right of the browser */}
       <TooltipContent className="mr-2">
-        <p>You do not have enough permissions to share this GPT.</p>
+        <p>You do not have sharing permissions for this GPT.</p>
       </TooltipContent>
     </Tooltip>
   )

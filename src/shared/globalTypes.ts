@@ -4,6 +4,7 @@ import type { DefaultArgs } from '@prisma/client/runtime/library'
 export enum UserAccessLevel {
   Owner = 'owner',
   Edit = 'edit',
+  EditWithoutInvite = 'edit_without_invite',
   Invite = 'invite',
   Use = 'use',
 }
@@ -11,6 +12,7 @@ export enum UserAccessLevel {
 export enum UserAccessLevelActions {
   Owner = UserAccessLevel.Owner,
   Edit = UserAccessLevel.Edit,
+  EditWithoutInvite = UserAccessLevel.EditWithoutInvite,
   Invite = UserAccessLevel.Invite,
   Use = UserAccessLevel.Use,
   Remove = 'remove',
