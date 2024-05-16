@@ -204,10 +204,9 @@ ${inviteeName} has invited you to the following workspace at Joia: ${workspaceNa
 To enter the workspace, please click on the following link:
 ${workspaceUrl}
 
-If you do not have an account, you will be prompted to create one. You must use the following email address to create your account, otherwise the invitation won't work:
-${email}
+If you do not have an account, you will be prompted to create one. You must use the email "${email}" to create your account, otherwise the invitation won't work.
 
-Reach out to us by replying to this email if you have any doubts or trouble signing up.
+If you have any doubts or trouble signing up, please do not hesitate to reach out to us by replying to this email.
 
 All the best,
 The Joia team`
