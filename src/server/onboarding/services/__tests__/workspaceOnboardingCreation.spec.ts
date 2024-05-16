@@ -2,6 +2,7 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { ShareScope } from '@/shared/globalTypes'
 import { onboardingTexts } from '../onboardingTexts'
 import { workspaceOnboardingCreationService } from '../workspaceOnboardingCreation.service'
 
@@ -25,31 +26,32 @@ describe('workspaceOnboardingCreationService', () => {
       where: {
         userId: user.id,
       },
+      include: {
+        shares: true,
+      },
     })
 
     expect(post).toMatchObject({
       title: "Joia's fun facts teller",
     })
+    expect(post.shares[0]!.scope).toBe(ShareScope.Everybody.toString())
   })
 
-  it.skip('creates the default instructions', async () => {
+  it('creates the default instructions', async () => {
     const user = await subject()
 
-    const postConfigVersion = await prisma.postConfigVersion.findFirstOrThrow({
+    const post = await prisma.post.findFirstOrThrow({
       where: {
-        post: {
-          postShares: {
-            some: {
-              userId: user.id,
-            },
-          },
-        },
+        userId: user.id,
+      },
+      include: {
+        postConfigVersions: true,
       },
     })
 
-    expect(postConfigVersion).toMatchObject({
-      description: onboardingTexts.description,
-    })
+    expect(post.postConfigVersions[0]!.description).toBe(
+      onboardingTexts.description,
+    )
   })
 
   it('creates the default system message', async () => {
