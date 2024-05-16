@@ -23,9 +23,9 @@ export class PermissionsVerifier {
     })
 
     await this.userBelongsWorkspaceOrThrow(post.workspaceId, userId)
-
+    // return await Promise.resolve(true)
     if (scope === ShareScope.Everybody) {
-      return true
+      return await this.handleEverybodyScope(userId, postId, action)
     }
 
     if (scope === ShareScope.Private) {
@@ -98,6 +98,20 @@ export class PermissionsVerifier {
     })
 
     return getEnumByValue(ShareScope, share.scope)
+  }
+
+  private async handleEverybodyScope(
+    userId: string,
+    postId: string,
+    action: PermissionAction,
+  ) {
+    // If the userId is the owner of the post, then he can do anything
+    // in other words: If they pass the handleUserScope test, then they can do anything
+
+    const privateScopeResponse = await this.handlePrivateScope(userId, postId)
+    if (privateScopeResponse) return true
+
+    return canForAccessLevel(action, UserAccessLevel.EditWithoutInvite)
   }
 
   private async handlePrivateScope(userId: string, postId: string) {

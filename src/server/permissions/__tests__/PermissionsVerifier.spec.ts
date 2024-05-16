@@ -548,7 +548,7 @@ describe('PermissionsVerifier ', () => {
               post.id,
               ShareScope.Everybody,
             ),
-          ).toBe(true)
+          ).toBe(false)
         })
         it('allows invite', async () => {
           expect(
@@ -558,7 +558,7 @@ describe('PermissionsVerifier ', () => {
               post.id,
               ShareScope.Everybody,
             ),
-          ).toBe(true)
+          ).toBe(false)
         })
         it('allows use', async () => {
           expect(

@@ -41,6 +41,10 @@ export const PermissionsByAccessLevel: Record<
     invite: true,
     use: true,
   }),
+  [UserAccessLevel.EditWithoutInvite]: buildPermissionKind({
+    update: true,
+    use: true,
+  }),
   [UserAccessLevel.Invite]: buildPermissionKind({
     invite: true,
     use: true,

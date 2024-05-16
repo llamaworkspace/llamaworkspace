@@ -60,7 +60,7 @@ export const api = createTRPCNext<RootRouter>({
           },
           mutations: {
             networkMode: NETWORK_MODE,
-            retry: 1,
+            retry: false,
             retryDelay: 2000,
           },
         },
