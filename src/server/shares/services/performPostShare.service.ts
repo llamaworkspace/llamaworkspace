@@ -131,7 +131,14 @@ const handleInvitedUserDoesNotExist = async (
     },
   })
 
-  await sendShareNotificationEmail(invitingUser?.name, email, postId)
+  await sendShareNotificationEmail(prisma, {
+    invitingUserEmail: invitingUser.email!,
+    invitingUserName: invitingUser.name,
+    invitedUserEmail: email,
+    postId,
+    userExistsInDb: false,
+    token: workspaceInvite.token,
+  })
 
   return await getPostSharesService(prisma, uowContext, { postId })
 }
@@ -191,11 +198,13 @@ const handleInvitedUserExists = async (
     }),
   ])
 
-  await sendShareNotificationEmail(
-    invitingUser.name,
-    invitedUser.email!,
+  await sendShareNotificationEmail(prisma, {
+    invitingUserEmail: invitingUser.email!,
+    invitingUserName: invitingUser.name,
+    invitedUserEmail: invitedUser.email!,
     postId,
-  )
+    userExistsInDb: true,
+  })
 
   return await getPostSharesService(prisma, uowContext, { postId })
 }
@@ -208,43 +217,91 @@ const getShare = async (prisma: PrismaTrxClient, postId: string) => {
   })
 }
 
+interface SendShareNotificationEmailPayload {
+  invitingUserEmail: string
+  invitingUserName: string | null
+  invitedUserEmail: string
+  postId: string
+  userExistsInDb: boolean
+  token?: string
+}
+
 const sendShareNotificationEmail = async (
-  invitingUserName: string | null,
-  invitedUserEmail: string,
-  postId: string,
+  prisma: PrismaTrxClient,
+  {
+    invitingUserEmail,
+    invitingUserName,
+    invitedUserEmail,
+    postId,
+    userExistsInDb,
+    token,
+  }: SendShareNotificationEmailPayload,
 ) => {
-  const subject = `Your invitation to Joia`
-  const postUrl = `${env.NEXT_PUBLIC_FRONTEND_URL}/p/${postId}`
+  const post = await prisma.post.findUniqueOrThrow({
+    where: {
+      id: postId,
+    },
+    select: {
+      title: true,
+    },
+  })
+
+  const invitingUserNameOrEmail = invitingUserName ?? invitingUserEmail
+  const subject = `${invitingUserNameOrEmail} has shared you access to a GPT`
+  const postUrl =
+    userExistsInDb && `${env.NEXT_PUBLIC_FRONTEND_URL}/p/${postId}`
+  const workspaceInviteUrl =
+    !userExistsInDb && `${env.NEXT_PUBLIC_FRONTEND_URL}/invite/${token}`
 
   await sendEmail({
     fromName: 'Joia',
     to: invitedUserEmail,
     subject,
-    body: getEmailBody(invitingUserName ?? '', postUrl),
+    body: getEmailBody(
+      invitingUserName ?? 'A colleague',
+      invitingUserEmail,
+      post.title ?? 'Untitled GPT',
+      postUrl || undefined,
+      workspaceInviteUrl || undefined,
+    ),
   })
 }
 
-const getEmailBody = (invitingUserName: string, postUrl: string) => {
-  let str = `Hello,
-  `
-
-  if (invitingUserName) {
-    str += `
-${invitingUserName} has shared access to a Chatbot in Joia with you.`
-  } else {
-    str += `
-This is a message from Joia. You have been shared access to a chatbot.`
+const getEmailBody = (
+  invitingUserName: string,
+  email: string,
+  postName: string,
+  postUrl?: string,
+  workspaceUrl?: string,
+) => {
+  if (!postUrl && !workspaceUrl) {
+    throw new Error('postUrl or workspaceUrl must be provided')
   }
 
-  str += `
+  let str = `Hello,
 
-You can access the chatbot through the following link:
+${invitingUserName} has invited you to use the following GPT at Joia: ${postName}.
+
+`
+  if (postUrl) {
+    str += `To access the GPT, please follow this link:
 ${postUrl}
 
-If you do not have an account, you will be prompted to create one.
+`
+  }
+  if (workspaceUrl) {
+    str += `Since you do not have an account with us, you will need to create one first. To do so, please click on the following link:
+${workspaceUrl}
 
-Thank you,
-Joia`
+You must use the email "${email}" to create your account; otherwise the invitation won't work.
+
+`
+  }
+
+  str += `If you have any doubts or trouble signing up, please do not hesitate to reach out to us by replying to this email.
+
+All the best,
+The Joia team`
 
   return str
 }

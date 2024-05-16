@@ -159,7 +159,6 @@ describe('performPostShareService', () => {
       await subject(invitingUser.id, workspace.id, post.id, invitedUser.email!)
       expect(mockedSendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          subject: 'Your invitation to Joia',
           to: invitedUser.email!,
         }),
       )
@@ -230,7 +229,6 @@ describe('performPostShareService', () => {
       await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
       expect(mockedSendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          subject: 'Your invitation to Joia',
           to: fakeEmail,
         }),
       )
