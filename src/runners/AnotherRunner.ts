@@ -10,46 +10,32 @@ const message = {
   content: 'What is the meaning of life?',
 } as MessageCreateParams
 
-const constructorParams = z
-  .object({
-    apiKey: z.string(),
-    baseURL: z.string().optional(),
-  })
-  .strict()
+export const anotherStrategyParams = z.object({
+  apiKey: z.string(),
+  pepe: z.string(),
+})
 
-const streamParams = z
-  .object({
-    assistantId: z.string(),
-  })
-  .strict()
+const anotherStrategyStreamParams = z.object({
+  assistantId: z.string(),
+  juan: z.string(),
+})
 
-type OpenAiAssistantStrategyConstructorParams = z.infer<
-  typeof constructorParams
->
-type OpenAiAssistantStrategyStreamParams = z.infer<typeof streamParams>
+type AnotherStrategyConstructorParams = z.infer<typeof anotherStrategyParams>
+type AnotherStrategyStreamParams = z.infer<typeof anotherStrategyStreamParams>
 
-export class OpenaiAssistantStrategy
-  implements Strategy<OpenAiAssistantStrategyStreamParams>
+export class AnotherAssistantStrategy
+  implements Strategy<AnotherStrategyStreamParams>
 {
   private readonly apiKey: string
   private readonly baseURL: string | undefined
 
-  static validateConstructorParamsOrThrow(params: unknown) {
-    return constructorParams.parse(params)
-  }
-
-  constructor(params: OpenAiAssistantStrategyConstructorParams) {
+  constructor(params: AnotherStrategyConstructorParams) {
     this.apiKey = params.apiKey
-    this.baseURL = params.baseURL
   }
 
-  async stream(
-    payload: OpenAiAssistantStrategyStreamParams,
-    // context: StrategyStreamContext,
-  ) {
-    // const { keyValues } = context
+  async stream(payload: AnotherStrategyStreamParams) {
     const openai = new OpenAI({ apiKey: this.apiKey, baseURL: this.baseURL })
-    // await main(openai)
+
     const thread = await openai.beta.threads.create({})
     const threadId = thread.id
 
@@ -92,29 +78,7 @@ export class OpenaiAssistantStrategy
     )
   }
 
-  async create() {
-    const openai = new OpenAI({ apiKey: this.apiKey, baseURL: this.baseURL })
-
-    const assistant = await openai.beta.assistants.create({
-      name: `Llama_Workspace_assistant_${Math.random().toString()}_DO_NOT_DELETE`,
-      instructions:
-        'You are a personal math tutor. Write and run code to answer math questions.',
-      tools: [],
-      model: 'gpt-4o',
-    })
-  }
-
-  validateStreamInputParams(params: OpenAiAssistantStrategyStreamParams) {
-    return streamParams.safeParse(params)
+  validateStreamInputParams(params: AnotherStrategyStreamParams) {
+    return anotherStrategyStreamParams.safeParse(params)
   }
 }
-
-// async function main(openai: OpenAI) {
-//   const assistant = await openai.beta.assistants.create({
-//     name: 'Math Tutor, IM EXAMPLE!!!',
-//     instructions:
-//       'You are a personal math tutor. Write and run code to answer math questions.',
-//     tools: [{ type: 'code_interpreter' }],
-//     model: 'gpt-4o',
-//   })
-// }

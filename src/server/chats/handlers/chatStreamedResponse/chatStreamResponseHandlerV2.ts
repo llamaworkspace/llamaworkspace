@@ -1,8 +1,6 @@
 import { env } from '@/env.mjs'
-import {
-  AssistantRunner,
-  OpenaiAssistantStrategy,
-} from '@/runners/OpenAiAssistantRunner'
+import { OpenaiAssistantStrategy } from '@/runners/OpenAiAssistantRunner'
+import { AssistantRunner } from '@/runners/runnersBase'
 import type { NextRequest } from 'next/server'
 import { z } from 'zod'
 
