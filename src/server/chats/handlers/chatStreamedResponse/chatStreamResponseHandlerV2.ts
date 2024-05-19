@@ -1,50 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-// prettier-ignore-start
-// Prettier ignore to avoid prettier-plugin-organize-imports
-// // from moving the import below
-// import 'zod-openapi/extend'
-// // prettier-ignore-end
-// import { createDocument } from 'zod-openapi'
+import { OpenaiAssistantRunner } from '@/runners/OpenAiAssistantRunner'
+import type { NextRequest } from 'next/server'
 import { z } from 'zod'
-
-// const jobId = z.string().openapi({
-//   description: 'A unique identifier for a job',
-//   example: '12345',
-//   ref: 'jobId',
-// })
-
-// const title = z.string().openapi({
-//   description: 'Job title',
-//   example: 'My job',
-// })
-
-// const document = createDocument({
-//   openapi: '3.1.0',
-//   info: {
-//     title: 'My API',
-//     version: '1.0.0',
-//   },
-//   paths: {
-//     '/jobs/{jobId}': {
-//       put: {
-//         requestParams: { path: z.object({ jobId }) },
-//         requestBody: {
-//           content: {
-//             'application/json': { schema: z.object({ title }) },
-//           },
-//         },
-//         responses: {
-//           '200': {
-//             description: '200 OK',
-//             content: {
-//               'application/json': { schema: z.object({ jobId, title }) },
-//             },
-//           },
-//         },
-//       },
-//     },
-//   },
-// })
 
 const schema = z.object({
   chatId: z.string(),
@@ -58,39 +14,23 @@ const schema = z.object({
 
 type RequestBody = z.infer<typeof schema>
 
-export default async function chatStreamedResponseHandlerV2(req: NextRequest) {
-  await Promise.resolve()
-
-  // Apply common operations like validation, permissions, etc
-  // I get chatId, check which type to use (which Strategy)
-  // Run strategy
-
-  try {
-    const body = (await req.json()) as RequestBody
-    const response = schema.parse(body)
-
-    return NextResponse.json(response)
-  } catch (error) {
-    return NextResponse.json(
-      {
-        message: `Yo, bad payloadsss!`,
-      },
-      { status: 400 },
-    )
-  }
-
-  // await Promise.resolve()
-  // return NextResponse.json({ success: true })
+const body = {
+  messages: [
+    {
+      role: 'user',
+      content: '',
+    },
+  ],
+  chatId: 'clw9ag77700b712erku3q6zat',
 }
 
-// const nextApiWrapper = async (func: (req: NextRequest) => Promise<unknown>) => {
-//   return async (req: NextRequest) => {
-//     const response = func(req)
-//     if (isPromise(response)) {
-//       return await response
-//     }
-//     return response
-//   }
-// }
+// Request type=oai_assistant
+// Pick the right strategy based on the chatId
+// Bring the runtime parameters from the database
+// Run the strategy, which will return a stream of messages
 
-// export default nextApiWrapper(chatStreamedResponseHandlerV2)
+export default async function chatStreamedResponseHandlerV2(req: NextRequest) {
+  const strategy = new OpenaiAssistantRunner()
+
+  return strategy.stream()
+}
