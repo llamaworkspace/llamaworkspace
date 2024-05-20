@@ -42,12 +42,12 @@ describe('createChat', () => {
 
   it('creates a appsOnUsers record', async () => {
     await subject(user.id, post.id)
-    const dbPostsOnUsers = await prisma.appsOnUsers.findFirstOrThrow({
+    const dbAppsOnUsers = await prisma.appsOnUsers.findFirstOrThrow({
       where: {
-        postId: post.id,
+        appId: post.id,
         userId: user.id,
       },
     })
-    expect(dbPostsOnUsers.lastVisitedAt).toBeDefined()
+    expect(dbAppsOnUsers.lastVisitedAt).toBeDefined()
   })
 })

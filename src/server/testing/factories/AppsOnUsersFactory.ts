@@ -3,7 +3,7 @@ import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type AppsOnUsersFactoryFields = {
   userId: string
-  postId: string
+  appId: string
 } & Partial<AppsOnUsers>
 
 const generateDefaults = () => {

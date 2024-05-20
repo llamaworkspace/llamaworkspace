@@ -30,15 +30,15 @@ export const getSortedPostsForSidebarService = async function (
       "Post"."id" as "id",
       "Post"."title" as "title",
       "Post"."emoji" as "emoji",
-      "PostsOnUsers"."position" as "position",
-      max("PostsOnUsers"."updatedAt") as "updatedAt"
+      "AppsOnUsers"."position" as "position",
+      max("AppsOnUsers"."updatedAt") as "updatedAt"
     FROM "Post"
-    LEFT JOIN "PostsOnUsers" ON "Post"."id" = "PostsOnUsers"."postId"
+    LEFT JOIN "AppsOnUsers" ON "Post"."id" = "AppsOnUsers"."appId"
     WHERE "Post"."workspaceId" = ${workspaceId}
     AND "Post"."isDefault" = false
     AND "Post"."id" IN (${Prisma.join(visiblePostIds)})
-    AND "PostsOnUsers"."userId" = ${userId}
-    AND "PostsOnUsers"."position" IS NOT NULL
+    AND "AppsOnUsers"."userId" = ${userId}
+    AND "AppsOnUsers"."position" IS NOT NULL
     GROUP BY 1,2,3,4
     ORDER BY "position" ASC
   `
