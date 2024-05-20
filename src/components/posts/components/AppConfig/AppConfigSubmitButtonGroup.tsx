@@ -44,7 +44,7 @@ export const AppConfigSubmitButtonGroup = ({
       <div className="flex items-center justify-end gap-x-2">
         {showSubmitError && (
           <div className="rounded bg-red-100 px-1 py-0.5 text-sm text-red-600">
-            Cannot save. There are required fields that are missing.
+            Cannot save. Some of the required fields are missing.
           </div>
         )}
         <Button

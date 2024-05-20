@@ -7,6 +7,7 @@ const zUpdateInput = z.object({
   id: z.string(),
   title: z.optional(z.nullable(z.string())),
   emoji: z.optional(z.nullable(z.string())),
+  gptEngine: z.optional(z.string()),
 })
 
 export const postsUpdate = protectedProcedure

@@ -34,6 +34,7 @@ interface SubmitProps {
   description?: string
   model: OpenAiModelEnum
   redirect?: boolean
+  gptEngine?: string
 }
 
 export function AppConfigForGPT({ postId }: AppConfigProps) {
@@ -54,10 +55,13 @@ export function AppConfigForGPT({ postId }: AppConfigProps) {
   const hideBackButton = router.query?.backButton === 'false'
 
   const handleSubmit = async (values: SubmitProps) => {
-    const { emoji, title, systemMessage, description, model } = values
     if (!appConfig || !post) {
       return
     }
+
+    const { emoji, title, systemMessage, description, model } = values
+
+    const gptEngine = post.gptEngine ? undefined : values.gptEngine
 
     try {
       await Promise.all([
@@ -65,6 +69,7 @@ export function AppConfigForGPT({ postId }: AppConfigProps) {
           id: post?.id,
           emoji: emoji ?? null,
           title: title ?? null,
+          gptEngine,
         }),
         updateAppConfigVersion({
           id: appConfig?.id,
