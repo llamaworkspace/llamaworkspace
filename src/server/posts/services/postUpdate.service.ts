@@ -6,6 +6,7 @@ import {
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { TRPCError } from '@trpc/server'
 import { scopePostByWorkspace } from '../postUtils'
 
 interface PostUpdateServiceInputProps {
@@ -30,7 +31,7 @@ export const postUpdateService = async (
       postId,
     )
 
-    await prisma.post.findFirstOrThrow({
+    const post = await prisma.post.findFirstOrThrow({
       where: scopePostByWorkspace(
         {
           id: postId,
@@ -40,6 +41,12 @@ export const postUpdateService = async (
       ),
     })
 
+    if (post.gptEngine && payload.gptEngine) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'GPT Engine cannot be updated once set',
+      })
+    }
     return await prisma.post.update({
       where: {
         id: postId,

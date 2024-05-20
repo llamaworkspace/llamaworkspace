@@ -1,3 +1,4 @@
+import { AppGptEngine } from '@/components/posts/postsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -12,7 +13,11 @@ const subject = async (
   workspaceId: string,
   userId: string,
   postId: string,
-  payload: { title?: string | null; emoji?: string | null } = {},
+  payload: {
+    title?: string | null
+    emoji?: string | null
+    gptEngine?: AppGptEngine
+  } = {},
 ) => {
   const uowContext = await createUserOnWorkspaceContext(
     prisma,
@@ -89,6 +94,51 @@ describe('postUpdateService', () => {
       await expect(
         subject(workspace.id, user.id, defaultPost.id),
       ).rejects.toThrow()
+    })
+  })
+
+  describe('gptEngine updates', () => {
+    describe('when gptEngine is not set', () => {
+      it('updates the post', async () => {
+        const postInDbBefore = await prisma.post.findFirstOrThrow({
+          where: {
+            id: post.id,
+          },
+        })
+        expect(postInDbBefore.gptEngine).toBe(null)
+
+        await subject(workspace.id, user.id, post.id, {
+          gptEngine: AppGptEngine.OpenaiAssistant,
+        })
+
+        const postInDb = await prisma.post.findFirstOrThrow({
+          where: {
+            id: post.id,
+          },
+        })
+
+        expect(postInDb.gptEngine).toBe(AppGptEngine.OpenaiAssistant)
+      })
+    })
+
+    describe('when gptEngine is set', () => {
+      beforeEach(async () => {
+        await prisma.post.update({
+          where: {
+            id: post.id,
+          },
+          data: {
+            gptEngine: AppGptEngine.OpenaiAssistant,
+          },
+        })
+      })
+      it('throws when trying to update it', async () => {
+        await expect(
+          subject(workspace.id, user.id, post.id, {
+            gptEngine: AppGptEngine.OpenaiAssistant,
+          }),
+        ).rejects.toThrow('GPT Engine cannot be updated once set')
+      })
     })
   })
 })
