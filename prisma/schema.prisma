@@ -63,7 +63,7 @@ model User {
     workspaces           UsersOnWorkspaces[]
     authoredChats        Chat[]
     workspaceInvitesSent WorkspaceInvite[]
-    postsMeta            PostsOnUsers[]
+    postsMeta            AppsOnUsers[]
     sharedTargets        ShareTarget[]
     sharingTargets       ShareTarget[]       @relation("sharingUser")
 }
@@ -125,22 +125,22 @@ model Post {
     chats              Chat[]
     postConfigVersions PostConfigVersion[]
     shares             Share[]
-    usersMeta          PostsOnUsers[]
+    usersMeta          AppsOnUsers[]
 }
 
-model PostsOnUsers {
+model AppsOnUsers {
     id            String    @id @default(cuid())
     userId        String
     user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    postId        String
-    post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    appId         String
+    app           Post      @relation(fields: [appId], references: [id], onDelete: Cascade)
     position      Int?
     pinnedAt      DateTime?
     lastVisitedAt DateTime?
     createdAt     DateTime  @default(now())
     updatedAt     DateTime  @updatedAt
 
-    @@unique([userId, postId])
+    @@unique([userId, appId])
 }
 
 model Share {
