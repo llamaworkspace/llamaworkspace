@@ -40,9 +40,9 @@ describe('createChat', () => {
     expect(dbChat.id).toEqual(result.id)
   })
 
-  it('creates a postsOnUsers record', async () => {
+  it('creates a appsOnUsers record', async () => {
     await subject(user.id, post.id)
-    const dbPostsOnUsers = await prisma.postsOnUsers.findFirstOrThrow({
+    const dbPostsOnUsers = await prisma.appsOnUsers.findFirstOrThrow({
       where: {
         postId: post.id,
         userId: user.id,

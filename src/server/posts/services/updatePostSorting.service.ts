@@ -23,7 +23,7 @@ export const updatePostSortingService = async (
       ),
     })
 
-    const existingPostsWithPosition = await prisma.postsOnUsers.findFirst({
+    const existingPostsWithPosition = await prisma.appsOnUsers.findFirst({
       where: {
         userId,
         postId: postIdToPushToPosition1,
@@ -50,7 +50,7 @@ const nullifyPostsWithPositionGte5 = async (
   prisma: PrismaTrxClient,
   userId: string,
 ) => {
-  await prisma.postsOnUsers.updateMany({
+  await prisma.appsOnUsers.updateMany({
     where: {
       userId,
       position: {
@@ -67,7 +67,7 @@ const updateExistingPositions = async (
   prisma: PrismaTrxClient,
   userId: string,
 ) => {
-  await prisma.postsOnUsers.updateMany({
+  await prisma.appsOnUsers.updateMany({
     where: {
       userId,
       position: {
@@ -87,7 +87,7 @@ const pushPostToPosition1 = async (
   userId: string,
   postId: string,
 ) => {
-  await prisma.postsOnUsers.upsert({
+  await prisma.appsOnUsers.upsert({
     where: {
       userId_postId: {
         postId,

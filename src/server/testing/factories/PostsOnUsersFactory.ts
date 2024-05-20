@@ -22,7 +22,7 @@ export const PostsOnUsersFactory = {
     prisma: PrismaClient,
     overrides: PostsOnUsersFactoryFields,
   ) => {
-    return await prisma.postsOnUsers.create({
+    return await prisma.appsOnUsers.create({
       data: PostsOnUsersFactory.build(overrides),
     })
   },

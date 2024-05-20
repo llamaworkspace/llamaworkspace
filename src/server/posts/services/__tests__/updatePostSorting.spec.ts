@@ -36,7 +36,7 @@ describe('updatePostSortingService', () => {
   describe('when it is the first post with position', () => {
     it('adds position 1', async () => {
       await subject(workspace.id, user.id, post1.id)
-      const postOnUser = await prisma.postsOnUsers.findFirstOrThrow({
+      const postOnUser = await prisma.appsOnUsers.findFirstOrThrow({
         where: {
           postId: post1.id,
         },
@@ -66,7 +66,7 @@ describe('updatePostSortingService', () => {
       await subject(workspace.id, user.id, post3.id)
       await subject(workspace.id, user.id, post1.id)
 
-      const postOnUsers = await prisma.postsOnUsers.findMany({
+      const postOnUsers = await prisma.appsOnUsers.findMany({
         where: {
           userId: user.id,
         },
@@ -122,7 +122,7 @@ describe('updatePostSortingService', () => {
       await subject(workspace.id, user.id, post3.id)
       await subject(workspace.id, user.id, post1.id)
 
-      const postOnUsers = await prisma.postsOnUsers.findMany({
+      const postOnUsers = await prisma.appsOnUsers.findMany({
         where: {
           userId: user.id,
         },
@@ -164,7 +164,7 @@ describe('updatePostSortingService', () => {
       await subject(workspace.id, user.id, post2.id)
       await subject(workspace.id, user.id, post1.id)
 
-      const postOnUsers = await prisma.postsOnUsers.findMany({
+      const postOnUsers = await prisma.appsOnUsers.findMany({
         where: {
           userId: user.id,
         },
@@ -178,7 +178,7 @@ describe('updatePostSortingService', () => {
       )
       await subject(workspace.id, user.id, post2.id)
 
-      const postOnUsers2 = await prisma.postsOnUsers.findMany({
+      const postOnUsers2 = await prisma.appsOnUsers.findMany({
         where: {
           userId: user.id,
         },
