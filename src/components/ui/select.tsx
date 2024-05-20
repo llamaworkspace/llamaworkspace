@@ -12,8 +12,15 @@ const triggerVariants = cva(
         default: 'shadow-sm border px-3 text-sm focus:ring-1',
         chatHeader: 'text-base font-semibold tracking-tighter px-2',
       },
+      colorScheme: {
+        default:
+          'border-zinc-200 text-zinc-900 dark:text-zinc-50 focus-visible:ring-zinc-950 dark:border-zinc-800  dark:focus-visible:ring-zinc-300',
+        danger:
+          'border-red-600 text-zinc-900 dark:text-red-50 focus-visible:ring-red-950 dark:border-red-800 dark:focus-visible:ring-red-300',
+      },
     },
-    defaultVariants: { variant: 'default' },
+
+    defaultVariants: { variant: 'default', colorScheme: 'default' },
   },
 )
 
@@ -32,10 +39,10 @@ interface SelectTriggerProps
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   SelectTriggerProps
->(({ className, children, variant, ...props }, ref) => (
+>(({ className, children, variant, colorScheme, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
-    className={cn(triggerVariants({ variant, className }))}
+    className={cn(triggerVariants({ variant, colorScheme }), className)}
     {...props}
   >
     {children}

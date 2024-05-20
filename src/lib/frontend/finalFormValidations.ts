@@ -18,6 +18,9 @@ export const stringOrNumberRequired: FinalFormValidator<StringOrNumber> = (
   value: StringOrNumber,
 ) => (value ? undefined : 'This field is required')
 
+export const stringRequired: FinalFormValidator<string> = (value: string) =>
+  value ? undefined : 'This field is required'
+
 export const minLength: FinalFormValidatorWithParams<number, string> =
   (minValue: number) => (value: string) => {
     return value && value.length < minValue

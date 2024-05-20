@@ -40,6 +40,7 @@ export const SelectField = ({
   disabled,
   variant,
   emptyStateContent,
+  meta,
   ...selectProps
 }: SelectFieldProps) => {
   // Necessary as otherwise the placeholder does not work
@@ -63,9 +64,10 @@ export const SelectField = ({
   }, [options, value])
 
   const selectedIsDisabled = selectedOption?.disabled
-
+  const error = meta && meta.submitFailed ? (meta.error as string) : undefined
+  const colorScheme = error ? 'danger' : 'default'
   return (
-    <FormFieldWrapper label={label} helperText={helperText}>
+    <FormFieldWrapper label={label} helperText={helperText} error={error}>
       <Select
         open={isOpen}
         onOpenChange={() => setIsOpen(!isOpen)}
@@ -81,6 +83,7 @@ export const SelectField = ({
             selectedIsDisabled && 'text-zinc-400',
             isOpen && 'bg-zinc-100',
           )}
+          colorScheme={colorScheme}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
