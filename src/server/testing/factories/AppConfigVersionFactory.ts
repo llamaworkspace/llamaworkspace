@@ -1,12 +1,12 @@
 import { Author } from '@/shared/aiTypesAndMappers'
 import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
 import { faker } from '@faker-js/faker'
-import type { PostConfigVersion, PrismaClient } from '@prisma/client'
+import type { AppConfigVersion, PrismaClient } from '@prisma/client'
 import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
-export type PostConfigVersionFactoryFields = {
-  postId: string
-} & Partial<PostConfigVersion>
+export type AppConfigVersionFactoryFields = {
+  appId: string
+} & Partial<AppConfigVersion>
 
 const generateDefaults = () => {
   return {
@@ -16,8 +16,8 @@ const generateDefaults = () => {
   }
 }
 
-export const PostConfigVersionFactory = {
-  build: (overrides: PostConfigVersionFactoryFields) => {
+export const AppConfigVersionFactory = {
+  build: (overrides: AppConfigVersionFactoryFields) => {
     return {
       ...generateDefaults(),
       ...overrides,
@@ -26,10 +26,10 @@ export const PostConfigVersionFactory = {
 
   create: async (
     prisma: PrismaClient,
-    overrides: PostConfigVersionFactoryFields,
+    overrides: AppConfigVersionFactoryFields,
   ) => {
-    const data = PostConfigVersionFactory.build(overrides)
-    return await prisma.postConfigVersion.create({
+    const data = AppConfigVersionFactory.build(overrides)
+    return await prisma.appConfigVersion.create({
       data: {
         ...data,
         messages: {

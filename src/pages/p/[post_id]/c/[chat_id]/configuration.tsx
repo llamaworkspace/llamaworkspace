@@ -1,9 +1,9 @@
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
-import { PostConfig } from '@/components/posts/components/PostConfig/PostConfig'
+import { AppConfig } from '@/components/posts/components/AppConfig/AppConfig'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 
-export default function PostConfigPage() {
+export default function AppConfigPage() {
   const navigation = useNavigation()
   const query = navigation.query
 
@@ -16,7 +16,7 @@ export default function PostConfigPage() {
       chatId={chatId}
       variant={HeaderVariants.Chatbot}
     >
-      <PostConfig postId={postId} />
+      <AppConfig postId={postId} />
     </MainLayout>
   )
 }

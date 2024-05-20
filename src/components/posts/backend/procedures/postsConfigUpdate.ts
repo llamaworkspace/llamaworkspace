@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { postConfigVersionUpdateService } from '@/server/posts/services/postConfigVersionUpdate.service'
+import { appConfigVersionUpdateService } from '@/server/posts/services/appConfigVersionUpdate.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -17,19 +17,20 @@ export const postsConfigUpdate = protectedProcedure
 
     const { id } = input
 
-    const postConfigVersion =
-      await ctx.prisma.postConfigVersion.findFirstOrThrow({
+    const appConfigVersion = await ctx.prisma.appConfigVersion.findFirstOrThrow(
+      {
         where: {
           id,
         },
-        include: { post: true },
-      })
+        include: { app: true },
+      },
+    )
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      postConfigVersion.post.workspaceId,
+      appConfigVersion.app.workspaceId,
       userId,
     )
 
-    return await postConfigVersionUpdateService(ctx.prisma, context, input)
+    return await appConfigVersionUpdateService(ctx.prisma, context, input)
   })

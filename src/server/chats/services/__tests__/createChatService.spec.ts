@@ -106,21 +106,22 @@ describe('createChatService', () => {
       })
     })
 
-    it('creates a postConfigVersion', async () => {
+    it('creates a appConfigVersion', async () => {
       const result = await subject(workspace.id, user.id, defaultPost.id)
 
-      const dbPostConfigVersion =
-        await prisma.postConfigVersion.findFirstOrThrow({
+      const dbAppConfigVersion = await prisma.appConfigVersion.findFirstOrThrow(
+        {
           where: {
-            postId: defaultPost.id,
+            appId: defaultPost.id,
           },
           orderBy: {
             createdAt: 'desc',
           },
-        })
+        },
+      )
 
-      expect(result.postConfigVersionId).toEqual(dbPostConfigVersion.id)
-      expect(dbPostConfigVersion.model).toEqual(user.defaultModel)
+      expect(result.appConfigVersionId).toEqual(dbAppConfigVersion.id)
+      expect(dbAppConfigVersion.model).toEqual(user.defaultModel)
     })
 
     it('does not update post sorting', async () => {

@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getApplicablePostConfigToChatService } from '@/server/chats/services/getApplicablePostConfigToChat.service'
+import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { prisma } from '@/server/db'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
@@ -8,7 +8,7 @@ const zGetById = z.object({
   chatId: z.string(),
 })
 
-export const getPostConfigForChatId = protectedProcedure
+export const getAppConfigForChatId = protectedProcedure
   .input(zGetById)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
@@ -32,6 +32,6 @@ export const getPostConfigForChatId = protectedProcedure
       userId,
     )
 
-    return await getApplicablePostConfigToChatService(prisma, context, input)
+    return await getApplicableAppConfigToChatService(prisma, context, input)
   })
 z

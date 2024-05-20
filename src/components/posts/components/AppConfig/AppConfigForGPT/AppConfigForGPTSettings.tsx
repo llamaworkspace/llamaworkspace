@@ -13,7 +13,7 @@ For example:
 Act as a public speaker and write compelling speeches that can be used to inspire people to take action.
 `
 
-export const PostConfigForGPTSettings = ({ disabled = false }) => {
+export const AppConfigForGPTSettings = ({ disabled = false }) => {
   const navigation = useNavigation()
   const { data: workspace } = useCurrentWorkspace()
   const ref = useRef<HTMLTextAreaElement>(null)

@@ -1,13 +1,13 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { PostConfigVersionFactory } from '@/server/testing/factories/PostConfigVersionFactory'
+import { AppConfigVersionFactory } from '@/server/testing/factories/AppConfigVersionFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Post, PostConfigVersion, User, Workspace } from '@prisma/client'
-import { getLatestPostConfigForPostIdService } from '../getLatestPostConfigForPostId.service'
+import type { AppConfigVersion, Post, User, Workspace } from '@prisma/client'
+import { getLatestAppConfigForPostIdService } from '../getLatestAppConfigForPostId.service'
 
 const subject = async (userId: string, workspaceId: string, postId: string) => {
   const context = await createUserOnWorkspaceContext(
@@ -15,14 +15,14 @@ const subject = async (userId: string, workspaceId: string, postId: string) => {
     workspaceId,
     userId,
   )
-  return await getLatestPostConfigForPostIdService(prisma, context, { postId })
+  return await getLatestAppConfigForPostIdService(prisma, context, { postId })
 }
 
-describe('getLatestPostConfigForPostIdService', () => {
+describe('getLatestAppConfigForPostIdService', () => {
   let workspace: Workspace
   let user: User
   let post: Post
-  let anotherPostConfigVersion: PostConfigVersion
+  let anotherAppConfigVersion: AppConfigVersion
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -36,14 +36,14 @@ describe('getLatestPostConfigForPostIdService', () => {
       workspaceId: workspace.id,
     })
 
-    anotherPostConfigVersion = await PostConfigVersionFactory.create(prisma, {
-      postId: post.id,
+    anotherAppConfigVersion = await AppConfigVersionFactory.create(prisma, {
+      appId: post.id,
     })
   })
 
   it('returns the latest post config', async () => {
     const result = await subject(user.id, workspace.id, post.id)
-    expect(result.id).toBe(anotherPostConfigVersion.id)
+    expect(result.id).toBe(anotherAppConfigVersion.id)
   })
 
   it('calls PermissionsVerifier', async () => {

@@ -65,7 +65,7 @@ const createPost = async (
       userId,
       gptEngine: input.gptEngine ?? AppGptEngine.Basic,
       ...input,
-      postConfigVersions: {
+      appConfigVersions: {
         create: [
           {
             model: targetModel,

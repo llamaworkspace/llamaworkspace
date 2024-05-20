@@ -5,14 +5,14 @@ import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopePostByWorkspace } from '../postUtils'
 
-interface LatestPostConfigForPostInputProps {
+interface LatestAppConfigForPostInputProps {
   postId: string
 }
 
-export const getLatestPostConfigForPostIdService = async (
+export const getLatestAppConfigForPostIdService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  input: LatestPostConfigForPostInputProps,
+  input: LatestAppConfigForPostInputProps,
 ) => {
   const { userId, workspaceId } = uowContext
   const { postId } = input
@@ -23,10 +23,10 @@ export const getLatestPostConfigForPostIdService = async (
     postId,
   )
 
-  const postConfig = await prisma.postConfigVersion.findFirstOrThrow({
+  const appConfig = await prisma.appConfigVersion.findFirstOrThrow({
     where: {
-      postId,
-      post: scopePostByWorkspace({}, workspaceId),
+      appId: postId,
+      app: scopePostByWorkspace({}, workspaceId),
     },
     orderBy: {
       createdAt: 'desc',
@@ -43,10 +43,10 @@ export const getLatestPostConfigForPostIdService = async (
     },
   })
 
-  const firstMessage = postConfig.messages[0]!
+  const firstMessage = appConfig.messages[0]!
 
   return {
-    ...postConfig,
+    ...appConfig,
     systemMessage: firstMessage.message,
   }
 }

@@ -15,7 +15,7 @@ export const handleChatTitleCreate = async (
   const chat = await getChat(prisma, chatId)
   if (chat.title) return
 
-  const systemMessage = chat.postConfigVersion?.messages[0]
+  const systemMessage = chat.appConfigVersion?.messages[0]
   const userMessages = chat.messages.filter(
     (message) => message.author === (ChatAuthor.User as string),
   )
@@ -106,7 +106,7 @@ const getChat = async (prisma: PrismaTrxClient, chatId: string) => {
           title: true,
         },
       },
-      postConfigVersion: {
+      appConfigVersion: {
         include: {
           messages: true,
         },

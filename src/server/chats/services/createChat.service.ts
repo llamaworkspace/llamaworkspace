@@ -34,22 +34,22 @@ export const createChatService = async function (
       },
     })
 
-    let postConfigVersionId: string | undefined
+    let appConfigVersionId: string | undefined
 
     if (post.isDefault) {
-      const postConfigVersion = await getNewPostConfigVersion(
+      const appConfigVersion = await getNewAppConfigVersion(
         prisma,
         userId,
         postId,
       )
-      postConfigVersionId = postConfigVersion.id
+      appConfigVersionId = appConfigVersion.id
     }
 
     const chat = await prisma.chat.create({
       data: {
         postId,
         authorId: userId,
-        postConfigVersionId,
+        appConfigVersionId,
       },
     })
 
@@ -61,19 +61,19 @@ export const createChatService = async function (
   })
 }
 
-const getNewPostConfigVersion = async (
+const getNewAppConfigVersion = async (
   prisma: PrismaTrxClient,
   userId: string,
-  postId: string,
+  appId: string,
 ) => {
   const user = await prisma.user.findUniqueOrThrow({
     where: {
       id: userId,
     },
   })
-  return await prisma.postConfigVersion.create({
+  return await prisma.appConfigVersion.create({
     data: {
-      postId,
+      appId,
       model: user.defaultModel ?? OpenAiModelEnum.GPT4_TURBO,
       messages: {
         create: [

@@ -1,22 +1,22 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { AppConfigVersionFactory } from '@/server/testing/factories/AppConfigVersionFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
 import { MessageFactory } from '@/server/testing/factories/MessageFactory'
-import { PostConfigVersionFactory } from '@/server/testing/factories/PostConfigVersionFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type {
+  AppConfigVersion,
   Chat,
   Post,
-  PostConfigVersion,
   User,
   Workspace,
 } from '@prisma/client'
 import { Promise } from 'bluebird'
-import { getApplicablePostConfigToChatService } from '../getApplicablePostConfigToChat.service'
+import { getApplicableAppConfigToChatService } from '../getApplicableAppConfigToChat.service'
 
 const subject = async (
   workspaceId: string,
@@ -28,15 +28,15 @@ const subject = async (
     workspaceId,
     userId,
   )
-  return await getApplicablePostConfigToChatService(prisma, uowContext, payload)
+  return await getApplicableAppConfigToChatService(prisma, uowContext, payload)
 }
 
-describe('getApplicablePostConfigToChat', () => {
+describe('getApplicableAppConfigToChat', () => {
   let workspace: Workspace
   let user: User
   let post: Post
   let chat: Chat
-  let otherPostConfigVersion: PostConfigVersion
+  let otherAppConfigVersion: AppConfigVersion
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -56,8 +56,8 @@ describe('getApplicablePostConfigToChat', () => {
           chatId: chat.id,
         }),
     )
-    otherPostConfigVersion = await PostConfigVersionFactory.create(prisma, {
-      postId: post.id,
+    otherAppConfigVersion = await AppConfigVersionFactory.create(prisma, {
+      appId: post.id,
     })
   })
 
@@ -75,17 +75,17 @@ describe('getApplicablePostConfigToChat', () => {
     )
   })
 
-  describe('when the chat has a postConfigVersionId', () => {
+  describe('when the chat has a appConfigVersionId', () => {
     beforeEach(async () => {
       await prisma.chat.update({
         where: { id: chat.id },
-        data: { postConfigVersionId: otherPostConfigVersion.id },
+        data: { appConfigVersionId: otherAppConfigVersion.id },
       })
     })
 
     it('returns the one linked to the chat', async () => {
       const result = await subject(workspace.id, user.id, { chatId: chat.id })
-      expect(result.id).toEqual(otherPostConfigVersion.id)
+      expect(result.id).toEqual(otherAppConfigVersion.id)
     })
 
     it('returns the linked system messages', async () => {
@@ -93,7 +93,7 @@ describe('getApplicablePostConfigToChat', () => {
 
       const dbMessages = await prisma.message.findMany({
         where: {
-          postConfigVersionId: otherPostConfigVersion.id,
+          appConfigVersionId: otherAppConfigVersion.id,
         },
       })
 
@@ -101,12 +101,12 @@ describe('getApplicablePostConfigToChat', () => {
       expect(result.messages[0]!.id).toBe(dbMessages[0]!.id)
     })
   })
-  describe('when the chat does not have a postConfigVersionId', () => {
+  describe('when the chat does not have a appConfigVersionId', () => {
     it('returns the latest one created for the post', async () => {
       const result = await subject(workspace.id, user.id, {
         chatId: chat.id,
       })
-      expect(result.id).toEqual(otherPostConfigVersion.id)
+      expect(result.id).toEqual(otherAppConfigVersion.id)
     })
   })
 })

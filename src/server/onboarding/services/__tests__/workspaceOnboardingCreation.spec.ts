@@ -45,11 +45,11 @@ describe('workspaceOnboardingCreationService', () => {
         userId: user.id,
       },
       include: {
-        postConfigVersions: true,
+        appConfigVersions: true,
       },
     })
 
-    expect(post.postConfigVersions[0]!.description).toBe(
+    expect(post.appConfigVersions[0]!.description).toBe(
       onboardingTexts.description,
     )
   })
@@ -59,8 +59,8 @@ describe('workspaceOnboardingCreationService', () => {
 
     const message = await prisma.message.findFirstOrThrow({
       where: {
-        postConfigVersion: {
-          post: {
+        appConfigVersion: {
+          app: {
             userId: user.id,
           },
         },
