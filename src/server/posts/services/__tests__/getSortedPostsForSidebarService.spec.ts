@@ -1,7 +1,7 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { AppsOnUsersFactory } from '@/server/testing/factories/AppsOnUsersFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
-import { PostsOnUsersFactory } from '@/server/testing/factories/PostsOnUsersFactory'
 import { workspaceWithUsersAndPostsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndPosts.fixture'
 import type { Post, User, Workspace } from '@prisma/client'
 import { getSortedPostsForSidebarService } from '../getSortedPostsForSidebar.service'
@@ -43,25 +43,25 @@ describe('getSortedPostsForSidebarService', () => {
     postWithScopePrivate = fixture.postWithScopePrivate
     postWithScopePrivateOfOtherUser = fixture.postWithScopePrivateOfOtherUser
 
-    await PostsOnUsersFactory.create(prisma, {
-      postId: postWithScopeEverybody.id,
+    await AppsOnUsersFactory.create(prisma, {
+      appId: postWithScopeEverybody.id,
       userId: user.id,
       position: 1,
     })
 
-    await PostsOnUsersFactory.create(prisma, {
-      postId: postWithScopeUser.id,
+    await AppsOnUsersFactory.create(prisma, {
+      appId: postWithScopeUser.id,
       userId: user.id,
       position: 2,
     })
 
-    await PostsOnUsersFactory.create(prisma, {
-      postId: postWithScopeUserOfOtherUser.id,
+    await AppsOnUsersFactory.create(prisma, {
+      appId: postWithScopeUserOfOtherUser.id,
       userId: user.id,
       position: 2,
     })
-    await PostsOnUsersFactory.create(prisma, {
-      postId: postWithScopePrivateOfOtherUser.id,
+    await AppsOnUsersFactory.create(prisma, {
+      appId: postWithScopePrivateOfOtherUser.id,
       userId: user.id,
       position: 2,
     })

@@ -76,15 +76,15 @@ describe('createChatService', () => {
     )
   })
 
-  it('creates a postsOnUsers record', async () => {
+  it('creates a appsOnUsers record', async () => {
     await subject(workspace.id, user.id, post.id)
-    const dbPostsOnUsers = await prisma.postsOnUsers.findFirstOrThrow({
+    const dbAppsOnUsers = await prisma.appsOnUsers.findFirstOrThrow({
       where: {
-        postId: post.id,
+        appId: post.id,
         userId: user.id,
       },
     })
-    expect(dbPostsOnUsers.id).toBeDefined()
+    expect(dbAppsOnUsers.id).toBeDefined()
   })
 
   it('invokes updatePostSortingService', async () => {
