@@ -1,3 +1,5 @@
+import { prisma } from '@/server/db'
+import { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { AssistantResponse } from 'ai'
 import createHttpError from 'http-errors'
 import OpenAI from 'openai'
@@ -23,6 +25,36 @@ const streamParams = z
   })
   .strict()
 
+class KeyValueStore {
+  private readonly prisma: PrismaClientOrTrxClient
+  private readonly postId: string
+  constructor(prisma: PrismaClientOrTrxClient, postId: string) {
+    this.prisma = prisma
+    this.postId = postId
+  }
+
+  async get(key: string) {
+    return await Promise.resolve()
+    // return this.prisma.keyValueStore.findFirst({
+    //   where: {
+    //     key,
+    //     postId: this.postId,
+    //   },
+    // })
+  }
+
+  async set(key: string, value: string) {
+    return await Promise.resolve()
+    // return this.prisma.keyValueStore.upsert({
+    //   data: {
+    //     key,
+    //     value,
+    //     postId: this.postId,
+    //   },
+    // })
+  }
+}
+
 type OpenAiAssistantStrategyConstructorParams = z.infer<
   typeof constructorParams
 >
@@ -33,6 +65,7 @@ export class OpenaiAssistantStrategy
 {
   private readonly apiKey: string
   private readonly baseURL: string | undefined
+  private readonly kvStore: KeyValueStore
 
   static validateConstructorParamsOrThrow(params: unknown) {
     return constructorParams.parse(params)
@@ -41,6 +74,7 @@ export class OpenaiAssistantStrategy
   constructor(params: OpenAiAssistantStrategyConstructorParams) {
     this.apiKey = params.apiKey
     this.baseURL = params.baseURL
+    this.kvStore = new KeyValueStore(prisma, 'postId')
   }
 
   async stream(
@@ -92,7 +126,9 @@ export class OpenaiAssistantStrategy
     )
   }
 
-  async create() {
+  async create(context) {
+    const { kvStore, payload } = context
+
     const openai = new OpenAI({ apiKey: this.apiKey, baseURL: this.baseURL })
 
     const assistant = await openai.beta.assistants.create({
@@ -108,13 +144,3 @@ export class OpenaiAssistantStrategy
     return streamParams.safeParse(params)
   }
 }
-
-// async function main(openai: OpenAI) {
-//   const assistant = await openai.beta.assistants.create({
-//     name: 'Math Tutor, IM EXAMPLE!!!',
-//     instructions:
-//       'You are a personal math tutor. Write and run code to answer math questions.',
-//     tools: [{ type: 'code_interpreter' }],
-//     model: 'gpt-4o',
-//   })
-// }
