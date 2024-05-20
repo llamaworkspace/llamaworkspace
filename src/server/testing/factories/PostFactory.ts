@@ -1,4 +1,3 @@
-import { AppGptType } from '@/components/posts/postsTypes'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
@@ -15,7 +14,6 @@ const generateDefaults = () => {
   return {
     ...generateBaseForDefaults(),
     title: faker.lorem.sentence(),
-    gptEngine: AppGptType.Basic,
   }
 }
 

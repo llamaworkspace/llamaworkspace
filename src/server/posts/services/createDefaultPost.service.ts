@@ -1,3 +1,4 @@
+import { AppGptEngine } from '@/components/posts/postsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -14,6 +15,7 @@ export const createDefaultPostService = async (
     const post = await postCreateService(prisma, uowContext, {
       title: DEFAULT_POST_NAME,
       isDefault: true,
+      gptEngine: AppGptEngine.Basic,
     })
 
     await prisma.chat.deleteMany({

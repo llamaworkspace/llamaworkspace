@@ -23,7 +23,7 @@ export enum PostType {
   Chat = 'chat',
 }
 
-export enum AppGptType {
+export enum AppGptEngine {
   Basic = 'basic',
   OpenaiAssistant = 'openai_assistant',
 }

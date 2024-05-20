@@ -26,9 +26,9 @@ describe('postCreateService', () => {
         userId: user.id,
       },
     })
-
     expect(post).toMatchObject({
       title: 'Test Post',
+      gptEngine: null,
     })
   })
 
