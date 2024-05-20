@@ -110,22 +110,22 @@ model WorkspaceInvite {
 }
 
 model Post {
-    id                 String              @id @default(cuid())
-    title              String?
-    emoji              String?
-    userId             String
-    workspaceId        String
-    type               String?
-    isDefault          Boolean             @default(false)
-    isDemo             Boolean             @default(false)
-    createdAt          DateTime            @default(now())
-    updatedAt          DateTime            @updatedAt
-    user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-    workspace          Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    chats              Chat[]
-    postConfigVersions PostConfigVersion[]
-    shares             Share[]
-    usersMeta          AppsOnUsers[]
+    id                String             @id @default(cuid())
+    title             String?
+    emoji             String?
+    userId            String
+    workspaceId       String
+    type              String?
+    isDefault         Boolean            @default(false)
+    isDemo            Boolean            @default(false)
+    createdAt         DateTime           @default(now())
+    updatedAt         DateTime           @updatedAt
+    user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+    workspace         Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    chats             Chat[]
+    appConfigVersions AppConfigVersion[]
+    shares            Share[]
+    usersMeta         AppsOnUsers[]
 }
 
 model AppsOnUsers {
@@ -173,38 +173,38 @@ model ShareTarget {
 }
 
 model Chat {
-    id                  String             @id @default(cuid())
-    postId              String
-    title               String?
-    post                Post               @relation(fields: [postId], references: [id], onDelete: Cascade)
-    postConfigVersionId String?
-    postConfigVersion   PostConfigVersion? @relation(fields: [postConfigVersionId], references: [id], onDelete: Cascade)
-    authorId            String?
-    author              User?              @relation(fields: [authorId], references: [id])
-    messages            Message[]
-    createdAt           DateTime           @default(now())
-    updatedAt           DateTime           @updatedAt
-    chatRuns            ChatRun[]
+    id                 String            @id @default(cuid())
+    postId             String
+    title              String?
+    post               Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+    appConfigVersionId String?
+    appConfigVersion   AppConfigVersion? @relation(fields: [appConfigVersionId], references: [id], onDelete: Cascade)
+    authorId           String?
+    author             User?             @relation(fields: [authorId], references: [id])
+    messages           Message[]
+    createdAt          DateTime          @default(now())
+    updatedAt          DateTime          @updatedAt
+    chatRuns           ChatRun[]
 }
 
 model Message {
-    id                  String             @id @default(cuid())
-    chatId              String?
-    chat                Chat?              @relation(fields: [chatId], references: [id], onDelete: Cascade)
-    postConfigVersionId String?
-    postConfigVersion   PostConfigVersion? @relation(fields: [postConfigVersionId], references: [id], onDelete: Cascade)
-    message             String?
-    author              String
-    tokens              Int?
-    createdAt           DateTime           @default(now())
-    updatedAt           DateTime           @updatedAt
-    chatRunMessage      ChatRunMessage[]
+    id                 String            @id @default(cuid())
+    chatId             String?
+    chat               Chat?             @relation(fields: [chatId], references: [id], onDelete: Cascade)
+    appConfigVersionId String?
+    appConfigVersion   AppConfigVersion? @relation(fields: [appConfigVersionId], references: [id], onDelete: Cascade)
+    message            String?
+    author             String
+    tokens             Int?
+    createdAt          DateTime          @default(now())
+    updatedAt          DateTime          @updatedAt
+    chatRunMessage     ChatRunMessage[]
 }
 
-model PostConfigVersion {
+model AppConfigVersion {
     id          String    @id @default(cuid())
-    postId      String
-    post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+    appId       String
+    app         Post      @relation(fields: [appId], references: [id], onDelete: Cascade)
     description String?
     model       String
     createdAt   DateTime  @default(now())

@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getLatestPostConfigForPostIdService } from '@/server/posts/services/getLatestPostConfigForPostId.service'
+import { getLatestAppConfigForPostIdService } from '@/server/posts/services/getLatestAppConfigForPostId.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -23,7 +23,7 @@ export const postsConfigGetLatestForPostId = protectedProcedure
       userId,
     )
 
-    return await getLatestPostConfigForPostIdService(ctx.prisma, context, {
+    return await getLatestAppConfigForPostIdService(ctx.prisma, context, {
       postId: input.postId,
     })
   })

@@ -3,16 +3,16 @@ import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'
 import ReactMarkdown from 'react-markdown'
-import { useChatById, useMessages, usePostConfigForChat } from '../chatHooks'
+import { useAppConfigForChat, useChatById, useMessages } from '../chatHooks'
 
 export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
-  const { data: postConfig } = usePostConfigForChat(chatId)
+  const { data: appConfig } = useAppConfigForChat(chatId)
   const { data: chat } = useChatById(chatId)
   const { data: post } = usePostById(chat?.postId)
   const { data: messages } = useMessages(chatId)
 
-  const isLoading = !postConfig || !chat || !post || !messages
-  const hasTitleOrInitialMessage = post?.title ?? postConfig?.description
+  const isLoading = !appConfig || !chat || !post || !messages
+  const hasTitleOrInitialMessage = post?.title ?? appConfig?.description
 
   if (isLoading || messages.length) {
     return null
@@ -47,9 +47,9 @@ export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
             <Skeleton className="h-4 w-3/6" />
           </div>
         )}
-        {!isLoading && postConfig?.description && (
+        {!isLoading && appConfig?.description && (
           <ReactMarkdown remarkPlugins={[]}>
-            {postConfig.description}
+            {appConfig.description}
           </ReactMarkdown>
         )}
       </div>

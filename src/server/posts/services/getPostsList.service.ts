@@ -1,6 +1,6 @@
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { ShareScope, type PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import type { Post, PostConfigVersion, Prisma } from '@prisma/client'
+import type { AppConfigVersion, Post, Prisma } from '@prisma/client'
 import { omit, sortBy } from 'underscore'
 import { scopePostByWorkspace } from '../postUtils'
 
@@ -13,7 +13,7 @@ export function getPostsListService(
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   payload: { includeLatestConfig: true },
-): Promise<(Post & { latestConfig: PostConfigVersion })[]>
+): Promise<(Post & { latestConfig: AppConfigVersion })[]>
 
 export function getPostsListService(
   prisma: PrismaClientOrTrxClient,
@@ -108,7 +108,7 @@ const genericPostFetch = async (
     const posts = await prisma.post.findMany({
       where,
       include: {
-        postConfigVersions: {
+        appConfigVersions: {
           orderBy: {
             createdAt: 'desc',
           },
@@ -120,8 +120,8 @@ const genericPostFetch = async (
     return posts.map((post) => {
       return {
         ...post,
-        ...omit(post, 'postConfigVersions'),
-        latestConfig: post.postConfigVersions[0],
+        ...omit(post, 'appConfigVersions'),
+        latestConfig: post.appConfigVersions[0],
       }
     })
   }

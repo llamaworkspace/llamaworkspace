@@ -7,7 +7,7 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Chat, Post, User, Workspace } from '@prisma/client'
-import { postConfigVersionUpdateForDefaultPostService } from '../postConfigVersionUpdateForDefaultPost.service'
+import { appConfigVersionUpdateForDefaultPostService } from '../appConfigVersionUpdateForDefaultPost.service'
 
 interface SubjectPayload {
   model: string
@@ -25,17 +25,13 @@ const subject = async (
     userId,
   )
 
-  return await postConfigVersionUpdateForDefaultPostService(
-    prisma,
-    uowContext,
-    {
-      chatId,
-      model: payload.model,
-    },
-  )
+  return await appConfigVersionUpdateForDefaultPostService(prisma, uowContext, {
+    chatId,
+    model: payload.model,
+  })
 }
 
-describe('postConfigVersionUpdateForDefaultPostService', () => {
+describe('appConfigVersionUpdateForDefaultPostService', () => {
   let workspace: Workspace
   let user: User
   let post: Post
@@ -51,25 +47,25 @@ describe('postConfigVersionUpdateForDefaultPostService', () => {
       workspaceId: workspace.id,
       isDefault: true,
     })
-    const postConfigVersion = await prisma.postConfigVersion.findFirstOrThrow({
+    const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
       where: {
-        postId: post.id,
+        appId: post.id,
       },
     })
     chat = await ChatFactory.create(prisma, {
       postId: post.id,
       authorId: user.id,
-      postConfigVersionId: postConfigVersion.id,
+      appConfigVersionId: appConfigVersion.id,
     })
   })
 
-  it('updates the postConfigVersion linked to the chat', async () => {
+  it('updates the appConfigVersion linked to the chat', async () => {
     await subject(workspace.id, user.id, chat.id, {
       model: 'fake_model',
     })
-    const dbPostConfigVersion = await prisma.postConfigVersion.findMany({
+    const dbAppConfigVersion = await prisma.appConfigVersion.findMany({
       where: {
-        postId: post.id,
+        appId: post.id,
         chats: {
           some: {
             id: chat.id,
@@ -77,8 +73,8 @@ describe('postConfigVersionUpdateForDefaultPostService', () => {
         },
       },
     })
-    expect(dbPostConfigVersion.length).toBe(1)
-    expect(dbPostConfigVersion[0]!.model).toBe('fake_model')
+    expect(dbAppConfigVersion.length).toBe(1)
+    expect(dbAppConfigVersion[0]!.model).toBe('fake_model')
   })
 
   it('calls PermissionsVerifier', async () => {

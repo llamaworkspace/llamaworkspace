@@ -17,11 +17,11 @@ export const saveTokenCountForChatRunService = async (
   return await prismaAsTrx(prisma, async (prisma) => {
     const chatRun = await getChatRunWithExtras(prisma, chatRunId)
 
-    if (!chatRun.chat.postConfigVersion) {
-      throw new Error('ChatRun should have a postConfigVersion')
+    if (!chatRun.chat.appConfigVersion) {
+      throw new Error('ChatRun should have a appConfigVersion')
     }
 
-    const fullModelSlug = chatRun.chat.postConfigVersion.model
+    const fullModelSlug = chatRun.chat.appConfigVersion.model
 
     const { provider: providerSlug } =
       getProviderAndModelFromFullSlug(fullModelSlug)
@@ -71,7 +71,7 @@ const getChatRunWithExtras = async (
     include: {
       chat: {
         include: {
-          postConfigVersion: true,
+          appConfigVersion: true,
         },
       },
       chatRunMessages: {

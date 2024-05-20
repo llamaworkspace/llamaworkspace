@@ -88,10 +88,10 @@ export const useDeleteChat = () => {
   })
 }
 
-export const useUpdatePostConfigForStandaloneChat = () => {
+export const useUpdateAppConfigForStandaloneChat = () => {
   const errorHandler = useErrorHandler()
 
-  return api.chats.updatePostConfigForStandaloneChat.useMutation({
+  return api.chats.updateAppConfigForStandaloneChat.useMutation({
     onError: errorHandler(),
   })
 }
@@ -104,9 +104,9 @@ export const useMessages = (chatId?: string) => {
   )
 }
 
-export const usePostConfigForChat = (chatId?: string) => {
+export const useAppConfigForChat = (chatId?: string) => {
   const errorHandler = useErrorHandler()
-  return api.chats.getPostConfigForChatId.useQuery(
+  return api.chats.getAppConfigForChatId.useQuery(
     { chatId: chatId! },
     {
       enabled: !!chatId,
@@ -170,7 +170,7 @@ export const usePrompt = (chatId?: string) => {
           const obj = {
             id: 'temp_user',
             chatId,
-            postConfigVersionId: null,
+            appConfigVersionId: null,
             message,
             author: ChatAuthor.User,
             tokens: null,
@@ -207,7 +207,7 @@ export const usePrompt = (chatId?: string) => {
                 const obj = {
                   id: 'temp_assistant',
                   chatId,
-                  postConfigVersionId: null,
+                  appConfigVersionId: null,
                   message: null,
                   author: ChatAuthor.Assistant,
                   tokens: null,

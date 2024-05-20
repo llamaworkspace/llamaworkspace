@@ -7,68 +7,68 @@ import {
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { PostConfigVersion } from '@prisma/client'
+import type { AppConfigVersion } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { isUndefined, omit } from 'underscore'
 import { scopePostByWorkspace } from '../postUtils'
 
-interface PostConfigVersionUpdateServiceInputProps {
+interface AppConfigVersionUpdateServiceInputProps {
   id: string
   description?: string | null
   systemMessage?: string
   model?: string
 }
 
-export const postConfigVersionUpdateService = async (
+export const appConfigVersionUpdateService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  input: PostConfigVersionUpdateServiceInputProps,
+  input: AppConfigVersionUpdateServiceInputProps,
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const { userId, workspaceId } = uowContext
     const { id, systemMessage, ...payload } = input
 
-    const postConfigVersionWithPost =
-      await prisma.postConfigVersion.findFirstOrThrow({
+    const appConfigVersionWithPost =
+      await prisma.appConfigVersion.findFirstOrThrow({
         where: {
           id,
-          post: scopePostByWorkspace({}, workspaceId),
+          app: scopePostByWorkspace({}, workspaceId),
         },
         include: {
-          post: true,
+          app: true,
         },
       })
 
-    const { post, ...postConfigVersion } = postConfigVersionWithPost
+    const { app, ...appConfigVersion } = appConfigVersionWithPost
 
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Update,
       userId,
-      postConfigVersionWithPost.postId,
+      appConfigVersionWithPost.appId,
     )
 
-    if (post.isDefault) {
+    if (app.isDefault) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Only default posts can be updated',
       })
     }
 
-    let targetPostConfigVersion = postConfigVersion
+    let targetAppConfigVersion = appConfigVersion
     // If there are chats using the configversion, when we edit it, we create a new version
     // else we dont
-    const chatsCount = await getChatsCount(prisma, postConfigVersionWithPost.id)
+    const chatsCount = await getChatsCount(prisma, appConfigVersionWithPost.id)
 
     if (chatsCount) {
-      targetPostConfigVersion = await duplicatePostConfigVersion(
+      targetAppConfigVersion = await duplicateAppConfigVersion(
         prisma,
-        postConfigVersion,
+        appConfigVersion,
       )
     }
 
-    const result = await prisma.postConfigVersion.update({
+    const result = await prisma.appConfigVersion.update({
       where: {
-        id: targetPostConfigVersion.id,
+        id: targetAppConfigVersion.id,
       },
       data: payload,
     })
@@ -76,7 +76,7 @@ export const postConfigVersionUpdateService = async (
     if (!isUndefined(systemMessage)) {
       const targetMessage = await prisma.message.findFirst({
         where: {
-          postConfigVersionId: targetPostConfigVersion.id,
+          appConfigVersionId: targetAppConfigVersion.id,
           author: Author.System,
         },
         orderBy: {
@@ -98,36 +98,36 @@ export const postConfigVersionUpdateService = async (
 
 const getChatsCount = async (
   prisma: PrismaTrxClient,
-  postConfigVersionId: string,
+  appConfigVersionId: string,
 ) => {
   return await prisma.chat.count({
     where: {
-      postConfigVersionId,
+      appConfigVersionId,
     },
   })
 }
 
-const duplicatePostConfigVersion = async (
+const duplicateAppConfigVersion = async (
   prisma: PrismaTrxClient,
-  postConfigVersion: PostConfigVersion,
+  appConfigVersion: AppConfigVersion,
 ) => {
   const messages = await prisma.message.findMany({
     where: {
-      postConfigVersionId: postConfigVersion.id,
+      appConfigVersionId: appConfigVersion.id,
       author: Author.System,
     },
   })
   const nextConfigVersionPayload = omit(
-    postConfigVersion,
+    appConfigVersion,
     'id',
     'createdAt',
     'updatedAt',
   )
   const nextMessages = messages.map((message) => {
-    return omit(message, 'id', 'createdAt', 'updatedAt', 'postConfigVersionId')
+    return omit(message, 'id', 'createdAt', 'updatedAt', 'appConfigVersionId')
   })
 
-  return await prisma.postConfigVersion.create({
+  return await prisma.appConfigVersion.create({
     data: {
       ...nextConfigVersionPayload,
       messages: {

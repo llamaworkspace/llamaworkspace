@@ -49,7 +49,7 @@ export const PostFactory = {
         data: {
           workspaceId,
           shares: sharesPayload,
-          postConfigVersions: {
+          appConfigVersions: {
             create: [
               {
                 model: DEFAULT_AI_MODEL,

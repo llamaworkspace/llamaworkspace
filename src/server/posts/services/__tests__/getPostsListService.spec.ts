@@ -1,12 +1,12 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { PostConfigVersionFactory } from '@/server/testing/factories/PostConfigVersionFactory'
+import { AppConfigVersionFactory } from '@/server/testing/factories/AppConfigVersionFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { workspaceWithUsersAndPostsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndPosts.fixture'
-import type { Post, PostConfigVersion, User, Workspace } from '@prisma/client'
+import type { AppConfigVersion, Post, User, Workspace } from '@prisma/client'
 import { getPostsListService } from '../getPostsList.service'
 
-type PostWithLatestConfig = Post & { latestConfig: PostConfigVersion }
+type PostWithLatestConfig = Post & { latestConfig: AppConfigVersion }
 
 const subject = async (
   userId: string,
@@ -87,12 +87,12 @@ describe('getPostsListService', () => {
     )
   })
 
-  describe('when the latestPostConfig is requested', () => {
-    let nextPostConfigForPost1: PostConfigVersion
+  describe('when the latestAppConfig is requested', () => {
+    let nextAppConfigForPost1: AppConfigVersion
 
     beforeEach(async () => {
-      nextPostConfigForPost1 = await PostConfigVersionFactory.create(prisma, {
-        postId: postWithScopeUser.id,
+      nextAppConfigForPost1 = await AppConfigVersionFactory.create(prisma, {
+        appId: postWithScopeUser.id,
       })
     })
     it('returns the posts with the latest post config', async () => {
@@ -102,15 +102,16 @@ describe('getPostsListService', () => {
         true,
       )) as PostWithLatestConfig[]
 
-      const post2ConfigVersion =
-        await prisma.postConfigVersion.findFirstOrThrow({
+      const post2ConfigVersion = await prisma.appConfigVersion.findFirstOrThrow(
+        {
           where: {
-            postId: postWithScopeEverybody.id,
+            appId: postWithScopeEverybody.id,
           },
           orderBy: {
             createdAt: 'desc',
           },
-        })
+        },
+      )
 
       const resultScopeUser = result.find(
         (post) => post.id === postWithScopeUser.id,
@@ -118,7 +119,7 @@ describe('getPostsListService', () => {
       const resultScopeEverybody = result.find(
         (post) => post.id === postWithScopeEverybody.id,
       )
-      expect(resultScopeUser!.latestConfig.id).toBe(nextPostConfigForPost1.id)
+      expect(resultScopeUser!.latestConfig.id).toBe(nextAppConfigForPost1.id)
       expect(resultScopeEverybody!.latestConfig.id).toBe(post2ConfigVersion.id)
       7
     })

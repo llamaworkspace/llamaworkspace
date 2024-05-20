@@ -7,7 +7,7 @@ import {
   createUserOnWorkspaceContext,
   type UserOnWorkspaceContext,
 } from '@/server/auth/userOnWorkspaceContext'
-import { getApplicablePostConfigToChatService } from '@/server/chats/services/getApplicablePostConfigToChat.service'
+import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { prisma } from '@/server/db'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { withMiddlewareForAppRouter } from '@/server/middlewares/withMiddleware'
@@ -51,18 +51,18 @@ async function handler(req: Request) {
       userId,
     )
 
-    const [postConfigVersion, messages] = await Promise.all([
-      await getPostConfigVersionForChat(context, chatId),
+    const [appConfigVersion, messages] = await Promise.all([
+      await getAppConfigVersionForChat(context, chatId),
       await getParsedMessagesForChat(chatId),
     ])
 
     await validateModelIsEnabledOrThrow(
       workspaceId,
       userId,
-      postConfigVersion.model,
+      appConfigVersion.model,
     )
 
-    const allUnprocessedMessages = [...postConfigVersion.messages, ...messages]
+    const allUnprocessedMessages = [...appConfigVersion.messages, ...messages]
 
     const {
       messages: allMessages,
@@ -71,8 +71,8 @@ async function handler(req: Request) {
 
     assistantTargetMessageId = assistantTargetMessage.id
 
-    if (!chat.postConfigVersionId) {
-      await attachPostConfigVersionToChat(chatId, postConfigVersion.id)
+    if (!chat.appConfigVersionId) {
+      await attachAppConfigVersionToChat(chatId, appConfigVersion.id)
     }
 
     // Todo: Update chatRun as transaction, in fact run everything as a trx!
@@ -85,7 +85,7 @@ async function handler(req: Request) {
 
     // Method to extract provider from model
     const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
-      postConfigVersion.model,
+      appConfigVersion.model,
     )
 
     const providerKVs = await getAiProviderKVsService(
@@ -221,25 +221,25 @@ const getChat = async (chatId: string) => {
   })
 }
 
-const getPostConfigVersionForChat = async (
+const getAppConfigVersionForChat = async (
   uowContext: UserOnWorkspaceContext,
   chatId: string,
 ) => {
-  return await getApplicablePostConfigToChatService(prisma, uowContext, {
+  return await getApplicableAppConfigToChatService(prisma, uowContext, {
     chatId,
   })
 }
 
-const attachPostConfigVersionToChat = async (
+const attachAppConfigVersionToChat = async (
   chatId: string,
-  postConfigVersionId: string,
+  appConfigVersionId: string,
 ) => {
   await prisma.chat.update({
     where: {
       id: chatId,
     },
     data: {
-      postConfigVersionId,
+      appConfigVersionId,
     },
   })
 }

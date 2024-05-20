@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { postConfigVersionUpdateForDefaultPostService } from '@/server/posts/services/postConfigVersionUpdateForDefaultPost.service'
+import { appConfigVersionUpdateForDefaultPostService } from '@/server/posts/services/appConfigVersionUpdateForDefaultPost.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -8,7 +8,7 @@ const zInput = z.object({
   model: z.string(),
 })
 
-export const updatePostConfigForStandaloneChat = protectedProcedure
+export const updateAppConfigForStandaloneChat = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const { chatId } = input
@@ -29,7 +29,7 @@ export const updatePostConfigForStandaloneChat = protectedProcedure
       userId,
     )
 
-    return await postConfigVersionUpdateForDefaultPostService(
+    return await appConfigVersionUpdateForDefaultPostService(
       ctx.prisma,
       context,
       input,

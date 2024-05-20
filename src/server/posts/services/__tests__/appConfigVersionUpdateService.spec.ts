@@ -6,8 +6,8 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Post, PostConfigVersion, User, Workspace } from '@prisma/client'
-import { postConfigVersionUpdateService } from '../postConfigVersionUpdate.service'
+import type { AppConfigVersion, Post, User, Workspace } from '@prisma/client'
+import { appConfigVersionUpdateService } from '../appConfigVersionUpdate.service'
 
 interface SubjectPayload {
   description?: string | null
@@ -18,7 +18,7 @@ interface SubjectPayload {
 const subject = async (
   workspaceId: string,
   userId: string,
-  postConfigVersionId: string,
+  appConfigVersionId: string,
   payload: SubjectPayload = {},
 ) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -27,17 +27,17 @@ const subject = async (
     userId,
   )
 
-  return await postConfigVersionUpdateService(prisma, uowContext, {
+  return await appConfigVersionUpdateService(prisma, uowContext, {
     ...payload,
-    id: postConfigVersionId,
+    id: appConfigVersionId,
   })
 }
 
-describe('postConfigVersionUpdateService', () => {
+describe('appConfigVersionUpdateService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post & { postConfigVersions: PostConfigVersion[] }
-  let postConfigVersion: PostConfigVersion
+  let post: Post & { appConfigVersions: AppConfigVersion[] }
+  let appConfigVersion: AppConfigVersion
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -54,15 +54,15 @@ describe('postConfigVersionUpdateService', () => {
         id: _post.id,
       },
       include: {
-        postConfigVersions: true,
+        appConfigVersions: true,
       },
     })
 
-    postConfigVersion = post.postConfigVersions[0]!
+    appConfigVersion = post.appConfigVersions[0]!
   })
 
-  it('updates the postConfigVersion', async () => {
-    const result = await subject(workspace.id, user.id, postConfigVersion.id, {
+  it('updates the appConfigVersion', async () => {
+    const result = await subject(workspace.id, user.id, appConfigVersion.id, {
       description: 'A new description',
     })
 
@@ -75,7 +75,7 @@ describe('postConfigVersionUpdateService', () => {
       'passOrThrowTrpcError',
     )
 
-    await subject(workspace.id, user.id, postConfigVersion.id, {
+    await subject(workspace.id, user.id, appConfigVersion.id, {
       description: 'A new description',
     })
 
@@ -91,27 +91,27 @@ describe('postConfigVersionUpdateService', () => {
       await ChatFactory.create(prisma, {
         postId: post.id,
         authorId: user.id,
-        postConfigVersionId: postConfigVersion.id,
+        appConfigVersionId: appConfigVersion.id,
       })
     })
 
-    it('creates a new postConfigVersion', async () => {
+    it('creates a new appConfigVersion', async () => {
       expect(
-        await prisma.postConfigVersion.count({
+        await prisma.appConfigVersion.count({
           where: {
-            postId: post.id,
+            appId: post.id,
           },
         }),
       ).toBe(1)
 
-      await subject(workspace.id, user.id, postConfigVersion.id, {
+      await subject(workspace.id, user.id, appConfigVersion.id, {
         description: 'A new description',
       })
 
       expect(
-        await prisma.postConfigVersion.count({
+        await prisma.appConfigVersion.count({
           where: {
-            postId: post.id,
+            appId: post.id,
           },
         }),
       ).toBe(2)
@@ -119,24 +119,19 @@ describe('postConfigVersionUpdateService', () => {
   })
 
   describe('when description is null', () => {
-    it('updates the postConfigVersion', async () => {
-      await prisma.postConfigVersion.update({
+    it('updates the appConfigVersion', async () => {
+      await prisma.appConfigVersion.update({
         where: {
-          id: postConfigVersion.id,
+          id: appConfigVersion.id,
         },
         data: {
           description: 'A description',
         },
       })
 
-      const result = await subject(
-        workspace.id,
-        user.id,
-        postConfigVersion.id,
-        {
-          description: null,
-        },
-      )
+      const result = await subject(workspace.id, user.id, appConfigVersion.id, {
+        description: null,
+      })
 
       expect(result.description).toBeNull()
     })
@@ -144,34 +139,34 @@ describe('postConfigVersionUpdateService', () => {
 
   describe('when systemMessage is provided', () => {
     it('updates the system message', async () => {
-      const postConfigVersionInDbBefore =
-        await prisma.postConfigVersion.findFirstOrThrow({
+      const appConfigVersionInDbBefore =
+        await prisma.appConfigVersion.findFirstOrThrow({
           where: {
-            id: postConfigVersion.id,
+            id: appConfigVersion.id,
           },
           include: {
             messages: true,
           },
         })
 
-      expect(postConfigVersionInDbBefore.messages[0]!.message).not.toBe(
+      expect(appConfigVersionInDbBefore.messages[0]!.message).not.toBe(
         'A new system message',
       )
 
-      await subject(workspace.id, user.id, postConfigVersion.id, {
+      await subject(workspace.id, user.id, appConfigVersion.id, {
         systemMessage: 'A new system message',
       })
-      const postConfigVersionInDb =
-        await prisma.postConfigVersion.findFirstOrThrow({
+      const appConfigVersionInDb =
+        await prisma.appConfigVersion.findFirstOrThrow({
           where: {
-            id: postConfigVersion.id,
+            id: appConfigVersion.id,
           },
           include: {
             messages: true,
           },
         })
 
-      expect(postConfigVersionInDb.messages[0]!.message).toBe(
+      expect(appConfigVersionInDb.messages[0]!.message).toBe(
         'A new system message',
       )
     })
@@ -190,7 +185,7 @@ describe('postConfigVersionUpdateService', () => {
     })
     it('throws an error', async () => {
       await expect(
-        subject(workspace.id, user.id, postConfigVersion.id, {
+        subject(workspace.id, user.id, appConfigVersion.id, {
           description: 'A new description',
         }),
       ).rejects.toThrow()

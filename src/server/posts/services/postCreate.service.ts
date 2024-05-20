@@ -62,7 +62,7 @@ const createPost = async (
       workspaceId,
       userId,
       ...input,
-      postConfigVersions: {
+      appConfigVersions: {
         create: [
           {
             model: targetModel,

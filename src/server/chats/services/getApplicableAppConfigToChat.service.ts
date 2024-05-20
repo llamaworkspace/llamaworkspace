@@ -6,14 +6,14 @@ import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopeChatByWorkspace } from '../chatUtils'
 
-interface ApplicablePostConfigVersionToChatServiceInputPayload {
+interface ApplicableAppConfigVersionToChatServiceInputPayload {
   chatId: string
 }
 
-export const getApplicablePostConfigToChatService = async function (
+export const getApplicableAppConfigToChatService = async function (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  payload: ApplicablePostConfigVersionToChatServiceInputPayload,
+  payload: ApplicableAppConfigVersionToChatServiceInputPayload,
 ) {
   const { workspaceId, userId } = uowContext
   const { chatId } = payload
@@ -29,14 +29,14 @@ export const getApplicablePostConfigToChatService = async function (
       chat.postId,
     )
 
-    if (chat.postConfigVersionId) {
-      return await getAssignedPostConfigVersion(
+    if (chat.appConfigVersionId) {
+      return await getAssignedAppConfigVersion(
         prisma,
         workspaceId,
-        chat.postConfigVersionId,
+        chat.appConfigVersionId,
       )
     } else {
-      return await getPostConfigVersionInProgress(
+      return await getAppConfigVersionInProgress(
         prisma,
         workspaceId,
         chat.postId,
@@ -45,15 +45,15 @@ export const getApplicablePostConfigToChatService = async function (
   })
 }
 
-const getAssignedPostConfigVersion = async (
+const getAssignedAppConfigVersion = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
-  postConfigVersionId: string,
+  appConfigVersionId: string,
 ) => {
-  const postConfig = await prisma.postConfigVersion.findFirstOrThrow({
+  const appConfig = await prisma.appConfigVersion.findFirstOrThrow({
     where: {
-      id: postConfigVersionId,
-      post: scopePostByWorkspace({}, workspaceId),
+      id: appConfigVersionId,
+      app: scopePostByWorkspace({}, workspaceId),
     },
     include: {
       messages: {
@@ -63,23 +63,23 @@ const getAssignedPostConfigVersion = async (
       },
     },
   })
-  const firstMessage = postConfig.messages[0]!
+  const firstMessage = appConfig.messages[0]!
 
   return {
-    ...postConfig,
+    ...appConfig,
     systemMessage: firstMessage.message,
   }
 }
 
-const getPostConfigVersionInProgress = async (
+const getAppConfigVersionInProgress = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
-  postId: string,
+  appId: string,
 ) => {
-  const postConfig = await prisma.postConfigVersion.findFirstOrThrow({
+  const appConfig = await prisma.appConfigVersion.findFirstOrThrow({
     where: {
-      postId,
-      post: scopePostByWorkspace({}, workspaceId),
+      appId,
+      app: scopePostByWorkspace({}, workspaceId),
     },
     orderBy: {
       createdAt: 'desc',
@@ -93,10 +93,10 @@ const getPostConfigVersionInProgress = async (
     },
   })
 
-  const firstMessage = postConfig.messages[0]!
+  const firstMessage = appConfig.messages[0]!
 
   return {
-    ...postConfig,
+    ...appConfig,
     systemMessage: firstMessage.message,
   }
 }

@@ -13,7 +13,7 @@ import EmojiPicker, { Emoji, type EmojiClickData } from 'emoji-picker-react'
 import { useEffect, useRef, useState } from 'react'
 import { Field } from 'react-final-form'
 
-export const PostConfigForGPTNameAndDescription = ({
+export const AppConfigForGPTNameAndDescription = ({
   disabled = false,
 }: {
   disabled: boolean

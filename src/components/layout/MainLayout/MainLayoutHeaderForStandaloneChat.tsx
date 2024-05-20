@@ -1,7 +1,7 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
 import {
-  usePostConfigForChat,
-  useUpdatePostConfigForStandaloneChat,
+  useAppConfigForChat,
+  useUpdateAppConfigForStandaloneChat,
 } from '@/components/chats/chatHooks'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMemo } from 'react'
@@ -59,21 +59,21 @@ interface FormValues {
 }
 
 const AiModelSelector = ({ chatId }: { chatId?: string }) => {
-  const { data: postConfig, refetch } = usePostConfigForChat(chatId)
-  const { mutate: updatePostConfigVersion } =
-    useUpdatePostConfigForStandaloneChat()
+  const { data: appConfig, refetch } = useAppConfigForChat(chatId)
+  const { mutate: updateAppConfigVersion } =
+    useUpdateAppConfigForStandaloneChat()
 
   const initialValues = useMemo(() => {
     return {
-      model: postConfig?.model,
+      model: appConfig?.model,
     }
-  }, [postConfig])
+  }, [appConfig])
 
   return (
     <FinalForm<FormValues>
       onSubmit={(values) => {
         if (!chatId) return
-        updatePostConfigVersion(
+        updateAppConfigVersion(
           {
             chatId,
             model: values.model,

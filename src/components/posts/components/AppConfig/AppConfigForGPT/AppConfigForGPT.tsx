@@ -14,16 +14,16 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Form as FinalForm } from 'react-final-form'
 import {
-  useLatestPostConfigVersionForPost,
+  useAppConfigUpdate,
+  useLatestAppConfigVersionForPost,
   usePostById,
-  usePostConfigUpdate,
   useUpdatePost,
 } from '../../../postsHooks'
-import { PostConfigSubmitButtonGroup } from '../PostConfigSubmitButtonGroup'
-import { PostConfigForGPTNameAndDescription } from './PostConfigForGPTNameAndDescription'
-import { PostConfigForGPTSettings } from './PostConfigForGPTSettings'
+import { AppConfigSubmitButtonGroup } from '../AppConfigSubmitButtonGroup'
+import { AppConfigForGPTNameAndDescription } from './AppConfigForGPTNameAndDescription'
+import { AppConfigForGPTSettings } from './AppConfigForGPTSettings'
 
-interface PostConfigProps {
+interface AppConfigProps {
   postId?: string
 }
 
@@ -36,13 +36,13 @@ interface SubmitProps {
   redirect?: boolean
 }
 
-export function PostConfigForGPT({ postId }: PostConfigProps) {
+export function AppConfigForGPT({ postId }: AppConfigProps) {
   const router = useRouter()
   const returnToChatRoute = router.asPath.replace(`/configuration`, '')
   const { data: post } = usePostById(postId)
-  const { data: postConfig } = useLatestPostConfigVersionForPost(postId)
+  const { data: appConfig } = useLatestAppConfigVersionForPost(postId)
 
-  const { mutateAsync: updatePostConfigVersion } = usePostConfigUpdate()
+  const { mutateAsync: updateAppConfigVersion } = useAppConfigUpdate()
   const { mutateAsync: updatePost } = useUpdatePost()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
@@ -55,7 +55,7 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
 
   const handleSubmit = async (values: SubmitProps) => {
     const { emoji, title, systemMessage, description, model } = values
-    if (!postConfig || !post) {
+    if (!appConfig || !post) {
       return
     }
 
@@ -66,8 +66,8 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
           emoji: emoji ?? null,
           title: title ?? null,
         }),
-        updatePostConfigVersion({
-          id: postConfig?.id,
+        updateAppConfigVersion({
+          id: appConfig?.id,
           systemMessage,
           description: description ?? null,
           model,
@@ -97,9 +97,9 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
             initialValues={{
               title: post?.title,
               emoji: post?.emoji,
-              systemMessage: postConfig?.systemMessage,
-              description: postConfig?.description,
-              model: postConfig?.model,
+              systemMessage: appConfig?.systemMessage,
+              description: appConfig?.description,
+              model: appConfig?.model,
             }}
             render={({
               handleSubmit,
@@ -116,9 +116,9 @@ export function PostConfigForGPT({ postId }: PostConfigProps) {
               }
               return (
                 <div className="space-y-8">
-                  <PostConfigForGPTNameAndDescription disabled={!canEdit} />
-                  <PostConfigForGPTSettings disabled={!canEdit} />
-                  <PostConfigSubmitButtonGroup
+                  <AppConfigForGPTNameAndDescription disabled={!canEdit} />
+                  <AppConfigForGPTSettings disabled={!canEdit} />
+                  <AppConfigSubmitButtonGroup
                     postId={postId}
                     pristine={pristine}
                     submitting={submitting}

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/router'
 
-interface PostConfigSubmitButtonGroupProps {
+interface AppConfigSubmitButtonGroupProps {
   postId?: string
   pristine: boolean
   submitting: boolean
@@ -11,13 +11,13 @@ interface PostConfigSubmitButtonGroupProps {
   onSave: () => Promise<void>
 }
 
-export const PostConfigSubmitButtonGroup = ({
+export const AppConfigSubmitButtonGroup = ({
   postId,
   pristine,
   submitting,
   showSubmitError = false,
   onSave,
-}: PostConfigSubmitButtonGroupProps) => {
+}: AppConfigSubmitButtonGroupProps) => {
   const router = useRouter()
   const returnToChatRoute = router.asPath.replace(`/configuration`, '')
   const { mutateAsync: createChat } = useCreateChatForApp()

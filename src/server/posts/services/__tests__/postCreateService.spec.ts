@@ -51,7 +51,7 @@ describe('postCreateService', () => {
     ])
   })
 
-  it('creates a first postConfigVersion', async () => {
+  it('creates a first appConfigVersion', async () => {
     const weirdModel = 'a_weird_model'
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, {
@@ -61,13 +61,13 @@ describe('postCreateService', () => {
 
     const post = await subject(workspace.id, user.id)
 
-    const postConfigVersion = await prisma.postConfigVersion.findFirstOrThrow({
+    const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
       where: {
-        postId: post.id,
+        appId: post.id,
       },
     })
 
-    expect(postConfigVersion).toMatchObject({
+    expect(appConfigVersion).toMatchObject({
       model: weirdModel,
     })
   })

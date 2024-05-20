@@ -191,7 +191,7 @@ export const usePostShare = (postId?: string) => {
   )
 }
 
-export const useLatestPostConfigVersionForPost = (postId?: string) => {
+export const useLatestAppConfigVersionForPost = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
   return api.posts.getLatestConfig.useQuery(
@@ -203,7 +203,7 @@ export const useLatestPostConfigVersionForPost = (postId?: string) => {
   )
 }
 
-export const usePostConfigUpdate = () => {
+export const useAppConfigUpdate = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 

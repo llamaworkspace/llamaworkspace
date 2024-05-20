@@ -24,21 +24,21 @@ export const workspaceOnboardingCreationService = async (
       },
     })
 
-    const postConfigVersion = await prisma.postConfigVersion.findFirstOrThrow({
+    const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
       where: {
-        postId: demoPost.id,
+        appId: demoPost.id,
       },
     })
 
     const firstMessage = await prisma.message.findFirstOrThrow({
       where: {
-        postConfigVersionId: postConfigVersion.id,
+        appConfigVersionId: appConfigVersion.id,
       },
     })
 
-    await prisma.postConfigVersion.update({
+    await prisma.appConfigVersion.update({
       where: {
-        id: postConfigVersion.id,
+        id: appConfigVersion.id,
       },
       data: {
         description: onboardingTexts.description,
