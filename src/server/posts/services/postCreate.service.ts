@@ -1,3 +1,4 @@
+import { AppGptEngine } from '@/components/posts/postsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { Author } from '@/shared/aiTypesAndMappers'
@@ -15,6 +16,7 @@ interface PostCreateServiceInputProps {
   emoji?: string
   isDefault?: boolean
   isDemo?: boolean
+  gptEngine?: AppGptEngine
 }
 
 export const postCreateService = async (
@@ -61,6 +63,7 @@ const createPost = async (
     data: {
       workspaceId,
       userId,
+      gptEngine: input.gptEngine ?? AppGptEngine.Basic,
       ...input,
       postConfigVersions: {
         create: [

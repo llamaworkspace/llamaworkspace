@@ -22,3 +22,8 @@ export interface ComponentWithPostId {
 export enum PostType {
   Chat = 'chat',
 }
+
+export enum AppGptEngine {
+  Basic = 'basic',
+  OpenaiAssistant = 'openai_assistant',
+}

@@ -2,7 +2,7 @@ import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiMode
 import { StyledLink } from '@/components/ui/StyledLink'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
-import { stringOrNumberRequired } from '@/lib/frontend/finalFormValidations'
+import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
@@ -35,7 +35,7 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
     <>
       <Field
         name="systemMessage"
-        validate={stringOrNumberRequired}
+        validate={stringRequired}
         render={({ input, meta }) => {
           return (
             <>
@@ -44,7 +44,7 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
                 meta={meta}
                 label="Instructions for the AI"
                 helperText='This content is known as the "system prompt". Use it to tell the AI what should do and how to behave. The more precise the instructions are, the better the AI will perform.'
-                rows={10}
+                rows={12}
                 placeholder={placeholderMessage}
                 disabled={disabled}
                 {...input}
@@ -53,9 +53,27 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
           )
         }}
       />
+      {/* <div className="grid md:grid-cols-2">
+        <Field
+          name="gptEngine"
+          validate={stringRequired}
+          render={({ input, meta }) => {
+            return (
+              <PostConfigForGPTSelectEngineFormField
+                {...input}
+                meta={meta}
+                placeholder="Select engine"
+                label="GPT engine"
+                disabled={disabled}
+              />
+            )
+          }}
+        />
+      </div> */}
       <div className="grid md:grid-cols-2">
         <Field
           name="model"
+          validate={stringRequired}
           render={({ input }) => {
             return (
               <SelectAiModelsFormField
