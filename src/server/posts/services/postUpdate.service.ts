@@ -12,6 +12,7 @@ interface PostUpdateServiceInputProps {
   postId: string
   title?: string | null
   emoji?: string | null
+  gptEngine?: string
 }
 
 export const postUpdateService = async (
