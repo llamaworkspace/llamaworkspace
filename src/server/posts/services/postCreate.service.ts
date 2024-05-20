@@ -1,3 +1,4 @@
+import { OpenAiGptEngine } from '@/integrations/gptEngines/OpenAiGptEngine'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { Author } from '@/shared/aiTypesAndMappers'
@@ -100,4 +101,11 @@ const createDefaultShare = async (
       },
     },
   })
+}
+
+const getOpenAiGptEngineForWorkspaceService = (
+  prisma: PrismaClientOrTrxClient,
+  postId: string,
+) => {
+  return new OpenAiGptEngine(prisma, postId)
 }

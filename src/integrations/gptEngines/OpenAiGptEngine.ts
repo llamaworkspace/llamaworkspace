@@ -5,7 +5,7 @@ import createHttpError from 'http-errors'
 import OpenAI from 'openai'
 import type { MessageCreateParams } from 'openai/resources/beta/threads/messages'
 import { z } from 'zod'
-import type { Strategy } from './runnersBase'
+import type { GptEngine } from '../runnersBase'
 
 const message = {
   role: 'user',
@@ -16,6 +16,7 @@ const constructorParams = z
   .object({
     apiKey: z.string(),
     baseURL: z.string().optional(),
+    postId: z.string(),
   })
   .strict()
 
@@ -60,8 +61,8 @@ type OpenAiAssistantStrategyConstructorParams = z.infer<
 >
 type OpenAiAssistantStrategyStreamParams = z.infer<typeof streamParams>
 
-export class OpenaiAssistantStrategy
-  implements Strategy<OpenAiAssistantStrategyStreamParams>
+export class OpenAiGptEngine
+  implements GptEngine<OpenAiAssistantStrategyStreamParams>
 {
   private readonly apiKey: string
   private readonly baseURL: string | undefined

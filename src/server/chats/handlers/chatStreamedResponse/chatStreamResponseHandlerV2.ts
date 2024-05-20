@@ -1,6 +1,6 @@
 import { env } from '@/env.mjs'
-import { OpenaiAssistantStrategy } from '@/runners/OpenAiAssistantRunner'
-import { AssistantRunner } from '@/runners/runnersBase'
+import { OpenAiGptEngine } from '@/integrations/gptEngines/OpenAiGptEngine'
+import { GptEngineRunner } from '@/integrations/runnersBase'
 import type { NextRequest } from 'next/server'
 import { z } from 'zod'
 
@@ -41,11 +41,9 @@ export default async function chatStreamedResponseHandlerV2(req: NextRequest) {
 
   if (type === 'openai') {
     const dbConstructorFields = await getDbConstructorFields()
-    OpenaiAssistantStrategy.validateConstructorParamsOrThrow(
-      dbConstructorFields,
-    ) // I should enforce this!!
-    const runnerStrategy = new OpenaiAssistantStrategy(dbConstructorFields)
-    const assistantRunner = new AssistantRunner(runnerStrategy)
+    OpenAiGptEngine.validateConstructorParamsOrThrow(dbConstructorFields) // I should enforce this!!
+    const runnerStrategy = new OpenAiGptEngine(dbConstructorFields)
+    const gptEngineRunner = new GptEngineRunner(runnerStrategy)
 
     // We fetch assistantId here. It's an internally created id, not exposed to the user
     // Who generates this id in this example where there is no file upload phase?
@@ -55,7 +53,7 @@ export default async function chatStreamedResponseHandlerV2(req: NextRequest) {
     // In the UI I envision: Select app type? (a) GPT with function calling, (b) OpenAI assistant, (b) Custom RAG?. Then, for each type, we show what is possible: Function calling, twyd, etc.
     // In the UI I envision: Select app type? (a) GPT with function calling, (b) OpenAI assistant, (b) Custom RAG?. Then, for each type, we show what is possible: Function calling, twyd, etc.
     const dbRuntimeFields = await getDbRuntimeFields()
-    return await assistantRunner.stream(dbRuntimeFields)
+    return await gptEngineRunner.stream(dbRuntimeFields)
   } else {
     // const runnerStrategy = new AnotherAssistantStrategy({ pepe: 'pepe' })
     // const assistantRunner = new AssistantRunner(runnerStrategy)

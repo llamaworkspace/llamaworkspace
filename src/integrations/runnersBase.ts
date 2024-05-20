@@ -1,8 +1,8 @@
 import type { SafeParseReturnType } from 'zod'
 
-export class AssistantRunner<T> {
-  private readonly strategy: Strategy<T>
-  constructor(strategy: Strategy<T>) {
+export class GptEngineRunner<T> {
+  private readonly strategy: GptEngine<T>
+  constructor(strategy: GptEngine<T>) {
     this.strategy = strategy
   }
 
@@ -23,14 +23,14 @@ export class AssistantRunner<T> {
   }
 }
 
-export interface StrategyStreamContext {
+export interface GptEngineStreamContext {
   keyValues: Record<string, string>
   // forwardStream: (stream: any) => Promise<any>
   // onFinal: (runResult: any) => void
   // onError: (error: any) => void
 }
 
-export interface Strategy<T> {
-  stream(payload: T, context: StrategyStreamContext): Promise<unknown>
+export interface GptEngine<T> {
+  stream(payload: T, context: GptEngineStreamContext): Promise<unknown>
   validateStreamInputParams(params: T): SafeParseReturnType<T, T>
 }

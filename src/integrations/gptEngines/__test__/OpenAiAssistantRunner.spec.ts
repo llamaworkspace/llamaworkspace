@@ -1,6 +1,6 @@
 import { mockDeep } from 'jest-mock-extended'
 import OpenAI from 'openai'
-import { OpenaiAssistantStrategy } from '../OpenAiAssistantRunner'
+import { OpenAiGptEngine } from '../OpenAiGptEngine'
 
 const mockOpenAIApi = mockDeep<OpenAI>()
 
@@ -9,7 +9,7 @@ jest.mock('openai', () => {
 })
 
 const subject = () => {
-  return new OpenaiAssistantStrategy({
+  return new OpenAiGptEngine({
     apiKey: 'apiKey',
   })
 }
