@@ -6,7 +6,6 @@ import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
-import { PostConfigForGPTSelectEngineFormField } from './PostConfigForGPTSelectEngineFormField'
 
 const placeholderMessage = `Write a message to help the AI understand what you are trying to achieve. The more details and context you provide, the better will be ChatGPT's outcome.
 
@@ -54,7 +53,7 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
           )
         }}
       />
-      <div className="grid md:grid-cols-2">
+      {/* <div className="grid md:grid-cols-2">
         <Field
           name="gptEngine"
           validate={stringRequired}
@@ -70,7 +69,7 @@ export const PostConfigForGPTSettings = ({ disabled = false }) => {
             )
           }}
         />
-      </div>
+      </div> */}
       <div className="grid md:grid-cols-2">
         <Field
           name="model"

@@ -63,6 +63,7 @@ const createPost = async (
     data: {
       workspaceId,
       userId,
+      gptEngine: input.gptEngine ?? AppGptEngine.Basic,
       ...input,
       postConfigVersions: {
         create: [
