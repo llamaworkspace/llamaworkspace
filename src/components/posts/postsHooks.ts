@@ -276,3 +276,11 @@ export const useAppFiles = (appId?: string) => {
     },
   )
 }
+
+export const useDeleteAppFiles = () => {
+  const errorHandler = useErrorHandler()
+
+  return api.posts.deleteAppFiles.useMutation({
+    onError: errorHandler(),
+  })
+}

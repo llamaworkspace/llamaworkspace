@@ -1,4 +1,5 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
+import { deleteAppFiles } from './procedures/deleteAppFiles'
 import { getAppFiles } from './procedures/getAppFiles'
 import { createFileUploadPresignedUrl } from './procedures/getFileUploadPresignedUrl'
 import { notifyFileUploadSuccess } from './procedures/notifyFileUploadSuccess'
@@ -29,6 +30,7 @@ export const postsRouter = createTRPCRouter({
   updateConfig: postsConfigUpdate,
   getLatestConfig: postsConfigGetLatestForPostId,
   getAppFiles,
+  deleteAppFiles,
   createFileUploadPresignedUrl,
   notifyFileUploadSuccess,
 })

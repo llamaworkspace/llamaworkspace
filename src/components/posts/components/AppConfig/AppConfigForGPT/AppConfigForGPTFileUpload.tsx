@@ -1,9 +1,12 @@
 import {
   useAppFiles,
   useCreateFileUploadPresignedUrl,
+  useDeleteAppFiles,
   useNotifyFileUploadSuccess,
 } from '@/components/posts/postsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
+import { useSuccessToast } from '@/components/ui/toastHooks'
+import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/posts/postConstants'
 import { DocumentIcon, XCircleIcon } from '@heroicons/react/24/outline'
@@ -19,7 +22,6 @@ export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
     useCreateFileUploadPresignedUrl()
 
   const { data: appFiles, refetch: refetchAppFiles } = useAppFiles(postId)
-
   const { mutateAsync: notifyFileUploadSuccess } = useNotifyFileUploadSuccess()
 
   const handleSingleFileUpload = async (file: File) => {
@@ -96,7 +98,12 @@ const FilesOrFutureFiles = ({
       {uploadedFiles && (
         <div className="grid gap-2 md:grid-cols-3">
           {Object.values(uploadedFiles).map((appFile) => (
-            <UploadedFile key={appFile.id} name={appFile.originalName} />
+            <UploadedFile
+              key={appFile.id}
+              appFileId={appFile.id}
+              appId={appFile.appId}
+              name={appFile.originalName}
+            />
           ))}
           {uploadableFiles && (
             <>
@@ -115,13 +122,31 @@ const FilesOrFutureFiles = ({
   )
 }
 
-const UploadedFile = ({
-  name,
-  uploading = false,
-}: {
+interface UploadedFileProps {
+  appId?: string
+  appFileId?: string
   name: string
   uploading?: boolean
-}) => {
+}
+
+const UploadedFile = ({
+  name,
+  appId,
+  appFileId,
+  uploading = false,
+}: UploadedFileProps) => {
+  const { mutateAsync: deleteAppFiles } = useDeleteAppFiles()
+  const { refetch: refetchAppFiles } = useAppFiles()
+  const toast = useSuccessToast()
+  const utils = api.useContext()
+
+  const handleFileDelete = async () => {
+    if (!appFileId) return
+    if (!appId) return
+    await deleteAppFiles({ appFileIds: [appFileId] })
+    toast(undefined, 'File successfully deleted')
+    await utils.posts.getAppFiles.invalidate()
+  }
   return (
     <div className="grid cursor-default grid-cols-12 items-center justify-between rounded border p-2 text-sm">
       <div className="col-span-1">
@@ -137,7 +162,10 @@ const UploadedFile = ({
       </div>
       <div className="col-span-1 flex justify-end">
         {!uploading && (
-          <XCircleIcon className="h-5 w-5 cursor-pointer rounded-full text-zinc-500 hover:text-red-500" />
+          <XCircleIcon
+            className="h-5 w-5 cursor-pointer rounded-full text-zinc-500 hover:text-red-500"
+            onClick={() => void handleFileDelete()}
+          />
         )}
       </div>
     </div>
