@@ -2,7 +2,7 @@ import {
   useCreateFileUploadPresignedUrl,
   useNotifyFileUploadSuccess,
 } from '@/components/posts/postsHooks'
-import { Input } from '@/components/ui/input'
+import { FileUploadInput } from '@/components/ui/FileUploadInput'
 import { useState, type ChangeEvent } from 'react'
 
 const SUPPORTED_FILE_TYPES =
@@ -50,10 +50,12 @@ export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
 
   return (
     <div>
-      <button onClick={() => void handleUpload()}>Upload</button>
-      <Input
+      {/* <button onClick={() => void handleUpload()}>Upload</button> */}
+      <FileUploadInput
+        buttonText="Upload files"
         onChange={handleChange}
         type="file"
+        multiple
         accept={SUPPORTED_FILE_TYPES}
       />
     </div>
