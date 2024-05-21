@@ -127,6 +127,7 @@ model Post {
     appConfigVersions AppConfigVersion[]
     shares            Share[]
     usersMeta         AppsOnUsers[]
+    files             AppFile[]
 }
 
 model AppsOnUsers {
@@ -142,6 +143,18 @@ model AppsOnUsers {
     updatedAt     DateTime  @updatedAt
 
     @@unique([userId, appId])
+}
+
+model AppFile {
+    id           String   @id @default(cuid())
+    appId        String
+    status       String
+    originalName String
+    extension    String
+    path         String
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    app          Post     @relation(fields: [appId], references: [id], onDelete: Cascade)
 }
 
 model Share {

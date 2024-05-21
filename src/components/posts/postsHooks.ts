@@ -248,3 +248,19 @@ export const useUpdateShareAccessLevelForPost = () => {
     },
   })
 }
+
+export const useCreateFileUploadPresignedUrl = () => {
+  const errorHandler = useErrorHandler()
+
+  return api.posts.createFileUploadPresignedUrl.useMutation({
+    onError: errorHandler(),
+  })
+}
+
+export const useNotifyFileUploadSuccess = () => {
+  const errorHandler = useErrorHandler()
+
+  return api.posts.notifyFileUploadSuccess.useMutation({
+    onError: errorHandler(),
+  })
+}

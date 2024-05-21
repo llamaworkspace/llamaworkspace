@@ -6,6 +6,8 @@ import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
+import { AppConfigForGPTFileUpload } from './AppConfigForGPTFileUpload'
+import { PostConfigForGPTSelectEngineFormField } from './PostConfigForGPTSelectEngineFormField'
 
 const placeholderMessage = `Write a message to help the AI understand what you are trying to achieve. The more details and context you provide, the better will be ChatGPT's outcome.
 
@@ -13,7 +15,15 @@ For example:
 Act as a public speaker and write compelling speeches that can be used to inspire people to take action.
 `
 
-export const AppConfigForGPTSettings = ({ disabled = false }) => {
+interface AppConfigForGPTSettingsProps {
+  postId?: string
+  disabled?: boolean
+}
+
+export const AppConfigForGPTSettings = ({
+  postId,
+  disabled = false,
+}: AppConfigForGPTSettingsProps) => {
   const navigation = useNavigation()
   const { data: workspace } = useCurrentWorkspace()
   const ref = useRef<HTMLTextAreaElement>(null)
@@ -53,7 +63,7 @@ export const AppConfigForGPTSettings = ({ disabled = false }) => {
           )
         }}
       />
-      {/* <div className="grid md:grid-cols-2">
+      <div className="grid md:grid-cols-2">
         <Field
           name="gptEngine"
           validate={stringRequired}
@@ -69,7 +79,7 @@ export const AppConfigForGPTSettings = ({ disabled = false }) => {
             )
           }}
         />
-      </div> */}
+      </div>
       <div className="grid md:grid-cols-2">
         <Field
           name="model"
@@ -86,6 +96,9 @@ export const AppConfigForGPTSettings = ({ disabled = false }) => {
             )
           }}
         />
+      </div>
+      <div className="grid md:grid-cols-2">
+        <AppConfigForGPTFileUpload postId={postId} />
       </div>
     </>
   )

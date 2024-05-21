@@ -1,4 +1,6 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
+import { createFileUploadPresignedUrl } from './procedures/getFileUploadPresignedUrl'
+import { notifyFileUploadSuccess } from './procedures/notifyFileUploadSuccess'
 import { performPostShare } from './procedures/performPostShare'
 import { postsConfigGetLatestForPostId } from './procedures/postsConfigGetLatestForPostId'
 import { postsConfigUpdate } from './procedures/postsConfigUpdate'
@@ -25,4 +27,6 @@ export const postsRouter = createTRPCRouter({
   updateShareAccessLevel: postsShareUpdateAccessLevel,
   updateConfig: postsConfigUpdate,
   getLatestConfig: postsConfigGetLatestForPostId,
+  createFileUploadPresignedUrl,
+  notifyFileUploadSuccess,
 })

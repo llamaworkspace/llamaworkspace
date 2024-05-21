@@ -28,6 +28,10 @@ const server = z.object({
   SMTP_EMAIL_SERVER: z.string(),
   SMTP_EMAIL_FROM: z.string().email(),
   ENCRYPTION_KEY: z.string(),
+  S3_BUCKET_NAME: z.string(),
+  S3_REGION: z.string(),
+  S3_ACCESS_KEY_ID: z.string(),
+  S3_SECRET_ACCESS_KEY: z.string(),
 })
 
 /**
@@ -51,6 +55,10 @@ const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.ENCRYPTION_KEY,
   ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+  S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
+  S3_REGION: process.env.S3_REGION,
+  S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
   NEXTAUTH_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
