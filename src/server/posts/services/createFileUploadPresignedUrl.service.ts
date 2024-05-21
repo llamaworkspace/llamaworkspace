@@ -82,17 +82,22 @@ const createFileReference = async (
 
   const splitFileName = originalName.split('.')
   const extension = splitFileName.length > 1 ? `.${splitFileName.pop()}` : ''
-  const path = `workspaces/${workspaceId}/apps/${postId}${extension}`
 
-  return await prisma.appFile.create({
+  let appFile = await prisma.appFile.create({
     data: {
       appId: postId,
       status: AppFileStatus.Pending,
       originalName,
-      path,
+      path: 'temp',
       extension,
     },
   })
+  const path = `workspaces/${workspaceId}/apps/${postId}/${appFile.id}${extension}`
+  appFile = await prisma.appFile.update({
+    where: { id: appFile.id },
+    data: { path },
+  })
+  return appFile
 }
 
 const generatePresignedUrl = async (path: string) => {

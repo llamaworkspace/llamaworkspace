@@ -264,3 +264,15 @@ export const useNotifyFileUploadSuccess = () => {
     onError: errorHandler(),
   })
 }
+
+export const useAppFiles = (appId?: string) => {
+  const errorHandler = useErrorHandler()
+
+  return api.posts.getAppFiles.useQuery(
+    { appId: appId! },
+    {
+      onError: errorHandler(),
+      enabled: !!appId,
+    },
+  )
+}

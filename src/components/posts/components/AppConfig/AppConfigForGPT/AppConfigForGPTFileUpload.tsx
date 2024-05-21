@@ -1,34 +1,37 @@
 import {
+  useAppFiles,
   useCreateFileUploadPresignedUrl,
   useNotifyFileUploadSuccess,
 } from '@/components/posts/postsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
+import { cn } from '@/lib/utils'
+import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/posts/postConstants'
+import { DocumentIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import type { AppFile } from '@prisma/client'
 import { useState, type ChangeEvent } from 'react'
 
-const SUPPORTED_FILE_TYPES =
-  '.c,.cs,.cpp,.doc,.docx,.html,.java,.json,.md,.pdf,.php,.pptx,.py,.py,.rb,.tex,.txt,.css,.js,.sh,.ts'
-
 export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
-  const [file, setFile] = useState<File | null>(null)
+  const [uploadableFiles, setUploadeableFiles] = useState<
+    Record<string, AppFile>
+  >({})
+
   const { mutateAsync: createFileUploadPresignedUrl } =
     useCreateFileUploadPresignedUrl()
+
+  const { data: appFiles, refetch: refetchAppFiles } = useAppFiles(postId)
+
   const { mutateAsync: notifyFileUploadSuccess } = useNotifyFileUploadSuccess()
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.files)
-    const first = event.target.files?.[0]!
-    setFile(first)
-  }
-
-  const handleUpload = async () => {
+  const handleSingleFileUpload = async (file: File) => {
     if (!postId) return
-    if (!file) return
+
     const { presignedUrl, appFile } = await createFileUploadPresignedUrl({
       postId,
       fileName: file.name,
     })
 
-    console.log(presignedUrl)
+    setUploadeableFiles((prev) => ({ ...prev, [file.name]: appFile }))
+
     const formData = new FormData()
     Object.keys(presignedUrl.fields).forEach((key) => {
       formData.append(key, presignedUrl.fields[key]!)
@@ -42,22 +45,101 @@ export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
 
     if (response.ok) {
       await notifyFileUploadSuccess({ appFileId: appFile.id })
+      setUploadeableFiles((prev) => {
+        const { [file.name]: _, ...rest } = prev
+        return rest
+      })
+      await refetchAppFiles()
+
       console.log('File uploaded successfully')
     } else {
       console.error('Error uploading file', response.statusText)
     }
   }
 
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return
+
+    Array.from(event.target.files).forEach(
+      (file) => void handleSingleFileUpload(file),
+    )
+  }
+
   return (
-    <div>
-      {/* <button onClick={() => void handleUpload()}>Upload</button> */}
+    <div className="space-y-2">
+      <FilesOrFutureFiles
+        uploadedFiles={appFiles}
+        uploadableFiles={uploadableFiles}
+      />
       <FileUploadInput
         buttonText="Upload files"
         onChange={handleChange}
         type="file"
         multiple
-        accept={SUPPORTED_FILE_TYPES}
+        accept={OPENAI_SUPPORTED_FILE_TYPES}
       />
+    </div>
+  )
+}
+
+interface UploadableFilesProps {
+  uploadedFiles?: AppFile[]
+  uploadableFiles: Record<string, AppFile>
+}
+
+const FilesOrFutureFiles = ({
+  uploadedFiles,
+  uploadableFiles,
+}: UploadableFilesProps) => {
+  return (
+    <div>
+      {uploadedFiles && (
+        <div className="grid gap-2 md:grid-cols-3">
+          {Object.values(uploadedFiles).map((appFile) => (
+            <UploadedFile key={appFile.id} name={appFile.originalName} />
+          ))}
+          {uploadableFiles && (
+            <>
+              {Object.values(uploadableFiles).map((appFile) => (
+                <UploadedFile
+                  key={appFile.id}
+                  name={appFile.originalName}
+                  uploading
+                />
+              ))}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+const UploadedFile = ({
+  name,
+  uploading = false,
+}: {
+  name: string
+  uploading?: boolean
+}) => {
+  return (
+    <div className="grid cursor-default grid-cols-12 items-center justify-between rounded border p-2 text-sm">
+      <div className="col-span-1">
+        <DocumentIcon className="h-4 w-4" />
+      </div>
+      <div
+        className={cn(
+          'col-span-10 line-clamp-1',
+          uploading && 'italic text-zinc-400',
+        )}
+      >
+        {name}
+      </div>
+      <div className="col-span-1 flex justify-end">
+        {!uploading && (
+          <XCircleIcon className="h-5 w-5 cursor-pointer rounded-full text-zinc-500 hover:text-red-500" />
+        )}
+      </div>
     </div>
   )
 }

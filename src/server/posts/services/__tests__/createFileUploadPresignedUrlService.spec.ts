@@ -55,8 +55,6 @@ describe('createFileUploadPresignedUrlService', () => {
       userId: user.id,
       workspaceId: workspace.id,
     })
-
-    expectedPath = `workspaces/${workspace.id}/apps/${post.id}.txt`
   })
 
   it('creates a file reference', async () => {
@@ -68,6 +66,8 @@ describe('createFileUploadPresignedUrlService', () => {
         appId: post.id,
       },
     })
+
+    const expectedPath = `workspaces/${workspace.id}/apps/${post.id}/${fileReference[0]!.id}.txt`
 
     expect(fileReference).toHaveLength(1)
     expect(fileReference[0]).toEqual(
@@ -95,7 +95,14 @@ describe('createFileUploadPresignedUrlService', () => {
 
   it('generates an aws sdk url', async () => {
     const fileName = 'file.txt'
-    await subject(workspace.id, user.id, post.id, fileName)
+
+    const fileReference = await subject(
+      workspace.id,
+      user.id,
+      post.id,
+      fileName,
+    )
+    const expectedPath = `workspaces/${workspace.id}/apps/${post.id}/${fileReference.appFile.id}.txt`
 
     expect(createPresignedPost).toHaveBeenCalledTimes(1)
     expect(createPresignedPost).toHaveBeenCalledWith(
@@ -131,14 +138,14 @@ describe('createFileUploadPresignedUrlService', () => {
           appId: post.id,
         },
       })
-
+      const expectedPath = `workspaces/${workspace.id}/apps/${post.id}/${fileReference[0]!.id}`
       expect(fileReference).toHaveLength(1)
       expect(fileReference[0]).toEqual(
         expect.objectContaining({
           appId: post.id,
           status: AppFileStatus.Pending,
           originalName: fileName,
-          path: expectedPath.replace('.txt', ''),
+          path: expectedPath,
         }),
       )
     })

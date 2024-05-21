@@ -97,7 +97,7 @@ export const AppConfigForGPTSettings = ({
           }}
         />
       </div>
-      <div className="grid md:grid-cols-2">
+      <div>
         <AppConfigForGPTFileUpload postId={postId} />
       </div>
     </>
