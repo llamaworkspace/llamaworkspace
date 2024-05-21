@@ -37,7 +37,7 @@ interface FormLabelProps extends PropsWithChildren {
   isError?: boolean
 }
 
-const FormLabel = ({
+export const FormLabel = ({
   children,
   isRequired,
   isError = false,

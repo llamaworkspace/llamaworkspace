@@ -5,6 +5,7 @@ import {
   useNotifyFileUploadSuccess,
 } from '@/components/posts/postsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
+import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -94,30 +95,40 @@ const FilesOrFutureFiles = ({
   uploadableFiles,
 }: UploadableFilesProps) => {
   return (
-    <div>
-      {uploadedFiles && (
-        <div className="grid gap-2 md:grid-cols-3">
-          {Object.values(uploadedFiles).map((appFile) => (
-            <UploadedFile
-              key={appFile.id}
-              appFileId={appFile.id}
-              appId={appFile.appId}
-              name={appFile.originalName}
-            />
-          ))}
-          {uploadableFiles && (
-            <>
-              {Object.values(uploadableFiles).map((appFile) => (
-                <UploadedFile
-                  key={appFile.id}
-                  name={appFile.originalName}
-                  uploading
-                />
-              ))}
-            </>
-          )}
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <FormLabel>Knowledge</FormLabel>
+        <div className="text-sm text-zinc-500">
+          By uploading files here, you will be able to ask questions related to
+          those files. Please note that the conversations with the AI may
+          include extracts from the file.
         </div>
-      )}
+      </div>
+      <div>
+        {uploadedFiles && (
+          <div className="grid gap-2 md:grid-cols-3">
+            {Object.values(uploadedFiles).map((appFile) => (
+              <UploadedFile
+                key={appFile.id}
+                appFileId={appFile.id}
+                appId={appFile.appId}
+                name={appFile.originalName}
+              />
+            ))}
+            {uploadableFiles && (
+              <>
+                {Object.values(uploadableFiles).map((appFile) => (
+                  <UploadedFile
+                    key={appFile.id}
+                    name={appFile.originalName}
+                    uploading
+                  />
+                ))}
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
