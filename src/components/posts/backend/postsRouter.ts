@@ -1,5 +1,5 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
-import { getAppFiles } from './procedures/getAppConfigFiles'
+import { getAppFiles } from './procedures/getAppFiles'
 import { createFileUploadPresignedUrl } from './procedures/getFileUploadPresignedUrl'
 import { notifyFileUploadSuccess } from './procedures/notifyFileUploadSuccess'
 import { performPostShare } from './procedures/performPostShare'
