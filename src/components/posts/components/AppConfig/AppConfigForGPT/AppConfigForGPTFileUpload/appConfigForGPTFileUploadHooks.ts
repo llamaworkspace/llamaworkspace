@@ -43,10 +43,8 @@ export const useUploadFile = (
         onFileUploaded(file.name, appFile)
 
         await refetchAppFiles()
-
-        console.log('File uploaded successfully')
       } else {
-        console.error('Error uploading file', response.statusText)
+        throw new Error('File upload filed')
       }
     },
     [
