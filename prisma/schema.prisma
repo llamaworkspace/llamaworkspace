@@ -127,7 +127,8 @@ model Post {
     appConfigVersions AppConfigVersion[]
     shares            Share[]
     usersMeta         AppsOnUsers[]
-    files             AppFile[]
+    filesLegagy       AppFile[]
+    files             FilesOnApps[]
 }
 
 model AppsOnUsers {
@@ -155,6 +156,31 @@ model AppFile {
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
     app          Post     @relation(fields: [appId], references: [id], onDelete: Cascade)
+}
+
+model File {
+    id              String        @id @default(cuid())
+    uploadStatus    String
+    originalName    String
+    extension       String
+    path            String
+    markAsDeletedAt DateTime?
+    remoteDeletedAt DateTime?
+    createdAt       DateTime      @default(now())
+    updatedAt       DateTime      @updatedAt
+    apps            FilesOnApps[]
+}
+
+model FilesOnApps {
+    id        String   @id @default(cuid())
+    fileId    String
+    appId     String
+    file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+    app       Post     @relation(fields: [appId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([fileId, appId])
 }
 
 model Share {
