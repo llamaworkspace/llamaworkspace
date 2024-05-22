@@ -1,12 +1,10 @@
 import { env } from '@/env.mjs'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { scopePostByWorkspace } from '@/server/posts/postUtils'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { Promise } from 'bluebird'
+import { scopeAssetByWorkspace } from '../assetUtils'
 
 const { S3_BUCKET_NAME, S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY } =
   env
@@ -32,24 +30,15 @@ export async function WIPdeleteAppFilesService(
 
   await Promise.map(appFileIds, async (appFileId) => {
     return prismaAsTrx(prisma, async (prisma) => {
-      const appFile = await prisma.appFile.findFirstOrThrow({
-        where: {
-          id: appFileId,
-          app: scopePostByWorkspace({}, workspaceId),
-        },
+      const asset = await prisma.asset.findFirstOrThrow({
+        where: scopeAssetByWorkspace({ id: appFileId }, workspaceId),
       })
 
-      await new PermissionsVerifier(prisma).passOrThrowTrpcError(
-        PermissionAction.Delete,
-        userId,
-        appFile.appId,
-      )
-
-      await prisma.appFile.delete({ where: { id: appFileId } })
+      await prisma.asset.delete({ where: { id: appFileId } })
 
       const deleteObjectParams = {
         Bucket: S3_BUCKET_NAME,
-        Key: appFile.path,
+        Key: asset.path,
       }
       const deleteObjectCommand = new DeleteObjectCommand(deleteObjectParams)
       await s3Client.send(deleteObjectCommand)
