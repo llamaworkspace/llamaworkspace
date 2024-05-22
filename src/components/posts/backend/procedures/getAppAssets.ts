@@ -14,7 +14,7 @@ export const getAppAssets = protectedProcedure
 
     const app = await ctx.prisma.post.findFirstOrThrow({
       where: {
-        id: 'clwhtn7t0000c11n5a9kxzrf8',
+        id: input.appId,
       },
     })
 
