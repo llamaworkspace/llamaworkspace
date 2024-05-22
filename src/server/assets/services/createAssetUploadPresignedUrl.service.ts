@@ -1,4 +1,4 @@
-import { FileUploadStatus } from '@/components/posts/postsTypes'
+import { AssetUploadStatus } from '@/components/assets/assetTypes'
 import { env } from '@/env.mjs'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
@@ -18,60 +18,60 @@ const credentials = {
 }
 const s3Client = new S3Client({ region: S3_REGION, credentials })
 
-interface CreateFileUploadPresignedUrlInputProps {
-  fileName: string
+interface CreateAssetUploadPresignedUrlInputProps {
+  assetName: string
 }
 
-export const createFileUploadPresignedUrlService = async (
+export const createAssetUploadPresignedUrlService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  input: CreateFileUploadPresignedUrlInputProps,
+  input: CreateAssetUploadPresignedUrlInputProps,
 ) => {
   const { workspaceId } = uowContext
-  const { fileName } = input
+  const { assetName } = input
 
   return await prismaAsTrx(prisma, async (prisma) => {
-    const file = await createFileReference(prisma, {
+    const asset = await createAssetReference(prisma, {
       workspaceId,
-      originalName: fileName,
+      originalName: assetName,
     })
 
-    const { path } = file
+    const { path } = asset
     const presignedUrl = await generatePresignedUrl(path)
 
-    return { presignedUrl, file }
+    return { presignedUrl, asset }
   })
 }
 
-interface CreateFileReferencePayload {
+interface CreateAssetReferencePayload {
   workspaceId: string
   originalName: string
 }
 
-const createFileReference = async (
+const createAssetReference = async (
   prisma: PrismaTrxClient,
-  payload: CreateFileReferencePayload,
+  payload: CreateAssetReferencePayload,
 ) => {
   const { workspaceId, originalName } = payload
 
-  const splitFileName = originalName.split('.')
-  const extension = splitFileName.length > 1 ? `.${splitFileName.pop()}` : ''
+  const splitAssetName = originalName.split('.')
+  const extension = splitAssetName.length > 1 ? `.${splitAssetName.pop()}` : ''
 
-  let file = await prisma.file.create({
+  let asset = await prisma.asset.create({
     data: {
       workspaceId,
-      uploadStatus: FileUploadStatus.Pending,
+      uploadStatus: AssetUploadStatus.Pending,
       originalName,
       path: 'temp',
       extension,
     },
   })
-  const path = `workspaces/${workspaceId}/${file.id}${extension}`
-  file = await prisma.file.update({
-    where: { id: file.id },
+  const path = `workspaces/${workspaceId}/${asset.id}${extension}`
+  asset = await prisma.asset.update({
+    where: { id: asset.id },
     data: { path },
   })
-  return file
+  return asset
 }
 
 const generatePresignedUrl = async (path: string) => {

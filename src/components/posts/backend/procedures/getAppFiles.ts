@@ -1,5 +1,5 @@
+import { getAppFilesService } from '@/server/assets/services/getAppFiles.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getAppFilesService } from '@/server/files/services/getAppFiles.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 

@@ -5,7 +5,7 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import type { User, Workspace } from '@prisma/client'
-import { createFileUploadPresignedUrlService } from '../createFileUploadPresignedUrl.service'
+import { createAssetUploadPresignedUrlService } from '../createAssetUploadPresignedUrl.service'
 
 jest.mock('@aws-sdk/s3-presigned-post', () => {
   return {
@@ -20,19 +20,19 @@ jest.mock('@aws-sdk/s3-presigned-post', () => {
 const subject = async (
   workspaceId: string,
   userId: string,
-  fileName: string,
+  assetName: string,
 ) => {
   const uowContext = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
-  return await createFileUploadPresignedUrlService(prisma, uowContext, {
-    fileName,
+  return await createAssetUploadPresignedUrlService(prisma, uowContext, {
+    assetName,
   })
 }
 
-describe('createFileUploadPresignedUrlService', () => {
+describe('createAssetUploadPresignedUrlService', () => {
   let workspace: Workspace
   let user: User
 
@@ -49,7 +49,7 @@ describe('createFileUploadPresignedUrlService', () => {
     const fileName = 'file.txt'
 
     await subject(workspace.id, user.id, fileName)
-    const fileReference = await prisma.file.findMany({
+    const fileReference = await prisma.asset.findMany({
       where: {
         workspaceId: workspace.id,
       },
@@ -74,7 +74,7 @@ describe('createFileUploadPresignedUrlService', () => {
     const response = await subject(workspace.id, user.id, fileName)
 
     expect(response.presignedUrl).toEqual({ url: 'https://example.com' })
-    expect(response.file).toEqual(
+    expect(response.asset).toEqual(
       expect.objectContaining({
         workspaceId: workspace.id,
         uploadStatus: FileUploadStatus.Pending,
@@ -87,7 +87,7 @@ describe('createFileUploadPresignedUrlService', () => {
     const fileName = 'file.txt'
 
     const fileReference = await subject(workspace.id, user.id, fileName)
-    const expectedPath = `workspaces/${workspace.id}/${fileReference.file.id}.txt`
+    const expectedPath = `workspaces/${workspace.id}/${fileReference.asset.id}.txt`
 
     expect(createPresignedPost).toHaveBeenCalledTimes(1)
     expect(createPresignedPost).toHaveBeenCalledWith(
@@ -103,7 +103,7 @@ describe('createFileUploadPresignedUrlService', () => {
       const fileName = 'file'
 
       await subject(workspace.id, user.id, fileName)
-      const filesInDb = await prisma.file.findMany({
+      const filesInDb = await prisma.asset.findMany({
         where: {
           workspaceId: workspace.id,
         },

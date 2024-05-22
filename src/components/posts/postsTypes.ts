@@ -27,8 +27,3 @@ export enum AppGptEngine {
   Basic = 'basic',
   OpenaiAssistant = 'openai_assistant',
 }
-
-export enum FileUploadStatus {
-  Pending = 'pending',
-  Success = 'success',
-}

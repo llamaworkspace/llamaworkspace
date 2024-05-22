@@ -1,31 +1,30 @@
-import {
-  useAppFiles,
-  useCreateFileUploadPresignedUrl,
-  useNotifyFileUploadSuccess,
-} from '@/components/posts/postsHooks'
-import type { AppFile } from '@prisma/client'
+import { useCreateFileUploadPresignedUrl } from '@/components/assets/assetsHooks'
+import { useNotifyFileUploadSuccess } from '@/components/posts/postsHooks'
+import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
+import type { File as Asset } from '@prisma/client'
 import { useCallback } from 'react'
 
 export const useUploadFile = (
-  onFileUploadStarted: (fileName: string, appFile: AppFile) => void,
-  onFileUploaded: (fileName: string, appFile: AppFile) => void,
-  postId?: string,
+  onFileUploadStarted: (fileName: string, file: Asset) => void,
+  onFileUploaded: (fileName: string, file: Asset) => void,
 ) => {
   const { mutateAsync: createFileUploadPresignedUrl } =
     useCreateFileUploadPresignedUrl()
   const { mutateAsync: notifyFileUploadSuccess } = useNotifyFileUploadSuccess()
-  const { refetch: refetchAppFiles } = useAppFiles(postId)
+  // To be fixed
+  // const { refetch: refetchAppFiles } = useAppFiles(postId)
+  const { data: workspace } = useCurrentWorkspace()
 
   return useCallback(
     async (file: File) => {
-      if (!postId) return
+      if (!workspace) return
 
-      const { presignedUrl, appFile } = await createFileUploadPresignedUrl({
-        postId,
+      const { presignedUrl, file: asset } = await createFileUploadPresignedUrl({
+        workspaceId: workspace.id,
         fileName: file.name,
       })
 
-      onFileUploadStarted(file.name, appFile)
+      onFileUploadStarted(file.name, asset)
 
       const formData = new FormData()
       Object.keys(presignedUrl.fields).forEach((key) => {
@@ -39,8 +38,8 @@ export const useUploadFile = (
       })
 
       if (response.ok) {
-        await notifyFileUploadSuccess({ appFileId: appFile.id })
-        onFileUploaded(file.name, appFile)
+        await notifyFileUploadSuccess({ appFileId: fileEntity.id })
+        onFileUploaded(file.name, asset)
 
         await refetchAppFiles()
       } else {
@@ -51,9 +50,9 @@ export const useUploadFile = (
       refetchAppFiles,
       createFileUploadPresignedUrl,
       notifyFileUploadSuccess,
-      postId,
       onFileUploadStarted,
       onFileUploaded,
+      workspace,
     ],
   )
 }

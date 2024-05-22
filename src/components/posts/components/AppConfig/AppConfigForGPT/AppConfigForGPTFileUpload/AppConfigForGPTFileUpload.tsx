@@ -22,7 +22,7 @@ export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
     })
   }
 
-  const uploadFile = useUploadFile(onFileUploadStarted, onFileUploaded, postId)
+  const uploadFile = useUploadFile(onFileUploadStarted, onFileUploaded)
   const { data: appFiles } = useAppFiles(postId)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
