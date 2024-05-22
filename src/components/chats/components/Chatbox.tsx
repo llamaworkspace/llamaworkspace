@@ -126,7 +126,7 @@ export function Chatbox({
   const showSkeleton = !chatId
 
   return (
-    <div className="relative mx-auto max-w-4xl bg-white px-2 pb-4 lg:px-0">
+    <div className="relative mx-auto max-w-4xl bg-white p-2 px-2 lg:px-0">
       {showScrollToBottomIcon && (
         <div
           onClick={onScrollToBottomIconClick}
