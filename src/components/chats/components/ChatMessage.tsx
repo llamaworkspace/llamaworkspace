@@ -42,7 +42,7 @@ export function ChatMessage({
       <div
         className={cn(
           'prose max-w-none text-zinc-950',
-          author === Author.User && 'rounded bg-zinc-100/50 p-2 lg:p-4',
+          author === Author.Assistant && 'rounded bg-zinc-100/50 p-2 lg:p-4',
         )}
       >
         {author === Author.User && <>{formattedMessage}</>}
