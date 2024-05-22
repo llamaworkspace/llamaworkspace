@@ -2,27 +2,27 @@ import { useAppFiles } from '@/components/posts/postsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
 import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/posts/postConstants'
-import type { AppFile } from '@prisma/client'
+import type { Asset } from '@prisma/client'
 import { useState, type ChangeEvent } from 'react'
 import { AppConfigForGPTUploadedFile } from './AppConfigForGPTUploadedFile'
 import { useUploadFile } from './appConfigForGPTFileUploadHooks'
 
 export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
   const [uploadableFiles, setUploadeableFiles] = useState<
-    Record<string, AppFile>
+    Record<string, Asset>
   >({})
 
-  const onFileUploadStarted = (fileName: string, appFile: AppFile) => {
+  const onFileUploadStarted = (fileName: string, appFile: Asset) => {
     setUploadeableFiles((prev) => ({ ...prev, [fileName]: appFile }))
   }
-  const onFileUploaded = (fileName: string, appFile: AppFile) => {
+  const onFileUploaded = (fileName: string, appFile: Asset) => {
     setUploadeableFiles((prev) => {
       const { [fileName]: _, ...rest } = prev
       return rest
     })
   }
 
-  const uploadFile = useUploadFile(onFileUploadStarted, onFileUploaded)
+  const uploadFile = useUploadFile(onFileUploadStarted, onFileUploaded, postId)
   const { data: appFiles } = useAppFiles(postId)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -49,8 +49,8 @@ export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
 }
 
 interface UploadableFilesProps {
-  uploadedFiles?: AppFile[]
-  uploadableFiles: Record<string, AppFile>
+  uploadedFiles?: Asset[]
+  uploadableFiles: Record<string, Asset>
 }
 
 const UploadedAndUploadingFiles = ({

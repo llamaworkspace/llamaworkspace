@@ -1,4 +1,4 @@
-import { getAppFilesService } from '@/server/assets/services/getAppFiles.service'
+import { getAssetsService } from '@/server/assets/services/getAssets.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
@@ -7,14 +7,14 @@ const zInput = z.object({
   appId: z.string(),
 })
 
-export const getAppFiles = protectedProcedure
+export const getAppAssets = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
     const app = await ctx.prisma.post.findFirstOrThrow({
       where: {
-        id: input.appId,
+        id: 'clwhtn7t0000c11n5a9kxzrf8',
       },
     })
 
@@ -24,5 +24,5 @@ export const getAppFiles = protectedProcedure
       userId,
     )
 
-    return await getAppFilesService(ctx.prisma, context, input)
+    return await getAssetsService(ctx.prisma, context, input)
   })

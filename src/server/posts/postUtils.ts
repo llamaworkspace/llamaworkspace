@@ -9,3 +9,13 @@ export const scopePostByWorkspace = (
     workspaceId,
   }
 }
+
+export const scopeAssetByWorkspace = (
+  whereClause: Prisma.AssetWhereInput,
+  workspaceId: string,
+) => {
+  return {
+    ...whereClause,
+    workspaceId,
+  }
+}

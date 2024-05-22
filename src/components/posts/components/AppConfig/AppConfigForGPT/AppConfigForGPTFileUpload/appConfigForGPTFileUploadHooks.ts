@@ -1,25 +1,29 @@
 import { useCreateFileUploadPresignedUrl } from '@/components/assets/assetsHooks'
-import { useNotifyFileUploadSuccess } from '@/components/posts/postsHooks'
+import {
+  useAppFiles,
+  useNotifyFileUploadSuccess,
+} from '@/components/posts/postsHooks'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
-import type { File as Asset } from '@prisma/client'
+import type { Asset } from '@prisma/client'
 import { useCallback } from 'react'
 
 export const useUploadFile = (
   onFileUploadStarted: (fileName: string, file: Asset) => void,
   onFileUploaded: (fileName: string, file: Asset) => void,
+  appId?: string,
 ) => {
   const { mutateAsync: createFileUploadPresignedUrl } =
     useCreateFileUploadPresignedUrl()
   const { mutateAsync: notifyFileUploadSuccess } = useNotifyFileUploadSuccess()
-  // To be fixed
-  // const { refetch: refetchAppFiles } = useAppFiles(postId)
+
+  const { refetch: refetchAppFiles } = useAppFiles(appId)
   const { data: workspace } = useCurrentWorkspace()
 
   return useCallback(
     async (file: File) => {
       if (!workspace) return
 
-      const { presignedUrl, file: asset } = await createFileUploadPresignedUrl({
+      const { presignedUrl, asset } = await createFileUploadPresignedUrl({
         workspaceId: workspace.id,
         fileName: file.name,
       })
@@ -38,7 +42,7 @@ export const useUploadFile = (
       })
 
       if (response.ok) {
-        await notifyFileUploadSuccess({ appFileId: fileEntity.id })
+        await notifyFileUploadSuccess({ appFileId: asset.id })
         onFileUploaded(file.name, asset)
 
         await refetchAppFiles()
