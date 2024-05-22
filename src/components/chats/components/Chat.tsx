@@ -119,7 +119,7 @@ export function Chat({ postId, chatId }: ChatProps) {
           <ChatMessageInitial chatId={chatId} />
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           <div className="h-4 "></div>
           {messages
             ?.map((message, index) => {
