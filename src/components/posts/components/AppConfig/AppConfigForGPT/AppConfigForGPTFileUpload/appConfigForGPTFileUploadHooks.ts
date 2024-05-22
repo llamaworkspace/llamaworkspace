@@ -1,4 +1,5 @@
 import {
+  useBindAsset,
   useCreateFileUploadPresignedUrl,
   useNotifyAssetUploadSuccess,
 } from '@/components/assets/assetsHooks'
@@ -16,6 +17,7 @@ export const useUploadFile = (
     useCreateFileUploadPresignedUrl()
   const { mutateAsync: notifyAssetUploadSuccess } =
     useNotifyAssetUploadSuccess()
+  const { mutateAsync: bindAsset } = useBindAsset()
 
   const { refetch: refetchAppFiles } = useAppFiles(appId)
   const { data: workspace } = useCurrentWorkspace()
@@ -23,6 +25,7 @@ export const useUploadFile = (
   return useCallback(
     async (file: File) => {
       if (!workspace) return
+      if (!appId) return
 
       const { presignedUrl, asset } = await createFileUploadPresignedUrl({
         workspaceId: workspace.id,
@@ -45,7 +48,7 @@ export const useUploadFile = (
       if (response.ok) {
         await notifyAssetUploadSuccess({ assetId: asset.id })
         onFileUploaded(file.name, asset)
-
+        await bindAsset({ assetId: asset.id, appId })
         await refetchAppFiles()
       } else {
         throw new Error('File upload filed')
@@ -58,6 +61,8 @@ export const useUploadFile = (
       onFileUploadStarted,
       onFileUploaded,
       workspace,
+      appId,
+      bindAsset,
     ],
   )
 }

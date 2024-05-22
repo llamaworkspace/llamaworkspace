@@ -16,3 +16,11 @@ export const useNotifyAssetUploadSuccess = () => {
     onError: errorHandler(),
   })
 }
+
+export const useBindAsset = () => {
+  const errorHandler = useErrorHandler()
+
+  return api.assets.bind.useMutation({
+    onError: errorHandler(),
+  })
+}
