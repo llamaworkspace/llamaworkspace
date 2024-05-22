@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { createFileUploadPresignedUrlService } from '@/server/posts/services/createFileUploadPresignedUrl.service'
+import { createFileUploadPresignedUrlService } from '@/server/files/services/createFileUploadPresignedUrl.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 

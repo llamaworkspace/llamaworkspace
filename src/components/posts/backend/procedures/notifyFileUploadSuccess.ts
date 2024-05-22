@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { updateAppFileService } from '@/server/posts/services/updateAppFile.service'
+import { updateAppFileService } from '@/server/files/services/updateAppFile.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 import { FileUploadStatus } from '../../postsTypes'

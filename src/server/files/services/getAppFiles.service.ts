@@ -1,9 +1,9 @@
 import { FileUploadStatus } from '@/components/posts/postsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { scopePostByWorkspace } from '@/server/posts/postUtils'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { scopePostByWorkspace } from '../postUtils'
 
 interface GetAppFilesPayload {
   appId: string

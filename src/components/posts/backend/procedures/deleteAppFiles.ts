@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { deleteAppFilesService } from '@/server/posts/services/deleteAppFiles.service'
+import { deleteAppFilesService } from '@/server/files/services/deleteAppFiles.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
