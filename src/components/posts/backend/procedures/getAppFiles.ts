@@ -12,18 +12,15 @@ export const getAppFiles = protectedProcedure
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
-    const appFile = await ctx.prisma.appFile.findFirstOrThrow({
+    const app = await ctx.prisma.post.findFirstOrThrow({
       where: {
-        appId: input.appId,
-      },
-      include: {
-        app: true,
+        id: input.appId,
       },
     })
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      appFile.app.workspaceId,
+      app.workspaceId,
       userId,
     )
 
