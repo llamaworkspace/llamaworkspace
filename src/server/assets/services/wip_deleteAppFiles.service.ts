@@ -22,7 +22,7 @@ interface DeleteAppFilesPayload {
   appFileIds: string[]
 }
 
-export async function deleteAppFilesService(
+export async function WIPdeleteAppFilesService(
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   payload: DeleteAppFilesPayload,

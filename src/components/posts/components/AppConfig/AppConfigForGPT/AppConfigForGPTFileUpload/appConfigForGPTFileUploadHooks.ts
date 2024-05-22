@@ -3,8 +3,8 @@ import {
   useCreateFileUploadPresignedUrl,
   useNotifyAssetUploadSuccess,
 } from '@/components/assets/assetsHooks'
-import { useAppFiles } from '@/components/posts/postsHooks'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
+import { api } from '@/lib/api'
 import type { Asset } from '@prisma/client'
 import { useCallback } from 'react'
 
@@ -18,8 +18,7 @@ export const useUploadFile = (
   const { mutateAsync: notifyAssetUploadSuccess } =
     useNotifyAssetUploadSuccess()
   const { mutateAsync: bindAsset } = useBindAsset()
-
-  const { refetch: refetchAppFiles } = useAppFiles(appId)
+  const utils = api.useContext()
   const { data: workspace } = useCurrentWorkspace()
 
   return useCallback(
@@ -49,13 +48,12 @@ export const useUploadFile = (
         await notifyAssetUploadSuccess({ assetId: asset.id })
         onFileUploaded(file.name, asset)
         await bindAsset({ assetId: asset.id, appId })
-        await refetchAppFiles()
+        await utils.posts.getAppAssets.invalidate()
       } else {
         throw new Error('File upload filed')
       }
     },
     [
-      refetchAppFiles,
       createFileUploadPresignedUrl,
       notifyAssetUploadSuccess,
       onFileUploadStarted,
@@ -63,6 +61,7 @@ export const useUploadFile = (
       workspace,
       appId,
       bindAsset,
+      utils.posts.getAppAssets,
     ],
   )
 }
