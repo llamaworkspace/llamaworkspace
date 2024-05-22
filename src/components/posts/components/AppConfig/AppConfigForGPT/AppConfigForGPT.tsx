@@ -122,7 +122,10 @@ export function AppConfigForGPT({ postId }: AppConfigProps) {
               return (
                 <div className="space-y-8">
                   <AppConfigForGPTNameAndDescription disabled={!canEdit} />
-                  <AppConfigForGPTSettings disabled={!canEdit} />
+                  <AppConfigForGPTSettings
+                    postId={postId}
+                    disabled={!canEdit}
+                  />
                   <AppConfigSubmitButtonGroup
                     postId={postId}
                     pristine={pristine}

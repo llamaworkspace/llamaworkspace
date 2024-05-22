@@ -248,3 +248,15 @@ export const useUpdateShareAccessLevelForPost = () => {
     },
   })
 }
+
+export const useAppFiles = (appId?: string) => {
+  const errorHandler = useErrorHandler()
+
+  return api.posts.getAppAssets.useQuery(
+    { appId: appId! },
+    {
+      onError: errorHandler(),
+      enabled: !!appId,
+    },
+  )
+}

@@ -77,6 +77,7 @@ model Workspace {
     posts            Post[]
     workspaceInvites WorkspaceInvite[]
     aiProvider       AiProvider[]
+    assets           Asset[]
 }
 
 model UsersOnWorkspaces {
@@ -127,6 +128,7 @@ model Post {
     appConfigVersions AppConfigVersion[]
     shares            Share[]
     usersMeta         AppsOnUsers[]
+    files             AssetsOnApps[]
 }
 
 model AppsOnUsers {
@@ -142,6 +144,33 @@ model AppsOnUsers {
     updatedAt     DateTime  @updatedAt
 
     @@unique([userId, appId])
+}
+
+model Asset {
+    id                String         @id @default(cuid())
+    workspaceId       String
+    uploadStatus      String
+    originalName      String
+    extension         String
+    path              String
+    markedAsDeletedAt DateTime?
+    remoteDeletedAt   DateTime?
+    createdAt         DateTime       @default(now())
+    updatedAt         DateTime       @updatedAt
+    workspace         Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    apps              AssetsOnApps[]
+}
+
+model AssetsOnApps {
+    id        String   @id @default(cuid())
+    assetId   String
+    appId     String
+    asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+    app       Post     @relation(fields: [appId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([assetId, appId])
 }
 
 model Share {
