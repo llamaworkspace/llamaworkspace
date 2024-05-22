@@ -9,30 +9,10 @@ export const useCreateFileUploadPresignedUrl = () => {
   })
 }
 
-// export const useNotifyFileUploadSuccess = () => {
-//   const errorHandler = useErrorHandler()
+export const useNotifyAssetUploadSuccess = () => {
+  const errorHandler = useErrorHandler()
 
-//   return api.posts.notifyFileUploadSuccess.useMutation({
-//     onError: errorHandler(),
-//   })
-// }
-
-// export const useAppFiles = (appId?: string) => {
-//   const errorHandler = useErrorHandler()
-
-//   return api.posts.getAppFiles.useQuery(
-//     { appId: appId! },
-//     {
-//       onError: errorHandler(),
-//       enabled: !!appId,
-//     },
-//   )
-// }
-
-// export const useDeleteAppFiles = () => {
-//   const errorHandler = useErrorHandler()
-
-//   return api.posts.deleteAppFiles.useMutation({
-//     onError: errorHandler(),
-//   })
-// }
+  return api.assets.notifyAssetUploadSuccess.useMutation({
+    onError: errorHandler(),
+  })
+}

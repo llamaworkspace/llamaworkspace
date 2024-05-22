@@ -249,14 +249,6 @@ export const useUpdateShareAccessLevelForPost = () => {
   })
 }
 
-export const useNotifyFileUploadSuccess = () => {
-  const errorHandler = useErrorHandler()
-
-  return api.posts.notifyFileUploadSuccess.useMutation({
-    onError: errorHandler(),
-  })
-}
-
 export const useAppFiles = (appId?: string) => {
   const errorHandler = useErrorHandler()
 

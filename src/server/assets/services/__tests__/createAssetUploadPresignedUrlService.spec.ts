@@ -1,4 +1,4 @@
-import { FileUploadStatus } from '@/components/posts/postsTypes'
+import { AssetUploadStatus } from '@/components/assets/assetTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
@@ -61,7 +61,7 @@ describe('createAssetUploadPresignedUrlService', () => {
     expect(fileReference[0]).toEqual(
       expect.objectContaining({
         workspaceId: workspace.id,
-        uploadStatus: FileUploadStatus.Pending,
+        uploadStatus: AssetUploadStatus.Pending,
         originalName: fileName,
         path: expectedPath,
       }),
@@ -77,7 +77,7 @@ describe('createAssetUploadPresignedUrlService', () => {
     expect(response.asset).toEqual(
       expect.objectContaining({
         workspaceId: workspace.id,
-        uploadStatus: FileUploadStatus.Pending,
+        uploadStatus: AssetUploadStatus.Pending,
         originalName: fileName,
       }),
     )
@@ -114,7 +114,7 @@ describe('createAssetUploadPresignedUrlService', () => {
       expect(filesInDb[0]).toEqual(
         expect.objectContaining({
           workspaceId: workspace.id,
-          uploadStatus: FileUploadStatus.Pending,
+          uploadStatus: AssetUploadStatus.Pending,
           originalName: fileName,
           path: expectedPath,
         }),

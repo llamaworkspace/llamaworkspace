@@ -2,14 +2,12 @@ import { AssetUploadStatus } from '@/components/assets/assetTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { scopeChatByWorkspace } from '@/server/chats/chatUtils'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import {
-  scopeAssetByWorkspace,
-  scopePostByWorkspace,
-} from '@/server/posts/postUtils'
+import { scopePostByWorkspace } from '@/server/posts/postUtils'
 import { scopeShareByWorkspace } from '@/server/shares/shareUtils'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
+import { scopeAssetByWorkspace } from '../assetUtils'
 
 interface GetAppFilesPayload {
   appId?: string

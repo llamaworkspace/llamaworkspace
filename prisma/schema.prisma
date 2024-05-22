@@ -147,18 +147,18 @@ model AppsOnUsers {
 }
 
 model Asset {
-    id              String         @id @default(cuid())
-    workspaceId     String
-    uploadStatus    String
-    originalName    String
-    extension       String
-    path            String
-    markAsDeletedAt DateTime?
-    remoteDeletedAt DateTime?
-    createdAt       DateTime       @default(now())
-    updatedAt       DateTime       @updatedAt
-    workspace       Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    apps            AssetsOnApps[]
+    id                String         @id @default(cuid())
+    workspaceId       String
+    uploadStatus      String
+    originalName      String
+    extension         String
+    path              String
+    markedAsDeletedAt DateTime?
+    remoteDeletedAt   DateTime?
+    createdAt         DateTime       @default(now())
+    updatedAt         DateTime       @updatedAt
+    workspace         Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    apps              AssetsOnApps[]
 }
 
 model AssetsOnApps {
