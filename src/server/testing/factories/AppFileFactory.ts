@@ -1,4 +1,4 @@
-import { AppFileStatus } from '@/components/posts/postsTypes'
+import { FileUploadStatus } from '@/components/posts/postsTypes'
 import type { AppFile, PrismaClient } from '@prisma/client'
 import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
@@ -10,7 +10,7 @@ export type AppFileFactoryFields = {
 const generateDefaults = () => {
   return {
     ...generateBaseForDefaults(),
-    status: AppFileStatus.Pending,
+    status: FileUploadStatus.Pending,
   }
 }
 

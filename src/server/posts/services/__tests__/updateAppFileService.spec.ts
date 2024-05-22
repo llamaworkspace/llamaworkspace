@@ -1,4 +1,4 @@
-import { AppFileStatus } from '@/components/posts/postsTypes'
+import { FileUploadStatus } from '@/components/posts/postsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -15,7 +15,7 @@ const subject = async (
   userId: string,
   appFileId: string,
   payload: {
-    status?: AppFileStatus
+    status?: FileUploadStatus
   } = {},
 ) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -58,10 +58,10 @@ describe('updateAppFileService', () => {
         id: appFile.id,
       },
     })
-    expect(before.status).toBe(AppFileStatus.Pending)
+    expect(before.status).toBe(FileUploadStatus.Pending)
 
     await subject(workspace.id, user.id, appFile.id, {
-      status: AppFileStatus.Success,
+      status: FileUploadStatus.Success,
     })
 
     const after = await prisma.appFile.findFirstOrThrow({
@@ -70,7 +70,7 @@ describe('updateAppFileService', () => {
       },
     })
 
-    expect(after.status).toBe(AppFileStatus.Success)
+    expect(after.status).toBe(FileUploadStatus.Success)
   })
 
   it('calls PermissionsVerifier', async () => {
@@ -80,7 +80,7 @@ describe('updateAppFileService', () => {
     )
 
     await subject(workspace.id, user.id, appFile.id, {
-      status: AppFileStatus.Success,
+      status: FileUploadStatus.Success,
     })
 
     expect(spy).toHaveBeenCalledWith(

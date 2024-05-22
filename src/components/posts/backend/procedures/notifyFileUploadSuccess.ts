@@ -2,7 +2,7 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { updateAppFileService } from '@/server/posts/services/updateAppFile.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
-import { AppFileStatus } from '../../postsTypes'
+import { FileUploadStatus } from '../../postsTypes'
 
 const zInput = z.object({
   appFileId: z.string(),
@@ -30,6 +30,6 @@ export const notifyFileUploadSuccess = protectedProcedure
     )
     return await updateAppFileService(ctx.prisma, context, {
       appFileId,
-      status: AppFileStatus.Success,
+      status: FileUploadStatus.Success,
     })
   })

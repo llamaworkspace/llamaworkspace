@@ -1,4 +1,4 @@
-import { AppFileStatus } from '@/components/posts/postsTypes'
+import { FileUploadStatus } from '@/components/posts/postsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -47,22 +47,22 @@ describe('getAppFilesService', () => {
     appFileSuccess1 = await AppFileFactory.create(prisma, {
       appId: post.id,
       originalName: 'file.txt',
-      status: AppFileStatus.Success,
+      status: FileUploadStatus.Success,
     })
     appFileSuccess2 = await AppFileFactory.create(prisma, {
       appId: post.id,
       originalName: 'file.txt',
-      status: AppFileStatus.Success,
+      status: FileUploadStatus.Success,
     })
     appFileSuccessForOtherApp = await AppFileFactory.create(prisma, {
       appId: otherPost.id,
       originalName: 'file.txt',
-      status: AppFileStatus.Success,
+      status: FileUploadStatus.Success,
     })
     appFilePending = await AppFileFactory.create(prisma, {
       appId: post.id,
       originalName: 'file.txt',
-      status: AppFileStatus.Pending,
+      status: FileUploadStatus.Pending,
     })
   })
 

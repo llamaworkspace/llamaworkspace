@@ -1,4 +1,4 @@
-import { AppFileStatus } from '@/components/posts/postsTypes'
+import { FileUploadStatus } from '@/components/posts/postsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -26,7 +26,7 @@ export async function getAppFilesService(
   const appFiles = await prisma.appFile.findMany({
     where: {
       appId,
-      status: AppFileStatus.Success,
+      status: FileUploadStatus.Success,
       app: scopePostByWorkspace({}, workspaceId),
     },
   })

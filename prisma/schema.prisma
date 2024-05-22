@@ -77,6 +77,7 @@ model Workspace {
     posts            Post[]
     workspaceInvites WorkspaceInvite[]
     aiProvider       AiProvider[]
+    files            File[]
 }
 
 model UsersOnWorkspaces {
@@ -127,7 +128,6 @@ model Post {
     appConfigVersions AppConfigVersion[]
     shares            Share[]
     usersMeta         AppsOnUsers[]
-    filesLegagy       AppFile[]
     files             FilesOnApps[]
 }
 
@@ -146,20 +146,9 @@ model AppsOnUsers {
     @@unique([userId, appId])
 }
 
-model AppFile {
-    id           String   @id @default(cuid())
-    appId        String
-    status       String
-    originalName String
-    extension    String
-    path         String
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
-    app          Post     @relation(fields: [appId], references: [id], onDelete: Cascade)
-}
-
 model File {
     id              String        @id @default(cuid())
+    workspaceId     String
     uploadStatus    String
     originalName    String
     extension       String
@@ -168,6 +157,7 @@ model File {
     remoteDeletedAt DateTime?
     createdAt       DateTime      @default(now())
     updatedAt       DateTime      @updatedAt
+    workspace       Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     apps            FilesOnApps[]
 }
 

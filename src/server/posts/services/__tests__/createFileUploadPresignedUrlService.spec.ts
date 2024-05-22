@@ -1,13 +1,10 @@
-import { AppFileStatus } from '@/components/posts/postsTypes'
+import { FileUploadStatus } from '@/components/posts/postsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { User, Workspace } from '@prisma/client'
 import { createFileUploadPresignedUrlService } from '../createFileUploadPresignedUrl.service'
 
 jest.mock('@aws-sdk/s3-presigned-post', () => {
@@ -23,7 +20,6 @@ jest.mock('@aws-sdk/s3-presigned-post', () => {
 const subject = async (
   workspaceId: string,
   userId: string,
-  postId: string,
   fileName: string,
 ) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -32,7 +28,6 @@ const subject = async (
     userId,
   )
   return await createFileUploadPresignedUrlService(prisma, uowContext, {
-    postId,
     fileName,
   })
 }
@@ -40,8 +35,6 @@ const subject = async (
 describe('createFileUploadPresignedUrlService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
-  let expectedPath: string
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -50,45 +43,42 @@ describe('createFileUploadPresignedUrlService', () => {
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-
-    post = await PostFactory.create(prisma, {
-      userId: user.id,
-      workspaceId: workspace.id,
-    })
   })
 
   it('creates a file reference', async () => {
     const fileName = 'file.txt'
 
-    await subject(workspace.id, user.id, post.id, fileName)
-    const fileReference = await prisma.appFile.findMany({
+    await subject(workspace.id, user.id, fileName)
+    const fileReference = await prisma.file.findMany({
       where: {
-        appId: post.id,
+        workspaceId: workspace.id,
       },
     })
 
-    const expectedPath = `workspaces/${workspace.id}/apps/${post.id}/${fileReference[0]!.id}.txt`
+    const expectedPath = `workspaces/${workspace.id}/${fileReference[0]!.id}.txt`
 
     expect(fileReference).toHaveLength(1)
     expect(fileReference[0]).toEqual(
       expect.objectContaining({
-        appId: post.id,
-        status: AppFileStatus.Pending,
+        workspaceId: workspace.id,
+        uploadStatus: FileUploadStatus.Pending,
         originalName: fileName,
         path: expectedPath,
       }),
     )
   })
 
-  it('returns the presignedUrl and appId', async () => {
+  it('returns the presignedUrl and file entity', async () => {
     const fileName = 'file.txt'
 
-    const response = await subject(workspace.id, user.id, post.id, fileName)
+    const response = await subject(workspace.id, user.id, fileName)
 
     expect(response.presignedUrl).toEqual({ url: 'https://example.com' })
-    expect(response.appFile).toEqual(
+    expect(response.file).toEqual(
       expect.objectContaining({
-        appId: post.id,
+        workspaceId: workspace.id,
+        uploadStatus: FileUploadStatus.Pending,
+        originalName: fileName,
       }),
     )
   })
@@ -96,13 +86,8 @@ describe('createFileUploadPresignedUrlService', () => {
   it('generates an aws sdk url', async () => {
     const fileName = 'file.txt'
 
-    const fileReference = await subject(
-      workspace.id,
-      user.id,
-      post.id,
-      fileName,
-    )
-    const expectedPath = `workspaces/${workspace.id}/apps/${post.id}/${fileReference.appFile.id}.txt`
+    const fileReference = await subject(workspace.id, user.id, fileName)
+    const expectedPath = `workspaces/${workspace.id}/${fileReference.file.id}.txt`
 
     expect(createPresignedPost).toHaveBeenCalledTimes(1)
     expect(createPresignedPost).toHaveBeenCalledWith(
@@ -113,37 +98,23 @@ describe('createFileUploadPresignedUrlService', () => {
     )
   })
 
-  it('calls PermissionsVerifier', async () => {
-    const spy = jest.spyOn(
-      PermissionsVerifier.prototype,
-      'passOrThrowTrpcError',
-    )
-
-    await subject(workspace.id, user.id, post.id, 'file.txt')
-
-    expect(spy).toHaveBeenCalledWith(
-      PermissionAction.Update,
-      expect.anything(),
-      expect.anything(),
-    )
-  })
-
   describe('when the file does not have an extension', () => {
     it('stores a file reference without an extension', async () => {
       const fileName = 'file'
 
-      await subject(workspace.id, user.id, post.id, fileName)
-      const fileReference = await prisma.appFile.findMany({
+      await subject(workspace.id, user.id, fileName)
+      const filesInDb = await prisma.file.findMany({
         where: {
-          appId: post.id,
+          workspaceId: workspace.id,
         },
       })
-      const expectedPath = `workspaces/${workspace.id}/apps/${post.id}/${fileReference[0]!.id}`
-      expect(fileReference).toHaveLength(1)
-      expect(fileReference[0]).toEqual(
+      const expectedPath = `workspaces/${workspace.id}/${filesInDb[0]!.id}`
+
+      expect(filesInDb).toHaveLength(1)
+      expect(filesInDb[0]).toEqual(
         expect.objectContaining({
-          appId: post.id,
-          status: AppFileStatus.Pending,
+          workspaceId: workspace.id,
+          uploadStatus: FileUploadStatus.Pending,
           originalName: fileName,
           path: expectedPath,
         }),

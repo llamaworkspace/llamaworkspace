@@ -1,4 +1,4 @@
-import type { AppFileStatus } from '@/components/posts/postsTypes'
+import type { FileUploadStatus } from '@/components/posts/postsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -8,7 +8,7 @@ import { scopePostByWorkspace } from '../postUtils'
 
 interface UpdateAppFileInputProps {
   appFileId: string
-  status?: AppFileStatus
+  status?: FileUploadStatus
 }
 
 export const updateAppFileService = async (

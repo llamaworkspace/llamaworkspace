@@ -28,7 +28,7 @@ export enum AppGptEngine {
   OpenaiAssistant = 'openai_assistant',
 }
 
-export enum AppFileStatus {
+export enum FileUploadStatus {
   Pending = 'pending',
   Success = 'success',
 }
