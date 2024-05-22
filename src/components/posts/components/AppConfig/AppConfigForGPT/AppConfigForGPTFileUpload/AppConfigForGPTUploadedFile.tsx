@@ -1,4 +1,4 @@
-import { useDeleteAppFiles } from '@/components/posts/postsHooks'
+import { useUnbindAsset } from '@/components/assets/assetsHooks'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -6,7 +6,7 @@ import { DocumentIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
 interface UploadedFileProps {
   appId?: string
-  appFileId?: string
+  assetId?: string
   name: string
   uploading?: boolean
 }
@@ -14,18 +14,18 @@ interface UploadedFileProps {
 export const AppConfigForGPTUploadedFile = ({
   name,
   appId,
-  appFileId,
+  assetId,
   uploading = false,
 }: UploadedFileProps) => {
-  const { mutateAsync: deleteAppFiles } = useDeleteAppFiles()
-
+  const { mutateAsync: unbindAsset } = useUnbindAsset()
   const toast = useSuccessToast()
   const utils = api.useContext()
 
   const handleFileDelete = async () => {
-    if (!appFileId) return
+    if (!assetId) return
     if (!appId) return
-    await deleteAppFiles({ appFileIds: [appFileId] })
+    await unbindAsset({ assetId, appId })
+
     toast(undefined, 'File successfully deleted')
     await utils.posts.getAppAssets.invalidate()
   }

@@ -1,4 +1,4 @@
-import { bindAssetService } from '@/server/assets/services/bindAsset.service'
+import { unbindAssetService } from '@/server/assets/services/unbindAsset.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
@@ -8,7 +8,7 @@ const zInput = z.object({
   appId: z.string(),
 })
 
-export const bindAsset = protectedProcedure
+export const unbindAsset = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
@@ -23,5 +23,5 @@ export const bindAsset = protectedProcedure
       asset.workspaceId,
       userId,
     )
-    return await bindAssetService(ctx.prisma, context, input)
+    return await unbindAssetService(ctx.prisma, context, input)
   })

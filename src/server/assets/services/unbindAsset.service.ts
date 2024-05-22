@@ -10,7 +10,7 @@ interface BindAssetPayload {
   appId: string
 }
 
-export const bindAssetService = async (
+export const unbindAssetService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   payload: BindAssetPayload,
@@ -28,9 +28,8 @@ export const bindAssetService = async (
     await prisma.asset.findFirstOrThrow({
       where: scopeAssetByWorkspace({ id: assetId }, workspaceId),
     })
-
-    return await prisma.assetsOnApps.create({
-      data: {
+    return await prisma.assetsOnApps.deleteMany({
+      where: {
         assetId,
         appId,
       },

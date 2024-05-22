@@ -24,3 +24,11 @@ export const useBindAsset = () => {
     onError: errorHandler(),
   })
 }
+
+export const useUnbindAsset = () => {
+  const errorHandler = useErrorHandler()
+
+  return api.assets.unbind.useMutation({
+    onError: errorHandler(),
+  })
+}

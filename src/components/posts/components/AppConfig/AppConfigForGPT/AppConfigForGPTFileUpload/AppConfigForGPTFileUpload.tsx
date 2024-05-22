@@ -34,6 +34,7 @@ export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
   return (
     <div className="space-y-2">
       <UploadedAndUploadingFiles
+        appId={postId}
         uploadedFiles={appFiles}
         uploadableFiles={uploadableFiles}
       />
@@ -49,11 +50,13 @@ export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
 }
 
 interface UploadableFilesProps {
-  uploadedFiles?: Asset[]
+  appId?: string
   uploadableFiles: Record<string, Asset>
+  uploadedFiles?: Asset[]
 }
 
 const UploadedAndUploadingFiles = ({
+  appId,
   uploadedFiles,
   uploadableFiles,
 }: UploadableFilesProps) => {
@@ -70,12 +73,12 @@ const UploadedAndUploadingFiles = ({
       <div>
         {uploadedFiles && (
           <div className="grid gap-2 md:grid-cols-3">
-            {Object.values(uploadedFiles).map((appFile) => (
+            {Object.values(uploadedFiles).map((asset) => (
               <AppConfigForGPTUploadedFile
-                key={appFile.id}
-                appFileId={appFile.id}
-                appId={appFile.appId}
-                name={appFile.originalName}
+                key={asset.id}
+                assetId={asset.id}
+                appId={appId}
+                name={asset.originalName}
               />
             ))}
             {uploadableFiles && (
