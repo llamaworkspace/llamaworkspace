@@ -47,11 +47,29 @@ export const postUpdateService = async (
         message: 'GPT Engine cannot be updated once set',
       })
     }
-    return await prisma.post.update({
+    const updatedPost = await prisma.post.update({
       where: {
         id: postId,
       },
       data: payload,
     })
+
+    if (payload.gptEngine) {
+      // enqueueGptEngineSelection()
+    }
+
+    return updatedPost
   })
+}
+const registerWorkerFunction = () => {
+  // const cloudService = new CloudService()
+  // const queue = cloudService.bindToQueue("myQueue", workerForGptEngineSelection)
+}
+
+const enqueueGptEngineSelection = () => {
+  // addToQueueWithASpecificPayload
+}
+
+const workerForGptEngineSelection = () => {
+  // executeWhateverSideEffects
 }

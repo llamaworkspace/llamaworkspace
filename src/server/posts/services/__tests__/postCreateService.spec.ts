@@ -1,3 +1,4 @@
+import { AppGptEngine } from '@/components/posts/postsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { postCreateService } from '@/server/posts/services/postCreate.service'
@@ -28,7 +29,7 @@ describe('postCreateService', () => {
     })
     expect(post).toMatchObject({
       title: 'Test Post',
-      gptEngine: null,
+      gptEngine: AppGptEngine.Basic,
     })
   })
 
