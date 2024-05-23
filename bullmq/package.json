@@ -7,9 +7,13 @@
   "scripts": {
     "dev": "tsc --build --watch ./tsconfig.json",
     "build": "tsc --build ./tsconfig.json",
-    "start": "node ./dist/worker.js"
+    "start": "nodemon ./dist/worker.js"
   },
   "dependencies": {
+    "bullmq": "^5.7.11",
+    "ioredis": "^5.4.1"
+  },
+  "devDependencies": {
     "@tsconfig/node20": "^20.1.4"
   }
 }

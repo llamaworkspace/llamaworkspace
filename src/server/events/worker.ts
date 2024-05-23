@@ -22,7 +22,7 @@ export const enqueue = async (
 ) => {
   const queue = queues.get(queueName) ?? new Queue(queueName, { connection })
   await queue.add(action, payload)
-  console.log('Job added to queue', queueName, action, payload)
+  console.log('Job added to queue 999', queueName, action, payload)
 }
 // Problem: In a serverless env, this isn't active. We move this tiny part elsewhere.
 
