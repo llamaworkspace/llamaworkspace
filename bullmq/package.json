@@ -1,0 +1,15 @@
+{
+  "name": "@llamaws/workers",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Isaac Mayolas",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc --build --watch ./tsconfig.json",
+    "build": "tsc --build ./tsconfig.json",
+    "start": "node ./dist/worker.js"
+  },
+  "dependencies": {
+    "@tsconfig/node20": "^20.1.4"
+  }
+}

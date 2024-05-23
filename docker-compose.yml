@@ -16,6 +16,13 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: joia
 
+  redis:
+    container_name: joia_redis
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+
   adminer:
     container_name: joia_adminer
     image: adminer
