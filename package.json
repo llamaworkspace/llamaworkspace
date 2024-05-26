@@ -5,7 +5,7 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "production:deploy": "npm run production:deploy --workspace=apps/llamaws"
+    "production:deploy": "npm run thing --workspace=apps/llamaws"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
