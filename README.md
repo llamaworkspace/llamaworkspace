@@ -1,81 +1,65 @@
-# Turborepo starter
+<p align="center">
+<a href="https://joia.so">
+  <img width="90" src="https://assets.joia.so/joia_logo_red.svg" alt="Joia Logo">
+  
+</a>
+</p>
 
-This is an official starter Turborepo.
+<h3 align="center"><strong>A lightweight ChatGPT alternative designed for team collaboration</strong></h3>
 
-## Using this example
+[Joia](https://joia.so/) is an open source alternative to _[ChatGPT for Teams](https://openai.com/chatgpt/team)_, designed from the ground up for collaboration.
 
-Run the following command:
+The easiest way to get started with Joia is by creating a [Joia Cloud account](https://joia.so/). If you prefer to self-host Joia, please refer to our documentation below.
 
-```sh
-npx create-turbo@latest
-```
+## Main features & benefits
 
-## What's inside?
+- Efortlessly grant **people access** to a user-friendly AI Chat.
+- Use any LLM, including the **latest open source LLMs** like Llama 2, Mixtral and others (more coming soon).
+- Create **collaborative chatbots** for specific use cases, and share them across your teams.
+- **Save between of 50% and 75%** (depends on usage) compared to _ChatGPT for Teams_ and _ChatGPT Enterprise_.
+- **Get responses 40% faster** than ChatGPT Plus. The OpenAI API is generally faster.
+- **Prevent your prompts from being used for training purposes**. When using ChatGPT Plus, your data might then be used for training purposes. However, when connecting to OpenAI via API keys, you're guaranteed that any inputs provided won't be used.
 
-This Turborepo includes the following packages/apps:
+## Getting started
 
-### Apps and Packages
+#### Cloud
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+The easiest way to get started with Joia is with [our official managed service in the cloud](https://joia.so/). At the moment it is completely free to use without limits, although we have plans to introduce a pricing model in the future.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+In the cloud version you can either use your own API keys for LLM provider, or purchase credits with us.
 
-### Utilities
+Our cloud version can save a substantial amount of developer time and resources. We think it's the de-facto solution for most customers and the one which provides most value for mone. Plus, any future revenues will go towards the funding and maintenance of Joia. You’ll be supporting open source software and getting a great service!
 
-This Turborepo has some additional tools already setup for you:
+#### Vercel
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+To deploy on Vercel, follow these steps:
 
-### Build
+1. Create a project by clicking on **Add New... > Project**.
+2. Select **Import Third-Party Git Repository** and enter the URL of this repository.
+3. Insert the environment variables. To do so, use `.env.example` as a reference for the variables to fill in. You'll need to set the `DATABASE_URL` variable to point to your Postgres database, which you can provision with Vercel.
+4. Deploy the project.
+5. Set up your domain to point to the Vercel deployment.
 
-To build all apps and packages, run the following command:
+#### Fully self-hosted
 
-```
-cd my-turborepo
-pnpm build
-```
+To self host a Joia app you'll need to follow the next steps:
 
-### Develop
+1. Provision a Postgres database. The details may vary based on your stup.
+2. Clone or copy this repository.
+3. Create an `.env` file based on the `.env.example` file. You'll need to set the `DATABASE_URL` variable to point to your Postgres database.
+4. Install the dependencies by running `npm install`.
+5. Build the NextJS app by running `npm run production:build`. This will prepare NextJS to be built and run the build itself.
+6. Run a post-install script by running `npm run production:postbuild`. This script will run the migrations.
+7. Bootstrap the app by running `npm run production:start`.
 
-To develop all apps and packages, run the following command:
+## Feedback
 
-```
-cd my-turborepo
-pnpm dev
-```
+We are happy to hear your valuable feedback. For this purpose, we have created a [Discord channel](https://discord.com/invite/wTHhNBDKvW) where you can share your thoughts and ideas. [Join the channel here](https://discord.com/invite/wTHhNBDKvW).
 
-### Remote Caching
+## Roadmap
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+We welcome feedback from our community. To stay up to date with all the latest news and product updates or to reach us, [follow us on X (formerly Twitter)](https://twitter.com/joiahq).
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+## License & Trademarks
 
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+Joia is open source under the GNU Affero General Public License Version 3 (AGPLv3) or any later version.
