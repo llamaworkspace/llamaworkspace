@@ -13,6 +13,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+          cache-dependency-path: "apps/llamaws/package-lock.json"
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: apps/llamaws/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('apps/llamaws/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Cache turbo build setup
         uses: actions/cache@v4
         with:
@@ -20,12 +34,6 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-          cache-dependency-path: "package-lock.json"
 
       - name: Install dependencies
         run: npm install --frozen-lockfile
