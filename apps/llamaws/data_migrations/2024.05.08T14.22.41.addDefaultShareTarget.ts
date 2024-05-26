@@ -1,5 +1,5 @@
-import { prisma } from '@/server/db'
-import { UserAccessLevel } from '@/shared/globalTypes'
+import { prisma } from 'server/db'
+import { UserAccessLevel } from 'shared/globalTypes'
 import type { MigrationFn } from 'umzug'
 
 export const up: MigrationFn = async () => {

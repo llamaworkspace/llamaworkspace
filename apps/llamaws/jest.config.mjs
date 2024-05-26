@@ -9,9 +9,9 @@ const createJestConfig = nextJest({
 /** @type {import('jest').Config} */
 const config = {
   // Add more setup options before each test is run
-  setupFilesAfterEnv: ['<rootDir>/src/server/testing/setupTests.ts'],
+  setupFilesAfterEnv: ['<rootDir>/server/testing/setupTests.ts'],
   // testEnvironment: "jest-environment-jsdom", # needed for frontend tests
-  moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
+  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
   modulePathIgnorePatterns: ['.*.types.spec.ts'], // TS tests shouldn't be run
 }
 
