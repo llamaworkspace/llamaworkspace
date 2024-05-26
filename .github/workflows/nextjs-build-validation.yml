@@ -2,6 +2,8 @@ name: NextJS build validation
 
 on:
   pull_request:
+    paths:
+      - "apps/llamaws/**"
   workflow_dispatch:
 
 jobs:
@@ -11,19 +13,22 @@ jobs:
     steps:
       - name: Enable corepack
         run: corepack enable
-
+        working-directory: apps/llamaws
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
+          node-version-file: ".nvmrc"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
 
       - name: Install dependencies
         run: npm install --frozen-lockfile
+        working-directory: apps/llamaws
 
       - name: Copy ENV files
         run: cp .env.test .env
+        working-directory: apps/llamaws
 
       - name: Build NextJS app
         run: npm run build
+        working-directory: apps/llamaws
