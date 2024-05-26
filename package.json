@@ -1,8 +1,7 @@
 {
-  "name": "joia_turbo",
-  "private": true,
+  "name": "llamaws-monorepo",
   "scripts": {
-    "build": "turbo build",
+    "build": "turbo run build --cache-dir=.turbo",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
@@ -14,7 +13,7 @@
     "turbo": "latest"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "packageManager": "npm@10.5.0",
   "workspaces": [
