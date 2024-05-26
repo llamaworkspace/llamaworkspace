@@ -1,5 +1,5 @@
 {
-  "name": "joia",
+  "name": "llama-workspace",
   "version": "0.1.0",
   "scripts": {
     "build": "next build",
