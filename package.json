@@ -13,7 +13,7 @@
     "turbo": "latest"
   },
   "engines": {
-    "node": ">=20"
+    "node": "20"
   },
   "packageManager": "npm@10.5.0",
   "workspaces": [
