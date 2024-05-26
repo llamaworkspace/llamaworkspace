@@ -26,10 +26,6 @@ jobs:
           POSTGRES_PASSWORD: password
 
     steps:
-      - name: Enable corepack
-        run: corepack enable
-        working-directory: apps/llamaws
-
       - name: Check out code
         uses: actions/checkout@v3
 
