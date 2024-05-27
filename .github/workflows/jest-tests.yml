@@ -2,6 +2,8 @@ name: Test suite
 
 on:
   pull_request:
+    paths:
+      - "apps/llamaws/**"
   workflow_dispatch:
 
 jobs:
@@ -24,24 +26,34 @@ jobs:
           POSTGRES_PASSWORD: password
 
     steps:
-      - name: Enable corepack
-        run: corepack enable
-
       - name: Check out code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
+          node-version-file: ".nvmrc"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: apps/llamaws/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('apps/llamaws/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm install --frozen-lockfile
+        working-directory: apps/llamaws
 
       - name: Prepare test environment
         run: npm run test:prepare && cp .env.test .env
+        working-directory: apps/llamaws
 
       - name: Run Jest tests
         run: npm run test:ci
+        working-directory: apps/llamaws
