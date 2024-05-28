@@ -1,9 +1,9 @@
+import { cn } from '@/lib/utils'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { Cog6ToothIcon as Cog6ToothIconSolid } from '@heroicons/react/24/solid'
 import { TabEnum, getTabForRoute } from 'components/posts/postsNavigation'
 import { Skeleton } from 'components/ui/skeleton'
 import { useNavigation } from 'lib/frontend/useNavigation'
-import { cn } from 'lib/utils'
 import Link from 'next/link'
 import { ChatHeaderShare } from './ChatHeaderShare/ChatHeaderShare'
 
