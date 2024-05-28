@@ -9,6 +9,7 @@
     "baseColor": "zinc",
     "cssVariables": false
   },
+
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils"
