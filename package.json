@@ -5,12 +5,17 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "production:deploy": "npm run production:deploy --workspace=apps/llamaws"
+    "production:deploy": "npm run production:deploy --workspace=apps/llamaws",
+    "prepare": "npx husky install"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.5",
     "prettier": "^3.2.5",
+    "prettier-plugin-organize-imports": "^3.2.3",
+    "prettier-plugin-tailwindcss": "^0.5.4",
     "turbo": "latest"
   },
   "engines": {
@@ -20,5 +25,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,md}": "prettier --write"
+  }
 }
