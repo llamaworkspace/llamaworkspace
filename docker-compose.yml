@@ -7,7 +7,6 @@ services:
 
     volumes:
       - llamaws_db:/var/lib/postgresql/data
-      - ./db/docker-volume:/mnt/host
 
     restart: always
     ports:
