@@ -24,6 +24,7 @@
     "datamigrate:down": "env-cmd -f .env tsx server/dataMigrations/dataMigrator.ts down"
   },
   "dependencies": {
+    "@repo/ui": "*",
     "@repo/llamaq": "*",
     "@repo/typescript-config": "*",
     "@anthropic-ai/sdk": "^0.16.1",

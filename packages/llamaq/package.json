@@ -1,5 +1,11 @@
 {
   "name": "@repo/llamaq",
   "version": "0.0.1",
-  "devDependencies": {}
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*"
+  }
 }
