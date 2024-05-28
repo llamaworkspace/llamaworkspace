@@ -127,7 +127,6 @@
     "sequelize": "^6.37.1",
     "tailwindcss": "^3.4.3",
     "tsx": "^4.7.1",
-    "typescript": "^5.4.2",
     "umzug": "^3.7.0"
   },
   "ct3aMetadata": {
