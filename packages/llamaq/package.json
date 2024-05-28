@@ -7,5 +7,9 @@
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*"
+  },
+  "dependencies": {
+    "bullmq": "^5.7.12",
+    "ioredis": "^5.4.1"
   }
 }
