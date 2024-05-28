@@ -16,7 +16,6 @@
     "test:prepare": "env-cmd -f .env.test prisma db push --force-reset",
     "test": "jest --watch",
     "test:ci": "jest --ci",
-    "prepare": "husky install",
     "prettier": "prettier --config prettier.config.mjs --write \"./**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "cloak:generate": "npx cloak generate | grep 'CLOAK_MASTER_KEY' | cut -d '=' -f2",
     "datamigrate": "env-cmd -f .env tsx server/dataMigrations/dataMigrator.ts",
