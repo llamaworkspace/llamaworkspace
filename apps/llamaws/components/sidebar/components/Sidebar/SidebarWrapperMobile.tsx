@@ -57,7 +57,7 @@ export function SidebarWrapperMobile() {
                   </button>
                 </div>
               </Transition.Child>
-              <div className="flex grow flex-col bg-zinc-10 md:gap-y-5">
+              <div className="bg-zinc-10 flex grow flex-col md:gap-y-5">
                 <SidebarContent />
               </div>
             </Dialog.Panel>

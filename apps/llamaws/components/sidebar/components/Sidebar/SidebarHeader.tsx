@@ -20,7 +20,7 @@ const NewChatButton = () => {
     <div className="flex max-h-[45px] w-full">
       <button
         onClick={() => createChat()}
-        className="group flex grow basis-0 items-center justify-between gap-x-2 rounded-lg bg-zinc-100 px-2 py-3 text-[14px] font-bold text-zinc-950 transition-with-margin hover:bg-zinc-200 active:m-0.5 active:bg-zinc-200 active:duration-75 active:ease-in "
+        className="transition-with-margin group flex grow basis-0 items-center justify-between gap-x-2 rounded-lg bg-zinc-100 px-2 py-3 text-[14px] font-bold text-zinc-950 hover:bg-zinc-200 active:m-0.5 active:bg-zinc-200 active:duration-75 active:ease-in "
       >
         <span>New chat</span>
         <PencilSquareIcon
