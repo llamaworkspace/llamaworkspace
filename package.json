@@ -6,7 +6,7 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "production:deploy": "npm run production:deploy --workspace=apps/llamaws",
-    "prepare": "husky install"
+    "prepare": "npx husky install"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
