@@ -1,5 +1,11 @@
+import { env } from 'env.mjs'
+import nodemailer from 'nodemailer'
 import { z } from 'zod'
 import { AbstractQueueManager } from '../../lib/AbstractQueueManager/AbstractQueueManager'
+
+const { SMTP_EMAIL_SERVER, SMTP_EMAIL_FROM } = env
+
+const mailer = nodemailer.createTransport(SMTP_EMAIL_SERVER)
 
 const zPayload = z.object({
   from: z.string(),
@@ -17,10 +23,8 @@ class SendEmailQueue extends AbstractQueueManager<typeof zPayload> {
     super(zPayload, llamaqHostname)
   }
 
-  // Pending to handle the email sending
   protected async handle(action: string, payload: SendEmailEventPayload) {
-    await Promise.resolve()
-    console.log('I handle the thing here')
+    return await mailer.sendMail(payload)
   }
 }
 

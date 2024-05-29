@@ -11,7 +11,7 @@ export abstract class AbstractQueueManager<T extends ZodType> {
   protected abstract handle(
     action: string,
     payload: PayloadType<T>,
-  ): Promise<void>
+  ): Promise<unknown>
 
   constructor(zPayloadSchema: T, enqueueUrl?: string) {
     this.zPayloadSchema = zPayloadSchema
@@ -21,8 +21,8 @@ export abstract class AbstractQueueManager<T extends ZodType> {
   async enqueue(action: string, payload: PayloadType<T>) {
     this.parsePayloadOrThrow(payload)
     const body = {
-      queue: this.queueName,
-      action,
+      queueName: this.queueName,
+      actionName: action,
       payload,
     }
 
