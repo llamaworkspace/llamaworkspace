@@ -1,6 +1,6 @@
-import { sendEmailQueue } from '../mailer/queues/SendEmailQueue'
+import { sendEmailQueue } from '../mailer/queues/sendEmailQueue'
 
-const queues = [sendEmailQueue]
+export const queues = [sendEmailQueue]
 
 interface IQueues<PayloadType> {
   enqueue: (action: string, payload: PayloadType) => Promise<void>

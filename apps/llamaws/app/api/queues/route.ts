@@ -1,6 +1,6 @@
+import { queuesManager } from '@/server/queues/queuesManager'
 import type { NextRequest } from 'next/server'
 import { z } from 'zod'
-import { queuesManager } from '../../../server/queues/queuesManager'
 
 export const maxDuration = 300 // 5 minutes
 

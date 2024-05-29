@@ -10,7 +10,7 @@ const zPayload = z.object({
 
 type SendEmailEventPayload = z.infer<typeof zPayload>
 
-export class SendEmailQueue extends AbstractQueueManager<typeof zPayload> {
+class SendEmailQueue extends AbstractQueueManager<typeof zPayload> {
   readonly queueName = 'email'
 
   constructor(llamaqHostname?: string) {
