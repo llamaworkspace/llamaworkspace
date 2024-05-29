@@ -10,7 +10,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
     { label, placeholder, helperText, onValueChange, required, meta, ...input },
     externalRef,
   ) {
-    const error = meta && meta.submitFailed ? (meta.error as string) : undefined
+    const error = meta?.submitFailed ? (meta.error as string) : undefined
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
