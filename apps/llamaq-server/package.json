@@ -1,0 +1,20 @@
+{
+  "name": "llamaq-server",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@bull-board/api": "^5.19.1",
+    "@bull-board/hono": "^5.19.1",
+    "@hono/node-server": "^1.11.1",
+    "@repo/llamaq": "*",
+    "bullmq": "^5.7.13",
+    "hono": "^4.4.0",
+    "ioredis": "^5.4.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.1"
+  }
+}

@@ -1,3 +1,3 @@
-import { LlamaQ } from '@repo/llamaq'
+import { LlamaQOnServer } from '@repo/llamaq'
 
-export const queueManager = new LlamaQ()
+export const queueManager = new LlamaQOnServer()

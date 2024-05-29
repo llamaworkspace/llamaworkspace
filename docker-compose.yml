@@ -21,6 +21,8 @@ services:
     restart: always
     ports:
       - 6379:6379
+    volumes:
+      - redis_data:/data
 
   adminer:
     container_name: llamaws_adminer
@@ -31,3 +33,4 @@ services:
 
 volumes:
   llamaws_db:
+  redis_data:

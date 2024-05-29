@@ -1,5 +1,7 @@
 import { env } from 'env.mjs'
 import nodemailer from 'nodemailer'
+import { SendEmailEvent } from './events/SendEmailEvent'
+import { sendEmailEventHandler } from './sendEmailEventHandler'
 
 const { SMTP_EMAIL_SERVER, SMTP_EMAIL_FROM } = env
 
@@ -27,11 +29,19 @@ export const sendEmail = async (
     ? `${fromName} <${fromEmail ?? SMTP_EMAIL_FROM}>`
     : SMTP_EMAIL_FROM
 
-  return await mailer.sendMail({
+  // Enqueue sending an email
+  const sendEmailEvent = new SendEmailEvent('http://localhost:4000')
+  await sendEmailEvent.enqueue('sendEmail', {
     from,
     to,
     subject,
     text,
-    ...options,
+  })
+
+  return await sendEmailEventHandler({
+    from,
+    to,
+    subject,
+    text,
   })
 }
