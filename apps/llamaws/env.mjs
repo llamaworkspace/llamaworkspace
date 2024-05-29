@@ -32,6 +32,8 @@ const server = z.object({
   S3_REGION: z.string(),
   S3_ACCESS_KEY_ID: z.string(),
   S3_SECRET_ACCESS_KEY: z.string(),
+  VERCEL_URL: z.string().optional(),
+  PORT: z.string().optional(),
 })
 
 /**
@@ -69,6 +71,8 @@ const processEnv = {
   NEXT_PUBLIC_ENV: process.env.NODE_ENV,
   NEXT_PUBLIC_FRONTEND_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
   NEXT_PUBLIC_TRPC_DEBUG: process.env.NEXT_PUBLIC_TRPC_DEBUG,
+  VERCEL_URL: process.env.VERCEL_URL,
+  PORT: process.env.PORT,
 }
 
 // Don't touch the part below
