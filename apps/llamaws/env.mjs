@@ -34,6 +34,7 @@ const server = z.object({
   S3_SECRET_ACCESS_KEY: z.string(),
   VERCEL_URL: z.string().optional(),
   PORT: z.string().optional(),
+  LLAMAQ_ENQUEUE_URL: z.string(),
 })
 
 /**
@@ -73,6 +74,7 @@ const processEnv = {
   NEXT_PUBLIC_TRPC_DEBUG: process.env.NEXT_PUBLIC_TRPC_DEBUG,
   VERCEL_URL: process.env.VERCEL_URL,
   PORT: process.env.PORT,
+  LLAMAQ_ENQUEUE_URL: process.env.LLAMAQ_ENQUEUE_URL,
 }
 
 // Don't touch the part below

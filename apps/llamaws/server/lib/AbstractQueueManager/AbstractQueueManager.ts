@@ -1,15 +1,22 @@
-import { type infer as Infer, type ZodType } from 'zod'
+import { env } from '@/env.mjs'
+import type { z, ZodType } from 'zod'
 
-type PayloadType<T extends ZodType> = Infer<T>
+type PayloadType<T extends ZodType> = z.infer<T>
 
-export abstract class AbstractEnqueuedEvent<T extends ZodType> {
+export abstract class AbstractQueueManager<T extends ZodType> {
+  private readonly zPayloadSchema: T
+  public readonly enqueueUrl: string
+
   abstract readonly queueName: string
-  protected abstract _handle(payload: PayloadType<T>): Promise<void>
+  protected abstract handle(
+    action: string,
+    payload: PayloadType<T>,
+  ): Promise<void>
 
-  constructor(
-    public readonly enqueueUrl: string,
-    private readonly zPayloadSchema: T,
-  ) {}
+  constructor(zPayloadSchema: T, enqueueUrl?: string) {
+    this.zPayloadSchema = zPayloadSchema
+    this.enqueueUrl = enqueueUrl ?? env.LLAMAQ_ENQUEUE_URL
+  }
 
   async enqueue(action: string, payload: PayloadType<T>) {
     this.parsePayloadOrThrow(payload)
@@ -34,11 +41,11 @@ export abstract class AbstractEnqueuedEvent<T extends ZodType> {
     }
   }
 
-  async handle(payload: PayloadType<T>) {
+  async call(action: string, payload: PayloadType<T>) {
     this.parsePayloadOrThrow(payload)
 
     try {
-      await this._handle(payload)
+      await this.handle(action, payload)
     } catch (err) {
       console.error('Failed to handle event', err)
     }

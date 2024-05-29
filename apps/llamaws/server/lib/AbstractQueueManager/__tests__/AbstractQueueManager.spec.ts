@@ -1,15 +1,15 @@
 import { ZodError, z, type infer as Infer, type ZodType } from 'zod'
-import { AbstractEnqueuedEvent } from '../AbstractEnqueuedEvent'
+import { AbstractQueueManager } from '../AbstractQueueManager'
 
 global.fetch = jest.fn()
 
 const mockedGlobalFetch = global.fetch as jest.MockedFunction<typeof fetch>
 
-describe('AbstractEnqueuedEvent', () => {
-  class TestEnqueuedEvent extends AbstractEnqueuedEvent<ZodType> {
+describe('AbstractQueueManager', () => {
+  class TestEnqueuedEvent extends AbstractQueueManager<ZodType> {
     queueName = 'testQueue'
 
-    protected async _handle(payload: Infer<ZodType>) {
+    protected async handle(payload: Infer<ZodType>) {
       // Dummy handle method for testing purposes
     }
   }
@@ -22,7 +22,7 @@ describe('AbstractEnqueuedEvent', () => {
   const hostname = 'http://my-hostname/enqueue'
 
   beforeEach(() => {
-    enqueuedEvent = new TestEnqueuedEvent(hostname, validPayloadSchema)
+    enqueuedEvent = new TestEnqueuedEvent(validPayloadSchema, hostname)
     // Reset fetch mock between tests
     jest.clearAllMocks()
   })
@@ -87,7 +87,7 @@ describe('AbstractEnqueuedEvent', () => {
 
       const handleSpy = jest.spyOn(enqueuedEvent, '_handle')
 
-      await enqueuedEvent.handle(validPayload)
+      await enqueuedEvent.call(validPayload)
 
       expect(handleSpy).toHaveBeenCalledWith(validPayload)
       handleSpy.mockRestore()
@@ -101,7 +101,7 @@ describe('AbstractEnqueuedEvent', () => {
         .mockRejectedValue(error)
       const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
 
-      await enqueuedEvent.handle(validPayload)
+      await enqueuedEvent.call(validPayload)
 
       expect(handleSpy).toHaveBeenCalledWith(validPayload)
       expect(consoleErrorMock).toHaveBeenCalledWith(
@@ -117,7 +117,7 @@ describe('AbstractEnqueuedEvent', () => {
       const invalidPayload = { key: 123 }
       const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
 
-      await enqueuedEvent.handle(invalidPayload)
+      await enqueuedEvent.call(invalidPayload)
 
       expect(consoleErrorMock).toHaveBeenCalled()
 
