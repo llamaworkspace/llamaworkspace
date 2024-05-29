@@ -17,6 +17,7 @@ class SendEmailQueue extends AbstractQueueManager<typeof zPayload> {
     super(zPayload, llamaqHostname)
   }
 
+  // Pending to handle the email sending
   protected async handle(action: string, payload: SendEmailEventPayload) {
     await Promise.resolve()
     console.log('I handle the thing here')
