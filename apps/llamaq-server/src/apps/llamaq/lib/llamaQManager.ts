@@ -1,7 +1,7 @@
 import { Job, Queue, Worker } from 'bullmq'
 import IORedis, { RedisOptions } from 'ioredis'
 
-export class LlamaQManager {
+class LlamaQManager {
   private readonly targetUrl: string
   private readonly queues = new Map<string, Queue>()
   private readonly connection: IORedis
@@ -24,8 +24,8 @@ export class LlamaQManager {
 
   bootstrap = async () => {
     const queues = await this.listJobsAndExtractQueues()
-    queues.forEach((queueName) => {
-      this.createQueue(queueName)
+    return queues.map((queueName) => {
+      return this.createQueue(queueName)
     })
   }
 
@@ -65,6 +65,7 @@ export class LlamaQManager {
       body,
     })
     const text = await res.text()
+
     if (!res.ok) {
       throw new Error(
         `Remote failed to process event. Remote response: ${res.status} ${res.statusText}. Response: ${text}`,
@@ -93,6 +94,6 @@ export class LlamaQManager {
   }
 }
 
-export const llamaQManager = new LlamaQManager(
+export const llamaQManagerxx = new LlamaQManager(
   'http://localhost:3000/api/queues',
 )

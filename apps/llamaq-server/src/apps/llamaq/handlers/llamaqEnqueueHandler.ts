@@ -1,7 +1,8 @@
 import { Hono } from 'hono'
 import { validator } from 'hono/validator'
 import { z } from 'zod'
-import { llamaQManager } from '../lib/llamaQManager'
+import { bullBoardService } from '../../bullboard/bullBoardService'
+import { llamaQManagerxx } from '../lib/llamaQManager'
 
 export const llamaqEnqueueHandler = new Hono()
 
@@ -15,7 +16,7 @@ const validationFunc = validator('json', (value, c) => {
   const parsed = schema.safeParse(value)
   if (!parsed.success) {
     // Handle validation error
-    return c.text('Invalid!', 401)
+    return c.json(parsed.error, 401)
   }
   return parsed.data
 })
@@ -24,8 +25,8 @@ llamaqEnqueueHandler.post(validationFunc, async (c) => {
   const { queueName, actionName, payload } = c.req.valid('json')
 
   // Enqueue the job
-  const queue = await llamaQManager.enqueue(queueName, actionName, payload)
-  // bullBoard.addQueue(new BullMQAdapter(queue))
+  const queue = await llamaQManagerxx.enqueue(queueName, actionName, payload)
+  bullBoardService.addQueue(queue)
 
   return c.json(
     {
