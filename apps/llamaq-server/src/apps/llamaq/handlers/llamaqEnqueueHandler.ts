@@ -1,8 +1,8 @@
+import { bullBoardService } from '@/apps/bullboard/bullBoardService'
 import { Hono } from 'hono'
 import { validator } from 'hono/validator'
 import { z } from 'zod'
-import { bullBoardService } from '../../bullboard/bullBoardService'
-import { llamaQManagerxx } from '../lib/llamaQManager'
+import { llamaQManager } from '../lib/llamaQManager'
 
 export const llamaqEnqueueHandler = new Hono()
 
@@ -24,7 +24,7 @@ llamaqEnqueueHandler.post(validationFunc, async (c) => {
   const { queueName, actionName, payload } = c.req.valid('json')
 
   // Enqueue the job
-  const queue = await llamaQManagerxx.enqueue(queueName, actionName, payload)
+  const queue = await llamaQManager.enqueue(queueName, actionName, payload)
   bullBoardService.addQueue(queue)
 
   return c.json(

@@ -1,6 +1,6 @@
-import { Job, Queue, Worker } from 'bullmq'
-import IORedis, { RedisOptions } from 'ioredis'
-
+import { env } from '@/env'
+import { Queue, Worker, type Job } from 'bullmq'
+import IORedis, { type RedisOptions } from 'ioredis'
 class LlamaQManager {
   private readonly targetUrl: string
   private readonly queues = new Map<string, Queue>()
@@ -10,10 +10,14 @@ class LlamaQManager {
     return
   }
 
-  constructor(targetUrl: string, redisOptions?: RedisOptions) {
+  constructor(
+    targetUrl: string,
+    redisUrl: string,
+    redisOptions?: RedisOptions,
+  ) {
     this.targetUrl = targetUrl
     redisOptions = redisOptions ?? { maxRetriesPerRequest: null }
-    this.connection = new IORedis(redisOptions)
+    this.connection = new IORedis(redisUrl, redisOptions)
   }
 
   enqueue = async (name: string, action: string, payload: unknown) => {
@@ -99,6 +103,7 @@ class LlamaQManager {
   }
 }
 
-export const llamaQManagerxx = new LlamaQManager(
-  'http://localhost:3000/api/queues',
+export const llamaQManager = new LlamaQManager(
+  env.NEXTJS_PROCESSOR_URL,
+  env.REDIS_URL,
 )
