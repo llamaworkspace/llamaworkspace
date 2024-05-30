@@ -26,7 +26,7 @@ export abstract class AbstractQueueManager<T extends ZodType> {
       payload,
     }
 
-    const res = await fetch('http://localhost:4567', {
+    const res = await fetch(this.enqueueUrl, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
