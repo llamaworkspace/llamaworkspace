@@ -1,16 +1,11 @@
 import type { TRPCError } from '@trpc/server'
 import chalk from 'chalk'
-import { env } from 'env.mjs'
 
 const log = (message: string) => {
-  if (env.NEXT_PUBLIC_ENV === 'development') {
-    console.log(message)
-  }
+  console.log(message)
 }
 const logError = (error: Error) => {
-  if (env.NEXT_PUBLIC_ENV === 'development') {
-    console.error(error)
-  }
+  console.error(error)
 }
 
 export const errorLogger = (error: Error) => {
