@@ -15,10 +15,14 @@ class QueuesManager {
     queues.forEach((queue) => this.registerQueue(queue))
   }
 
-  async call<PayloadType>(queue: string, action: string, payload: PayloadType) {
-    const queue = this.queueProvidersMap.get(queue)
+  async call<PayloadType>(
+    queueName: string,
+    action: string,
+    payload: PayloadType,
+  ) {
+    const queue = this.queueProvidersMap.get(queueName)
     if (!queue) {
-      throw new Error(`Queue ${queue} not found`)
+      throw new Error(`Queue ${queueName} not found`)
     }
 
     return await queue.call(action, payload)
