@@ -19,6 +19,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "bull-repl": "^0.29.1",
     "tsx": "4.7.1"
   }
 }

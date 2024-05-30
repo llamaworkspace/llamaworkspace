@@ -55,7 +55,10 @@ class LlamaQManager {
     })
     this.queues.set(name, queue)
 
-    new Worker(name, this.processor, { connection: this.connection })
+    new Worker(name, this.processor, {
+      connection: this.connection,
+      concurrency: 10,
+    })
     return queue
   }
 
@@ -73,6 +76,7 @@ class LlamaQManager {
       },
       body,
     })
+
     const text = await res.text()
 
     if (!res.ok) {
