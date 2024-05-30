@@ -43,7 +43,12 @@ class LlamaQManager {
     if (this.queues.has(name)) {
       throw new Error(`Queue ${name} already exists`)
     }
-    const queue = new Queue(name, { connection: this.connection })
+    const queue = new Queue(name, {
+      connection: this.connection,
+      defaultJobOptions: {
+        attempts: 3,
+      },
+    })
     this.queues.set(name, queue)
 
     new Worker(name, this.processor, { connection: this.connection })
