@@ -5,7 +5,9 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "production:deploy": "npm run production:deploy --workspace=apps/llamaws",
+    "deploy": "npx run-p llamaq:production:deploy llamaws:production:deploy",
+    "llamaws:production:deploy": "npm run production:deploy --workspace=apps/llamaws",
+    "llamaq:production:deploy": "npm run build --workspace=apps/llamaq",
     "prepare": "npx husky install"
   },
   "devDependencies": {
@@ -13,12 +15,13 @@
     "@repo/typescript-config": "*",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.5",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.2.5",
     "prettier-plugin-organize-imports": "^3.2.3",
     "prettier-plugin-tailwindcss": "^0.5.4",
+    "tsx": "^4.7.1",
     "turbo": "latest",
-    "typescript": "^5.4.5",
-    "tsx": "^4.7.1"
+    "typescript": "^5.4.5"
   },
   "engines": {
     "node": "20"

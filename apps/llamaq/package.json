@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "tsx watch src/llamaqServer.ts",
-    "lint": "eslint .",
+    "lint": "eslint",
     "build": "npm run lint && tsc",
     "start": "node dist/llamaqServer.js"
   },
