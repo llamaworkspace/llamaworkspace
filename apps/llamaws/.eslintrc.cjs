@@ -3,7 +3,7 @@ const config = {
   root: true,
   extends: ['@repo/eslint-config/next.js'],
   parserOptions: {
-    project: true,
+    project: './tsconfig.json',
   },
   rules: {
     'no-restricted-imports': [

@@ -15,7 +15,6 @@ const schema = z.object({
 const validationFunc = validator('json', (value, c) => {
   const parsed = schema.safeParse(value)
   if (!parsed.success) {
-    // Handle validation error
     return c.json(parsed.error, 401)
   }
   return parsed.data
