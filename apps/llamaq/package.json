@@ -1,11 +1,12 @@
 {
   "name": "llamaq",
   "version": "0.1.0",
+  "type": "module",
   "scripts": {
     "dev": "tsx watch src/llamaqServer.ts",
     "lint": "eslint",
     "build": "npm run lint && tsc",
-    "start": "node dist/llamaqServer.js"
+    "start": "tsx src/llamaqServer"
   },
   "dependencies": {
     "@bull-board/api": "^5.19.1",

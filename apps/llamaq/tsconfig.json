@@ -2,21 +2,22 @@
   "compilerOptions": {
     "target": "es2022",
     "sourceMap": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["esnext"],
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
     "incremental": true,
     "noUncheckedIndexedAccess": true,
     "outDir": "./dist",
+    "baseUrl": ".",
+    "noEmit": true,
     "paths": {
       "@/*": ["./src/*"]
     }
