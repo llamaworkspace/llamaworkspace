@@ -5,7 +5,7 @@ export const queues = [sendEmailQueue]
 interface IQueues<PayloadType> {
   enqueue: (action: string, payload: PayloadType) => Promise<void>
   call: (action: string, payload: PayloadType) => Promise<void>
-  queue: string
+  queueName: string
 }
 
 class QueuesManager {
@@ -29,7 +29,7 @@ class QueuesManager {
   }
 
   private registerQueue(queue: IQueues<unknown>) {
-    const name = queue.queue
+    const name = queue.queueName
     if (this.queueProvidersMap.has(name)) {
       throw new Error(`Queue ${name} already registered`)
     }

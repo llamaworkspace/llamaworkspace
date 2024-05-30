@@ -28,8 +28,8 @@ class LlamaQManager {
 
   bootstrap = async () => {
     const queues = await this.listJobsAndExtractQueues()
-    return queues.map((queue) => {
-      return this.createQueue(queue)
+    return queues.map((queueName) => {
+      return this.createQueue(queueName)
     })
   }
 
@@ -64,7 +64,7 @@ class LlamaQManager {
 
   private processor = async (job: Job<unknown, unknown, string>) => {
     const body = JSON.stringify({
-      queue: job.queue,
+      queue: job.queueName,
       action: job.name,
       payload: job.data,
     })
@@ -94,16 +94,16 @@ class LlamaQManager {
 
   private listJobsAndExtractQueues = async () => {
     const keys = await this.connection.keys('bull:*')
-    const queues = new Set()
+    const queueNames = new Set()
 
     for (const key of keys) {
       const match = key.match(/^(.*):id/)
       if (match) {
-        queues.add(match[1]?.replace('bull:', ''))
+        queueNames.add(match[1]?.replace('bull:', ''))
       }
     }
 
-    return Array.from(queues) as string[]
+    return Array.from(queueNames) as string[]
   }
 }
 

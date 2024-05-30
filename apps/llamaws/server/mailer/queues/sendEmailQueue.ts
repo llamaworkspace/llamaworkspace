@@ -17,7 +17,7 @@ const zPayload = z.object({
 type SendEmailEventPayload = z.infer<typeof zPayload>
 
 class SendEmailQueue extends AbstractQueueManager<typeof zPayload> {
-  readonly queue = 'email'
+  readonly queueName = 'email'
 
   constructor(llamaqHostname?: string) {
     super(zPayload, llamaqHostname)
