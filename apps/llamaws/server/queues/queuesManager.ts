@@ -5,7 +5,7 @@ export const queues = [sendEmailQueue]
 interface IQueues<PayloadType> {
   enqueue: (action: string, payload: PayloadType) => Promise<void>
   call: (action: string, payload: PayloadType) => Promise<void>
-  queueName: string
+  queue: string
 }
 
 class QueuesManager {
@@ -15,21 +15,17 @@ class QueuesManager {
     queues.forEach((queue) => this.registerQueue(queue))
   }
 
-  async call<PayloadType>(
-    queueName: string,
-    action: string,
-    payload: PayloadType,
-  ) {
-    const queue = this.queueProvidersMap.get(queueName)
+  async call<PayloadType>(queue: string, action: string, payload: PayloadType) {
+    const queue = this.queueProvidersMap.get(queue)
     if (!queue) {
-      throw new Error(`Queue ${queueName} not found`)
+      throw new Error(`Queue ${queue} not found`)
     }
 
     return await queue.call(action, payload)
   }
 
   private registerQueue(queue: IQueues<unknown>) {
-    const name = queue.queueName
+    const name = queue.queue
     if (this.queueProvidersMap.has(name)) {
       throw new Error(`Queue ${name} already registered`)
     }

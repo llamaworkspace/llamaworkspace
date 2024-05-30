@@ -7,8 +7,8 @@ import { llamaQManager } from '../lib/llamaQManager'
 export const llamaqEnqueueHandler = new Hono()
 
 const schema = z.object({
-  queueName: z.string(),
-  actionName: z.string(),
+  queue: z.string(),
+  action: z.string(),
   payload: z.unknown(),
 })
 
@@ -21,16 +21,16 @@ const validationFunc = validator('json', (value, c) => {
 })
 
 llamaqEnqueueHandler.post(validationFunc, async (c) => {
-  const { queueName, actionName, payload } = c.req.valid('json')
+  const { queue, action, payload } = c.req.valid('json')
 
   // Enqueue the job
-  const queue = await llamaQManager.enqueue(queueName, actionName, payload)
+  const queue = await llamaQManager.enqueue(queue, action, payload)
   bullBoardService.addQueue(queue)
 
   return c.json(
     {
-      queueName,
-      actionName,
+      queue,
+      action,
       payload,
     },
     201,

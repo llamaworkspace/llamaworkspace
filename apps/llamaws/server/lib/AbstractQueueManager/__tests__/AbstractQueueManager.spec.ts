@@ -7,7 +7,7 @@ const mockedGlobalFetch = global.fetch as jest.MockedFunction<typeof fetch>
 
 describe('AbstractQueueManager', () => {
   class TestEnqueuedEvent extends AbstractQueueManager<ZodType> {
-    queueName = 'testQueue'
+    queue = 'testQueue'
 
     protected async handle(payload: Infer<ZodType>) {
       // Dummy handle method for testing purposes
