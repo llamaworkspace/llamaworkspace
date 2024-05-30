@@ -1,7 +1,7 @@
 import { Job, Queue, Worker } from 'bullmq'
 import IORedis, { RedisOptions } from 'ioredis'
 
-export class LlamaQOnServer {
+export class LlamaQManager {
   private readonly targetUrl: string
   private readonly queues = new Map<string, Queue>()
   private readonly connection: IORedis
@@ -92,3 +92,7 @@ export class LlamaQOnServer {
     return Array.from(queueNames) as string[]
   }
 }
+
+export const llamaQManager = new LlamaQManager(
+  'http://localhost:3000/api/queues',
+)

@@ -1,10 +1,9 @@
 import { Hono } from 'hono'
 import { validator } from 'hono/validator'
 import { z } from 'zod'
-import { LlamaQOnServer } from '../lib/LlamaQOnServer'
+import { llamaQManager } from '../lib/llamaQManager'
 
-const llamaqRouter = new Hono()
-const llamaQ = new LlamaQOnServer('http://localhost:3000/api/queues')
+export const llamaqEnqueueHandler = new Hono()
 
 const schema = z.object({
   queueName: z.string(),
@@ -21,11 +20,11 @@ const validationFunc = validator('json', (value, c) => {
   return parsed.data
 })
 
-llamaqRouter.post('/enqueue', validationFunc, async (c) => {
+llamaqEnqueueHandler.post(validationFunc, async (c) => {
   const { queueName, actionName, payload } = c.req.valid('json')
 
   // Enqueue the job
-  const queue = await llamaQ.enqueue(queueName, actionName, payload)
+  const queue = await llamaQManager.enqueue(queueName, actionName, payload)
   // bullBoard.addQueue(new BullMQAdapter(queue))
 
   return c.json(
@@ -37,5 +36,3 @@ llamaqRouter.post('/enqueue', validationFunc, async (c) => {
     201,
   )
 })
-
-export { llamaqRouter }
