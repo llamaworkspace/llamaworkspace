@@ -21,10 +21,10 @@ const validationFunc = validator('json', (value, c) => {
 })
 
 llamaqEnqueueHandler.post(validationFunc, async (c) => {
-  const { queue, action, payload } = c.req.valid('json')
+  const { queue: queueName, action, payload } = c.req.valid('json')
 
   // Enqueue the job
-  const queue = await llamaQManager.enqueue(queue, action, payload)
+  const queue = await llamaQManager.enqueue(queueName, action, payload)
   bullBoardService.addQueue(queue)
 
   return c.json(
