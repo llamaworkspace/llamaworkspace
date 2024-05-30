@@ -3,7 +3,8 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-COPY apps/llamaws/package.json apps/llamaws/package-lock.json ./apps/llamaws/
+COPY apps/llamaws/package.json ./apps/llamaws/
+COPY apps/llamaq/package.json ./apps/llamaq/
 
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
