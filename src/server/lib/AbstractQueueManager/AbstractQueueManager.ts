@@ -47,6 +47,7 @@ export abstract class AbstractQueueManager<T extends ZodType> {
     try {
       await this.handle(action, payload)
     } catch (err) {
+      // Red flag
       console.error('Failed to handle event', err)
     }
   }

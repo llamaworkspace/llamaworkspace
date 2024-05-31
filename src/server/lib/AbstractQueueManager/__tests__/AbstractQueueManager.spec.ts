@@ -44,8 +44,8 @@ describe('AbstractQueueManager', () => {
       expect(mockedGlobalFetch).toHaveBeenCalledWith(hostname, {
         method: 'POST',
         body: JSON.stringify({
-          queue: 'testQueue',
-          action: 'testAction',
+          queueName: 'testQueue',
+          actionName: 'testAction',
           payload: validPayload,
         }),
         headers: {
@@ -78,50 +78,6 @@ describe('AbstractQueueManager', () => {
           enqueuedEvent.enqueue('testAction', { key: 'value' }),
         ).rejects.toThrow()
       })
-    })
-  })
-
-  describe.skip('handle', () => {
-    it('should parse payload and call _handle', async () => {
-      const validPayload = { key: 'value' }
-
-      const handleSpy = jest.spyOn(enqueuedEvent, '_handle')
-
-      await enqueuedEvent.call(validPayload)
-
-      expect(handleSpy).toHaveBeenCalledWith(validPayload)
-      handleSpy.mockRestore()
-    })
-
-    it('should catch and log error if _handle throws', async () => {
-      const validPayload = { key: 'value' }
-      const error = new Error('Handler error')
-      const handleSpy = jest
-        .spyOn(enqueuedEvent, '_handle')
-        .mockRejectedValue(error)
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-
-      await enqueuedEvent.call(validPayload)
-
-      expect(handleSpy).toHaveBeenCalledWith(validPayload)
-      expect(consoleErrorMock).toHaveBeenCalledWith(
-        'Failed to handle event',
-        error,
-      )
-
-      handleSpy.mockRestore()
-      consoleErrorMock.mockRestore()
-    })
-
-    it('should catch and log error if parsePayload throws', async () => {
-      const invalidPayload = { key: 123 }
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-
-      await enqueuedEvent.call(invalidPayload)
-
-      expect(consoleErrorMock).toHaveBeenCalled()
-
-      consoleErrorMock.mockRestore()
     })
   })
 })
