@@ -127,7 +127,7 @@ export function Chatbox({
 
   return (
     <div className="bg-white">
-      <div className="relative mx-auto max-w-4xl bg-white px-2 pb-2 lg:px-0">
+      <div className="relative mx-auto max-w-3xl bg-white px-2 pb-2 lg:px-0">
         {showScrollToBottomIcon && (
           <div
             onClick={onScrollToBottomIconClick}
