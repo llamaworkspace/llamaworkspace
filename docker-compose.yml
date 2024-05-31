@@ -1,36 +1,27 @@
 version: '3.8'
 
 services:
-  postgres:
-    container_name: llamaws_postgres
+  joia_db:
+    container_name: db
     image: postgres:15
 
     volumes:
-      - llamaws_db:/var/lib/postgresql/data
+      - joia_db:/var/lib/postgresql/data
+      - ./db/docker-volume:/mnt/host
 
     restart: always
     ports:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: llamaws
-
-  redis:
-    container_name: llamaws_redis
-    image: redis
-    restart: always
-    ports:
-      - 6379:6379
-    volumes:
-      - redis_data:/data
+      POSTGRES_DB: joia
 
   adminer:
-    container_name: llamaws_adminer
+    container_name: joia_adminer
     image: adminer
     restart: always
     ports:
       - 8080:8080
 
 volumes:
-  llamaws_db:
-  redis_data:
+  joia_db:
