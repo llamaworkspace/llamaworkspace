@@ -139,7 +139,7 @@
     "initVersion": "7.19.0"
   },
   "engines": {
-    "node": ">=20.14"
+    "node": ">=20.12"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs}": [

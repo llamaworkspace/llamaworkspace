@@ -1,4 +1,4 @@
-FROM node:20.14
+FROM node:20.12
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install --frozen-lockfile --ignore-scripts
