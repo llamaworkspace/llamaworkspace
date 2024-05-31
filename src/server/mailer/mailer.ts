@@ -1,5 +1,6 @@
 import { env } from '@/env.mjs'
 import nodemailer from 'nodemailer'
+import { sendEmailQueue } from './queues/sendEmailQueue'
 
 const { SMTP_EMAIL_SERVER, SMTP_EMAIL_FROM } = env
 
@@ -27,11 +28,10 @@ export const sendEmail = async (
     ? `${fromName} <${fromEmail ?? SMTP_EMAIL_FROM}>`
     : SMTP_EMAIL_FROM
 
-  return await mailer.sendMail({
+  await sendEmailQueue.enqueue('send', {
     from,
     to,
     subject,
     text,
-    ...options,
   })
 }
