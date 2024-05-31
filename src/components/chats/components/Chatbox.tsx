@@ -126,77 +126,74 @@ export function Chatbox({
   const showSkeleton = !chatId
 
   return (
-    <div className="bg-white">
-      <div className="relative mx-auto max-w-3xl bg-white px-2 pb-2 lg:px-0">
-        {showScrollToBottomIcon && (
+    <div className="relative mx-auto max-w-3xl bg-white px-2 pb-2 lg:px-0">
+      {showScrollToBottomIcon && (
+        <div
+          onClick={onScrollToBottomIconClick}
+          className="absolute -top-14 right-0 h-10 w-10 cursor-pointer rounded "
+        >
+          <ArrowDownCircleIcon className="rounded-full bg-white text-zinc-800 hover:bg-zinc-100" />
+        </div>
+      )}
+      {showSkeleton ? (
+        <Skeleton className="h-14 w-full" />
+      ) : (
+        <form onSubmit={handleSubmit} ref={formRef}>
           <div
-            onClick={onScrollToBottomIconClick}
-            className="absolute -top-14 right-0 h-10 w-10 cursor-pointer rounded "
+            className={cn(
+              'flex items-center gap-x-2 rounded-md border border-zinc-200 bg-white p-2',
+              !canUse && 'cursor-not-allowed bg-zinc-100',
+              _.isNull(canUse) && 'cursor-not-allowed border-zinc-200 bg-white',
+            )}
           >
-            <ArrowDownCircleIcon className="rounded-full bg-white text-zinc-800 hover:bg-zinc-100" />
-          </div>
-        )}
-        {showSkeleton ? (
-          <Skeleton className="h-14 w-full" />
-        ) : (
-          <form onSubmit={handleSubmit} ref={formRef}>
-            <div
-              className={cn(
-                'flex items-center gap-x-2 rounded-md border border-zinc-200 bg-white p-2',
-                !canUse && 'cursor-not-allowed bg-zinc-100',
-                _.isNull(canUse) &&
-                  'cursor-not-allowed border-zinc-200 bg-white',
-              )}
-            >
-              <div className="relative flex h-full w-full justify-center">
-                <textarea
-                  disabled={!canUse}
-                  ref={textareaRef}
-                  rows={1}
-                  placeholder={placeholder}
-                  className={cn(
-                    'm-0 h-auto w-full resize-none overflow-y-auto p-0 text-zinc-900 outline-none focus:ring-0 focus-visible:ring-0',
-                    canUse === false && 'cursor-not-allowed bg-zinc-100',
-                    _.isNull(canUse) && 'cursor-not-allowed bg-white',
-                  )}
-                  style={{
-                    maxHeight: textAreaExpectedHeight,
-                    height: textAreaExpectedHeight,
-                  }}
-                  onChange={handleTextAreaChange}
-                  onKeyDown={onKeyDown}
-                  value={value}
-                />
-                {/* Shadow textarea */}
-                <div
-                  ref={divRef}
-                  // Keep this and uncomment in dev to debugging the shadow textarea
-                  // className="absolute left-0 right-0 top-[-220px] overflow-hidden bg-pink-200"
-                  className="absolute h-0 max-h-0 overflow-hidden"
-                  style={{
-                    whiteSpace: 'pre-wrap',
-                  }}
-                >
-                  {trackingDivValue}
-                </div>
-              </div>
-              <div className="self-end">
-                <Button
-                  type="submit"
-                  disabled={!value || isLoading}
-                  variant="secondary"
-                >
-                  <PaperAirplaneIcon className="h-5 w-5 text-zinc-600" />
-                </Button>
+            <div className="relative flex h-full w-full justify-center">
+              <textarea
+                disabled={!canUse}
+                ref={textareaRef}
+                rows={1}
+                placeholder={placeholder}
+                className={cn(
+                  'm-0 h-auto w-full resize-none overflow-y-auto p-0 text-zinc-900 outline-none focus:ring-0 focus-visible:ring-0',
+                  canUse === false && 'cursor-not-allowed bg-zinc-100',
+                  _.isNull(canUse) && 'cursor-not-allowed bg-white',
+                )}
+                style={{
+                  maxHeight: textAreaExpectedHeight,
+                  height: textAreaExpectedHeight,
+                }}
+                onChange={handleTextAreaChange}
+                onKeyDown={onKeyDown}
+                value={value}
+              />
+              {/* Shadow textarea */}
+              <div
+                ref={divRef}
+                // Keep this and uncomment in dev to debugging the shadow textarea
+                // className="absolute left-0 right-0 top-[-220px] overflow-hidden bg-pink-200"
+                className="absolute h-0 max-h-0 overflow-hidden"
+                style={{
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {trackingDivValue}
               </div>
             </div>
-          </form>
-        )}
-        <div className="mt-2 flex justify-end text-xs tracking-tight">
-          <div className="text-zinc-400">
-            <span className="font-semibold">Shift + Enter</span> &nbsp;to add a
-            new line
+            <div className="self-end">
+              <Button
+                type="submit"
+                disabled={!value || isLoading}
+                variant="secondary"
+              >
+                <PaperAirplaneIcon className="h-5 w-5 text-zinc-600" />
+              </Button>
+            </div>
           </div>
+        </form>
+      )}
+      <div className="mt-2 flex justify-end text-xs tracking-tight">
+        <div className="text-zinc-400">
+          <span className="font-semibold">Shift + Enter</span> &nbsp;to add a
+          new line
         </div>
       </div>
     </div>
