@@ -119,8 +119,7 @@ export function Chat({ postId, chatId }: ChatProps) {
           <ChatMessageInitial chatId={chatId} />
         )}
 
-        <div className="space-y-8">
-          <div className="h-4 "></div>
+        <div className="space-y-8 pt-8">
           {messages
             ?.map((message, index) => {
               const author = getEnumByValue(Author, message.author) as
