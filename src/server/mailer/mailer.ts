@@ -1,4 +1,4 @@
-import { env } from '@env.mjs'
+import { env } from '@/env.mjs'
 import nodemailer from 'nodemailer'
 import { sendEmailQueue } from './queues/sendEmailQueue'
 
