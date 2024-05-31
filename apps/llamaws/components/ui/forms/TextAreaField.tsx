@@ -26,7 +26,7 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     externalRef,
   ) {
     const finalClassNames = cn(disabled && 'bg-zinc-100', className)
-    const error = meta?.submitFailed ? (meta.error as string) : undefined
+    const error = meta && meta.submitFailed ? (meta.error as string) : undefined
 
     return (
       <FormFieldWrapper label={label} helperText={helperText} error={error}>

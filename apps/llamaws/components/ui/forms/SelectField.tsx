@@ -64,7 +64,7 @@ export const SelectField = ({
   }, [options, value])
 
   const selectedIsDisabled = selectedOption?.disabled
-  const error = meta?.submitFailed ? (meta.error as string) : undefined
+  const error = meta && meta.submitFailed ? (meta.error as string) : undefined
   const colorScheme = error ? 'danger' : 'default'
   return (
     <FormFieldWrapper label={label} helperText={helperText} error={error}>
