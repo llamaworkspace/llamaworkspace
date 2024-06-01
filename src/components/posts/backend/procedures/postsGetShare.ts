@@ -31,7 +31,7 @@ export const postsGetShare = protectedProcedure
     const userId = ctx.session.user.id
     const { postId } = input
 
-    const post = await ctx.prisma.post.findFirstOrThrow({
+    const post = await ctx.prisma.app.findFirstOrThrow({
       where: {
         id: postId,
       },

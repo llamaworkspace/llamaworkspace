@@ -6,7 +6,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { App, User, Workspace } from '@prisma/client'
 import { postUpdateService } from '../postUpdate.service'
 
 const subject = async (
@@ -31,7 +31,7 @@ const subject = async (
 describe('postUpdateService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -46,7 +46,7 @@ describe('postUpdateService', () => {
   })
 
   it('updates the post', async () => {
-    const postInDbBefore = await prisma.post.findFirstOrThrow({
+    const postInDbBefore = await prisma.app.findFirstOrThrow({
       where: {
         id: post.id,
       },
@@ -55,7 +55,7 @@ describe('postUpdateService', () => {
 
     await subject(workspace.id, user.id, post.id, { title: 'A new title' })
 
-    const postInDb = await prisma.post.findFirstOrThrow({
+    const postInDb = await prisma.app.findFirstOrThrow({
       where: {
         id: post.id,
       },
@@ -80,7 +80,7 @@ describe('postUpdateService', () => {
   })
 
   describe('when the postId is the defaultPost for the workspace', () => {
-    let defaultPost: Post
+    let defaultPost: App
 
     beforeEach(async () => {
       defaultPost = await PostFactory.create(prisma, {
@@ -100,7 +100,7 @@ describe('postUpdateService', () => {
   describe('gptEngine updates', () => {
     describe('when gptEngine is not set', () => {
       it('updates the post', async () => {
-        const postInDbBefore = await prisma.post.findFirstOrThrow({
+        const postInDbBefore = await prisma.app.findFirstOrThrow({
           where: {
             id: post.id,
           },
@@ -111,7 +111,7 @@ describe('postUpdateService', () => {
           gptEngine: AppGptEngine.OpenaiAssistant,
         })
 
-        const postInDb = await prisma.post.findFirstOrThrow({
+        const postInDb = await prisma.app.findFirstOrThrow({
           where: {
             id: post.id,
           },
@@ -123,7 +123,7 @@ describe('postUpdateService', () => {
 
     describe('when gptEngine is set', () => {
       beforeEach(async () => {
-        await prisma.post.update({
+        await prisma.app.update({
           where: {
             id: post.id,
           },

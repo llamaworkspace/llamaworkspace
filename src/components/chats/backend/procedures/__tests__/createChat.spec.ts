@@ -3,7 +3,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { App, User, Workspace } from '@prisma/client'
 
 const subject = async (userId: string, postId: string) => {
   const { caller } = trpcContextSetupHelper(prisma, userId)
@@ -13,7 +13,7 @@ const subject = async (userId: string, postId: string) => {
 describe('createChat', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)

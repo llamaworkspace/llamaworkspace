@@ -15,7 +15,7 @@ export const postsUpdate = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
     const { id } = input
-    const post = await ctx.prisma.post.findFirstOrThrow({
+    const post = await ctx.prisma.app.findFirstOrThrow({
       where: {
         id,
       },

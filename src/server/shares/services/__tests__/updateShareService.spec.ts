@@ -6,7 +6,7 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { ShareScope } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Post, Share, User, Workspace } from '@prisma/client'
+import type { App, Share, User, Workspace } from '@prisma/client'
 import { updateShareService } from '../updateShare.service'
 
 const subject = async (
@@ -29,7 +29,7 @@ const subject = async (
 describe('updateShareService', () => {
   let workspace: Workspace
   let userCreatingPost: User
-  let post: Post
+  let post: App
   let share: Share
 
   beforeEach(async () => {

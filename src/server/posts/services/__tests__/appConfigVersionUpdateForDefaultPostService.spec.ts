@@ -6,7 +6,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Chat, Post, User, Workspace } from '@prisma/client'
+import type { App, Chat, User, Workspace } from '@prisma/client'
 import { appConfigVersionUpdateForDefaultPostService } from '../appConfigVersionUpdateForDefaultPost.service'
 
 interface SubjectPayload {
@@ -34,7 +34,7 @@ const subject = async (
 describe('appConfigVersionUpdateForDefaultPostService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: App
   let chat: Chat
 
   beforeEach(async () => {
@@ -96,7 +96,7 @@ describe('appConfigVersionUpdateForDefaultPostService', () => {
 
   describe('when the post linked to the chat is not the default post', () => {
     beforeEach(async () => {
-      await prisma.post.update({
+      await prisma.app.update({
         where: { id: post.id },
         data: { isDefault: false },
       })

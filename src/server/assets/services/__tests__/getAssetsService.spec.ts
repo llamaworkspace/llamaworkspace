@@ -8,7 +8,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Asset, Post, User, Workspace } from '@prisma/client'
+import type { App, Asset, User, Workspace } from '@prisma/client'
 import { getAssetsService } from '../getAssets.service'
 
 const subject = async (workspaceId: string, userId: string, appId?: string) => {
@@ -23,7 +23,7 @@ const subject = async (workspaceId: string, userId: string, appId?: string) => {
 describe('getAssetsService', () => {
   let workspace: Workspace
   let user: User
-  let app: Post
+  let app: App
   let file1: Asset
   let file2ForApp1: Asset
   let file3ForApp2: Asset

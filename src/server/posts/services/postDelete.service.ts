@@ -27,7 +27,7 @@ export const postDeleteService = async (
       postId,
     )
 
-    await prisma.post.findFirstOrThrow({
+    await prisma.app.findFirstOrThrow({
       where: scopePostByWorkspace(
         {
           id: postId,
@@ -37,7 +37,7 @@ export const postDeleteService = async (
       ),
     })
 
-    return await prisma.post.delete({
+    return await prisma.app.delete({
       where: {
         id: postId,
       },

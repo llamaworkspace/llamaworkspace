@@ -9,7 +9,7 @@ import { WorkspaceInviteFactory } from '@/server/testing/factories/WorkspaceInvi
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { faker } from '@faker-js/faker'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { App, User, Workspace } from '@prisma/client'
 import { getPostSharesService } from '../getPostShares.service'
 
 const subject = async (userId: string, workspaceId: string, postId: string) => {
@@ -25,7 +25,7 @@ describe('getPostSharesService', () => {
   let workspace: Workspace
   let userPostOwner: User
   let sharedUser: User
-  let post: Post
+  let post: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)

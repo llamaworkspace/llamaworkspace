@@ -3,7 +3,7 @@ import { prisma } from '@/server/db'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { App, User, Workspace } from '@prisma/client'
 import { updatePostSortingService } from '../updatePostSorting.service'
 
 const subject = async (workspaceId: string, userId: string, postId: string) => {
@@ -18,7 +18,7 @@ const subject = async (workspaceId: string, userId: string, postId: string) => {
 describe('updatePostSortingService', () => {
   let workspace: Workspace
   let user: User
-  let post1: Post
+  let post1: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -47,8 +47,8 @@ describe('updatePostSortingService', () => {
   })
 
   describe('when it is the not the first post with position', () => {
-    let post2: Post
-    let post3: Post
+    let post2: App
+    let post3: App
 
     beforeEach(async () => {
       post2 = await PostFactory.create(prisma, {
@@ -85,11 +85,11 @@ describe('updatePostSortingService', () => {
   })
 
   describe('there are six or more posts with position', () => {
-    let post2: Post
-    let post3: Post
-    let post4: Post
-    let post5: Post
-    let post6: Post
+    let post2: App
+    let post3: App
+    let post4: App
+    let post5: App
+    let post6: App
 
     beforeEach(async () => {
       post2 = await PostFactory.create(prisma, {
@@ -150,8 +150,8 @@ describe('updatePostSortingService', () => {
   })
 
   describe('when the post already has a position', () => {
-    let post2: Post
-    let post3: Post
+    let post2: App
+    let post3: App
 
     beforeEach(async () => {
       post2 = await PostFactory.create(prisma, {

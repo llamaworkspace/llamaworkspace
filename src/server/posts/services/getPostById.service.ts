@@ -22,7 +22,7 @@ export const getPostByIdService = async (
     postId,
   )
 
-  return await prisma.post.findFirstOrThrow({
+  return await prisma.app.findFirstOrThrow({
     where: scopePostByWorkspace({ id: postId }, workspaceId),
     include: {
       chats: {

@@ -16,7 +16,7 @@ export class PermissionsVerifier {
 
   async call(action: PermissionAction, userId: string, postId: string) {
     const scope = await this.getShareScope(postId)
-    const post = await this.prisma.post.findFirstOrThrow({
+    const post = await this.prisma.app.findFirstOrThrow({
       where: {
         id: postId,
       },
@@ -115,7 +115,7 @@ export class PermissionsVerifier {
   }
 
   private async handlePrivateScope(userId: string, postId: string) {
-    const post = await this.prisma.post.findFirstOrThrow({
+    const post = await this.prisma.app.findFirstOrThrow({
       where: {
         id: postId,
       },

@@ -10,7 +10,7 @@ import { inviteToWorkspaceService } from '@/server/workspaces/services/inviteToW
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { faker } from '@faker-js/faker'
-import type { Post, User, Workspace, WorkspaceInvite } from '@prisma/client'
+import type { App, User, Workspace, WorkspaceInvite } from '@prisma/client'
 import { performPostShareService } from '../performPostShare.service'
 
 type MockedInviteToWorkspaceService = jest.MockedFunction<
@@ -47,7 +47,7 @@ const subject = async (
 describe('performPostShareService', () => {
   let workspace: Workspace
   let invitingUser: User
-  let post: Post
+  let post: App
 
   beforeEach(() => {
     mockedInviteToWorkspace.mockClear()

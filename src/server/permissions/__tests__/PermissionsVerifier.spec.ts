@@ -5,13 +5,13 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { App, User, Workspace } from '@prisma/client'
 import { PermissionsVerifier } from '../PermissionsVerifier'
 
 describe('PermissionsVerifier ', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -92,7 +92,7 @@ describe('PermissionsVerifier ', () => {
 
     let workspace: Workspace
     let user: User
-    let post: Post
+    let post: App
 
     beforeEach(async () => {
       workspace = await WorkspaceFactory.create(prisma)

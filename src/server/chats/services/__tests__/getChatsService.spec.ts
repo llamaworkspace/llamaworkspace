@@ -5,7 +5,7 @@ import { MessageFactory } from '@/server/testing/factories/MessageFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { Chat, Post, User, Workspace } from '@prisma/client'
+import type { App, Chat, User, Workspace } from '@prisma/client'
 import { getChatsService } from '../getChats.service'
 
 const subject = async (
@@ -35,8 +35,8 @@ const subject = async (
 describe('getChatsService', () => {
   let workspace: Workspace
   let user: User
-  let post1: Post
-  let post2: Post
+  let post1: App
+  let post2: App
   let chat1: Chat
   let chat2: Chat
   let chat3: Chat

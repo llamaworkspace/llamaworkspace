@@ -31,7 +31,7 @@ export const postUpdateService = async (
       postId,
     )
 
-    const post = await prisma.post.findFirstOrThrow({
+    const post = await prisma.app.findFirstOrThrow({
       where: scopePostByWorkspace(
         {
           id: postId,
@@ -47,7 +47,7 @@ export const postUpdateService = async (
         message: 'GPT Engine cannot be updated once set',
       })
     }
-    return await prisma.post.update({
+    return await prisma.app.update({
       where: {
         id: postId,
       },

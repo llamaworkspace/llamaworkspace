@@ -28,7 +28,7 @@ export const createChatService = async function (
   )
 
   return await prismaAsTrx(prisma, async (prisma) => {
-    const post = await prisma.post.findUniqueOrThrow({
+    const post = await prisma.app.findUniqueOrThrow({
       where: {
         id: postId,
       },

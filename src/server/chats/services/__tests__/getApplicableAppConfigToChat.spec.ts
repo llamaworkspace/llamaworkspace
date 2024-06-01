@@ -9,9 +9,9 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type {
+  App,
   AppConfigVersion,
   Chat,
-  Post,
   User,
   Workspace,
 } from '@prisma/client'
@@ -34,7 +34,7 @@ const subject = async (
 describe('getApplicableAppConfigToChat', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: App
   let chat: Chat
   let otherAppConfigVersion: AppConfigVersion
 

@@ -3,16 +3,16 @@ import { prisma } from '@/server/db'
 import { AppConfigVersionFactory } from '@/server/testing/factories/AppConfigVersionFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { workspaceWithUsersAndPostsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndPosts.fixture'
-import type { AppConfigVersion, Post, User, Workspace } from '@prisma/client'
+import type { App, AppConfigVersion, User, Workspace } from '@prisma/client'
 import { getPostsListService } from '../getPostsList.service'
 
-type PostWithLatestConfig = Post & { latestConfig: AppConfigVersion }
+type PostWithLatestConfig = App & { latestConfig: AppConfigVersion }
 
 const subject = async (
   userId: string,
   workspaceId: string,
   includeLatestConfig?: boolean,
-): Promise<Post[] | PostWithLatestConfig[]> => {
+): Promise<App[] | PostWithLatestConfig[]> => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
@@ -32,13 +32,13 @@ describe('getPostsListService', () => {
   let workspace: Workspace
   let user: User
   let otherUser: User
-  let postWithScopeUser: Post
-  let postWithScopeUserOfOtherUser: Post
-  let postWithScopeUserOfOtherUserWhereMainUserIsInvited: Post
-  let postWithScopeEverybody: Post
-  let postWithScopeEverybodyOfOtherUser: Post
-  let postWithScopePrivate: Post
-  let postWithScopePrivateOfOtherUser: Post
+  let postWithScopeUser: App
+  let postWithScopeUserOfOtherUser: App
+  let postWithScopeUserOfOtherUserWhereMainUserIsInvited: App
+  let postWithScopeEverybody: App
+  let postWithScopeEverybodyOfOtherUser: App
+  let postWithScopePrivate: App
+  let postWithScopePrivateOfOtherUser: App
 
   beforeEach(async () => {
     const fixture = await workspaceWithUsersAndPostsFixture(prisma)

@@ -14,7 +14,7 @@ export const updatePostSortingService = async (
   const { workspaceId, userId } = uowContext
 
   return prismaAsTrx(prisma, async (prisma) => {
-    await prisma.post.findFirstOrThrow({
+    await prisma.app.findFirstOrThrow({
       where: scopePostByWorkspace(
         {
           id: postIdToPushToPosition1,

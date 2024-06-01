@@ -12,7 +12,7 @@ const subject = async (workspaceId: string, userId: string) => {
     workspaceId,
     userId,
   )
-  const input = { title: 'Test Post' }
+  const input = { title: 'Test App' }
   return await postCreateService(prisma, uowContext, input)
 }
 
@@ -22,13 +22,13 @@ describe('postCreateService', () => {
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     await subject(workspace.id, user.id)
 
-    const post = await prisma.post.findFirstOrThrow({
+    const post = await prisma.app.findFirstOrThrow({
       where: {
         userId: user.id,
       },
     })
     expect(post).toMatchObject({
-      title: 'Test Post',
+      title: 'Test App',
       gptEngine: AppGptEngine.Basic,
     })
   })

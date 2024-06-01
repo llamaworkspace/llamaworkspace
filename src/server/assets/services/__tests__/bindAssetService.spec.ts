@@ -6,7 +6,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Asset, Post, User, Workspace } from '@prisma/client'
+import type { App, Asset, User, Workspace } from '@prisma/client'
 import { bindAssetService } from '../bindAsset.service'
 
 const subject = async (
@@ -33,7 +33,7 @@ describe('bindAssetService', () => {
   let workspace: Workspace
   let user: User
   let asset: Asset
-  let app: Post
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
