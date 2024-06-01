@@ -23,7 +23,7 @@ export abstract class AbstractQueueManager<T extends ZodType> {
     const { enqueueUrl, accessToken } = llamaQparams ?? {}
     this.zPayloadSchema = zPayloadSchema
     this.enqueueUrl = enqueueUrl ?? env.LLAMAQ_ENQUEUE_URL
-    this.accessToken = accessToken ?? env.LLAMAQ_ACCESS_TOKEN
+    this.accessToken = accessToken ?? env.LLAMAQ_ACCESS_KEY
   }
 
   async enqueue(action: string, payload: PayloadType<T>) {
