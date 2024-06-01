@@ -2,8 +2,6 @@
     "editor.indentSize": "tabSize",
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
-    "explorer.excludeGitIgnore": true,
-    "search.useGlobalIgnoreFiles": true,
     "search.exclude": {
         "**/.next": true,
         "**/launch.json": true,

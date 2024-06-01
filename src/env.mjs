@@ -33,6 +33,7 @@ const server = z.object({
   S3_ACCESS_KEY_ID: z.string(),
   S3_SECRET_ACCESS_KEY: z.string(),
   LLAMAQ_ENQUEUE_URL: z.string(),
+  LLAMAQ_ACCESS_TOKEN: z.string(),
 })
 
 /**
@@ -64,6 +65,7 @@ const processEnv = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   LLAMAQ_ENQUEUE_URL: process.env.LLAMAQ_ENQUEUE_URL,
+  LLAMAQ_ACCESS_TOKEN: process.env.LLAMAQ_ACCESS_TOKEN,
   INTERNAL_OPENAI_API_KEY: process.env.INTERNAL_OPENAI_API_KEY,
   OPTIONAL_OPENAI_BASE_URL: process.env.OPTIONAL_OPENAI_BASE_URL,
   SMTP_EMAIL_SERVER: process.env.SMTP_EMAIL_SERVER,
