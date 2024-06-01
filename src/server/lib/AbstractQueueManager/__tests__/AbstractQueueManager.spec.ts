@@ -19,10 +19,14 @@ describe('AbstractQueueManager', () => {
   })
 
   let enqueuedEvent: TestEnqueuedEvent
-  const hostname = 'http://my-hostname/enqueue'
+  const enqueueUrl = 'http://my-hostname/enqueue'
+  const accessToken = 'my-access-token'
 
   beforeEach(() => {
-    enqueuedEvent = new TestEnqueuedEvent(validPayloadSchema, hostname)
+    enqueuedEvent = new TestEnqueuedEvent(validPayloadSchema, {
+      enqueueUrl,
+      accessToken,
+    })
     // Reset fetch mock between tests
     jest.clearAllMocks()
   })
@@ -41,7 +45,7 @@ describe('AbstractQueueManager', () => {
 
       await enqueuedEvent.enqueue('testAction', validPayload)
 
-      expect(mockedGlobalFetch).toHaveBeenCalledWith(hostname, {
+      expect(mockedGlobalFetch).toHaveBeenCalledWith(enqueueUrl, {
         method: 'POST',
         body: JSON.stringify({
           queueName: 'testQueue',
@@ -50,6 +54,7 @@ describe('AbstractQueueManager', () => {
         }),
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${enqueuedEvent.accessToken}`,
         },
       })
     })

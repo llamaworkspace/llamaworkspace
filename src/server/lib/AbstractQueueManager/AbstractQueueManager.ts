@@ -3,9 +3,15 @@ import type { z, ZodType } from 'zod'
 
 type PayloadType<T extends ZodType> = z.infer<T>
 
+interface LlamaQParams {
+  enqueueUrl?: string
+  accessToken?: string
+}
+
 export abstract class AbstractQueueManager<T extends ZodType> {
   private readonly zPayloadSchema: T
   public readonly enqueueUrl: string
+  public readonly accessToken: string
 
   abstract readonly queueName: string
   protected abstract handle(
@@ -13,9 +19,11 @@ export abstract class AbstractQueueManager<T extends ZodType> {
     payload: PayloadType<T>,
   ): Promise<unknown>
 
-  constructor(zPayloadSchema: T, enqueueUrl?: string) {
+  constructor(zPayloadSchema: T, llamaQparams?: LlamaQParams) {
+    const { enqueueUrl, accessToken } = llamaQparams ?? {}
     this.zPayloadSchema = zPayloadSchema
     this.enqueueUrl = enqueueUrl ?? env.LLAMAQ_ENQUEUE_URL
+    this.accessToken = accessToken ?? env.LLAMAQ_ACCESS_KEY
   }
 
   async enqueue(action: string, payload: PayloadType<T>) {
@@ -31,6 +39,7 @@ export abstract class AbstractQueueManager<T extends ZodType> {
       body: JSON.stringify(body),
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.accessToken}`,
       },
     })
 
