@@ -58,7 +58,7 @@ model User {
     createdAt            DateTime            @default(now())
     updatedAt            DateTime            @updatedAt
     accounts             Account[]
-    posts                Post[]
+    posts                App[]
     sessions             Session[]
     workspaces           UsersOnWorkspaces[]
     authoredChats        Chat[]
@@ -74,7 +74,7 @@ model Workspace {
     createdAt        DateTime            @default(now())
     updatedAt        DateTime            @updatedAt
     users            UsersOnWorkspaces[]
-    posts            Post[]
+    posts            App[]
     workspaceInvites WorkspaceInvite[]
     aiProvider       AiProvider[]
     assets           Asset[]
@@ -110,7 +110,7 @@ model WorkspaceInvite {
     @@index([email])
 }
 
-model Post {
+model App {
     id                String             @id @default(cuid())
     title             String?
     emoji             String?
@@ -136,7 +136,7 @@ model AppsOnUsers {
     userId        String
     user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
     appId         String
-    app           Post      @relation(fields: [appId], references: [id], onDelete: Cascade)
+    app           App       @relation(fields: [appId], references: [id], onDelete: Cascade)
     position      Int?
     pinnedAt      DateTime?
     lastVisitedAt DateTime?
@@ -166,7 +166,7 @@ model AssetsOnApps {
     assetId   String
     appId     String
     asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
-    app       Post     @relation(fields: [appId], references: [id], onDelete: Cascade)
+    app       App      @relation(fields: [appId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -179,7 +179,7 @@ model Share {
     scope        String
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt
-    post         Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+    post         App           @relation(fields: [postId], references: [id], onDelete: Cascade)
     shareTargets ShareTarget[]
 }
 
@@ -206,7 +206,7 @@ model Chat {
     id                 String            @id @default(cuid())
     postId             String
     title              String?
-    post               Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+    post               App               @relation(fields: [postId], references: [id], onDelete: Cascade)
     appConfigVersionId String?
     appConfigVersion   AppConfigVersion? @relation(fields: [appConfigVersionId], references: [id], onDelete: Cascade)
     authorId           String?
@@ -234,7 +234,7 @@ model Message {
 model AppConfigVersion {
     id          String    @id @default(cuid())
     appId       String
-    app         Post      @relation(fields: [appId], references: [id], onDelete: Cascade)
+    app         App       @relation(fields: [appId], references: [id], onDelete: Cascade)
     description String?
     model       String
     createdAt   DateTime  @default(now())
