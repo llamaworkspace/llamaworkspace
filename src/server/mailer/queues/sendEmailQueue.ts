@@ -19,8 +19,8 @@ type SendEmailEventPayload = z.infer<typeof zPayload>
 class SendEmailQueue extends AbstractQueueManager<typeof zPayload> {
   readonly queueName = 'email'
 
-  constructor(llamaqHostname?: string) {
-    super(zPayload, llamaqHostname)
+  constructor(enqueueUrl?: string) {
+    super(zPayload, { enqueueUrl })
   }
 
   protected async handle(action: string, payload: SendEmailEventPayload) {
