@@ -13,3 +13,10 @@ jest.mock('@/server/mailer/mailer', () => {
     sendEmail: jest.fn(),
   }
 })
+
+// @ts-expect-error - global fetch mocking
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve({}),
+  }),
+)
