@@ -12,7 +12,7 @@ export const getAppAssets = protectedProcedure
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
-    const app = await ctx.prisma.post.findFirstOrThrow({
+    const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
         id: input.appId,
       },

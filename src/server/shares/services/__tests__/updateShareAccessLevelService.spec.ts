@@ -11,7 +11,7 @@ import { UserAccessLevel, UserAccessLevelActions } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { faker } from '@faker-js/faker'
 import type {
-  Post,
+  App,
   Share,
   ShareTarget,
   User,
@@ -41,7 +41,7 @@ describe('updateShareAccessLevelService', () => {
   let workspace: Workspace
   let userCreatingPost: User
   let userInvitedToPost: User
-  let post: Post
+  let post: App
   let share: Share
   let shareTarget: ShareTarget
 

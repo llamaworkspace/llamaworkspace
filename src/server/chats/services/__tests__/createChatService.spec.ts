@@ -6,7 +6,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { App, User, Workspace } from '@prisma/client'
 import { createChatService } from '../createChat.service'
 
 jest.mock('@/server/posts/services/updatePostSorting.service', () => {
@@ -35,7 +35,7 @@ const subject = async (workspaceId: string, userId: string, postId: string) => {
 describe('createChatService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -96,7 +96,7 @@ describe('createChatService', () => {
   })
 
   describe('when the post is default', () => {
-    let defaultPost: Post
+    let defaultPost: App
 
     beforeEach(async () => {
       defaultPost = await PostFactory.create(prisma, {

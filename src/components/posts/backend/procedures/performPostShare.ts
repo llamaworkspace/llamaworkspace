@@ -12,7 +12,7 @@ export const performPostShare = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const invitingUserId = ctx.session.user.id
-    const post = await ctx.prisma.post.findUniqueOrThrow({
+    const post = await ctx.prisma.app.findUniqueOrThrow({
       where: {
         id: input.postId,
       },

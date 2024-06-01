@@ -11,7 +11,7 @@ export const getDefaultPostService = async (
 ) => {
   const { userId, workspaceId } = uowContext
 
-  const post = await prisma.post.findFirst({
+  const post = await prisma.app.findFirst({
     select: { id: true },
     where: scopePostByWorkspace(
       {

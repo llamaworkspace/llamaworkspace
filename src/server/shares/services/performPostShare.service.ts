@@ -237,7 +237,7 @@ const sendShareNotificationEmail = async (
     token,
   }: SendShareNotificationEmailPayload,
 ) => {
-  const post = await prisma.post.findUniqueOrThrow({
+  const post = await prisma.app.findUniqueOrThrow({
     where: {
       id: postId,
     },

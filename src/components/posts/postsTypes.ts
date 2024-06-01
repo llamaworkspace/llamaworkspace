@@ -1,12 +1,5 @@
 import type { RootRouter } from '@/server/trpc/rootRouter'
-import type { Prisma } from '@prisma/client'
 import type { inferRouterInputs } from '@trpc/server'
-
-export type PostWithChatIds = Prisma.PostGetPayload<{
-  include: {
-    chats: { select: { id: true; createdAt: true } }
-  }
-}>
 
 type RouterInput = inferRouterInputs<RootRouter>
 

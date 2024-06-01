@@ -6,7 +6,7 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { App, User, Workspace } from '@prisma/client'
 
 jest.mock('@/server/shares/services/getPostShares.service.ts', () => {
   const original = jest.requireActual(
@@ -25,7 +25,7 @@ const subject = async (userId: string, postId: string) => {
 describe('postsGetShares', () => {
   let workspace: Workspace
   let invitingUser: User
-  let post: Post
+  let post: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)

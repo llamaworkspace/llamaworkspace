@@ -5,7 +5,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { App, User, Workspace } from '@prisma/client'
 import { postDeleteService } from '../postDelete.service'
 
 const subject = async (workspaceId: string, userId: string, postId: string) => {
@@ -21,7 +21,7 @@ const subject = async (workspaceId: string, userId: string, postId: string) => {
 describe('postDeleteService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -35,7 +35,7 @@ describe('postDeleteService', () => {
   })
 
   it('deletes the post', async () => {
-    const postInDbBefore = await prisma.post.findFirst({
+    const postInDbBefore = await prisma.app.findFirst({
       where: {
         id: post.id,
       },
@@ -44,7 +44,7 @@ describe('postDeleteService', () => {
 
     await subject(workspace.id, user.id, post.id)
 
-    const postInDb = await prisma.post.findFirst({
+    const postInDb = await prisma.app.findFirst({
       where: {
         id: post.id,
       },
@@ -69,7 +69,7 @@ describe('postDeleteService', () => {
   })
 
   describe('when the postId is the defaultPost for the workspace', () => {
-    let defaultPost: Post
+    let defaultPost: App
 
     beforeEach(async () => {
       defaultPost = await PostFactory.create(prisma, {

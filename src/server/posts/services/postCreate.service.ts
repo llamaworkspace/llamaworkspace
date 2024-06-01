@@ -59,7 +59,7 @@ const createPost = async (
   targetModel: string,
   input: PostCreateServiceInputProps,
 ) => {
-  return await prisma.post.create({
+  return await prisma.app.create({
     data: {
       workspaceId,
       userId,

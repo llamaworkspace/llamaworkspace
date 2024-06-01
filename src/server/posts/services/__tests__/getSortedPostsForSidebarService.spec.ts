@@ -3,7 +3,7 @@ import { prisma } from '@/server/db'
 import { AppsOnUsersFactory } from '@/server/testing/factories/AppsOnUsersFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { workspaceWithUsersAndPostsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndPosts.fixture'
-import type { Post, User, Workspace } from '@prisma/client'
+import type { App, User, Workspace } from '@prisma/client'
 import { getSortedPostsForSidebarService } from '../getSortedPostsForSidebar.service'
 
 const subject = async (userId: string, workspaceId: string) => {
@@ -20,13 +20,13 @@ describe('getSortedPostsForSidebarService', () => {
   let workspace: Workspace
   let user: User
   let otherUser: User
-  let postWithScopeUser: Post
-  let postWithScopeUserOfOtherUser: Post
-  let postWithScopeUserOfOtherUserWhereMainUserIsInvited: Post
-  let postWithScopeEverybody: Post
-  let postWithScopeEverybodyOfOtherUser: Post
-  let postWithScopePrivate: Post
-  let postWithScopePrivateOfOtherUser: Post
+  let postWithScopeUser: App
+  let postWithScopeUserOfOtherUser: App
+  let postWithScopeUserOfOtherUserWhereMainUserIsInvited: App
+  let postWithScopeEverybody: App
+  let postWithScopeEverybodyOfOtherUser: App
+  let postWithScopePrivate: App
+  let postWithScopePrivateOfOtherUser: App
 
   beforeEach(async () => {
     const fixture = await workspaceWithUsersAndPostsFixture(prisma)

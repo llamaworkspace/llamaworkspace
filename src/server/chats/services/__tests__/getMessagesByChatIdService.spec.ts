@@ -8,7 +8,7 @@ import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactor
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Chat, Message, Post, User, Workspace } from '@prisma/client'
+import type { App, Chat, Message, User, Workspace } from '@prisma/client'
 import { Promise } from 'bluebird'
 import { getMessagesByChatIdService } from '../getMessagesByChatId.service'
 
@@ -28,7 +28,7 @@ const subject = async (
 describe('getMessagesByChatIdService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: App
   let chat: Chat
   let messages: Message[]
 

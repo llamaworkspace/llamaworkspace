@@ -22,7 +22,7 @@ describe('workspaceOnboardingCreationService', () => {
   it('creates a default post', async () => {
     const user = await subject()
 
-    const post = await prisma.post.findFirstOrThrow({
+    const post = await prisma.app.findFirstOrThrow({
       where: {
         userId: user.id,
       },
@@ -40,7 +40,7 @@ describe('workspaceOnboardingCreationService', () => {
   it('creates the default instructions', async () => {
     const user = await subject()
 
-    const post = await prisma.post.findFirstOrThrow({
+    const post = await prisma.app.findFirstOrThrow({
       where: {
         userId: user.id,
       },

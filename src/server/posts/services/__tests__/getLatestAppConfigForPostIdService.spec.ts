@@ -6,7 +6,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { AppConfigVersion, Post, User, Workspace } from '@prisma/client'
+import type { App, AppConfigVersion, User, Workspace } from '@prisma/client'
 import { getLatestAppConfigForPostIdService } from '../getLatestAppConfigForPostId.service'
 
 const subject = async (userId: string, workspaceId: string, postId: string) => {
@@ -21,7 +21,7 @@ const subject = async (userId: string, workspaceId: string, postId: string) => {
 describe('getLatestAppConfigForPostIdService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post
+  let post: App
   let anotherAppConfigVersion: AppConfigVersion
 
   beforeEach(async () => {

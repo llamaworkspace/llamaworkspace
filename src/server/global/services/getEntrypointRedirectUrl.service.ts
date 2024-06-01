@@ -67,7 +67,7 @@ const handleCaseNoChatRuns = async (
   workspaceId: string,
   userId: string,
 ) => {
-  const demoChatbot = await prisma.post.findFirst({
+  const demoChatbot = await prisma.app.findFirst({
     where: scopePostByWorkspace(
       {
         isDemo: true,

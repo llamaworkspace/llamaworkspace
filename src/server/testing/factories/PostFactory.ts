@@ -2,13 +2,13 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import { DEFAULT_AI_MODEL } from '@/shared/globalConfig'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { faker } from '@faker-js/faker'
-import type { Post, PrismaClient } from '@prisma/client'
+import type { App, PrismaClient } from '@prisma/client'
 import { WorkspaceFactory } from './WorkspaceFactory'
 import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type PostFactoryFields = {
   userId: string
-} & Partial<Post>
+} & Partial<App>
 
 const generateDefaults = () => {
   return {
@@ -45,7 +45,7 @@ export const PostFactory = {
     }
 
     if (workspaceId) {
-      return await prisma.post.create({
+      return await prisma.app.create({
         data: {
           workspaceId,
           shares: sharesPayload,
@@ -70,7 +70,7 @@ export const PostFactory = {
 
     const workspace = await WorkspaceFactory.create(prisma)
 
-    return await prisma.post.create({
+    return await prisma.app.create({
       data: {
         ...rest,
         workspaceId: workspace.id,

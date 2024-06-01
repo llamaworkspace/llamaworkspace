@@ -27,16 +27,16 @@ export const getSortedPostsForSidebarService = async function (
 
   const result = await prisma.$queryRaw`
     SELECT
-      "Post"."id" as "id",
-      "Post"."title" as "title",
-      "Post"."emoji" as "emoji",
+      "App"."id" as "id",
+      "App"."title" as "title",
+      "App"."emoji" as "emoji",
       "AppsOnUsers"."position" as "position",
       max("AppsOnUsers"."updatedAt") as "updatedAt"
-    FROM "Post"
-    LEFT JOIN "AppsOnUsers" ON "Post"."id" = "AppsOnUsers"."appId"
-    WHERE "Post"."workspaceId" = ${workspaceId}
-    AND "Post"."isDefault" = false
-    AND "Post"."id" IN (${Prisma.join(visiblePostIds)})
+    FROM "App"
+    LEFT JOIN "AppsOnUsers" ON "App"."id" = "AppsOnUsers"."appId"
+    WHERE "App"."workspaceId" = ${workspaceId}
+    AND "App"."isDefault" = false
+    AND "App"."id" IN (${Prisma.join(visiblePostIds)})
     AND "AppsOnUsers"."userId" = ${userId}
     AND "AppsOnUsers"."position" IS NOT NULL
     GROUP BY 1,2,3,4

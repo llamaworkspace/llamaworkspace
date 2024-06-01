@@ -6,7 +6,7 @@ import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { AppConfigVersion, Post, User, Workspace } from '@prisma/client'
+import type { App, AppConfigVersion, User, Workspace } from '@prisma/client'
 import { appConfigVersionUpdateService } from '../appConfigVersionUpdate.service'
 
 interface SubjectPayload {
@@ -36,7 +36,7 @@ const subject = async (
 describe('appConfigVersionUpdateService', () => {
   let workspace: Workspace
   let user: User
-  let post: Post & { appConfigVersions: AppConfigVersion[] }
+  let post: App & { appConfigVersions: AppConfigVersion[] }
   let appConfigVersion: AppConfigVersion
 
   beforeEach(async () => {
@@ -49,7 +49,7 @@ describe('appConfigVersionUpdateService', () => {
       workspaceId: workspace.id,
       title: 'A title',
     })
-    post = await prisma.post.findFirstOrThrow({
+    post = await prisma.app.findFirstOrThrow({
       where: {
         id: _post.id,
       },
@@ -174,7 +174,7 @@ describe('appConfigVersionUpdateService', () => {
 
   describe('when the post is the default one', () => {
     beforeEach(async () => {
-      await prisma.post.update({
+      await prisma.app.update({
         where: {
           id: post.id,
         },

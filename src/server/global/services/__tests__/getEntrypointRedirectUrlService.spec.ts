@@ -4,7 +4,7 @@ import { ChatRunFactory } from '@/server/testing/factories/ChatRunFactory'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { Chat, Post, User, Workspace } from '@prisma/client'
+import type { App, Chat, User, Workspace } from '@prisma/client'
 import { getEntrypointRedirectUrlService } from '../getEntrypointRedirectUrl.service'
 
 const subject = async (userId: string) => {
@@ -13,8 +13,8 @@ const subject = async (userId: string) => {
 describe('getEntrypointRedirectUrl', () => {
   let workspace: Workspace
   let user: User
-  let defaultPost: Post
-  let demoChatbot: Post
+  let defaultPost: App
+  let demoChatbot: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -86,7 +86,7 @@ describe('getEntrypointRedirectUrl', () => {
 
     describe('when the demo chatbot does not exist', () => {
       beforeEach(async () => {
-        await prisma.post.delete({
+        await prisma.app.delete({
           where: {
             id: demoChatbot.id,
           },
@@ -118,7 +118,7 @@ describe('getEntrypointRedirectUrl', () => {
 
     describe('when the demo chatbot does not exist', () => {
       beforeEach(async () => {
-        await prisma.post.delete({
+        await prisma.app.delete({
           where: {
             id: demoChatbot.id,
           },
