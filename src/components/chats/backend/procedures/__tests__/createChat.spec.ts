@@ -13,7 +13,7 @@ const subject = async (userId: string, postId: string) => {
 describe('createChat', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -22,18 +22,18 @@ describe('createChat', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
   })
 
   it('creates a chat', async () => {
-    const result = await subject(user.id, post.id)
+    const result = await subject(user.id, app.id)
     const dbChat = await prisma.chat.findFirstOrThrow({
       where: {
         app: {
-          id: post.id,
+          id: app.id,
         },
       },
     })
@@ -41,10 +41,10 @@ describe('createChat', () => {
   })
 
   it('creates a appsOnUsers record', async () => {
-    await subject(user.id, post.id)
+    await subject(user.id, app.id)
     const dbAppsOnUsers = await prisma.appsOnUsers.findFirstOrThrow({
       where: {
-        appId: post.id,
+        appId: app.id,
         userId: user.id,
       },
     })

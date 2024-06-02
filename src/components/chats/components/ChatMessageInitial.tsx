@@ -8,11 +8,11 @@ import { useAppConfigForChat, useChatById, useMessages } from '../chatHooks'
 export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
   const { data: appConfig } = useAppConfigForChat(chatId)
   const { data: chat } = useChatById(chatId)
-  const { data: post } = usePostById(chat?.postId)
+  const { data: app } = usePostById(chat?.postId)
   const { data: messages } = useMessages(chatId)
 
-  const isLoading = !appConfig || !chat || !post || !messages
-  const hasTitleOrInitialMessage = post?.title ?? appConfig?.description
+  const isLoading = !appConfig || !chat || !app || !messages
+  const hasTitleOrInitialMessage = app?.title ?? appConfig?.description
 
   if (isLoading || messages.length) {
     return null
@@ -25,8 +25,8 @@ export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
           {isLoading && <Skeleton className="h-14 w-14" />}
           {!isLoading && hasTitleOrInitialMessage && (
             <>
-              {post?.emoji ? (
-                <Emoji unified={post.emoji} size={54} />
+              {app?.emoji ? (
+                <Emoji unified={app.emoji} size={54} />
               ) : (
                 <div className="inline-flex h-16 w-16 text-zinc-300">
                   <JoiaIcon24 className="h-16 w-16" />
@@ -37,7 +37,7 @@ export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
         </div>
         <div className="text-3xl font-bold tracking-tighter text-zinc-900">
           {isLoading && <Skeleton className="h-8 w-96" />}
-          {!isLoading && post?.title && <>{post.title}</>}
+          {!isLoading && app?.title && <>{app.title}</>}
         </div>
       </div>
       <div className="max-w-3xl space-y-4 text-[1.05rem]">

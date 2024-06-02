@@ -21,7 +21,7 @@ export const postsGetById = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      post.workspaceId,
+      app.workspaceId,
       userId,
     )
 

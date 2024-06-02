@@ -260,7 +260,7 @@ const sendShareNotificationEmail = async (
     body: getEmailBody(
       invitingUserName ?? 'A colleague',
       invitingUserEmail,
-      post.title ?? 'Untitled GPT',
+      app.title ?? 'Untitled GPT',
       postUrl || undefined,
       workspaceInviteUrl || undefined,
     ),

@@ -26,7 +26,7 @@ export async function WIPdeleteAppFilesService(
   payload: DeleteAppFilesPayload,
 ) {
   const { appFileIds } = payload
-  const { userId, workspaceId } = uowContext
+  const { workspaceId } = uowContext
 
   await Promise.map(appFileIds, async (appFileId) => {
     return prismaAsTrx(prisma, async (prisma) => {

@@ -35,13 +35,13 @@ export const postUpdateService = async (
       where: scopePostByWorkspace(
         {
           id: postId,
-          isDefault: false, // Keep this to avoid updating the default post.
+          isDefault: false, // Keep this to avoid updating the default app.
         },
         workspaceId,
       ),
     })
 
-    if (post.gptEngine && payload.gptEngine) {
+    if (app.gptEngine && payload.gptEngine) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'GPT Engine cannot be updated once set',

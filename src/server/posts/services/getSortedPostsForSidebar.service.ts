@@ -18,7 +18,7 @@ export const getSortedPostsForSidebarService = async function (
   const { userId, workspaceId } = uowContext
 
   const visiblePosts = await getPostsListService(prisma, uowContext)
-  const visiblePostIds = visiblePosts.map((post) => post.id)
+  const visiblePostIds = visiblePosts.map((app) => app.id)
 
   // Keep this early return to avoid Prisma.join to fail when the array is empty
   if (!visiblePostIds.length) {

@@ -18,7 +18,7 @@ export const rootRouter = createTRPCRouter({
   sidebar: sidebarRouter,
   users: usersRouter,
   workspaces: workspacesRouter,
-  posts: postsRouter,
+  apps: postsRouter,
   chats: chatsRouter,
   ai: aiRouter,
   permissions: permissionsRouter,

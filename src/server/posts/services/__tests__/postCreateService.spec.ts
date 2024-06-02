@@ -27,7 +27,7 @@ describe('postCreateService', () => {
         userId: user.id,
       },
     })
-    expect(post).toMatchObject({
+    expect(app).toMatchObject({
       title: 'Test App',
       gptEngine: AppGptEngine.Basic,
     })
@@ -40,13 +40,13 @@ describe('postCreateService', () => {
 
     const share = await prisma.share.findMany({
       where: {
-        postId: post.id,
+        postId: app.id,
       },
     })
     expect(share).toHaveLength(1)
     expect(share).toMatchObject([
       {
-        postId: post.id,
+        postId: app.id,
         scope: ShareScope.Private,
       },
     ])
@@ -64,7 +64,7 @@ describe('postCreateService', () => {
 
     const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
       where: {
-        appId: post.id,
+        appId: app.id,
       },
     })
 
@@ -83,7 +83,7 @@ describe('postCreateService', () => {
 
     const share = await prisma.share.findFirstOrThrow({
       where: {
-        postId: post.id,
+        postId: app.id,
       },
       include: {
         shareTargets: true,
@@ -91,7 +91,7 @@ describe('postCreateService', () => {
     })
 
     expect(share).toMatchObject({
-      postId: post.id,
+      postId: app.id,
       scope: ShareScope.Private,
       shareTargets: [
         expect.objectContaining({

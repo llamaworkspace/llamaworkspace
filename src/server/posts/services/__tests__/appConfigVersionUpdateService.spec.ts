@@ -36,7 +36,7 @@ const subject = async (
 describe('appConfigVersionUpdateService', () => {
   let workspace: Workspace
   let user: User
-  let post: App & { appConfigVersions: AppConfigVersion[] }
+  let app: App & { appConfigVersions: AppConfigVersion[] }
   let appConfigVersion: AppConfigVersion
 
   beforeEach(async () => {
@@ -44,21 +44,21 @@ describe('appConfigVersionUpdateService', () => {
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    const _post = await PostFactory.create(prisma, {
+    const _app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       title: 'A title',
     })
-    post = await prisma.app.findFirstOrThrow({
+    app = await prisma.app.findFirstOrThrow({
       where: {
-        id: _post.id,
+        id: _app.id,
       },
       include: {
         appConfigVersions: true,
       },
     })
 
-    appConfigVersion = post.appConfigVersions[0]!
+    appConfigVersion = app.appConfigVersions[0]!
   })
 
   it('updates the appConfigVersion', async () => {
@@ -89,7 +89,7 @@ describe('appConfigVersionUpdateService', () => {
   describe('when there are chats using the configversion', () => {
     beforeEach(async () => {
       await ChatFactory.create(prisma, {
-        postId: post.id,
+        postId: app.id,
         authorId: user.id,
         appConfigVersionId: appConfigVersion.id,
       })
@@ -99,7 +99,7 @@ describe('appConfigVersionUpdateService', () => {
       expect(
         await prisma.appConfigVersion.count({
           where: {
-            appId: post.id,
+            appId: app.id,
           },
         }),
       ).toBe(1)
@@ -111,7 +111,7 @@ describe('appConfigVersionUpdateService', () => {
       expect(
         await prisma.appConfigVersion.count({
           where: {
-            appId: post.id,
+            appId: app.id,
           },
         }),
       ).toBe(2)
@@ -176,7 +176,7 @@ describe('appConfigVersionUpdateService', () => {
     beforeEach(async () => {
       await prisma.app.update({
         where: {
-          id: post.id,
+          id: app.id,
         },
         data: {
           isDefault: true,

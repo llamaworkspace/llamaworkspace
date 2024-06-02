@@ -29,7 +29,7 @@ const subject = async (
 describe('updateShareService', () => {
   let workspace: Workspace
   let userCreatingPost: User
-  let post: App
+  let app: App
   let share: Share
 
   beforeEach(async () => {
@@ -38,12 +38,12 @@ describe('updateShareService', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: userCreatingPost.id,
       workspaceId: workspace.id,
     })
     share = await prisma.share.findFirstOrThrow({
-      where: { postId: post.id },
+      where: { postId: app.id },
     })
   })
 

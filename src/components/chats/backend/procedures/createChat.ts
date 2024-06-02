@@ -22,7 +22,7 @@ export const createChat = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      post.workspaceId,
+      app.workspaceId,
       userId,
     )
 

@@ -24,12 +24,12 @@ export function MainLayout({
   children,
   variant,
 }: MainLayoutProps) {
-  const { data: post } = usePostById(postId)
+  const { data: app } = usePostById(postId)
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
 
-  const postTitle = post && (post.title ?? EMPTY_POST_NAME)
-  const head = post ? `${postTitle} | Joia` : 'Joia'
+  const postTitle = app && (app.title ?? EMPTY_POST_NAME)
+  const head = app ? `${postTitle} | Joia` : 'Joia'
 
   // IMPORTANT: Keep this key prop, it forces re-renders that otherwise
   // would not happen when navigating between posts.

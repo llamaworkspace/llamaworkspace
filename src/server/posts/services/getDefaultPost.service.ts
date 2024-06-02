@@ -24,14 +24,14 @@ export const getDefaultPostService = async (
 
   // This scenario should never happen, but this is just
   // defensive code to generate a default post as a last resort
-  if (!post) {
+  if (!app) {
     return await createDefaultPostService(prisma, uowContext)
   }
 
   await new PermissionsVerifier(prisma).passOrThrowTrpcError(
     PermissionAction.Use,
     userId,
-    post.id,
+    app.id,
   )
-  return post
+  return app
 }

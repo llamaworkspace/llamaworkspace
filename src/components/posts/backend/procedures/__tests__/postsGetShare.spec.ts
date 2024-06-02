@@ -19,13 +19,13 @@ jest.mock('@/server/shares/services/getPostShares.service.ts', () => {
 
 const subject = async (userId: string, postId: string) => {
   const { caller } = trpcContextSetupHelper(prisma, userId)
-  return await caller.posts.getShare({ postId })
+  return await caller.apps.getShare({ postId })
 }
 
 describe('postsGetShares', () => {
   let workspace: Workspace
   let invitingUser: User
-  let post: App
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -36,23 +36,23 @@ describe('postsGetShares', () => {
     await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: invitingUser.id,
       workspaceId: workspace.id,
     })
   })
 
   it('invokes getPostSharesService', async () => {
-    await subject(invitingUser.id, post.id)
+    await subject(invitingUser.id, app.id)
     expect(getPostSharesService).toHaveBeenCalled()
   })
 
   it('returns a schema specific response', async () => {
-    const response = await subject(invitingUser.id, post.id)
+    const response = await subject(invitingUser.id, app.id)
 
     expect(response).toEqual(
       expect.objectContaining({
-        postId: post.id,
+        postId: app.id,
         scope: ShareScope.Private,
       }),
     )

@@ -11,7 +11,7 @@ import { PermissionsVerifier } from '../PermissionsVerifier'
 describe('PermissionsVerifier ', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -20,7 +20,7 @@ describe('PermissionsVerifier ', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
@@ -35,7 +35,7 @@ describe('PermissionsVerifier ', () => {
     }
 
     it('it returns the userAccessLevel', async () => {
-      expect(await subject(user.id, post.id)).toBe(UserAccessLevel.Owner)
+      expect(await subject(user.id, app.id)).toBe(UserAccessLevel.Owner)
     })
 
     describe('when there is no relation between the user and the post', () => {
@@ -44,7 +44,7 @@ describe('PermissionsVerifier ', () => {
           workspaceId: workspace.id,
         })
 
-        expect(await subject(tempUser.id, post.id)).toBeNull()
+        expect(await subject(tempUser.id, app.id)).toBeNull()
       })
     })
 
@@ -52,7 +52,7 @@ describe('PermissionsVerifier ', () => {
       it('it throws', async () => {
         const share = await prisma.share.findFirstOrThrow({
           where: {
-            postId: post.id,
+            postId: app.id,
           },
         })
 
@@ -65,7 +65,7 @@ describe('PermissionsVerifier ', () => {
           },
         })
 
-        await expect(subject(user.id, post.id)).rejects.toThrow(
+        await expect(subject(user.id, app.id)).rejects.toThrow(
           'Multiple share targets found for the same user and post',
         )
       })
@@ -114,7 +114,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Update,
               user.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -124,7 +124,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Delete,
               user.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -134,7 +134,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Invite,
               user.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -144,7 +144,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Use,
               user.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -160,7 +160,7 @@ describe('PermissionsVerifier ', () => {
 
           const share = await prisma.share.findFirstOrThrow({
             where: {
-              postId: post.id,
+              postId: app.id,
             },
           })
 
@@ -176,7 +176,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Update,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -186,7 +186,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Delete,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -196,7 +196,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Invite,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -206,7 +206,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Use,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -222,7 +222,7 @@ describe('PermissionsVerifier ', () => {
 
           const share = await prisma.share.findFirstOrThrow({
             where: {
-              postId: post.id,
+              postId: app.id,
             },
           })
 
@@ -238,7 +238,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Update,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -248,7 +248,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Delete,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -258,7 +258,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Invite,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -268,7 +268,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Use,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -284,7 +284,7 @@ describe('PermissionsVerifier ', () => {
 
           const share = await prisma.share.findFirstOrThrow({
             where: {
-              postId: post.id,
+              postId: app.id,
             },
           })
 
@@ -301,7 +301,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Update,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -311,7 +311,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Delete,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -321,7 +321,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Invite,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -331,7 +331,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Use,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(true)
@@ -350,7 +350,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Update,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -360,7 +360,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Delete,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -370,7 +370,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Invite,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -380,7 +380,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Use,
               targetUser.id,
-              post.id,
+              app.id,
               ShareScope.User,
             ),
           ).toBe(false)
@@ -395,7 +395,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Update,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Private,
             ),
           ).toBe(true)
@@ -405,7 +405,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Delete,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Private,
             ),
           ).toBe(true)
@@ -415,7 +415,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Invite,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Private,
             ),
           ).toBe(true)
@@ -425,7 +425,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Use,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Private,
             ),
           ).toBe(true)
@@ -443,7 +443,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Update,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Private,
             ),
           ).toBe(false)
@@ -453,7 +453,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Delete,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Private,
             ),
           ).toBe(false)
@@ -463,7 +463,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Invite,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Private,
             ),
           ).toBe(false)
@@ -473,7 +473,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Use,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Private,
             ),
           ).toBe(false)
@@ -487,7 +487,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Update,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Everybody,
             ),
           ).toBe(true)
@@ -497,7 +497,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Delete,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Everybody,
             ),
           ).toBe(true)
@@ -507,7 +507,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Invite,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Everybody,
             ),
           ).toBe(true)
@@ -517,7 +517,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Use,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Everybody,
             ),
           ).toBe(true)
@@ -535,7 +535,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Update,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Everybody,
             ),
           ).toBe(true)
@@ -545,7 +545,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Delete,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Everybody,
             ),
           ).toBe(false)
@@ -555,7 +555,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Invite,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Everybody,
             ),
           ).toBe(false)
@@ -565,7 +565,7 @@ describe('PermissionsVerifier ', () => {
             await subject(
               PermissionAction.Use,
               user.id,
-              post.id,
+              app.id,
               ShareScope.Everybody,
             ),
           ).toBe(true)
@@ -586,7 +586,7 @@ describe('PermissionsVerifier ', () => {
           subject(
             PermissionAction.Update,
             targetUser.id,
-            post.id,
+            app.id,
             ShareScope.User,
           ),
         ).rejects.toThrow()

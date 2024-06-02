@@ -25,19 +25,19 @@ const subject = async (
 describe('getChatByIdService', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
   let chat: Chat
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
     user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
     chat = await ChatFactory.create(prisma, {
       authorId: user.id,
-      postId: post.id,
+      postId: app.id,
     })
   })
 

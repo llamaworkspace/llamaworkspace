@@ -76,7 +76,7 @@ describe('getSortedPostsForSidebarService', () => {
 
     expect(result).toHaveLength(expectedPostIdsSorted.length)
 
-    const resultIds = result.map((post) => post.id)
+    const resultIds = result.map((app) => app.id)
     expect(resultIds).toEqual(expectedPostIdsSorted)
   })
 

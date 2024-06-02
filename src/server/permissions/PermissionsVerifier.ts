@@ -22,7 +22,7 @@ export class PermissionsVerifier {
       },
     })
 
-    await this.userBelongsWorkspaceOrThrow(post.workspaceId, userId)
+    await this.userBelongsWorkspaceOrThrow(app.workspaceId, userId)
     // return await Promise.resolve(true)
     if (scope === ShareScope.Everybody) {
       return await this.handleEverybodyScope(userId, postId, action)
@@ -120,7 +120,7 @@ export class PermissionsVerifier {
         id: postId,
       },
     })
-    return post.userId === userId
+    return app.userId === userId
   }
 
   private async handleUserScope(

@@ -21,7 +21,7 @@ const subject = async (workspaceId: string, userId: string, chatId: string) => {
 describe('deleteChatService', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
   let chat: Chat
 
   beforeEach(async () => {
@@ -31,13 +31,13 @@ describe('deleteChatService', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
 
     chat = await ChatFactory.create(prisma, {
-      postId: post.id,
+      postId: app.id,
       authorId: user.id,
     })
   })
@@ -46,7 +46,7 @@ describe('deleteChatService', () => {
     const dbChatBefore = await prisma.chat.findFirstOrThrow({
       where: {
         app: {
-          id: post.id,
+          id: app.id,
         },
       },
     })
@@ -57,7 +57,7 @@ describe('deleteChatService', () => {
     const dbChat = await prisma.chat.findFirst({
       where: {
         app: {
-          id: post.id,
+          id: app.id,
         },
       },
     })

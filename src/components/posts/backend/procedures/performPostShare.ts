@@ -19,7 +19,7 @@ export const performPostShare = protectedProcedure
     })
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      post.workspaceId,
+      app.workspaceId,
       invitingUserId,
     )
     return await performPostShareService(ctx.prisma, context, {

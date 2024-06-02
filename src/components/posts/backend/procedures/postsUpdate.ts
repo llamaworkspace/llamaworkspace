@@ -23,7 +23,7 @@ export const postsUpdate = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      post.workspaceId,
+      app.workspaceId,
       userId,
     )
     return await postUpdateService(ctx.prisma, context, {

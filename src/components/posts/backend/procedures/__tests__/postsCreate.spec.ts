@@ -13,7 +13,7 @@ const subject = async (workspaceId: string, userId: string, title: string) => {
   const payload = { workspaceId, title }
 
   const { caller } = trpcContextSetupHelper(prisma, userId)
-  await caller.posts.create(payload)
+  await caller.apps.create(payload)
 }
 
 describe('postsCreate', () => {

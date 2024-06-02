@@ -34,20 +34,20 @@ const subject = async (
 describe('getApplicableAppConfigToChat', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
   let chat: Chat
   let otherAppConfigVersion: AppConfigVersion
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
     user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
     chat = await ChatFactory.create(prisma, {
       authorId: user.id,
-      postId: post.id,
+      postId: app.id,
     })
     await Promise.mapSeries(
       Array.from({ length: 3 }),
@@ -57,7 +57,7 @@ describe('getApplicableAppConfigToChat', () => {
         }),
     )
     otherAppConfigVersion = await AppConfigVersionFactory.create(prisma, {
-      appId: post.id,
+      appId: app.id,
     })
   })
 

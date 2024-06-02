@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async (
   )
   const app = await getDefaultPostService(prisma, ctx)
   const result = await createChatService(prisma, ctx, {
-    postId: post.id,
+    postId: app.id,
   })
 
   return { redirect: { destination: `/c/${result.id}`, permanent: false } }

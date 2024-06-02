@@ -40,7 +40,7 @@ interface SubmitProps {
 export function AppConfigForGPT({ postId }: AppConfigProps) {
   const router = useRouter()
   const returnToChatRoute = router.asPath.replace(`/configuration`, '')
-  const { data: post } = usePostById(postId)
+  const { data: app } = usePostById(postId)
   const { data: appConfig } = useLatestAppConfigVersionForPost(postId)
 
   const { mutateAsync: updateAppConfigVersion } = useAppConfigUpdate()
@@ -55,18 +55,18 @@ export function AppConfigForGPT({ postId }: AppConfigProps) {
   const hideBackButton = router.query?.backButton === 'false'
 
   const handleSubmit = async (values: SubmitProps) => {
-    if (!appConfig || !post) {
+    if (!appConfig || !app) {
       return
     }
 
     const { emoji, title, systemMessage, description, model } = values
 
-    const gptEngine = post.gptEngine ? undefined : values.gptEngine
+    const gptEngine = app.gptEngine ? undefined : values.gptEngine
 
     try {
       await Promise.all([
         updatePost({
-          id: post?.id,
+          id: app?.id,
           emoji: emoji ?? null,
           title: title ?? null,
           gptEngine,
@@ -100,8 +100,8 @@ export function AppConfigForGPT({ postId }: AppConfigProps) {
           <FinalForm
             onSubmit={handleSubmit}
             initialValues={{
-              title: post?.title,
-              emoji: post?.emoji,
+              title: app?.title,
+              emoji: app?.emoji,
               systemMessage: appConfig?.systemMessage,
               description: appConfig?.description,
               model: appConfig?.model,

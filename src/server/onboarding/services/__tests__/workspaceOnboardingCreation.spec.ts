@@ -31,10 +31,10 @@ describe('workspaceOnboardingCreationService', () => {
       },
     })
 
-    expect(post).toMatchObject({
+    expect(app).toMatchObject({
       title: "Joia's fun facts teller",
     })
-    expect(post.shares[0]!.scope).toBe(ShareScope.Everybody.toString())
+    expect(app.shares[0]!.scope).toBe(ShareScope.Everybody.toString())
   })
 
   it('creates the default instructions', async () => {
@@ -49,7 +49,7 @@ describe('workspaceOnboardingCreationService', () => {
       },
     })
 
-    expect(post.appConfigVersions[0]!.description).toBe(
+    expect(app.appConfigVersions[0]!.description).toBe(
       onboardingTexts.description,
     )
   })

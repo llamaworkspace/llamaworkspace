@@ -21,7 +21,7 @@ interface ErrorLoggerForTRPCMeta {
 }
 export const errorLoggerForTRPC = (
   error: TRPCError,
-  meta: ErrorLoggerForTRPCMeta,
+  _: ErrorLoggerForTRPCMeta,
 ) => {
   log(chalk.red.bold.bgWhite('  *** START: Logging error (trpc) ***  '))
   logError(error)

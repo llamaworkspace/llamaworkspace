@@ -58,12 +58,12 @@ model User {
     createdAt            DateTime            @default(now())
     updatedAt            DateTime            @updatedAt
     accounts             Account[]
-    posts                App[]
+    apps                 App[]
     sessions             Session[]
     workspaces           UsersOnWorkspaces[]
     authoredChats        Chat[]
     workspaceInvitesSent WorkspaceInvite[]
-    postsMeta            AppsOnUsers[]
+    appsMeta             AppsOnUsers[]
     sharedTargets        ShareTarget[]
     sharingTargets       ShareTarget[]       @relation("sharingUser")
 }
@@ -74,7 +74,7 @@ model Workspace {
     createdAt        DateTime            @default(now())
     updatedAt        DateTime            @updatedAt
     users            UsersOnWorkspaces[]
-    posts            App[]
+    apps             App[]
     workspaceInvites WorkspaceInvite[]
     aiProvider       AiProvider[]
     assets           Asset[]

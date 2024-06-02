@@ -12,7 +12,7 @@ export const useDefaultPost = () => {
   const errorHandler = useErrorHandler()
   const { data: workspace } = useCurrentWorkspace()
 
-  return api.posts.getDefault.useQuery(
+  return api.apps.getDefault.useQuery(
     { workspaceId: workspace?.id! },
     {
       enabled: !!workspace?.id,
@@ -36,15 +36,15 @@ export const useCreatePost = () => {
   const errorHandler = useErrorHandler()
   const navigation = useNavigation()
   const utils = api.useContext()
-  const { mutate, isLoading, ...rest } = api.posts.create.useMutation({
+  const { mutate, isLoading, ...rest } = api.apps.create.useMutation({
     onError: errorHandler(),
-    onSuccess: (post) => {
+    onSuccess: (app) => {
       // Important: Invalidate the entire sidebar cache!
       void utils.sidebar.invalidate()
       void navigation.push(
         `/p/:postId/configuration`,
         {
-          postId: post.id,
+          postId: app.id,
         },
         {
           backButton: false,
@@ -72,19 +72,19 @@ export const useCreatePost = () => {
 
 export const useUpdatePost = (debounceMs = 0) => {
   const errorHandler = useErrorHandler()
-  const { sidebar: sidebarRouter, posts: postsRouter } = api.useContext()
+  const { sidebar: sidebarRouter, apps: postsRouter } = api.useContext()
 
-  const { postsForSidebar } = sidebarRouter
+  const { appsForSidebar } = sidebarRouter
   const { getById: getPostById } = postsRouter
-  const postsForSidebarRef = useRef(postsForSidebar)
+  const appsForSidebarRef = useRef(appsForSidebar)
   const getPostByIdRef = useRef(getPostById)
   const utils = api.useContext()
 
-  const { mutate, ...rest } = api.posts.update.useMutation({
+  const { mutate, ...rest } = api.apps.update.useMutation({
     onError: errorHandler(),
     onSuccess: async () => {
       await utils.sidebar.invalidate()
-      await utils.posts.invalidate()
+      await utils.apps.invalidate()
     },
   })
   const { data: workspace } = useCurrentWorkspace()
@@ -95,7 +95,7 @@ export const useUpdatePost = (debounceMs = 0) => {
     }, debounceMs)
 
     return (params: PostUpdateInput) => {
-      postsForSidebarRef.current.setData(
+      appsForSidebarRef.current.setData(
         { workspaceId: workspace?.id! },
         (previous) => {
           if (!previous) return previous
@@ -133,7 +133,7 @@ export const useUpdatePost = (debounceMs = 0) => {
 
       _debounced(params)
     }
-  }, [debounceMs, workspace, postsForSidebarRef, getPostByIdRef, mutate])
+  }, [debounceMs, workspace, appsForSidebarRef, getPostByIdRef, mutate])
 
   return {
     mutate: debounced,
@@ -145,12 +145,12 @@ export const useDeletePost = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
-  return api.posts.delete.useMutation({
+  return api.apps.delete.useMutation({
     onError: errorHandler(),
     onSuccess: async () => {
       // Important: Invalidate the entire sidebar cache!
       await utils.sidebar.invalidate()
-      await utils.posts.invalidate()
+      await utils.apps.invalidate()
     },
   })
 }
@@ -158,7 +158,7 @@ export const useDeletePost = () => {
 export const usePostById = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
-  return api.posts.getById.useQuery(
+  return api.apps.getById.useQuery(
     {
       id: postId!,
     },
@@ -171,7 +171,7 @@ export const usePostsForAppsList = () => {
   const { data: workspace } = useCurrentWorkspace()
   const workspaceId = workspace?.id
 
-  return api.posts.getList.useQuery(
+  return api.apps.getList.useQuery(
     {
       workspaceId: workspaceId ?? '',
     },
@@ -182,7 +182,7 @@ export const usePostsForAppsList = () => {
 export const usePostShare = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
-  return api.posts.getShare.useQuery(
+  return api.apps.getShare.useQuery(
     { postId: postId! },
     {
       onError: errorHandler(),
@@ -194,7 +194,7 @@ export const usePostShare = (postId?: string) => {
 export const useLatestAppConfigVersionForPost = (postId?: string) => {
   const errorHandler = useErrorHandler()
 
-  return api.posts.getLatestConfig.useQuery(
+  return api.apps.getLatestConfig.useQuery(
     { postId: postId! },
     {
       onError: errorHandler(),
@@ -207,10 +207,10 @@ export const useAppConfigUpdate = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
-  return api.posts.updateConfig.useMutation({
+  return api.apps.updateConfig.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.posts.getLatestConfig.invalidate()
+      void utils.apps.getLatestConfig.invalidate()
     },
   })
 }
@@ -219,10 +219,10 @@ export const usePostPerformInvite = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
-  return api.posts.share.useMutation({
+  return api.apps.share.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.posts.getShare.invalidate()
+      void utils.apps.getShare.invalidate()
     },
     retry: false,
   })
@@ -230,10 +230,10 @@ export const usePostPerformInvite = () => {
 export const usePostShareUpdate = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
-  return api.posts.updateShare.useMutation({
+  return api.apps.updateShare.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.posts.getShare.invalidate()
+      void utils.apps.getShare.invalidate()
     },
   })
 }
@@ -241,10 +241,10 @@ export const usePostShareUpdate = () => {
 export const useUpdateShareAccessLevelForPost = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
-  return api.posts.updateShareAccessLevel.useMutation({
+  return api.apps.updateShareAccessLevel.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.posts.getShare.invalidate()
+      void utils.apps.getShare.invalidate()
     },
   })
 }
@@ -252,7 +252,7 @@ export const useUpdateShareAccessLevelForPost = () => {
 export const useAppFiles = (appId?: string) => {
   const errorHandler = useErrorHandler()
 
-  return api.posts.getAppAssets.useQuery(
+  return api.apps.getAppAssets.useQuery(
     { appId: appId! },
     {
       onError: errorHandler(),

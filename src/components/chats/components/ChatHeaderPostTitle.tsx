@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'
 
 export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
-  const { data: post, isLoading } = usePostById(postId)
+  const { data: app, isLoading } = usePostById(postId)
 
   if (isLoading) {
     return <Skeleton className="h-5 w-96" />
@@ -15,9 +15,9 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
     <div className="flex w-full items-center gap-x-1 text-zinc-900">
       <div className="relative text-xl">
         <div>
-          {post?.emoji ? (
+          {app?.emoji ? (
             <div className="w-12">
-              <Emoji unified={post.emoji} size={36} />
+              <Emoji unified={app.emoji} size={36} />
             </div>
           ) : (
             <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center text-[1.1rem] text-zinc-300">
@@ -27,7 +27,7 @@ export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
         </div>
       </div>
       <div className="line-clamp-1 text-lg font-bold tracking-tight md:text-xl">
-        {post?.title ?? EMPTY_POST_NAME}
+        {app?.title ?? EMPTY_POST_NAME}
       </div>
     </div>
   )

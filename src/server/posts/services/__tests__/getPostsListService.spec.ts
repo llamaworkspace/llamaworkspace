@@ -69,7 +69,7 @@ describe('getPostsListService', () => {
 
     expect(result).toHaveLength(expectedPostIdsSorted.length)
 
-    const resultIds = result.map((post) => post.id)
+    const resultIds = result.map((app) => app.id)
     expect(resultIds).toEqual(expectedPostIdsSorted)
   })
 
@@ -114,10 +114,10 @@ describe('getPostsListService', () => {
       )
 
       const resultScopeUser = result.find(
-        (post) => post.id === postWithScopeUser.id,
+        (app) => app.id === postWithScopeUser.id,
       )
       const resultScopeEverybody = result.find(
-        (post) => post.id === postWithScopeEverybody.id,
+        (app) => app.id === postWithScopeEverybody.id,
       )
       expect(resultScopeUser!.latestConfig.id).toBe(nextAppConfigForPost1.id)
       expect(resultScopeEverybody!.latestConfig.id).toBe(post2ConfigVersion.id)
