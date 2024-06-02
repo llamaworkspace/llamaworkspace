@@ -102,7 +102,7 @@ describe('getApplicableAppConfigToChat', () => {
     })
   })
   describe('when the chat does not have a appConfigVersionId', () => {
-    it('returns the latest one created for the post', async () => {
+    it('returns the latest one created for the app', async () => {
       const result = await subject(workspace.id, user.id, {
         chatId: chat.id,
       })

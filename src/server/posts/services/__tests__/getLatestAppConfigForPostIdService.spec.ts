@@ -41,7 +41,7 @@ describe('getLatestAppConfigForPostIdService', () => {
     })
   })
 
-  it('returns the latest post config', async () => {
+  it('returns the latest app config', async () => {
     const result = await subject(user.id, workspace.id, app.id)
     expect(result.id).toBe(anotherAppConfigVersion.id)
   })

@@ -10,8 +10,8 @@ import {
 import { useCanPerformActionForPost } from '../permissions/permissionsHooks'
 
 /**
- * Hook that automatically redirects to the latest post in the current workspace.
- * If there are no posts, it returns hasNoPosts=true after it finishes loading.
+ * Hook that automatically redirects to the latest app in the current workspace.
+ * If there are no apps, it returns hasNoPosts=true after it finishes loading.
  */
 export function useDefaultPageRedirection() {
   const navigation = useNavigation()

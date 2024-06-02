@@ -45,7 +45,7 @@ describe('postUpdateService', () => {
     })
   })
 
-  it('updates the post', async () => {
+  it('updates the app', async () => {
     const postInDbBefore = await prisma.app.findFirstOrThrow({
       where: {
         id: app.id,
@@ -99,7 +99,7 @@ describe('postUpdateService', () => {
 
   describe('gptEngine updates', () => {
     describe('when gptEngine is not set', () => {
-      it('updates the post', async () => {
+      it('updates the app', async () => {
         const postInDbBefore = await prisma.app.findFirstOrThrow({
           where: {
             id: app.id,

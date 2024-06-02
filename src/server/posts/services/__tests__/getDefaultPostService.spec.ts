@@ -36,7 +36,7 @@ describe('getDefaultPostService', () => {
     })
   })
 
-  it('returns the default post', async () => {
+  it('returns the default app', async () => {
     const result = await subject(workspace.id, user.id)
 
     expect(result.id).toBe(defaultPost.id)
@@ -56,7 +56,7 @@ describe('getDefaultPostService', () => {
     )
   })
 
-  describe('when there is no default post', () => {
+  describe('when there is no default app', () => {
     beforeEach(async () => {
       await prisma.app.deleteMany({
         where: {
@@ -65,7 +65,7 @@ describe('getDefaultPostService', () => {
       })
     })
 
-    it('returns a newly creared default post', async () => {
+    it('returns a newly creared default app', async () => {
       const result = await subject(workspace.id, user.id)
 
       expect(result).toMatchObject({

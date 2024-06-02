@@ -216,7 +216,7 @@ describe('updateShareAccessLevelService', () => {
           })
         })
 
-        it('and it is the last post where the user is invited, it deletes the invite', async () => {
+        it('and it is the last app where the user is invited, it deletes the invite', async () => {
           await subject(
             userCreatingPost.id,
             workspace.id,
@@ -231,7 +231,7 @@ describe('updateShareAccessLevelService', () => {
           expect(nextWorkspaceInvite).toBeNull()
         })
 
-        it('and it is not the last post where the user is invited, it keeps the invite', async () => {
+        it('and it is not the last app where the user is invited, it keeps the invite', async () => {
           const otherPost = await PostFactory.create(prisma, {
             userId: userCreatingPost.id,
             workspaceId: workspace.id,

@@ -23,7 +23,7 @@ export const getDefaultPostService = async (
   })
 
   // This scenario should never happen, but this is just
-  // defensive code to generate a default post as a last resort
+  // defensive code to generate a default app as a last resort
   if (!app) {
     return await createDefaultPostService(prisma, uowContext)
   }

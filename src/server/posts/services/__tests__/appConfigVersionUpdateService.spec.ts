@@ -172,7 +172,7 @@ describe('appConfigVersionUpdateService', () => {
     })
   })
 
-  describe('when the post is the default one', () => {
+  describe('when the app is the default one', () => {
     beforeEach(async () => {
       await prisma.app.update({
         where: {

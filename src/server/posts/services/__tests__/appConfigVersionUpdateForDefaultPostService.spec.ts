@@ -94,7 +94,7 @@ describe('appConfigVersionUpdateForDefaultPostService', () => {
     )
   })
 
-  describe('when the post linked to the chat is not the default post', () => {
+  describe('when the app linked to the chat is not the default app', () => {
     beforeEach(async () => {
       await prisma.app.update({
         where: { id: app.id },
@@ -102,7 +102,7 @@ describe('appConfigVersionUpdateForDefaultPostService', () => {
       })
     })
 
-    it('throws if it is not a default post', async () => {
+    it('throws if it is not a default app', async () => {
       await expect(
         subject(workspace.id, user.id, chat.id, {
           model: 'fake_model',

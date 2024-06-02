@@ -17,7 +17,7 @@ const subject = async (workspaceId: string, userId: string) => {
 }
 
 describe('postCreateService', () => {
-  it('creates a new post', async () => {
+  it('creates a new app', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     await subject(workspace.id, user.id)
@@ -33,7 +33,7 @@ describe('postCreateService', () => {
     })
   })
 
-  it('creates an Private-scope-based share for the post', async () => {
+  it('creates an Private-scope-based share for the app', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     const app = await subject(workspace.id, user.id)

@@ -100,7 +100,7 @@ describe('getChatsService', () => {
   })
 
   describe('when appId is passed', () => {
-    it('returns the chats for the post', async () => {
+    it('returns the chats for the app', async () => {
       const result = await subject(user.id, workspace.id, post1.id)
       const expectedIds = [chat1.id, chat2.id]
       const returnedIds = result.map((chat) => chat.id)

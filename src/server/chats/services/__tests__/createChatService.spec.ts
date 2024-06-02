@@ -95,7 +95,7 @@ describe('createChatService', () => {
     ).toHaveBeenCalled()
   })
 
-  describe('when the post is default', () => {
+  describe('when the app is default', () => {
     let defaultPost: App
 
     beforeEach(async () => {
@@ -124,7 +124,7 @@ describe('createChatService', () => {
       expect(dbAppConfigVersion.model).toEqual(user.defaultModel)
     })
 
-    it('does not update post sorting', async () => {
+    it('does not update app sorting', async () => {
       await subject(workspace.id, user.id, defaultPost.id)
       expect(
         updatePostSortingServiceWrapper.updatePostSortingService,

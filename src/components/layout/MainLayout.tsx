@@ -32,7 +32,7 @@ export function MainLayout({
   const head = app ? `${postTitle} | Joia` : 'Joia'
 
   // IMPORTANT: Keep this key prop, it forces re-renders that otherwise
-  // would not happen when navigating between posts.
+  // would not happen when navigating between apps.
   return (
     <MainLayoutSessionChecker key={appId}>
       <Head>

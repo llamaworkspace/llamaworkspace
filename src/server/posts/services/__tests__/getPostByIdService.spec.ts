@@ -35,7 +35,7 @@ describe('getPostByIdService', () => {
     })
   })
 
-  it('returns the post', async () => {
+  it('returns the app', async () => {
     const result = await subject(workspace.id, user.id, app.id)
 
     expect(result.id).toBe(app.id)

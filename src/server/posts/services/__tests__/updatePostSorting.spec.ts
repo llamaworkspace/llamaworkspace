@@ -33,7 +33,7 @@ describe('updatePostSortingService', () => {
     })
   })
 
-  describe('when it is the first post with position', () => {
+  describe('when it is the first app with position', () => {
     it('adds position 1', async () => {
       await subject(workspace.id, user.id, post1.id)
       const postOnUser = await prisma.appsOnUsers.findFirstOrThrow({
@@ -46,7 +46,7 @@ describe('updatePostSortingService', () => {
     })
   })
 
-  describe('when it is the not the first post with position', () => {
+  describe('when it is the not the first app with position', () => {
     let post2: App
     let post3: App
 
@@ -84,7 +84,7 @@ describe('updatePostSortingService', () => {
     })
   })
 
-  describe('there are six or more posts with position', () => {
+  describe('there are six or more apps with position', () => {
     let post2: App
     let post3: App
     let post4: App
@@ -149,7 +149,7 @@ describe('updatePostSortingService', () => {
     })
   })
 
-  describe('when the post already has a position', () => {
+  describe('when the app already has a position', () => {
     let post2: App
     let post3: App
 

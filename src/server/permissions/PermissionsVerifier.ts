@@ -81,7 +81,7 @@ export class PermissionsVerifier {
     if (shareTargets.length > 1) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Multiple share targets found for the same user and post',
+        message: 'Multiple share targets found for the same user and app',
       })
     }
 
@@ -105,7 +105,7 @@ export class PermissionsVerifier {
     appId: string,
     action: PermissionAction,
   ) {
-    // If the userId is the owner of the post, then he can do anything
+    // If the userId is the owner of the app, then he can do anything
     // in other words: If they pass the handleUserScope test, then they can do anything
 
     const privateScopeResponse = await this.handlePrivateScope(userId, appId)

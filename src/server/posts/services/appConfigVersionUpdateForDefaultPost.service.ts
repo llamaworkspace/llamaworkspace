@@ -44,7 +44,7 @@ export const appConfigVersionUpdateForDefaultPostService = async (
     if (!chat.app.isDefault) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Only default posts can be updated',
+        message: 'Only default apps can be updated',
       })
     }
 

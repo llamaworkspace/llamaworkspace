@@ -34,7 +34,7 @@ describe('postDeleteService', () => {
     })
   })
 
-  it('deletes the post', async () => {
+  it('deletes the app', async () => {
     const postInDbBefore = await prisma.app.findFirst({
       where: {
         id: app.id,

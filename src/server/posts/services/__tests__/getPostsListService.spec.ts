@@ -56,7 +56,7 @@ describe('getPostsListService', () => {
     postWithScopePrivateOfOtherUser = fixture.postWithScopePrivateOfOtherUser
   })
 
-  it('returns the posts relevant to the user, in sorted form', async () => {
+  it('returns the apps relevant to the user, in sorted form', async () => {
     const result = await subject(user.id, workspace.id)
 
     const expectedPostIdsSorted = [
@@ -73,7 +73,7 @@ describe('getPostsListService', () => {
     expect(resultIds).toEqual(expectedPostIdsSorted)
   })
 
-  it('does not return the default post', async () => {
+  it('does not return the default app', async () => {
     await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
@@ -95,7 +95,7 @@ describe('getPostsListService', () => {
         appId: postWithScopeUser.id,
       })
     })
-    it('returns the posts with the latest post config', async () => {
+    it('returns the apps with the latest app config', async () => {
       const result = (await subject(
         user.id,
         workspace.id,
