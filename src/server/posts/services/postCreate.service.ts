@@ -34,7 +34,7 @@ export const postCreateService = async (
 
     const targetModel = user.defaultModel ?? DEFAULT_AI_MODEL
 
-    const post = await createPost(
+    const app = await createPost(
       prisma,
       workspaceId,
       userId,

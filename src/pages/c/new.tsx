@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (
     workspaceId as string,
     userId,
   )
-  const post = await getDefaultPostService(prisma, ctx)
+  const app = await getDefaultPostService(prisma, ctx)
   const result = await createChatService(prisma, ctx, {
     postId: post.id,
   })

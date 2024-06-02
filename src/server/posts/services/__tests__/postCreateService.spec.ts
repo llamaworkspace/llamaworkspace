@@ -22,7 +22,7 @@ describe('postCreateService', () => {
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     await subject(workspace.id, user.id)
 
-    const post = await prisma.app.findFirstOrThrow({
+    const app = await prisma.app.findFirstOrThrow({
       where: {
         userId: user.id,
       },
@@ -36,7 +36,7 @@ describe('postCreateService', () => {
   it('creates an Private-scope-based share for the post', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    const post = await subject(workspace.id, user.id)
+    const app = await subject(workspace.id, user.id)
 
     const share = await prisma.share.findMany({
       where: {
@@ -60,7 +60,7 @@ describe('postCreateService', () => {
       workspaceId: workspace.id,
     })
 
-    const post = await subject(workspace.id, user.id)
+    const app = await subject(workspace.id, user.id)
 
     const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
       where: {
@@ -79,7 +79,7 @@ describe('postCreateService', () => {
       workspaceId: workspace.id,
     })
 
-    const post = await subject(workspace.id, user.id)
+    const app = await subject(workspace.id, user.id)
 
     const share = await prisma.share.findFirstOrThrow({
       where: {

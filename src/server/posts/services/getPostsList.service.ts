@@ -105,7 +105,7 @@ const genericPostFetch = async (
   )
 
   if (includeLatestConfig) {
-    const posts = await prisma.app.findMany({
+    const apps = await prisma.app.findMany({
       where,
       include: {
         appConfigVersions: {

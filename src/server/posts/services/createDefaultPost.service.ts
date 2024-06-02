@@ -12,7 +12,7 @@ export const createDefaultPostService = async (
   return await prismaAsTrx(prisma, async (prisma) => {
     const { userId } = uowContext
 
-    const post = await postCreateService(prisma, uowContext, {
+    const app = await postCreateService(prisma, uowContext, {
       title: DEFAULT_POST_NAME,
       isDefault: true,
       gptEngine: AppGptEngine.Basic,

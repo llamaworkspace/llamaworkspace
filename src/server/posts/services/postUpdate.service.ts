@@ -31,7 +31,7 @@ export const postUpdateService = async (
       postId,
     )
 
-    const post = await prisma.app.findFirstOrThrow({
+    const app = await prisma.app.findFirstOrThrow({
       where: scopePostByWorkspace(
         {
           id: postId,

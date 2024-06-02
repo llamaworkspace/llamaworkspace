@@ -14,7 +14,7 @@ export const createChat = protectedProcedure
 
     const userId = ctx.session.user.id
 
-    const post = await ctx.prisma.app.findFirstOrThrow({
+    const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
         id: postId,
       },

@@ -11,7 +11,7 @@ export const postsConfigGetLatestForPostId = protectedProcedure
   .input(zGetLatestByPostId)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-    const post = await ctx.prisma.app.findFirstOrThrow({
+    const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
         id: input.postId,
       },

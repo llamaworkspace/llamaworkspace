@@ -3,7 +3,7 @@ import { ShareScope } from '@/shared/globalTypes'
 import type { MigrationFn } from 'umzug'
 
 export const up: MigrationFn = async () => {
-  const posts = await prisma.app.findMany({
+  const apps = await prisma.app.findMany({
     select: {
       id: true,
     },
