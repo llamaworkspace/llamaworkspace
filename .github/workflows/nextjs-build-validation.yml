@@ -3,6 +3,9 @@ name: NextJS build validation
 on:
   pull_request:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   validation:
