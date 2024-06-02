@@ -5,7 +5,7 @@ import type { MigrationFn } from 'umzug'
 export const up: MigrationFn = async () => {
   const shares = await prisma.share.findMany({
     include: {
-      post: true,
+      app: true,
     },
     where: {
       shareTargets: {
@@ -16,11 +16,11 @@ export const up: MigrationFn = async () => {
 
   await prisma.shareTarget.createMany({
     data: shares.map((share) => {
-      const { post } = share
+      const { app } = share
       return {
         shareId: share.id,
-        sharerId: post.userId,
-        userId: post.userId,
+        sharerId: app.userId,
+        userId: app.userId,
         accessLevel: UserAccessLevel.Owner,
       }
     }),

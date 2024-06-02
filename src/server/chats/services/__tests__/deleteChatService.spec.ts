@@ -45,7 +45,7 @@ describe('deleteChatService', () => {
   it('deletes the chat', async () => {
     const dbChatBefore = await prisma.chat.findFirstOrThrow({
       where: {
-        post: {
+        app: {
           id: post.id,
         },
       },
@@ -56,7 +56,7 @@ describe('deleteChatService', () => {
 
     const dbChat = await prisma.chat.findFirst({
       where: {
-        post: {
+        app: {
           id: post.id,
         },
       },

@@ -12,7 +12,7 @@ export const getEntrypointRedirectUrlService = async (
   const chatRuns = await prisma.chatRun.count({
     where: {
       chat: {
-        post: {
+        app: {
           workspaceId: workspace.id,
         },
       },
@@ -31,7 +31,7 @@ const handleCaseChatRunsExist = async (
 ) => {
   const latestPrivateChat = await prisma.chat.findFirst({
     where: {
-      post: scopePostByWorkspace(
+      app: scopePostByWorkspace(
         {
           isDefault: true,
         },

@@ -50,7 +50,7 @@ describe('updateChatService', () => {
   it('updates the chat title', async () => {
     const dbChatBefore = await prisma.chat.findFirstOrThrow({
       where: {
-        post: {
+        app: {
           id: post.id,
         },
       },
@@ -63,7 +63,7 @@ describe('updateChatService', () => {
 
     const dbChat = await prisma.chat.findFirstOrThrow({
       where: {
-        post: {
+        app: {
           id: post.id,
         },
       },

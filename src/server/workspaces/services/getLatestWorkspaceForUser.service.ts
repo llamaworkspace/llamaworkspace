@@ -13,7 +13,7 @@ export const getLatestWorkspaceForUserService = async (
     include: {
       chat: {
         select: {
-          post: {
+          app: {
             select: {
               workspaceId: true,
             },
@@ -43,7 +43,7 @@ export const getLatestWorkspaceForUserService = async (
 
   return await prisma.workspace.findFirstOrThrow({
     where: {
-      id: chatRun.chat.post.workspaceId,
+      id: chatRun.chat.app.workspaceId,
     },
   })
 }

@@ -19,13 +19,13 @@ export const updateAppConfigForStandaloneChat = protectedProcedure
         id: chatId,
       },
       include: {
-        post: true,
+        app: true,
       },
     })
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      chat.post.workspaceId,
+      chat.app.workspaceId,
       userId,
     )
 

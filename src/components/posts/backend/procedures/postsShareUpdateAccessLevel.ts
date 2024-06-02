@@ -23,7 +23,7 @@ export const postsShareUpdateAccessLevel = protectedProcedure
         },
       },
       include: {
-        post: {
+        app: {
           select: {
             workspaceId: true,
           },
@@ -31,7 +31,7 @@ export const postsShareUpdateAccessLevel = protectedProcedure
       },
     })
 
-    const workspaceId = share.post.workspaceId
+    const workspaceId = share.app.workspaceId
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,

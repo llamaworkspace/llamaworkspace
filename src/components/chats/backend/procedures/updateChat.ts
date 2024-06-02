@@ -20,7 +20,7 @@ export const updateChat = protectedProcedure
         id,
       },
       include: {
-        post: {
+        app: {
           select: {
             workspaceId: true,
           },
@@ -30,7 +30,7 @@ export const updateChat = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      chat.post.workspaceId,
+      chat.app.workspaceId,
       userId,
     )
     return await updateChatService(ctx.prisma, context, input)

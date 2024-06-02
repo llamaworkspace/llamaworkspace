@@ -6,7 +6,7 @@ export const scopeShareByWorkspace = (
 ) => {
   return {
     ...whereClause,
-    post: {
+    app: {
       workspaceId,
     },
   }

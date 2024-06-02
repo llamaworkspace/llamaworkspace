@@ -54,7 +54,7 @@ describe('createChatService', () => {
     const result = await subject(workspace.id, user.id, post.id)
     const dbChat = await prisma.chat.findFirstOrThrow({
       where: {
-        post: {
+        app: {
           id: post.id,
         },
       },

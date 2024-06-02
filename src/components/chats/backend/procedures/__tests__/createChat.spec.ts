@@ -32,7 +32,7 @@ describe('createChat', () => {
     const result = await subject(user.id, post.id)
     const dbChat = await prisma.chat.findFirstOrThrow({
       where: {
-        post: {
+        app: {
           id: post.id,
         },
       },

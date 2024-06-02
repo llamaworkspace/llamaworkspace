@@ -179,7 +179,7 @@ model Share {
     scope        String
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt
-    post         App           @relation(fields: [postId], references: [id], onDelete: Cascade)
+    app          App           @relation(fields: [postId], references: [id], onDelete: Cascade)
     shareTargets ShareTarget[]
 }
 
@@ -206,7 +206,7 @@ model Chat {
     id                 String            @id @default(cuid())
     postId             String
     title              String?
-    post               App               @relation(fields: [postId], references: [id], onDelete: Cascade)
+    app                App               @relation(fields: [postId], references: [id], onDelete: Cascade)
     appConfigVersionId String?
     appConfigVersion   AppConfigVersion? @relation(fields: [appConfigVersionId], references: [id], onDelete: Cascade)
     authorId           String?
