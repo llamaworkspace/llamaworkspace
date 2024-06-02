@@ -20,7 +20,7 @@ const subject = async (workspaceId: string, userId: string, postId: string) => {
 describe('getPostByIdService', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -29,16 +29,16 @@ describe('getPostByIdService', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
   })
 
   it('returns the post', async () => {
-    const result = await subject(workspace.id, user.id, post.id)
+    const result = await subject(workspace.id, user.id, app.id)
 
-    expect(result.id).toBe(post.id)
+    expect(result.id).toBe(app.id)
   })
 
   it('calls PermissionsVerifier', async () => {
@@ -46,7 +46,7 @@ describe('getPostByIdService', () => {
       PermissionsVerifier.prototype,
       'passOrThrowTrpcError',
     )
-    await subject(workspace.id, user.id, post.id)
+    await subject(workspace.id, user.id, app.id)
 
     expect(spy).toHaveBeenCalledWith(
       PermissionAction.Use,

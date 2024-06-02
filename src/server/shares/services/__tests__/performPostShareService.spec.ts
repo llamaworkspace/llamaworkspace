@@ -47,7 +47,7 @@ const subject = async (
 describe('performPostShareService', () => {
   let workspace: Workspace
   let invitingUser: User
-  let post: App
+  let app: App
 
   beforeEach(() => {
     mockedInviteToWorkspace.mockClear()
@@ -59,7 +59,7 @@ describe('performPostShareService', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: invitingUser.id,
       workspaceId: workspace.id,
     })
@@ -75,7 +75,7 @@ describe('performPostShareService', () => {
       'passOrThrowTrpcError',
     )
 
-    await subject(invitingUser.id, workspace.id, post.id, invitedUser.email!)
+    await subject(invitingUser.id, workspace.id, app.id, invitedUser.email!)
 
     expect(spy).toHaveBeenCalledWith(
       PermissionAction.Invite,
@@ -97,12 +97,12 @@ describe('performPostShareService', () => {
       const result = await subject(
         invitingUser.id,
         workspace.id,
-        post.id,
+        app.id,
         invitedUser.email!,
       )
 
       expect(result).toMatchObject({
-        postId: post.id,
+        postId: app.id,
         scope: ShareScope.Private,
         shareTargets: [
           expect.objectContaining({
@@ -122,10 +122,10 @@ describe('performPostShareService', () => {
     })
 
     it('persists in the db only once', async () => {
-      await subject(invitingUser.id, workspace.id, post.id, invitedUser.email!)
+      await subject(invitingUser.id, workspace.id, app.id, invitedUser.email!)
 
       const shares = await prisma.share.findMany({
-        where: { postId: post.id },
+        where: { postId: app.id },
         include: { shareTargets: true },
       })
 
@@ -135,28 +135,23 @@ describe('performPostShareService', () => {
     describe('and the user is self', () => {
       it('throws an already invited alert', async () => {
         await expect(
-          subject(invitingUser.id, workspace.id, post.id, invitingUser.email!),
+          subject(invitingUser.id, workspace.id, app.id, invitingUser.email!),
         ).rejects.toThrow('You cannot invite yourself')
       })
     })
 
     describe('and the user is already invited to the chatbot', () => {
       it('throws an already invited alert', async () => {
-        await subject(
-          invitingUser.id,
-          workspace.id,
-          post.id,
-          invitedUser.email!,
-        )
+        await subject(invitingUser.id, workspace.id, app.id, invitedUser.email!)
 
         await expect(
-          subject(invitingUser.id, workspace.id, post.id, invitedUser.email!),
+          subject(invitingUser.id, workspace.id, app.id, invitedUser.email!),
         ).rejects.toThrow('You have already invited this user')
       })
     })
 
     it('sends a custom invite', async () => {
-      await subject(invitingUser.id, workspace.id, post.id, invitedUser.email!)
+      await subject(invitingUser.id, workspace.id, app.id, invitedUser.email!)
       expect(mockedSendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: invitedUser.email!,
@@ -184,7 +179,7 @@ describe('performPostShareService', () => {
     })
 
     it('invites the user, without sending the original invite email', async () => {
-      await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
+      await subject(invitingUser.id, workspace.id, app.id, fakeEmail)
       expect(inviteToWorkspaceService).toHaveBeenCalledWith(
         expect.anything(),
         expect.anything(),
@@ -195,10 +190,10 @@ describe('performPostShareService', () => {
     })
 
     it('creates the share', async () => {
-      await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
+      await subject(invitingUser.id, workspace.id, app.id, fakeEmail)
 
       const shares = await prisma.share.findMany({
-        where: { postId: post.id },
+        where: { postId: app.id },
         include: { shareTargets: true },
       })
 
@@ -206,7 +201,7 @@ describe('performPostShareService', () => {
       const share = shares[0]!
 
       expect(share).toMatchObject({
-        postId: post.id,
+        postId: app.id,
         scope: ShareScope.Private,
       })
       expect(share.shareTargets).toEqual([
@@ -226,7 +221,7 @@ describe('performPostShareService', () => {
     })
 
     it('sends a custom invite', async () => {
-      await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
+      await subject(invitingUser.id, workspace.id, app.id, fakeEmail)
       expect(mockedSendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: fakeEmail,
@@ -236,10 +231,10 @@ describe('performPostShareService', () => {
 
     describe('and the user is already invited to the chatbot', () => {
       it('throws an already invited alert', async () => {
-        await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
+        await subject(invitingUser.id, workspace.id, app.id, fakeEmail)
 
         await expect(
-          subject(invitingUser.id, workspace.id, post.id, fakeEmail),
+          subject(invitingUser.id, workspace.id, app.id, fakeEmail),
         ).rejects.toThrow('You have already invited this user')
       })
     })
@@ -283,18 +278,18 @@ describe('performPostShareService', () => {
       const invitedUser2 = await UserFactory.create(prisma, {
         workspaceId: workspace.id,
       })
-      await subject(invitingUser.id, workspace.id, post.id, invitedUser.email!)
-      await subject(invitingUser.id, workspace.id, post.id, invitedUser2.email!)
+      await subject(invitingUser.id, workspace.id, app.id, invitedUser.email!)
+      await subject(invitingUser.id, workspace.id, app.id, invitedUser2.email!)
 
       const shares = await prisma.share.findMany({
-        where: { postId: post.id },
+        where: { postId: app.id },
         include: { shareTargets: true },
       })
 
       expect(shares).toHaveLength(1)
       expect(shares[0]!.shareTargets).toHaveLength(3)
       expect(shares[0]).toMatchObject({
-        postId: post.id,
+        postId: app.id,
         shareTargets: [
           expect.objectContaining({
             sharerId: invitingUser.id,
@@ -334,22 +329,22 @@ describe('performPostShareService', () => {
       })
 
       it('where both are non existing, it invites them all', async () => {
-        const firstShare = await subject(
+        await subject(
           invitingUser.id,
           workspace.id,
-          post.id,
+          app.id,
           faker.internet.email(),
         )
 
-        const secondShare = await subject(
+        await subject(
           invitingUser.id,
           workspace.id,
-          post.id,
+          app.id,
           faker.internet.email(),
         )
 
         const shares = await prisma.share.findMany({
-          where: { postId: post.id },
+          where: { postId: app.id },
           include: { shareTargets: true },
         })
 
@@ -371,16 +366,16 @@ describe('performPostShareService', () => {
       })
 
       it('where there is a mix of non existing and existing', async () => {
-        await subject(invitingUser.id, workspace.id, post.id, fakeEmail)
+        await subject(invitingUser.id, workspace.id, app.id, fakeEmail)
         await subject(
           invitingUser.id,
           workspace.id,
-          post.id,
+          app.id,
           faker.internet.email(),
         )
 
         const shares = await prisma.share.findMany({
-          where: { postId: post.id },
+          where: { postId: app.id },
           include: { shareTargets: true },
         })
 

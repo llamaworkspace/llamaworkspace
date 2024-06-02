@@ -27,7 +27,7 @@ export const AppConfigForGPTUploadedFile = ({
     await unbindAsset({ assetId, appId })
 
     toast(undefined, 'File successfully deleted')
-    await utils.posts.getAppAssets.invalidate()
+    await utils.apps.getAppAssets.invalidate()
   }
   return (
     <div className="grid cursor-default grid-cols-12 items-center justify-between rounded border p-2 text-sm">

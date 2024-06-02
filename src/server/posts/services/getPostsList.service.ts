@@ -86,7 +86,7 @@ export async function getPostsListService(
       ...postsWithScopeUser,
       ...postsWithScopeEverybody,
     ],
-    (post) => -post.createdAt,
+    (app) => -app.createdAt,
   )
 }
 
@@ -105,7 +105,7 @@ const genericPostFetch = async (
   )
 
   if (includeLatestConfig) {
-    const posts = await prisma.app.findMany({
+    const apps = await prisma.app.findMany({
       where,
       include: {
         appConfigVersions: {
@@ -117,11 +117,11 @@ const genericPostFetch = async (
       },
     })
 
-    return posts.map((post) => {
+    return apps.map((app) => {
       return {
-        ...post,
-        ...omit(post, 'appConfigVersions'),
-        latestConfig: post.appConfigVersions[0],
+        ...app,
+        ...omit(app, 'appConfigVersions'),
+        latestConfig: app.appConfigVersions[0],
       }
     })
   }

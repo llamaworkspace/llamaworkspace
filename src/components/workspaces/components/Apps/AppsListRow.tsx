@@ -19,19 +19,19 @@ import {
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
 
 interface AppsListRowProps {
-  post: RouterOutputs['posts']['getList'][0]
+  app: RouterOutputs['apps']['getList'][0]
   onRowDelete: (postId: string) => void
 }
 
-export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
+export const AppsListRow = ({ app, onRowDelete }: AppsListRowProps) => {
   const { mutate: createChat } = useCreateChatForApp()
 
   const handleCreateChat = () => {
-    createChat({ postId: post.id })
+    createChat({ postId: app.id })
   }
 
   const handleDelete = () => {
-    onRowDelete(post.id)
+    onRowDelete(app.id)
   }
 
   return (
@@ -46,20 +46,20 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
         <div className="col-span-2 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-50">
           <EmojiWithFallback
             size={24}
-            unified={post.emoji}
+            unified={app.emoji}
             fallbackClassName="h-6 w-6 text-zinc-400"
           />
         </div>
       </div>
       <div className="col-span-9 flex flex-col justify-center">
         <div className="line-clamp-1 font-semibold">
-          {post.title ?? 'Untitled'}
+          {app.title ?? 'Untitled'}
         </div>
 
         {/* Description text. If, when needed */}
-        {post.latestConfig.description && (
+        {app.latestConfig.description && (
           <div className="line-clamp-2 text-sm">
-            {post.latestConfig.description}
+            {app.latestConfig.description}
           </div>
         )}
       </div>
@@ -78,7 +78,7 @@ export const AppsListRow = ({ post, onRowDelete }: AppsListRowProps) => {
             'hover:bg-zinc-200',
           )}
         >
-          <EllipsisDropdown postId={post.id} onDelete={handleDelete} />
+          <EllipsisDropdown postId={app.id} onDelete={handleDelete} />
         </div>
       </div>
     </div>

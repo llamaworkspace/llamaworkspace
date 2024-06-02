@@ -21,7 +21,7 @@ const subject = async (userId: string, workspaceId: string, postId: string) => {
 describe('getLatestAppConfigForPostIdService', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
   let anotherAppConfigVersion: AppConfigVersion
 
   beforeEach(async () => {
@@ -31,18 +31,18 @@ describe('getLatestAppConfigForPostIdService', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
 
     anotherAppConfigVersion = await AppConfigVersionFactory.create(prisma, {
-      appId: post.id,
+      appId: app.id,
     })
   })
 
   it('returns the latest post config', async () => {
-    const result = await subject(user.id, workspace.id, post.id)
+    const result = await subject(user.id, workspace.id, app.id)
     expect(result.id).toBe(anotherAppConfigVersion.id)
   })
 
@@ -52,7 +52,7 @@ describe('getLatestAppConfigForPostIdService', () => {
       'passOrThrowTrpcError',
     )
 
-    await subject(user.id, workspace.id, post.id)
+    await subject(user.id, workspace.id, app.id)
 
     expect(spy).toHaveBeenCalledWith(
       PermissionAction.Use,

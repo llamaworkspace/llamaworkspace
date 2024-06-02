@@ -19,7 +19,7 @@ export const postsShareUpdate = protectedProcedure
         id: input.shareId,
       },
       include: {
-        post: {
+        app: {
           select: {
             workspaceId: true,
           },
@@ -27,7 +27,7 @@ export const postsShareUpdate = protectedProcedure
       },
     })
 
-    const workspaceId = share.post.workspaceId
+    const workspaceId = share.app.workspaceId
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,

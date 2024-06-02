@@ -31,7 +31,7 @@ export const postDeleteService = async (
       where: scopePostByWorkspace(
         {
           id: postId,
-          isDefault: false, // Keep this to avoid deleting the default post.
+          isDefault: false, // Keep this to avoid deleting the default app.
         },
         workspaceId,
       ),

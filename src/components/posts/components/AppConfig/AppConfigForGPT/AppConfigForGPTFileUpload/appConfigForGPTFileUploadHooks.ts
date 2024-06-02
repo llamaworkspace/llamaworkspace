@@ -48,7 +48,7 @@ export const useUploadFile = (
         await notifyAssetUploadSuccess({ assetId: asset.id })
         onFileUploaded(file.name, asset)
         await bindAsset({ assetId: asset.id, appId })
-        await utils.posts.getAppAssets.invalidate()
+        await utils.apps.getAppAssets.invalidate()
       } else {
         throw new Error('File upload filed')
       }
@@ -61,7 +61,7 @@ export const useUploadFile = (
       workspace,
       appId,
       bindAsset,
-      utils.posts.getAppAssets,
+      utils.apps.getAppAssets,
     ],
   )
 }

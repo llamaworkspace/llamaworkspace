@@ -12,14 +12,14 @@ export const performPostShare = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const invitingUserId = ctx.session.user.id
-    const post = await ctx.prisma.app.findUniqueOrThrow({
+    const app = await ctx.prisma.app.findUniqueOrThrow({
       where: {
         id: input.postId,
       },
     })
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      post.workspaceId,
+      app.workspaceId,
       invitingUserId,
     )
     return await performPostShareService(ctx.prisma, context, {

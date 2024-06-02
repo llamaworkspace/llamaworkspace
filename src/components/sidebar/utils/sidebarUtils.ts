@@ -15,25 +15,25 @@ import {
 } from 'date-fns'
 import { chain, sortBy } from 'underscore'
 
-type PostsForSidebar = RouterOutputs['sidebar']['postsForSidebar']
-type PostForSidebar = PostsForSidebar extends Array<infer Item> ? Item : never
+type appsForSidebar = RouterOutputs['sidebar']['appsForSidebar']
+type PostForSidebar = appsForSidebar extends Array<infer Item> ? Item : never
 
 type ChatHistoryForSidebarOutput =
   RouterOutputs['sidebar']['chatHistoryForSidebar']
 
 export const getSortedPosts = (
-  posts: PostsForSidebar,
+  apps: appsForSidebar,
   sortedPostIds: string[],
 ) => {
   const sortedPostIdsSet = new Set(sortedPostIds)
 
   const sortedPosts = sortedPostIds
-    .map((postId) => posts.find((post) => post.id === postId))
-    .filter((post): post is PostForSidebar => !!post)
-  const unsortedPosts = posts.filter((post) => !sortedPostIdsSet.has(post.id))
+    .map((postId) => apps.find((app) => app.id === postId))
+    .filter((app): app is PostForSidebar => !!app)
+  const unsortedPosts = apps.filter((app) => !sortedPostIdsSet.has(app.id))
 
   return [
-    ...sortBy(unsortedPosts, (post) => post.title ?? EMPTY_POST_NAME),
+    ...sortBy(unsortedPosts, (app) => app.title ?? EMPTY_POST_NAME),
     ...sortedPosts,
   ]
 }

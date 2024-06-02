@@ -9,7 +9,7 @@ describe('AbstractQueueManager', () => {
   class TestEnqueuedEvent extends AbstractQueueManager<ZodType> {
     queueName = 'testQueue'
 
-    protected async handle(payload: Infer<ZodType>) {
+    protected async handle(_: Infer<ZodType>) {
       // Dummy handle method for testing purposes
     }
   }

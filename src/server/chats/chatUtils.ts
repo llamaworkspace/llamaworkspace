@@ -6,7 +6,7 @@ export const scopeChatByWorkspace = (
 ) => {
   return {
     ...whereClause,
-    post: {
+    app: {
       workspaceId,
     },
   }

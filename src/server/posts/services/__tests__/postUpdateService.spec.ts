@@ -31,14 +31,14 @@ const subject = async (
 describe('postUpdateService', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       title: 'A title',
@@ -48,16 +48,16 @@ describe('postUpdateService', () => {
   it('updates the post', async () => {
     const postInDbBefore = await prisma.app.findFirstOrThrow({
       where: {
-        id: post.id,
+        id: app.id,
       },
     })
     expect(postInDbBefore.title).toBe('A title')
 
-    await subject(workspace.id, user.id, post.id, { title: 'A new title' })
+    await subject(workspace.id, user.id, app.id, { title: 'A new title' })
 
     const postInDb = await prisma.app.findFirstOrThrow({
       where: {
-        id: post.id,
+        id: app.id,
       },
     })
 
@@ -70,7 +70,7 @@ describe('postUpdateService', () => {
       'passOrThrowTrpcError',
     )
 
-    await subject(workspace.id, user.id, post.id, { title: 'A new title' })
+    await subject(workspace.id, user.id, app.id, { title: 'A new title' })
 
     expect(spy).toHaveBeenCalledWith(
       PermissionAction.Update,
@@ -102,18 +102,18 @@ describe('postUpdateService', () => {
       it('updates the post', async () => {
         const postInDbBefore = await prisma.app.findFirstOrThrow({
           where: {
-            id: post.id,
+            id: app.id,
           },
         })
         expect(postInDbBefore.gptEngine).toBe(null)
 
-        await subject(workspace.id, user.id, post.id, {
+        await subject(workspace.id, user.id, app.id, {
           gptEngine: AppGptEngine.OpenaiAssistant,
         })
 
         const postInDb = await prisma.app.findFirstOrThrow({
           where: {
-            id: post.id,
+            id: app.id,
           },
         })
 
@@ -125,7 +125,7 @@ describe('postUpdateService', () => {
       beforeEach(async () => {
         await prisma.app.update({
           where: {
-            id: post.id,
+            id: app.id,
           },
           data: {
             gptEngine: AppGptEngine.OpenaiAssistant,
@@ -134,7 +134,7 @@ describe('postUpdateService', () => {
       })
       it('throws when trying to update it', async () => {
         await expect(
-          subject(workspace.id, user.id, post.id, {
+          subject(workspace.id, user.id, app.id, {
             gptEngine: AppGptEngine.OpenaiAssistant,
           }),
         ).rejects.toThrow('GPT Engine cannot be updated once set')

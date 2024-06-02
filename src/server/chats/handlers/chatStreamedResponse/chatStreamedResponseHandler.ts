@@ -43,7 +43,7 @@ async function handler(req: Request) {
     const userId = await getRequestUserId()
     const chat = await getChat(chatId)
     await validateUserPermissionsOrThrow(userId, chatId)
-    const workspaceId = chat.post.workspaceId
+    const workspaceId = chat.app.workspaceId
 
     const context = await createUserOnWorkspaceContext(
       prisma,
@@ -152,7 +152,7 @@ const validateUserPermissionsOrThrow = async (
       id: chatId,
     },
     include: {
-      post: true,
+      app: true,
     },
   })
 
@@ -212,7 +212,7 @@ const getChat = async (chatId: string) => {
       id: chatId,
     },
     include: {
-      post: {
+      app: {
         select: {
           workspaceId: true,
         },

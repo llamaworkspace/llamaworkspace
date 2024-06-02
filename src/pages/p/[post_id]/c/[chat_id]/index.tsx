@@ -12,14 +12,14 @@ export default function ChatPage() {
   const query = navigation.query
   const postId = query.post_id as string | undefined
   const chatId = query.chat_id as string | undefined
-  const { data: post, isLoading: postIsLoading } = usePostById(postId)
+  const { data: app, isLoading: postIsLoading } = usePostById(postId)
   const { data: chat, isLoading: chatIsLoading } = useChatById(chatId)
   const { data: defaultPost, isLoading: defaultPostIsLoading } =
     useDefaultPost()
 
   let isPostOrChatInvalid = false
   if (!postIsLoading && !chatIsLoading) {
-    if (!post || !chat) {
+    if (!app || !chat) {
       isPostOrChatInvalid = true
     }
   }

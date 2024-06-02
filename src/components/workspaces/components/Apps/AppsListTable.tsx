@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { AppsListRow } from './AppsListRow'
 
 export const AppsListTable = () => {
-  const { data: posts } = usePostsForAppsList()
+  const { data: apps } = usePostsForAppsList()
   const [deleteModalTargetPostId, setDeleteModalTargetPostId] = useState<
     string | null
   >(null)
@@ -38,7 +38,7 @@ export const AppsListTable = () => {
     void _doPostDeletion()
   }
 
-  if (posts && !posts.length) {
+  if (apps && !apps.length) {
     return (
       <>
         <div className="pt-16 text-center text-zinc-600">
@@ -51,11 +51,11 @@ export const AppsListTable = () => {
 
   return (
     <div className="space-y-1">
-      {posts?.map((post) => {
+      {apps?.map((app) => {
         return (
           <AppsListRow
-            key={post.id}
-            post={post}
+            key={app.id}
+            app={app}
             onRowDelete={handlePostDeletetionRequest}
           />
         )

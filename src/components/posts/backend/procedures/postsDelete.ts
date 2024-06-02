@@ -12,7 +12,7 @@ export const postsDelete = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
     const { id } = input
-    const post = await ctx.prisma.app.findFirstOrThrow({
+    const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
         id,
       },
@@ -20,7 +20,7 @@ export const postsDelete = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      post.workspaceId,
+      app.workspaceId,
       userId,
     )
 

@@ -12,7 +12,7 @@ export const createDefaultPostService = async (
   return await prismaAsTrx(prisma, async (prisma) => {
     const { userId } = uowContext
 
-    const post = await postCreateService(prisma, uowContext, {
+    const app = await postCreateService(prisma, uowContext, {
       title: DEFAULT_POST_NAME,
       isDefault: true,
       gptEngine: AppGptEngine.Basic,
@@ -20,11 +20,11 @@ export const createDefaultPostService = async (
 
     await prisma.chat.deleteMany({
       where: {
-        postId: post.id,
+        postId: app.id,
         authorId: userId,
       },
     })
 
-    return post
+    return app
   })
 }

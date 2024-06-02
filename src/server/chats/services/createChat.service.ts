@@ -28,7 +28,7 @@ export const createChatService = async function (
   )
 
   return await prismaAsTrx(prisma, async (prisma) => {
-    const post = await prisma.app.findUniqueOrThrow({
+    const app = await prisma.app.findUniqueOrThrow({
       where: {
         id: postId,
       },
@@ -36,7 +36,7 @@ export const createChatService = async function (
 
     let appConfigVersionId: string | undefined
 
-    if (post.isDefault) {
+    if (app.isDefault) {
       const appConfigVersion = await getNewAppConfigVersion(
         prisma,
         userId,
@@ -53,7 +53,7 @@ export const createChatService = async function (
       },
     })
 
-    if (!post.isDefault) {
+    if (!app.isDefault) {
       await updatePostSortingService(prisma, uowContext, postId)
     }
 

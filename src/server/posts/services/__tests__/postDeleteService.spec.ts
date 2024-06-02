@@ -21,14 +21,14 @@ const subject = async (workspaceId: string, userId: string, postId: string) => {
 describe('postDeleteService', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
@@ -37,16 +37,16 @@ describe('postDeleteService', () => {
   it('deletes the post', async () => {
     const postInDbBefore = await prisma.app.findFirst({
       where: {
-        id: post.id,
+        id: app.id,
       },
     })
     expect(postInDbBefore).not.toBeNull()
 
-    await subject(workspace.id, user.id, post.id)
+    await subject(workspace.id, user.id, app.id)
 
     const postInDb = await prisma.app.findFirst({
       where: {
-        id: post.id,
+        id: app.id,
       },
     })
 
@@ -59,7 +59,7 @@ describe('postDeleteService', () => {
       'passOrThrowTrpcError',
     )
 
-    await subject(workspace.id, user.id, post.id)
+    await subject(workspace.id, user.id, app.id)
 
     expect(spy).toHaveBeenCalledWith(
       PermissionAction.Delete,

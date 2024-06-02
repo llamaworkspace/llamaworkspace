@@ -280,7 +280,7 @@ export const useUpdateChat = (debounceMs = 0) => {
   const { mutate, ...rest } = api.chats.updateChat.useMutation({
     onError: errorHandler(),
     onSuccess: () => {
-      void utils.sidebar.postsForSidebar.invalidate()
+      void utils.sidebar.appsForSidebar.invalidate()
       void utils.sidebar.chatHistoryForSidebar.invalidate()
     },
   })
@@ -289,12 +289,12 @@ export const useUpdateChat = (debounceMs = 0) => {
   type Params = MutateArgs[0]
   type Options = MutateArgs[1]
 
-  const { data: post } = useDefaultPost()
+  const { data: app } = useDefaultPost()
   const { data: workspace } = useCurrentWorkspace()
 
   return {
     mutate: debounce((params: Params, options?: Options) => {
-      if (!post || !workspace) return
+      if (!app || !workspace) return
 
       utils.sidebar.chatHistoryForSidebar.setData(
         { workspaceId: workspace.id },

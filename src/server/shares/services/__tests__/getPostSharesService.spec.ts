@@ -25,7 +25,7 @@ describe('getPostSharesService', () => {
   let workspace: Workspace
   let userPostOwner: User
   let sharedUser: User
-  let post: App
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -38,7 +38,7 @@ describe('getPostSharesService', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: userPostOwner.id,
       workspaceId: workspace.id,
     })
@@ -50,7 +50,7 @@ describe('getPostSharesService', () => {
       'passOrThrowTrpcError',
     )
 
-    await subject(userPostOwner.id, workspace.id, post.id)
+    await subject(userPostOwner.id, workspace.id, app.id)
     expect(spy).toHaveBeenCalledWith(
       PermissionAction.Invite,
       expect.anything(),
@@ -62,7 +62,7 @@ describe('getPostSharesService', () => {
     it('returns the share with scope User', async () => {
       const share = await prisma.share.findFirstOrThrow({
         where: {
-          postId: post.id,
+          postId: app.id,
         },
       })
 
@@ -81,7 +81,7 @@ describe('getPostSharesService', () => {
         userId: otherSharedUser.id,
       })
 
-      const result = await subject(userPostOwner.id, workspace.id, post.id)
+      const result = await subject(userPostOwner.id, workspace.id, app.id)
 
       expect(result.shareTargets).toHaveLength(3)
       expect(result.shareTargets).toEqual([
@@ -114,14 +114,14 @@ describe('getPostSharesService', () => {
     it('returns the share with scope Everybody', async () => {
       await prisma.share.update({
         where: {
-          postId: post.id,
+          postId: app.id,
         },
         data: {
           scope: ShareScope.Everybody,
         },
       })
 
-      const result = await subject(userPostOwner.id, workspace.id, post.id)
+      const result = await subject(userPostOwner.id, workspace.id, app.id)
 
       expect(result).toEqual(
         expect.objectContaining({
@@ -135,7 +135,7 @@ describe('getPostSharesService', () => {
     it('returns the invitees', async () => {
       const share = await prisma.share.findFirstOrThrow({
         where: {
-          postId: post.id,
+          postId: app.id,
         },
       })
 
@@ -151,7 +151,7 @@ describe('getPostSharesService', () => {
         workspaceInviteId: invitedMember.id,
       })
 
-      const result = await subject(userPostOwner.id, workspace.id, post.id)
+      const result = await subject(userPostOwner.id, workspace.id, app.id)
 
       expect(result.shareTargets).toHaveLength(2)
       expect(result.shareTargets).toEqual([

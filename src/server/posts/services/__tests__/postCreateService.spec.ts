@@ -22,12 +22,12 @@ describe('postCreateService', () => {
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     await subject(workspace.id, user.id)
 
-    const post = await prisma.app.findFirstOrThrow({
+    const app = await prisma.app.findFirstOrThrow({
       where: {
         userId: user.id,
       },
     })
-    expect(post).toMatchObject({
+    expect(app).toMatchObject({
       title: 'Test App',
       gptEngine: AppGptEngine.Basic,
     })
@@ -36,17 +36,17 @@ describe('postCreateService', () => {
   it('creates an Private-scope-based share for the post', async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    const post = await subject(workspace.id, user.id)
+    const app = await subject(workspace.id, user.id)
 
     const share = await prisma.share.findMany({
       where: {
-        postId: post.id,
+        postId: app.id,
       },
     })
     expect(share).toHaveLength(1)
     expect(share).toMatchObject([
       {
-        postId: post.id,
+        postId: app.id,
         scope: ShareScope.Private,
       },
     ])
@@ -60,11 +60,11 @@ describe('postCreateService', () => {
       workspaceId: workspace.id,
     })
 
-    const post = await subject(workspace.id, user.id)
+    const app = await subject(workspace.id, user.id)
 
     const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
       where: {
-        appId: post.id,
+        appId: app.id,
       },
     })
 
@@ -79,11 +79,11 @@ describe('postCreateService', () => {
       workspaceId: workspace.id,
     })
 
-    const post = await subject(workspace.id, user.id)
+    const app = await subject(workspace.id, user.id)
 
     const share = await prisma.share.findFirstOrThrow({
       where: {
-        postId: post.id,
+        postId: app.id,
       },
       include: {
         shareTargets: true,
@@ -91,7 +91,7 @@ describe('postCreateService', () => {
     })
 
     expect(share).toMatchObject({
-      postId: post.id,
+      postId: app.id,
       scope: ShareScope.Private,
       shareTargets: [
         expect.objectContaining({

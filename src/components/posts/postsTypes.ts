@@ -3,9 +3,9 @@ import type { inferRouterInputs } from '@trpc/server'
 
 type RouterInput = inferRouterInputs<RootRouter>
 
-export type PostCreateInput = RouterInput['posts']['create']
+export type PostCreateInput = RouterInput['apps']['create']
 
-export type PostUpdateInput = RouterInput['posts']['update']
+export type PostUpdateInput = RouterInput['apps']['update']
 export type PostUpdateParams = Omit<PostUpdateInput, 'id'>
 
 export interface ComponentWithPostId {
