@@ -1,10 +1,7 @@
 import { env } from '@/env.mjs'
-import nodemailer from 'nodemailer'
 import { sendEmailQueue } from './queues/sendEmailQueue'
 
-const { SMTP_EMAIL_SERVER, SMTP_EMAIL_FROM } = env
-
-const mailer = nodemailer.createTransport(SMTP_EMAIL_SERVER)
+const { SMTP_EMAIL_FROM } = env
 
 interface ISendEmailParams {
   fromName?: string
@@ -14,10 +11,7 @@ interface ISendEmailParams {
   body: string
 }
 
-export const sendEmail = async (
-  params: ISendEmailParams,
-  options?: nodemailer.SendMailOptions,
-) => {
+export const sendEmail = async (params: ISendEmailParams) => {
   if (env.NODE_ENV === 'test') {
     throw new Error('sendEmail is not available in test environment')
   }

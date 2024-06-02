@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'
 import { z } from 'zod'
 import { AbstractQueueManager } from '../../lib/AbstractQueueManager/AbstractQueueManager'
 
-const { SMTP_EMAIL_SERVER, SMTP_EMAIL_FROM } = env
+const { SMTP_EMAIL_SERVER } = env
 
 const mailer = nodemailer.createTransport(SMTP_EMAIL_SERVER)
 
