@@ -4,12 +4,12 @@ import { useGlobalState } from '../../global/globalState'
 import { SidebarToggleIcon } from '../../sidebar/components/Sidebar/SidebarToggleIcon'
 
 interface MainLayoutHeaderForChatbotProps {
-  postId?: string
+  appId?: string
   chatId?: string
 }
 
 export function MainLayoutHeaderForChatbot({
-  postId,
+  appId,
   chatId,
 }: MainLayoutHeaderForChatbotProps) {
   const { toggleMobileSidebar } = useGlobalState()
@@ -28,10 +28,10 @@ export function MainLayoutHeaderForChatbot({
         </button>
         <div className="flex w-full justify-between px-2">
           <div className="flex grow items-center text-sm">
-            <ChatHeaderPostTitle postId={postId} />
+            <ChatHeaderPostTitle appId={appId} />
           </div>
           <div className="items-center text-sm">
-            <ChatHeaderPostLinks postId={postId} chatId={chatId} />
+            <ChatHeaderPostLinks appId={appId} chatId={chatId} />
           </div>
         </div>
       </div>
@@ -39,10 +39,10 @@ export function MainLayoutHeaderForChatbot({
       <div className="hidden h-8 w-full items-center  lg:flex">
         <div className="flex w-full justify-between gap-x-2 px-6">
           <div className="flex grow items-center text-sm">
-            <ChatHeaderPostTitle postId={postId} />
+            <ChatHeaderPostTitle appId={appId} />
           </div>
           <div className="items-center text-sm">
-            <ChatHeaderPostLinks postId={postId} chatId={chatId} />
+            <ChatHeaderPostLinks appId={appId} chatId={chatId} />
           </div>
         </div>
       </div>

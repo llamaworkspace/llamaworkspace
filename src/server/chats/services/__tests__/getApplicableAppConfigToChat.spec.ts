@@ -47,7 +47,7 @@ describe('getApplicableAppConfigToChat', () => {
     })
     chat = await ChatFactory.create(prisma, {
       authorId: user.id,
-      postId: app.id,
+      appId: app.id,
     })
     await Promise.mapSeries(
       Array.from({ length: 3 }),

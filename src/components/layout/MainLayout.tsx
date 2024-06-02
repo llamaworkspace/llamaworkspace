@@ -12,19 +12,19 @@ import {
 import { MainLayoutSessionChecker } from './MainLayoutSessionChecker'
 
 interface MainLayoutProps extends PropsWithChildren {
-  postId?: string
+  appId?: string
   chatId?: string
   hideHeader?: boolean
   variant: HeaderVariants
 }
 
 export function MainLayout({
-  postId,
+  appId,
   chatId,
   children,
   variant,
 }: MainLayoutProps) {
-  const { data: app } = usePostById(postId)
+  const { data: app } = usePostById(appId)
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
 
@@ -34,7 +34,7 @@ export function MainLayout({
   // IMPORTANT: Keep this key prop, it forces re-renders that otherwise
   // would not happen when navigating between posts.
   return (
-    <MainLayoutSessionChecker key={postId}>
+    <MainLayoutSessionChecker key={appId}>
       <Head>
         <title>{head}</title>
       </Head>
@@ -46,7 +46,7 @@ export function MainLayout({
         )}
       >
         <div className="relative flex h-full w-full min-w-[300px] flex-1 flex-col overflow-hidden">
-          <MainLayoutHeader postId={postId} chatId={chatId} variant={variant} />
+          <MainLayoutHeader appId={appId} chatId={chatId} variant={variant} />
           <SidebarToggler />
           {children}
         </div>

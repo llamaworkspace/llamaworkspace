@@ -12,22 +12,22 @@ export default function NewChatPage() {
   const isChatCreateInvokedRef = useRef(false)
   const query = navigation.query
 
-  const postId = query.post_id as string | undefined
+  const appId = query.post_id as string | undefined
   const { mutate: createChat } = useCreateChatForApp()
 
   useEffect(() => {
     // Make this hook idempotent
     if (isChatCreateInvokedRef.current === true) return
 
-    if (postId) {
+    if (appId) {
       isChatCreateInvokedRef.current = true
-      createChat({ postId })
+      createChat({ appId })
     }
-  }, [createChat, postId])
+  }, [createChat, appId])
 
   return (
-    <MainLayout postId={postId} variant={HeaderVariants.Chatbot}>
-      <Chat postId={postId} chatId={undefined} />
+    <MainLayout appId={appId} variant={HeaderVariants.Chatbot}>
+      <Chat appId={appId} chatId={undefined} />
     </MainLayout>
   )
 }

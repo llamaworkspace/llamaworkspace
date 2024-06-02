@@ -10,9 +10,9 @@ import { HeaderVariants } from '../../../../../components/layout/MainLayout/Main
 export default function ChatPage() {
   const navigation = useNavigation()
   const query = navigation.query
-  const postId = query.post_id as string | undefined
+  const appId = query.post_id as string | undefined
   const chatId = query.chat_id as string | undefined
-  const { data: app, isLoading: postIsLoading } = usePostById(postId)
+  const { data: app, isLoading: postIsLoading } = usePostById(appId)
   const { data: chat, isLoading: chatIsLoading } = useChatById(chatId)
   const { data: defaultPost, isLoading: defaultPostIsLoading } =
     useDefaultPost()
@@ -25,22 +25,18 @@ export default function ChatPage() {
   }
 
   useEffect(() => {
-    if (chat?.postId && defaultPost?.id && chat.postId === defaultPost.id) {
+    if (chat?.appId && defaultPost?.id && chat.appId === defaultPost.id) {
       void navigation.replace(`/c/:chatId`, {
         chatId: chat.id,
       })
     }
-  }, [chat?.postId, chat?.id, defaultPost?.id, navigation])
+  }, [chat?.appId, chat?.id, defaultPost?.id, navigation])
 
   return (
-    <MainLayout
-      postId={postId}
-      chatId={chatId}
-      variant={HeaderVariants.Chatbot}
-    >
+    <MainLayout appId={appId} chatId={chatId} variant={HeaderVariants.Chatbot}>
       {/* Apply a key to force full remounts; otherwise nested effects might not work... Nextjs related */}
       {!isPostOrChatInvalid && (
-        <Chat postId={postId} chatId={chatId} key={navigation.asPath} />
+        <Chat appId={appId} chatId={chatId} key={navigation.asPath} />
       )}
       {isPostOrChatInvalid && <PostError />}
     </MainLayout>

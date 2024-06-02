@@ -8,14 +8,14 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
 import { postDeleteService } from '../postDelete.service'
 
-const subject = async (workspaceId: string, userId: string, postId: string) => {
+const subject = async (workspaceId: string, userId: string, appId: string) => {
   const uowContext = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
 
-  return await postDeleteService(prisma, uowContext, { postId })
+  return await postDeleteService(prisma, uowContext, { appId })
 }
 
 describe('postDeleteService', () => {
@@ -68,7 +68,7 @@ describe('postDeleteService', () => {
     )
   })
 
-  describe('when the postId is the defaultPost for the workspace', () => {
+  describe('when the appId is the defaultPost for the workspace', () => {
     let defaultPost: App
 
     beforeEach(async () => {

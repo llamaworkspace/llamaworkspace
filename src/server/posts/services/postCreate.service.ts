@@ -85,12 +85,12 @@ const createPost = async (
 
 const createDefaultShare = async (
   prisma: PrismaTrxClient,
-  postId: string,
+  appId: string,
   userId: string,
 ) => {
   return await prisma.share.create({
     data: {
-      postId: postId,
+      appId: appId,
       scope: ShareScope.Private,
       shareTargets: {
         create: [

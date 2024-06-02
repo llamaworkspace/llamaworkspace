@@ -8,13 +8,13 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
 import { getPostByIdService } from '../getPostById.service'
 
-const subject = async (workspaceId: string, userId: string, postId: string) => {
+const subject = async (workspaceId: string, userId: string, appId: string) => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
-  return await getPostByIdService(prisma, context, { postId })
+  return await getPostByIdService(prisma, context, { appId })
 }
 
 describe('getPostByIdService', () => {

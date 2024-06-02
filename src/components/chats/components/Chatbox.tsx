@@ -13,7 +13,7 @@ import { useMessages, usePrompt } from '../chatHooks'
 const MAX_HEIGHT = 200
 
 interface ChatProps {
-  postId?: string
+  appId?: string
   chatId?: string
   stableOnChatboxHeightChange?: (height: number) => void
   onChatSubmit?: () => void
@@ -22,7 +22,7 @@ interface ChatProps {
 }
 
 export function Chatbox({
-  postId,
+  appId,
   chatId,
   stableOnChatboxHeightChange,
   onChatSubmit,
@@ -52,7 +52,7 @@ export function Chatbox({
 
   const { data: canUse } = useCanPerformActionForPost(
     PermissionAction.Use,
-    postId,
+    appId,
   )
 
   useEffect(() => {

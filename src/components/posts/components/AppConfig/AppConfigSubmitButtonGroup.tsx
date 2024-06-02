@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { useRouter } from 'next/router'
 
 interface AppConfigSubmitButtonGroupProps {
-  postId?: string
+  appId?: string
   pristine: boolean
   submitting: boolean
   showSubmitError?: boolean
@@ -12,7 +12,7 @@ interface AppConfigSubmitButtonGroupProps {
 }
 
 export const AppConfigSubmitButtonGroup = ({
-  postId,
+  appId,
   pristine,
   submitting,
   showSubmitError = false,
@@ -28,8 +28,8 @@ export const AppConfigSubmitButtonGroup = ({
       if (router.query.chat_id) {
         return void router.push(returnToChatRoute)
       }
-      if (!postId) return
-      await createChat({ postId })
+      if (!appId) return
+      await createChat({ appId })
     }
     void run()
   }

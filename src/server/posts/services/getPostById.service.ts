@@ -5,7 +5,7 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopePostByWorkspace } from '../postUtils'
 
 interface GetPostByIdServiceInputProps {
-  postId: string
+  appId: string
 }
 
 export const getPostByIdService = async (
@@ -14,16 +14,16 @@ export const getPostByIdService = async (
   payload: GetPostByIdServiceInputProps,
 ) => {
   const { userId, workspaceId } = uowContext
-  const { postId } = payload
+  const { appId } = payload
 
   await new PermissionsVerifier(prisma).passOrThrowTrpcError(
     PermissionAction.Use,
     userId,
-    postId,
+    appId,
   )
 
   return await prisma.app.findFirstOrThrow({
-    where: scopePostByWorkspace({ id: postId }, workspaceId),
+    where: scopePostByWorkspace({ id: appId }, workspaceId),
     include: {
       chats: {
         select: { id: true, createdAt: true },

@@ -8,9 +8,9 @@ import type { App, User, Workspace } from '@prisma/client'
 
 jest.mock('@/server/shares/services/performPostShare.service')
 
-const subject = async (userId: string, postId: string, email: string) => {
+const subject = async (userId: string, appId: string, email: string) => {
   const { caller } = trpcContextSetupHelper(prisma, userId)
-  return await caller.apps.share({ postId, email })
+  return await caller.apps.share({ appId, email })
 }
 
 describe('performPostInvite', () => {

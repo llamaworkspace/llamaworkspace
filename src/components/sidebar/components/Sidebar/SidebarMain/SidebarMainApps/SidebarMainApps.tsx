@@ -16,7 +16,7 @@ export const SidebarMainApps = () => {
           return (
             <SidebarMainAppItem
               key={app.id}
-              postId={app.id}
+              appId={app.id}
               emoji={app.emoji}
               title={app.title}
             />

@@ -63,7 +63,7 @@ describe('updateShareAccessLevelService', () => {
 
     share = await prisma.share.findFirstOrThrow({
       where: {
-        postId: app.id,
+        appId: app.id,
       },
     })
 
@@ -115,7 +115,7 @@ describe('updateShareAccessLevelService', () => {
     it('removes the share', async () => {
       const shareTargetsBefore = await prisma.shareTarget.findMany({
         where: {
-          share: { postId: app.id },
+          share: { appId: app.id },
         },
       })
 
@@ -130,7 +130,7 @@ describe('updateShareAccessLevelService', () => {
 
       const shareTargetsAfter = await prisma.shareTarget.findMany({
         where: {
-          share: { postId: app.id },
+          share: { appId: app.id },
         },
       })
       expect(shareTargetsAfter).toHaveLength(1)
@@ -143,7 +143,7 @@ describe('updateShareAccessLevelService', () => {
             userId: userCreatingPost.id,
             accessLevel: UserAccessLevel.Owner.toString(),
             share: {
-              postId: app.id,
+              appId: app.id,
             },
           },
         })
@@ -239,7 +239,7 @@ describe('updateShareAccessLevelService', () => {
 
           const shareForOtherPost = await prisma.share.findFirstOrThrow({
             where: {
-              postId: otherPost.id,
+              appId: otherPost.id,
             },
           })
 

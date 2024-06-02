@@ -9,7 +9,7 @@ export type PostUpdateInput = RouterInput['apps']['update']
 export type PostUpdateParams = Omit<PostUpdateInput, 'id'>
 
 export interface ComponentWithPostId {
-  postId: string
+  appId: string
 }
 
 export enum PostType {

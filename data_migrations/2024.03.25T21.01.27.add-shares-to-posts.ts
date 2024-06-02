@@ -16,7 +16,7 @@ export const up: MigrationFn = async () => {
 
   await prisma.share.createMany({
     data: apps.map((app) => ({
-      postId: app.id,
+      appId: app.id,
       scope: ShareScope.Everybody,
     })),
   })

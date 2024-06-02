@@ -40,13 +40,13 @@ describe('getEntrypointRedirectUrl', () => {
 
     beforeEach(async () => {
       chat1 = await ChatFactory.create(prisma, {
-        postId: defaultPost.id,
+        appId: defaultPost.id,
         authorId: user.id,
         title: 'chat1',
       })
 
       chat2 = await ChatFactory.create(prisma, {
-        postId: defaultPost.id,
+        appId: defaultPost.id,
         authorId: user.id,
         title: 'chat2',
       })
@@ -104,7 +104,7 @@ describe('getEntrypointRedirectUrl', () => {
     beforeEach(async () => {
       await prisma.chat.deleteMany({
         where: {
-          postId: defaultPost.id,
+          appId: defaultPost.id,
         },
       })
     })
@@ -139,7 +139,7 @@ describe('getEntrypointRedirectUrl', () => {
           workspaceId: workspace.id,
         })
         const otherChat = await ChatFactory.create(prisma, {
-          postId: otherPost.id,
+          appId: otherPost.id,
           authorId: user.id,
         })
         await ChatRunFactory.create(prisma, {

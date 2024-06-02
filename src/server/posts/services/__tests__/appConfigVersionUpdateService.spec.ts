@@ -89,7 +89,7 @@ describe('appConfigVersionUpdateService', () => {
   describe('when there are chats using the configversion', () => {
     beforeEach(async () => {
       await ChatFactory.create(prisma, {
-        postId: app.id,
+        appId: app.id,
         authorId: user.id,
         appConfigVersionId: appConfigVersion.id,
       })

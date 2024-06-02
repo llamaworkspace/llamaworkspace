@@ -11,35 +11,35 @@ export enum TabEnum {
   Configuration = 'configuration',
 }
 
-export const getTabConfigForPostId = (postId: string) => {
+export const getTabConfigForPostId = (appId: string) => {
   return {
     chat: {
       tab: TabEnum.Chat,
       hidden: false,
       label: 'Chat',
       Icon: ChatBubbleLeftRightIcon,
-      targetUrl: `/p/${postId}`,
+      targetUrl: `/p/${appId}`,
     },
     // history: {
     //   tab: TabEnum.History,
     //   hidden: false,
     //   label: 'History',
     //   Icon: ClockIcon,
-    //   targetUrl: `/p/${postId}/history`,
+    //   targetUrl: `/p/${appId}/history`,
     // },
     configuration: {
       tab: TabEnum.Configuration,
       hidden: false,
       label: 'Configuration',
       Icon: Cog6ToothIcon,
-      targetUrl: `/p/${postId}/configuration`,
+      targetUrl: `/p/${appId}/configuration`,
     },
     // publishing: {
     //   tab: TabEnum.Publishing,
     //   hidden: true,
     //   label: 'Publishing',
     //   Icon: ShareIcon,
-    //   targetUrl: `/p/${postId}/publishing`,
+    //   targetUrl: `/p/${appId}/publishing`,
     // },
   }
 }

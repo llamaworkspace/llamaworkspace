@@ -4,15 +4,15 @@ import { useErrorHandler } from '../global/errorHandlingHooks'
 
 export const useCanPerformActionForPost = (
   action: PermissionAction,
-  postId?: string,
+  appId?: string,
 ) => {
   const errorHandler = useErrorHandler()
 
   return api.permissions.canPerformActionForPostId.useQuery(
-    { action, postId: postId! },
+    { action, appId: appId! },
     {
       onError: errorHandler(),
-      enabled: !!postId,
+      enabled: !!appId,
     },
   )
 }

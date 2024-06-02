@@ -22,16 +22,16 @@ interface FormShape {
   email: string
 }
 
-export const ChatHeaderShareHandleUsers = ({ postId }: ComponentWithPostId) => {
+export const ChatHeaderShareHandleUsers = ({ appId }: ComponentWithPostId) => {
   const toast = useSuccessToast()
 
-  const { data: share } = usePostShare(postId)
+  const { data: share } = usePostShare(appId)
   const { data: self } = useSelf()
   const { mutate: performShare } = usePostPerformInvite()
 
   const handleSubmit = ({ email }: FormShape, form: FormApi<FormShape>) => {
     performShare(
-      { email, postId },
+      { email, appId },
       {
         onSuccess: () => {
           toast('User added', `We've notified ${email} about your invite`)

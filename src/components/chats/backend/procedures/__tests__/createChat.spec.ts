@@ -5,9 +5,9 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import type { App, User, Workspace } from '@prisma/client'
 
-const subject = async (userId: string, postId: string) => {
+const subject = async (userId: string, appId: string) => {
   const { caller } = trpcContextSetupHelper(prisma, userId)
-  return await caller.chats.createChat({ postId })
+  return await caller.chats.createChat({ appId })
 }
 
 describe('createChat', () => {

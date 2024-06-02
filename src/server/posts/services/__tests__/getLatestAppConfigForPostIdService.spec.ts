@@ -9,13 +9,13 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, AppConfigVersion, User, Workspace } from '@prisma/client'
 import { getLatestAppConfigForPostIdService } from '../getLatestAppConfigForPostId.service'
 
-const subject = async (userId: string, workspaceId: string, postId: string) => {
+const subject = async (userId: string, workspaceId: string, appId: string) => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
-  return await getLatestAppConfigForPostIdService(prisma, context, { postId })
+  return await getLatestAppConfigForPostIdService(prisma, context, { appId })
 }
 
 describe('getLatestAppConfigForPostIdService', () => {

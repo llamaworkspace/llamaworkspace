@@ -26,7 +26,7 @@ export const getApplicableAppConfigToChatService = async function (
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Use,
       userId,
-      chat.postId,
+      chat.appId,
     )
 
     if (chat.appConfigVersionId) {
@@ -39,7 +39,7 @@ export const getApplicableAppConfigToChatService = async function (
       return await getAppConfigVersionInProgress(
         prisma,
         workspaceId,
-        chat.postId,
+        chat.appId,
       )
     }
   })

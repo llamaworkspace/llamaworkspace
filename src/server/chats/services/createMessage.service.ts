@@ -29,7 +29,7 @@ export const createMessageService = async function (
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Use,
       userId,
-      chat.postId,
+      chat.appId,
     )
 
     if (author === Author.Assistant && message) {

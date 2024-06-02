@@ -20,14 +20,14 @@ import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
 
 interface AppsListRowProps {
   app: RouterOutputs['apps']['getList'][0]
-  onRowDelete: (postId: string) => void
+  onRowDelete: (appId: string) => void
 }
 
 export const AppsListRow = ({ app, onRowDelete }: AppsListRowProps) => {
   const { mutate: createChat } = useCreateChatForApp()
 
   const handleCreateChat = () => {
-    createChat({ postId: app.id })
+    createChat({ appId: app.id })
   }
 
   const handleDelete = () => {
@@ -78,7 +78,7 @@ export const AppsListRow = ({ app, onRowDelete }: AppsListRowProps) => {
             'hover:bg-zinc-200',
           )}
         >
-          <EllipsisDropdown postId={app.id} onDelete={handleDelete} />
+          <EllipsisDropdown appId={app.id} onDelete={handleDelete} />
         </div>
       </div>
     </div>
@@ -86,14 +86,14 @@ export const AppsListRow = ({ app, onRowDelete }: AppsListRowProps) => {
 }
 
 interface EllipsisDropdownProps {
-  postId: string
+  appId: string
   onDelete: () => void
 }
 
-const EllipsisDropdown = ({ postId, onDelete }: EllipsisDropdownProps) => {
+const EllipsisDropdown = ({ appId, onDelete }: EllipsisDropdownProps) => {
   const { data: canDelete, isLoading } = useCanPerformActionForPost(
     PermissionAction.Delete,
-    postId,
+    appId,
   )
   return (
     <DropdownMenu>
@@ -112,7 +112,7 @@ const EllipsisDropdown = ({ postId, onDelete }: EllipsisDropdownProps) => {
           onClick={(ev) => {
             ev.stopPropagation()
           }}
-          href={`/p/${postId}/configuration?backButton=false`}
+          href={`/p/${appId}/configuration?backButton=false`}
         >
           <PencilIcon className="mr-2 h-4 w-4" />
           <span>Edit</span>

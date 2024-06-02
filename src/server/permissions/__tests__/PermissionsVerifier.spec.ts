@@ -27,10 +27,10 @@ describe('PermissionsVerifier ', () => {
   })
 
   describe('getAccessLevelForPost', () => {
-    const subject = async (userId: string, postId: string) => {
+    const subject = async (userId: string, appId: string) => {
       return await new PermissionsVerifier(prisma).getUserAccessLevelToPost(
         userId,
-        postId,
+        appId,
       )
     }
 
@@ -52,7 +52,7 @@ describe('PermissionsVerifier ', () => {
       it('it throws', async () => {
         const share = await prisma.share.findFirstOrThrow({
           where: {
-            postId: app.id,
+            appId: app.id,
           },
         })
 
@@ -76,18 +76,18 @@ describe('PermissionsVerifier ', () => {
     const subject = async (
       action: PermissionAction,
       userId: string,
-      postId: string,
+      appId: string,
       postScope: ShareScope,
     ) => {
       await prisma.share.update({
         where: {
-          postId,
+          appId,
         },
         data: {
           scope: postScope,
         },
       })
-      return await new PermissionsVerifier(prisma).call(action, userId, postId)
+      return await new PermissionsVerifier(prisma).call(action, userId, appId)
     }
 
     let workspace: Workspace
@@ -160,7 +160,7 @@ describe('PermissionsVerifier ', () => {
 
           const share = await prisma.share.findFirstOrThrow({
             where: {
-              postId: app.id,
+              appId: app.id,
             },
           })
 
@@ -222,7 +222,7 @@ describe('PermissionsVerifier ', () => {
 
           const share = await prisma.share.findFirstOrThrow({
             where: {
-              postId: app.id,
+              appId: app.id,
             },
           })
 
@@ -284,7 +284,7 @@ describe('PermissionsVerifier ', () => {
 
           const share = await prisma.share.findFirstOrThrow({
             where: {
-              postId: app.id,
+              appId: app.id,
             },
           })
 

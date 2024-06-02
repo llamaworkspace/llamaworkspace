@@ -9,18 +9,18 @@ export enum HeaderVariants {
 }
 
 export function MainLayoutHeader({
-  postId,
+  appId,
   chatId,
   variant = HeaderVariants.Chat,
 }: {
-  postId?: string
+  appId?: string
   chatId?: string
   variant: HeaderVariants
 }) {
   return (
-    <div key={`${postId}-${chatId}`}>
+    <div key={`${appId}-${chatId}`}>
       {variant === HeaderVariants.Chatbot && (
-        <MainLayoutHeaderForChatbot postId={postId} chatId={chatId} />
+        <MainLayoutHeaderForChatbot appId={appId} chatId={chatId} />
       )}
 
       {variant === HeaderVariants.Chat && (
@@ -28,7 +28,7 @@ export function MainLayoutHeader({
       )}
 
       {variant === HeaderVariants.Hidden && (
-        <MainLayoutHeaderAsHidden postId={postId} />
+        <MainLayoutHeaderAsHidden appId={appId} />
       )}
     </div>
   )

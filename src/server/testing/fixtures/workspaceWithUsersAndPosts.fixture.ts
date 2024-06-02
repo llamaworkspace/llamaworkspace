@@ -26,7 +26,7 @@ export const workspaceWithUsersAndPostsFixture = async (
 
   await prisma.share.update({
     where: {
-      postId: postWithScopeUser.id,
+      appId: postWithScopeUser.id,
     },
     data: {
       scope: ShareScope.User,
@@ -41,7 +41,7 @@ export const workspaceWithUsersAndPostsFixture = async (
 
   await prisma.share.update({
     where: {
-      postId: postWithScopeUserOfOtherUser.id,
+      appId: postWithScopeUserOfOtherUser.id,
     },
     data: {
       scope: ShareScope.User,
@@ -56,7 +56,7 @@ export const workspaceWithUsersAndPostsFixture = async (
     })
   await prisma.share.update({
     where: {
-      postId: postWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
+      appId: postWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
     },
     data: {
       scope: ShareScope.User,
@@ -66,7 +66,7 @@ export const workspaceWithUsersAndPostsFixture = async (
   const shareOfPostWithScopeUserOfOtherUserWhereMainUserIsInvited =
     await prisma.share.findFirstOrThrow({
       where: {
-        postId: postWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
+        appId: postWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
       },
     })
 
@@ -84,7 +84,7 @@ export const workspaceWithUsersAndPostsFixture = async (
 
   await prisma.share.update({
     where: {
-      postId: postWithScopeEverybody.id,
+      appId: postWithScopeEverybody.id,
     },
     data: {
       scope: ShareScope.Everybody,
@@ -99,7 +99,7 @@ export const workspaceWithUsersAndPostsFixture = async (
 
   await prisma.share.update({
     where: {
-      postId: postWithScopeEverybodyOfOtherUser.id,
+      appId: postWithScopeEverybodyOfOtherUser.id,
     },
     data: {
       scope: ShareScope.Everybody,

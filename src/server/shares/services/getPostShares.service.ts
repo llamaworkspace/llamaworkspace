@@ -5,7 +5,7 @@ import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 
 interface GetPostSharesPayload {
-  postId: string
+  appId: string
 }
 
 export const getPostSharesService = async (
@@ -14,17 +14,17 @@ export const getPostSharesService = async (
   payload: GetPostSharesPayload,
 ) => {
   const { workspaceId, userId } = uowContext
-  const { postId } = payload
+  const { appId } = payload
 
   await new PermissionsVerifier(prisma).passOrThrowTrpcError(
     PermissionAction.Invite,
     userId,
-    postId,
+    appId,
   )
 
   return await prisma.share.findFirstOrThrow({
     where: {
-      postId,
+      appId,
       app: scopePostByWorkspace({}, workspaceId),
     },
     include: {

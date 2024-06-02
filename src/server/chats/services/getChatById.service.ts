@@ -25,7 +25,7 @@ export const getChatByIdService = async function (
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Use,
       userId,
-      chat.postId,
+      chat.appId,
     )
 
     return chat

@@ -11,11 +11,11 @@ export const postsGetById = protectedProcedure
   .input(zByIdInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-    const postId = input.id
+    const appId = input.id
 
     const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
-        id: postId,
+        id: appId,
       },
     })
 
@@ -25,5 +25,5 @@ export const postsGetById = protectedProcedure
       userId,
     )
 
-    return getPostByIdService(ctx.prisma, context, { postId })
+    return getPostByIdService(ctx.prisma, context, { appId })
   })

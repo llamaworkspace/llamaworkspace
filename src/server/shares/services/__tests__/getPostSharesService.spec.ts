@@ -12,13 +12,13 @@ import { faker } from '@faker-js/faker'
 import type { App, User, Workspace } from '@prisma/client'
 import { getPostSharesService } from '../getPostShares.service'
 
-const subject = async (userId: string, workspaceId: string, postId: string) => {
+const subject = async (userId: string, workspaceId: string, appId: string) => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
-  return await getPostSharesService(prisma, context, { postId })
+  return await getPostSharesService(prisma, context, { appId })
 }
 
 describe('getPostSharesService', () => {
@@ -62,7 +62,7 @@ describe('getPostSharesService', () => {
     it('returns the share with scope User', async () => {
       const share = await prisma.share.findFirstOrThrow({
         where: {
-          postId: app.id,
+          appId: app.id,
         },
       })
 
@@ -114,7 +114,7 @@ describe('getPostSharesService', () => {
     it('returns the share with scope Everybody', async () => {
       await prisma.share.update({
         where: {
-          postId: app.id,
+          appId: app.id,
         },
         data: {
           scope: ShareScope.Everybody,
@@ -135,7 +135,7 @@ describe('getPostSharesService', () => {
     it('returns the invitees', async () => {
       const share = await prisma.share.findFirstOrThrow({
         where: {
-          postId: app.id,
+          appId: app.id,
         },
       })
 

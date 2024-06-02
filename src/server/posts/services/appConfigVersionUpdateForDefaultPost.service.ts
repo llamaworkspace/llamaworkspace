@@ -38,7 +38,7 @@ export const appConfigVersionUpdateForDefaultPostService = async (
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Use,
       userId,
-      chat.postId,
+      chat.appId,
     )
 
     if (!chat.app.isDefault) {

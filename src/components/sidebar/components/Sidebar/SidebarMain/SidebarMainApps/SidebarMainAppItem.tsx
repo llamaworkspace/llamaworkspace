@@ -5,15 +5,15 @@ import { useNavigation } from '@/lib/frontend/useNavigation'
 import { SidebarMainItemShell } from './SidebarMainItemShell'
 
 interface AppItemProps {
-  postId: string
+  appId: string
   title: string | null
   emoji: string | null
 }
 
-export const SidebarMainAppItem = ({ postId, title, emoji }: AppItemProps) => {
+export const SidebarMainAppItem = ({ appId, title, emoji }: AppItemProps) => {
   const navigation = useNavigation()
   const { mutate: createChat } = useCreateChatForApp()
-  const isActive = navigation.query.post_id === postId
+  const isActive = navigation.query.post_id === appId
 
   return (
     <SidebarMainItemShell
@@ -26,7 +26,7 @@ export const SidebarMainAppItem = ({ postId, title, emoji }: AppItemProps) => {
           fallbackClassName="h-6 w-6 text-zinc-400"
         />
       }
-      onClick={() => createChat({ postId })}
+      onClick={() => createChat({ appId })}
     />
   )
 }

@@ -5,17 +5,17 @@ import { ShareScope } from '@/shared/globalTypes'
 import { ChatHeaderShareHandleUsers } from './ChatHeaderShareHandleUsers'
 import { ChatHeaderShareWhoCanAccess } from './ChatHeaderShareWhoCanAccess'
 
-export const ChatHeaderShareBody = ({ postId }: ComponentWithPostId) => {
-  const { data: share } = usePostShare(postId)
+export const ChatHeaderShareBody = ({ appId }: ComponentWithPostId) => {
+  const { data: share } = usePostShare(appId)
 
   return (
     <div>
-      <ChatHeaderShareWhoCanAccess postId={postId} />
+      <ChatHeaderShareWhoCanAccess appId={appId} />
       {share?.scope === ShareScope.User && (
         <>
           <Separator className="my-4" />
           <div className="mt-4x">
-            <ChatHeaderShareHandleUsers postId={postId} />
+            <ChatHeaderShareHandleUsers appId={appId} />
           </div>
         </>
       )}

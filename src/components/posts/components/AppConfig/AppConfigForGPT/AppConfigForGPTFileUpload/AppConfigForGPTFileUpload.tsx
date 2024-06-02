@@ -7,7 +7,7 @@ import { useState, type ChangeEvent } from 'react'
 import { AppConfigForGPTUploadedFile } from './AppConfigForGPTUploadedFile'
 import { useUploadFile } from './appConfigForGPTFileUploadHooks'
 
-export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
+export const AppConfigForGPTFileUpload = ({ appId }: { appId?: string }) => {
   const [uploadableFiles, setUploadeableFiles] = useState<
     Record<string, Asset>
   >({})
@@ -22,8 +22,8 @@ export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
     })
   }
 
-  const uploadFile = useUploadFile(onFileUploadStarted, onFileUploaded, postId)
-  const { data: appFiles } = useAppFiles(postId)
+  const uploadFile = useUploadFile(onFileUploadStarted, onFileUploaded, appId)
+  const { data: appFiles } = useAppFiles(appId)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return
@@ -34,7 +34,7 @@ export const AppConfigForGPTFileUpload = ({ postId }: { postId?: string }) => {
   return (
     <div className="space-y-2">
       <UploadedAndUploadingFiles
-        appId={postId}
+        appId={appId}
         uploadedFiles={appFiles}
         uploadableFiles={uploadableFiles}
       />

@@ -6,13 +6,13 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import type { App, User, Workspace } from '@prisma/client'
 import { updatePostSortingService } from '../updatePostSorting.service'
 
-const subject = async (workspaceId: string, userId: string, postId: string) => {
+const subject = async (workspaceId: string, userId: string, appId: string) => {
   const uowContext = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
-  return await updatePostSortingService(prisma, uowContext, postId)
+  return await updatePostSortingService(prisma, uowContext, appId)
 }
 
 describe('updatePostSortingService', () => {

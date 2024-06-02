@@ -4,7 +4,7 @@ import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
 const zInput = z.object({
-  postId: z.string(),
+  appId: z.string(),
 })
 
 const zShareTargets = z.array(
@@ -19,7 +19,7 @@ const zShareTargets = z.array(
 
 const zOutput = z.object({
   id: z.string(),
-  postId: z.string(),
+  appId: z.string(),
   scope: z.string(),
   shareTargets: zShareTargets,
 })
@@ -29,11 +29,11 @@ export const postsGetShare = protectedProcedure
   .output(zOutput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-    const { postId } = input
+    const { appId } = input
 
     const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
-        id: postId,
+        id: appId,
       },
     })
 
@@ -43,11 +43,11 @@ export const postsGetShare = protectedProcedure
       userId,
     )
 
-    const share = await getPostSharesService(ctx.prisma, context, { postId })
+    const share = await getPostSharesService(ctx.prisma, context, { appId })
 
     return {
       id: share.id,
-      postId: share.postId,
+      appId: share.appId,
       scope: share.scope,
       shareTargets: share.shareTargets.map((shareTarget) => {
         return {

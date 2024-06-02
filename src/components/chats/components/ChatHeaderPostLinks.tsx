@@ -8,30 +8,30 @@ import Link from 'next/link'
 import { ChatHeaderShare } from './ChatHeaderShare/ChatHeaderShare'
 
 interface ChatHeaderPostLinksProps {
-  postId?: string
+  appId?: string
   chatId?: string
 }
 
 export const ChatHeaderPostLinks = ({
-  postId,
+  appId,
   chatId,
 }: ChatHeaderPostLinksProps) => {
   const navigation = useNavigation()
 
   const activeTab = getTabForRoute(navigation.route)
 
-  const chatLink = postId && chatId ? `/p/${postId}/c/${chatId}` : '#'
+  const chatLink = appId && chatId ? `/p/${appId}/c/${chatId}` : '#'
   const configLink =
-    postId && chatId ? `/p/${postId}/c/${chatId}/configuration` : '#'
+    appId && chatId ? `/p/${appId}/c/${chatId}/configuration` : '#'
 
   return (
     <nav className="flex items-center gap-x-4 text-sm text-zinc-900">
-      {!postId && <Skeleton className="h-3 w-36" />}
-      {postId && (
+      {!appId && <Skeleton className="h-3 w-36" />}
+      {appId && (
         <>
           <ul className="flex items-center gap-x-4">
             <li>
-              <ChatHeaderShare postId={postId} />
+              <ChatHeaderShare appId={appId} />
             </li>
             <Link
               href={activeTab === TabEnum.Configuration ? chatLink : configLink}

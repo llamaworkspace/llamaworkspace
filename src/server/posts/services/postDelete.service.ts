@@ -9,7 +9,7 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopePostByWorkspace } from '../postUtils'
 
 interface PostDeleteServiceInputProps {
-  postId: string
+  appId: string
 }
 
 export const postDeleteService = async (
@@ -19,18 +19,18 @@ export const postDeleteService = async (
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const { userId, workspaceId } = uowContext
-    const { postId } = input
+    const { appId } = input
 
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Delete,
       userId,
-      postId,
+      appId,
     )
 
     await prisma.app.findFirstOrThrow({
       where: scopePostByWorkspace(
         {
-          id: postId,
+          id: appId,
           isDefault: false, // Keep this to avoid deleting the default app.
         },
         workspaceId,
@@ -39,7 +39,7 @@ export const postDeleteService = async (
 
     return await prisma.app.delete({
       where: {
-        id: postId,
+        id: appId,
       },
     })
   })

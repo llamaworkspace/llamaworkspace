@@ -10,7 +10,7 @@ import { TRPCError } from '@trpc/server'
 import { scopePostByWorkspace } from '../postUtils'
 
 interface PostUpdateServiceInputProps {
-  postId: string
+  appId: string
   title?: string | null
   emoji?: string | null
   gptEngine?: string
@@ -23,18 +23,18 @@ export const postUpdateService = async (
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const { userId, workspaceId } = uowContext
-    const { postId, ...payload } = input
+    const { appId, ...payload } = input
 
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Update,
       userId,
-      postId,
+      appId,
     )
 
     const app = await prisma.app.findFirstOrThrow({
       where: scopePostByWorkspace(
         {
-          id: postId,
+          id: appId,
           isDefault: false, // Keep this to avoid updating the default app.
         },
         workspaceId,
@@ -49,7 +49,7 @@ export const postUpdateService = async (
     }
     return await prisma.app.update({
       where: {
-        id: postId,
+        id: appId,
       },
       data: payload,
     })

@@ -40,13 +40,13 @@ describe('postCreateService', () => {
 
     const share = await prisma.share.findMany({
       where: {
-        postId: app.id,
+        appId: app.id,
       },
     })
     expect(share).toHaveLength(1)
     expect(share).toMatchObject([
       {
-        postId: app.id,
+        appId: app.id,
         scope: ShareScope.Private,
       },
     ])
@@ -83,7 +83,7 @@ describe('postCreateService', () => {
 
     const share = await prisma.share.findFirstOrThrow({
       where: {
-        postId: app.id,
+        appId: app.id,
       },
       include: {
         shareTargets: true,
@@ -91,7 +91,7 @@ describe('postCreateService', () => {
     })
 
     expect(share).toMatchObject({
-      postId: app.id,
+      appId: app.id,
       scope: ShareScope.Private,
       shareTargets: [
         expect.objectContaining({

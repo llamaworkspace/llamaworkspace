@@ -27,7 +27,7 @@ export const postsUpdate = protectedProcedure
       userId,
     )
     return await postUpdateService(ctx.prisma, context, {
-      postId: id,
+      appId: id,
       ...input,
     })
   })

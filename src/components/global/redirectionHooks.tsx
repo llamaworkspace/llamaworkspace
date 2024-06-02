@@ -15,14 +15,14 @@ import { useCanPerformActionForPost } from '../permissions/permissionsHooks'
  */
 export function useDefaultPageRedirection() {
   const navigation = useNavigation()
-  const postId = navigation.query?.post_id as string
+  const appId = navigation.query?.post_id as string
   const workspaceId = navigation.query?.workspace_id as string
   const { mutate: createStandaloneChat } = useCreateStandaloneChat()
   const { mutate: createChatForApp } = useCreateChatForApp()
   const { data: defaultPost } = useDefaultPost()
   const { data: canUse } = useCanPerformActionForPost(
     PermissionAction.Use,
-    postId,
+    appId,
   )
 
   const [redirectIsCalled, setRedirectIsCalled] = useState(false)
@@ -36,15 +36,15 @@ export function useDefaultPageRedirection() {
     if (!redirectIsCalled) return
     if (isExecuted) return
 
-    // When the user does not have permission access to the postId: redirect to the default
-    if (postId && isBoolean(canUse)) {
+    // When the user does not have permission access to the appId: redirect to the default
+    if (appId && isBoolean(canUse)) {
       if (!defaultPost) return
       setIsExecuted(true)
 
-      if (postId === defaultPost.id || !canUse) {
+      if (appId === defaultPost.id || !canUse) {
         void createStandaloneChat()
       } else {
-        void createChatForApp({ postId })
+        void createChatForApp({ appId })
       }
 
       return
@@ -56,7 +56,7 @@ export function useDefaultPageRedirection() {
   }, [
     redirectIsCalled,
     isExecuted,
-    postId,
+    appId,
     defaultPost,
     createStandaloneChat,
     createChatForApp,

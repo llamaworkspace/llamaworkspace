@@ -24,12 +24,12 @@ export const useDefaultPost = () => {
   )
 }
 
-export const useIsDefaultPost = (postId?: string) => {
+export const useIsDefaultPost = (appId?: string) => {
   const { data: defaultPost } = useDefaultPost()
 
-  if (!defaultPost || !postId) return
+  if (!defaultPost || !appId) return
 
-  return defaultPost.id === postId
+  return defaultPost.id === appId
 }
 
 export const useCreatePost = () => {
@@ -42,9 +42,9 @@ export const useCreatePost = () => {
       // Important: Invalidate the entire sidebar cache!
       void utils.sidebar.invalidate()
       void navigation.push(
-        `/p/:postId/configuration`,
+        `/p/:appId/configuration`,
         {
-          postId: app.id,
+          appId: app.id,
         },
         {
           backButton: false,
@@ -155,14 +155,14 @@ export const useDeletePost = () => {
   })
 }
 
-export const usePostById = (postId?: string) => {
+export const usePostById = (appId?: string) => {
   const errorHandler = useErrorHandler()
 
   return api.apps.getById.useQuery(
     {
-      id: postId!,
+      id: appId!,
     },
-    { onError: errorHandler(), enabled: !!postId },
+    { onError: errorHandler(), enabled: !!appId },
   )
 }
 
@@ -179,26 +179,26 @@ export const usePostsForAppsList = () => {
   )
 }
 
-export const usePostShare = (postId?: string) => {
+export const usePostShare = (appId?: string) => {
   const errorHandler = useErrorHandler()
 
   return api.apps.getShare.useQuery(
-    { postId: postId! },
+    { appId: appId! },
     {
       onError: errorHandler(),
-      enabled: !!postId,
+      enabled: !!appId,
     },
   )
 }
 
-export const useLatestAppConfigVersionForPost = (postId?: string) => {
+export const useLatestAppConfigVersionForPost = (appId?: string) => {
   const errorHandler = useErrorHandler()
 
   return api.apps.getLatestConfig.useQuery(
-    { postId: postId! },
+    { appId: appId! },
     {
       onError: errorHandler(),
-      enabled: !!postId,
+      enabled: !!appId,
     },
   )
 }

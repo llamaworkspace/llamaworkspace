@@ -41,7 +41,7 @@ describe('getMessagesByChatIdService', () => {
     })
     chat = await ChatFactory.create(prisma, {
       authorId: user.id,
-      postId: app.id,
+      appId: app.id,
     })
     messages = await Promise.mapSeries(
       Array.from({ length: 3 }),
@@ -81,7 +81,7 @@ describe('getMessagesByChatIdService', () => {
         workspaceId: workspace.id,
       })
       const share = await prisma.share.findFirstOrThrow({
-        where: { postId: app.id },
+        where: { appId: app.id },
       })
 
       await ShareTargetFactory.create(prisma, {

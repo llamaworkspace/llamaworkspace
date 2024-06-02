@@ -33,7 +33,7 @@ jest.mock('@/server/workspaces/services/inviteToWorkspace.service', () => {
 const subject = async (
   userId: string,
   workspaceId: string,
-  postId: string,
+  appId: string,
   email: string,
 ) => {
   const context = await createUserOnWorkspaceContext(
@@ -41,7 +41,7 @@ const subject = async (
     workspaceId,
     userId,
   )
-  return await performPostShareService(prisma, context, { postId, email })
+  return await performPostShareService(prisma, context, { appId, email })
 }
 
 describe('performPostShareService', () => {
@@ -102,7 +102,7 @@ describe('performPostShareService', () => {
       )
 
       expect(result).toMatchObject({
-        postId: app.id,
+        appId: app.id,
         scope: ShareScope.Private,
         shareTargets: [
           expect.objectContaining({
@@ -125,7 +125,7 @@ describe('performPostShareService', () => {
       await subject(invitingUser.id, workspace.id, app.id, invitedUser.email!)
 
       const shares = await prisma.share.findMany({
-        where: { postId: app.id },
+        where: { appId: app.id },
         include: { shareTargets: true },
       })
 
@@ -193,7 +193,7 @@ describe('performPostShareService', () => {
       await subject(invitingUser.id, workspace.id, app.id, fakeEmail)
 
       const shares = await prisma.share.findMany({
-        where: { postId: app.id },
+        where: { appId: app.id },
         include: { shareTargets: true },
       })
 
@@ -201,7 +201,7 @@ describe('performPostShareService', () => {
       const share = shares[0]!
 
       expect(share).toMatchObject({
-        postId: app.id,
+        appId: app.id,
         scope: ShareScope.Private,
       })
       expect(share.shareTargets).toEqual([
@@ -282,14 +282,14 @@ describe('performPostShareService', () => {
       await subject(invitingUser.id, workspace.id, app.id, invitedUser2.email!)
 
       const shares = await prisma.share.findMany({
-        where: { postId: app.id },
+        where: { appId: app.id },
         include: { shareTargets: true },
       })
 
       expect(shares).toHaveLength(1)
       expect(shares[0]!.shareTargets).toHaveLength(3)
       expect(shares[0]).toMatchObject({
-        postId: app.id,
+        appId: app.id,
         shareTargets: [
           expect.objectContaining({
             sharerId: invitingUser.id,
@@ -344,7 +344,7 @@ describe('performPostShareService', () => {
         )
 
         const shares = await prisma.share.findMany({
-          where: { postId: app.id },
+          where: { appId: app.id },
           include: { shareTargets: true },
         })
 
@@ -375,7 +375,7 @@ describe('performPostShareService', () => {
         )
 
         const shares = await prisma.share.findMany({
-          where: { postId: app.id },
+          where: { appId: app.id },
           include: { shareTargets: true },
         })
 

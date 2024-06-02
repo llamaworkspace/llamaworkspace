@@ -14,26 +14,26 @@ import { createUserOnWorkspaceContext } from '../auth/userOnWorkspaceContext'
 export class PermissionsVerifier {
   constructor(private prisma: PrismaClientOrTrxClient) {}
 
-  async call(action: PermissionAction, userId: string, postId: string) {
-    const scope = await this.getShareScope(postId)
+  async call(action: PermissionAction, userId: string, appId: string) {
+    const scope = await this.getShareScope(appId)
     const app = await this.prisma.app.findFirstOrThrow({
       where: {
-        id: postId,
+        id: appId,
       },
     })
 
     await this.userBelongsWorkspaceOrThrow(app.workspaceId, userId)
     // return await Promise.resolve(true)
     if (scope === ShareScope.Everybody) {
-      return await this.handleEverybodyScope(userId, postId, action)
+      return await this.handleEverybodyScope(userId, appId, action)
     }
 
     if (scope === ShareScope.Private) {
-      return await this.handlePrivateScope(userId, postId)
+      return await this.handlePrivateScope(userId, appId)
     }
 
     if (scope === ShareScope.User) {
-      return await this.handleUserScope(userId, postId, action)
+      return await this.handleUserScope(userId, appId, action)
     }
 
     throw new TRPCError({
@@ -45,9 +45,9 @@ export class PermissionsVerifier {
   async passOrThrowTrpcError(
     action: PermissionAction,
     userId: string,
-    postId: string,
+    appId: string,
   ) {
-    const result = await this.call(action, userId, postId)
+    const result = await this.call(action, userId, appId)
 
     if (!result) {
       throw new TRPCError({
@@ -60,12 +60,12 @@ export class PermissionsVerifier {
 
   async getUserAccessLevelToPost(
     userId: string,
-    postId: string,
+    appId: string,
   ): Promise<UserAccessLevel | null> {
     const shareTargets = await this.prisma.shareTarget.findMany({
       where: {
         share: {
-          postId,
+          appId,
         },
         userId,
       },
@@ -90,10 +90,10 @@ export class PermissionsVerifier {
     return getEnumByValue(UserAccessLevel, shareTarget.accessLevel)
   }
 
-  private async getShareScope(postId: string) {
+  private async getShareScope(appId: string) {
     const share = await this.prisma.share.findFirstOrThrow({
       where: {
-        postId,
+        appId,
       },
     })
 
@@ -102,22 +102,22 @@ export class PermissionsVerifier {
 
   private async handleEverybodyScope(
     userId: string,
-    postId: string,
+    appId: string,
     action: PermissionAction,
   ) {
     // If the userId is the owner of the post, then he can do anything
     // in other words: If they pass the handleUserScope test, then they can do anything
 
-    const privateScopeResponse = await this.handlePrivateScope(userId, postId)
+    const privateScopeResponse = await this.handlePrivateScope(userId, appId)
     if (privateScopeResponse) return true
 
     return canForAccessLevel(action, UserAccessLevel.EditWithoutInvite)
   }
 
-  private async handlePrivateScope(userId: string, postId: string) {
+  private async handlePrivateScope(userId: string, appId: string) {
     const app = await this.prisma.app.findFirstOrThrow({
       where: {
-        id: postId,
+        id: appId,
       },
     })
     return app.userId === userId
@@ -125,10 +125,10 @@ export class PermissionsVerifier {
 
   private async handleUserScope(
     userId: string,
-    postId: string,
+    appId: string,
     action: PermissionAction,
   ) {
-    const userAccessLevel = await this.getUserAccessLevelToPost(userId, postId)
+    const userAccessLevel = await this.getUserAccessLevelToPost(userId, appId)
     if (!userAccessLevel) {
       return false
     }

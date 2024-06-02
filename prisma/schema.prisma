@@ -175,11 +175,11 @@ model AssetsOnApps {
 
 model Share {
     id           String        @id @default(cuid())
-    postId       String        @unique
+    appId        String        @unique
     scope        String
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt
-    app          App           @relation(fields: [postId], references: [id], onDelete: Cascade)
+    app          App           @relation(fields: [appId], references: [id], onDelete: Cascade)
     shareTargets ShareTarget[]
 }
 
@@ -204,9 +204,9 @@ model ShareTarget {
 
 model Chat {
     id                 String            @id @default(cuid())
-    postId             String
+    appId              String
     title              String?
-    app                App               @relation(fields: [postId], references: [id], onDelete: Cascade)
+    app                App               @relation(fields: [appId], references: [id], onDelete: Cascade)
     appConfigVersionId String?
     appConfigVersion   AppConfigVersion? @relation(fields: [appConfigVersionId], references: [id], onDelete: Cascade)
     authorId           String?

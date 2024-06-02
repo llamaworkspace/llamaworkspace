@@ -7,16 +7,12 @@ export default function AppConfigPage() {
   const navigation = useNavigation()
   const query = navigation.query
 
-  const postId = query.post_id as string | undefined
+  const appId = query.post_id as string | undefined
   const chatId = query.chat_id as string | undefined
 
   return (
-    <MainLayout
-      postId={postId}
-      chatId={chatId}
-      variant={HeaderVariants.Chatbot}
-    >
-      <AppConfig postId={postId} />
+    <MainLayout appId={appId} chatId={chatId} variant={HeaderVariants.Chatbot}>
+      <AppConfig appId={appId} />
     </MainLayout>
   )
 }

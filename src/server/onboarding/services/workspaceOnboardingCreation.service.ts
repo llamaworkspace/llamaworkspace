@@ -17,7 +17,7 @@ export const workspaceOnboardingCreationService = async (
 
     await prisma.share.update({
       where: {
-        postId: demoPost.id,
+        appId: demoPost.id,
       },
       data: {
         scope: ShareScope.Everybody,
