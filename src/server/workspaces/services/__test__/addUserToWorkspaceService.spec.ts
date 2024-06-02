@@ -1,11 +1,11 @@
+import { createDefaultPostService } from '@/server/apps/services/createDefaultPost.service'
 import { prisma } from '@/server/db'
-import { createDefaultPostService } from '@/server/posts/services/createDefaultPost.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import type { User, Workspace } from '@prisma/client'
 import { addUserToWorkspaceService } from '../addUserToWorkspace.service'
 
-jest.mock('@/server/posts/services/createDefaultPost.service')
+jest.mock('@/server/apps/services/createDefaultPost.service')
 
 const subject = async (workspaceId: string, invitedUserId: string) => {
   return await addUserToWorkspaceService(prisma, {

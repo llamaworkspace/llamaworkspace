@@ -1,4 +1,4 @@
-import { useDefaultPost } from '@/components/posts/postsHooks'
+import { useDefaultPost } from '@/components/apps/postsHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { useCallback, useEffect, useState } from 'react'

@@ -1,7 +1,7 @@
+import * as updatePostSortingServiceWrapper from '@/server/apps/services/updatePostSorting.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import * as updatePostSortingServiceWrapper from '@/server/posts/services/updatePostSorting.service'
 import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
@@ -9,9 +9,9 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
 import { createChatService } from '../createChat.service'
 
-jest.mock('@/server/posts/services/updatePostSorting.service', () => {
+jest.mock('@/server/apps/services/updatePostSorting.service', () => {
   const original = jest.requireActual(
-    '@/server/posts/services/updatePostSorting.service',
+    '@/server/apps/services/updatePostSorting.service',
   ) as unknown as typeof updatePostSortingServiceWrapper
 
   return {

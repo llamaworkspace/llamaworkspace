@@ -1,17 +1,14 @@
+import { postDeleteService } from '@/server/apps/services/postDelete.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { postUpdateService } from '@/server/posts/services/postUpdate.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
-const zUpdateInput = z.object({
+const zInput = z.object({
   id: z.string(),
-  title: z.optional(z.nullable(z.string())),
-  emoji: z.optional(z.nullable(z.string())),
-  gptEngine: z.optional(z.string()),
 })
 
-export const postsUpdate = protectedProcedure
-  .input(zUpdateInput)
+export const postsDelete = protectedProcedure
+  .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
     const { id } = input
@@ -26,8 +23,6 @@ export const postsUpdate = protectedProcedure
       app.workspaceId,
       userId,
     )
-    return await postUpdateService(ctx.prisma, context, {
-      appId: id,
-      ...input,
-    })
+
+    return await postDeleteService(ctx.prisma, context, { appId: id })
   })

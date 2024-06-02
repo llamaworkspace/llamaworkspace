@@ -1,4 +1,4 @@
-import { AppGptEngine } from '@/components/posts/postsTypes'
+import { AppGptEngine } from '@/components/apps/postsTypes'
 import {
   SelectField,
   type SelectFieldProps,

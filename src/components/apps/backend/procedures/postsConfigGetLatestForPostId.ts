@@ -1,5 +1,5 @@
+import { getLatestAppConfigForPostIdService } from '@/server/apps/services/getLatestAppConfigForPostId.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getLatestAppConfigForPostIdService } from '@/server/posts/services/getLatestAppConfigForPostId.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 

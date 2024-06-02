@@ -1,4 +1,4 @@
-import { AppGptEngine } from '@/components/posts/postsTypes'
+import { AppGptEngine } from '@/components/apps/postsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'

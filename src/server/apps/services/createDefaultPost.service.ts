@@ -1,4 +1,4 @@
-import { AppGptEngine } from '@/components/posts/postsTypes'
+import { AppGptEngine } from '@/components/apps/postsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'

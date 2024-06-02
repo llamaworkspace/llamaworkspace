@@ -1,5 +1,5 @@
+import type { ComponentWithPostId } from '@/components/apps/postsTypes'
 import { useCanPerformActionForPost } from '@/components/permissions/permissionsHooks'
-import type { ComponentWithPostId } from '@/components/posts/postsTypes'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

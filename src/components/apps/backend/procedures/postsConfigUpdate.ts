@@ -1,5 +1,5 @@
+import { appConfigVersionUpdateService } from '@/server/apps/services/appConfigVersionUpdate.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { appConfigVersionUpdateService } from '@/server/posts/services/appConfigVersionUpdate.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 

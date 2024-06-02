@@ -1,15 +1,16 @@
+import { postCreateService } from '@/server/apps/services/postCreate.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getPostsListService } from '@/server/posts/services/getPostsList.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
-const zInput = z.object({
+const zCreateInput = z.object({
   workspaceId: z.string(),
+  title: z.optional(z.nullable(z.string())),
 })
 
-export const postsGetList = protectedProcedure
-  .input(zInput)
-  .query(async ({ ctx, input }) => {
+export const postsCreate = protectedProcedure
+  .input(zCreateInput)
+  .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
     const context = await createUserOnWorkspaceContext(
@@ -18,7 +19,7 @@ export const postsGetList = protectedProcedure
       userId,
     )
 
-    return await getPostsListService(ctx.prisma, context, {
-      includeLatestConfig: true,
+    return await postCreateService(ctx.prisma, context, {
+      title: input.title ?? undefined,
     })
   })

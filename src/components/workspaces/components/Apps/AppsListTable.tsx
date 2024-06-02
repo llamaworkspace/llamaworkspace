@@ -1,7 +1,7 @@
 import {
   useDeletePost,
   usePostsForAppsList,
-} from '@/components/posts/postsHooks'
+} from '@/components/apps/postsHooks'
 import { DeleteConfirmationDialog } from '@/components/ui/DeleteConfirmationDialog'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useState } from 'react'

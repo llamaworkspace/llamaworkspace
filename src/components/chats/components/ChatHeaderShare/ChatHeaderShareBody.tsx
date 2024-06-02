@@ -1,5 +1,5 @@
-import { usePostShare } from '@/components/posts/postsHooks'
-import type { ComponentWithPostId } from '@/components/posts/postsTypes'
+import { usePostShare } from '@/components/apps/postsHooks'
+import type { ComponentWithPostId } from '@/components/apps/postsTypes'
 import { Separator } from '@/components/ui/separator'
 import { ShareScope } from '@/shared/globalTypes'
 import { ChatHeaderShareHandleUsers } from './ChatHeaderShareHandleUsers'

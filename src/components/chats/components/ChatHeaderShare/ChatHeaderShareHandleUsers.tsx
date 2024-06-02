@@ -1,8 +1,8 @@
 import {
   usePostPerformInvite,
   usePostShare,
-} from '@/components/posts/postsHooks'
-import type { ComponentWithPostId } from '@/components/posts/postsTypes'
+} from '@/components/apps/postsHooks'
+import type { ComponentWithPostId } from '@/components/apps/postsTypes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useSelf } from '@/components/users/usersHooks'

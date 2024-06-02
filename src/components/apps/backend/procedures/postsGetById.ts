@@ -1,20 +1,21 @@
+import { getPostByIdService } from '@/server/apps/services/getPostById.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { postDeleteService } from '@/server/posts/services/postDelete.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
-const zInput = z.object({
+const zByIdInput = z.object({
   id: z.string(),
 })
 
-export const postsDelete = protectedProcedure
-  .input(zInput)
-  .mutation(async ({ ctx, input }) => {
+export const postsGetById = protectedProcedure
+  .input(zByIdInput)
+  .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-    const { id } = input
+    const appId = input.id
+
     const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
-        id,
+        id: appId,
       },
     })
 
@@ -24,5 +25,5 @@ export const postsDelete = protectedProcedure
       userId,
     )
 
-    return await postDeleteService(ctx.prisma, context, { appId: id })
+    return getPostByIdService(ctx.prisma, context, { appId })
   })

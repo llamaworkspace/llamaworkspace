@@ -1,4 +1,4 @@
-import { useCreatePost } from '@/components/posts/postsHooks'
+import { useCreatePost } from '@/components/apps/postsHooks'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 

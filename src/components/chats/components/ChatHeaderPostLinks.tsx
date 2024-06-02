@@ -1,4 +1,4 @@
-import { TabEnum, getTabForRoute } from '@/components/posts/postsNavigation'
+import { TabEnum, getTabForRoute } from '@/components/apps/postsNavigation'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { cn } from '@/lib/utils'

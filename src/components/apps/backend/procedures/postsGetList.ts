@@ -1,5 +1,5 @@
+import { getPostsListService } from '@/server/apps/services/getPostsList.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getDefaultPostService } from '@/server/posts/services/getDefaultPost.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -7,7 +7,7 @@ const zInput = z.object({
   workspaceId: z.string(),
 })
 
-export const postsGetDefault = protectedProcedure
+export const postsGetList = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
@@ -18,5 +18,7 @@ export const postsGetDefault = protectedProcedure
       userId,
     )
 
-    return await getDefaultPostService(ctx.prisma, context)
+    return await getPostsListService(ctx.prisma, context, {
+      includeLatestConfig: true,
+    })
   })

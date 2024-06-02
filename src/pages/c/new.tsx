@@ -1,10 +1,10 @@
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
+import { getDefaultPostService } from '@/server/apps/services/getDefaultPost.service'
 import { getServerAuthSession } from '@/server/auth/nextauth'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { createChatService } from '@/server/chats/services/createChat.service'
 import { prisma } from '@/server/db'
-import { getDefaultPostService } from '@/server/posts/services/getDefaultPost.service'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async (
