@@ -1,9 +1,9 @@
 import { AppConfigForGPT } from './AppConfigForGPT/AppConfigForGPT'
 
 interface AppConfigProps {
-  postId?: string
+  appId?: string
 }
 
-export function AppConfig({ postId }: AppConfigProps) {
-  return <AppConfigForGPT postId={postId} />
+export function AppConfig({ appId }: AppConfigProps) {
+  return <AppConfigForGPT appId={appId} />
 }

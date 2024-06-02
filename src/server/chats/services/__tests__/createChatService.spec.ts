@@ -23,13 +23,13 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-const subject = async (workspaceId: string, userId: string, postId: string) => {
+const subject = async (workspaceId: string, userId: string, appId: string) => {
   const uowContext = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
-  return await createChatService(prisma, uowContext, { postId })
+  return await createChatService(prisma, uowContext, { appId })
 }
 
 describe('createChatService', () => {

@@ -17,9 +17,9 @@ jest.mock('@/server/shares/services/getPostShares.service.ts', () => {
   }
 })
 
-const subject = async (userId: string, postId: string) => {
+const subject = async (userId: string, appId: string) => {
   const { caller } = trpcContextSetupHelper(prisma, userId)
-  return await caller.apps.getShare({ postId })
+  return await caller.apps.getShare({ appId })
 }
 
 describe('postsGetShares', () => {
@@ -52,7 +52,7 @@ describe('postsGetShares', () => {
 
     expect(response).toEqual(
       expect.objectContaining({
-        postId: app.id,
+        appId: app.id,
         scope: ShareScope.Private,
       }),
     )

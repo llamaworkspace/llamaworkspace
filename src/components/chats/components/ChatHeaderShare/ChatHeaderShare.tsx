@@ -17,10 +17,10 @@ import {
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { ChatHeaderShareBody } from './ChatHeaderShareBody'
 
-export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
+export const ChatHeaderShare = ({ appId }: ComponentWithPostId) => {
   const { data: canInvite, isLoading } = useCanPerformActionForPost(
     PermissionAction.Invite,
-    postId,
+    appId,
   )
 
   const tooltipOpenBlocker = isLoading ? false : undefined
@@ -56,7 +56,7 @@ export const ChatHeaderShare = ({ postId }: ComponentWithPostId) => {
         </DialogHeader>
         <div className="-mx-3 max-h-[400px] overflow-y-auto ">
           <div className="mx-3">
-            <ChatHeaderShareBody postId={postId} />
+            <ChatHeaderShareBody appId={appId} />
           </div>
         </div>
       </DialogContent>

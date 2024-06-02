@@ -19,7 +19,7 @@ const USER_ALREADY_INVITED_ERROR = 'You have already invited this user'
 
 interface PerformPostShareInputPayload {
   email: string
-  postId: string
+  appId: string
 }
 
 export const performPostShareService = async (
@@ -28,13 +28,13 @@ export const performPostShareService = async (
   payload: PerformPostShareInputPayload,
 ) => {
   const { userId: invitingUserId } = uowContext
-  const { email, postId } = payload
+  const { email, appId } = payload
 
   return await prismaAsTrx(prisma, async (prisma) => {
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Invite,
       invitingUserId,
-      postId,
+      appId,
     )
 
     const invitedUser = await prisma.user.findFirst({
@@ -48,7 +48,7 @@ export const performPostShareService = async (
         prisma,
         uowContext,
         email,
-        postId,
+        appId,
       )
     }
 
@@ -57,7 +57,7 @@ export const performPostShareService = async (
       invitingUserId,
       invitedUser.id,
       uowContext,
-      postId,
+      appId,
     )
   })
 }
@@ -66,7 +66,7 @@ const handleInvitedUserDoesNotExist = async (
   prisma: PrismaTrxClient,
   uowContext: UserOnWorkspaceContext,
   email: string,
-  postId: string,
+  appId: string,
 ) => {
   const { workspaceId, userId: invitingUserId } = uowContext
   // Check if already invited to the workspace
@@ -98,7 +98,7 @@ const handleInvitedUserDoesNotExist = async (
 
   const shareForInvitedUser = await prisma.share.findFirst({
     where: {
-      postId,
+      appId,
       shareTargets: {
         some: {
           workspaceInviteId: workspaceInvite.id,
@@ -114,7 +114,7 @@ const handleInvitedUserDoesNotExist = async (
     })
   }
 
-  const share = await getShare(prisma, postId)
+  const share = await getShare(prisma, appId)
 
   await prisma.shareTarget.create({
     data: {
@@ -135,12 +135,12 @@ const handleInvitedUserDoesNotExist = async (
     invitingUserEmail: invitingUser.email!,
     invitingUserName: invitingUser.name,
     invitedUserEmail: email,
-    postId,
+    appId,
     userExistsInDb: false,
     token: workspaceInvite.token,
   })
 
-  return await getPostSharesService(prisma, uowContext, { postId })
+  return await getPostSharesService(prisma, uowContext, { appId })
 }
 
 const handleInvitedUserExists = async (
@@ -148,7 +148,7 @@ const handleInvitedUserExists = async (
   invitingUserId: string,
   invitedUserId: string,
   uowContext: UserOnWorkspaceContext,
-  postId: string,
+  appId: string,
 ) => {
   if (invitingUserId === invitedUserId) {
     throw new TRPCError({
@@ -158,7 +158,7 @@ const handleInvitedUserExists = async (
   }
   const shareForInvitedUser = await prisma.share.findFirst({
     where: {
-      postId,
+      appId,
       shareTargets: {
         some: {
           userId: invitedUserId,
@@ -174,7 +174,7 @@ const handleInvitedUserExists = async (
     })
   }
 
-  const share = await getShare(prisma, postId)
+  const share = await getShare(prisma, appId)
 
   await prisma.shareTarget.create({
     data: {
@@ -202,17 +202,17 @@ const handleInvitedUserExists = async (
     invitingUserEmail: invitingUser.email!,
     invitingUserName: invitingUser.name,
     invitedUserEmail: invitedUser.email!,
-    postId,
+    appId,
     userExistsInDb: true,
   })
 
-  return await getPostSharesService(prisma, uowContext, { postId })
+  return await getPostSharesService(prisma, uowContext, { appId })
 }
 
-const getShare = async (prisma: PrismaTrxClient, postId: string) => {
+const getShare = async (prisma: PrismaTrxClient, appId: string) => {
   return await prisma.share.findFirstOrThrow({
     where: {
-      postId,
+      appId,
     },
   })
 }
@@ -221,7 +221,7 @@ interface SendShareNotificationEmailPayload {
   invitingUserEmail: string
   invitingUserName: string | null
   invitedUserEmail: string
-  postId: string
+  appId: string
   userExistsInDb: boolean
   token?: string
 }
@@ -232,14 +232,14 @@ const sendShareNotificationEmail = async (
     invitingUserEmail,
     invitingUserName,
     invitedUserEmail,
-    postId,
+    appId,
     userExistsInDb,
     token,
   }: SendShareNotificationEmailPayload,
 ) => {
   const app = await prisma.app.findUniqueOrThrow({
     where: {
-      id: postId,
+      id: appId,
     },
     select: {
       title: true,
@@ -248,8 +248,7 @@ const sendShareNotificationEmail = async (
 
   const invitingUserNameOrEmail = invitingUserName ?? invitingUserEmail
   const subject = `${invitingUserNameOrEmail} has shared you access to a GPT`
-  const postUrl =
-    userExistsInDb && `${env.NEXT_PUBLIC_FRONTEND_URL}/p/${postId}`
+  const postUrl = userExistsInDb && `${env.NEXT_PUBLIC_FRONTEND_URL}/p/${appId}`
   const workspaceInviteUrl =
     !userExistsInDb && `${env.NEXT_PUBLIC_FRONTEND_URL}/invite/${token}`
 

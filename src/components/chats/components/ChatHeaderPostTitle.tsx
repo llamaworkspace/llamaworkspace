@@ -4,8 +4,8 @@ import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'
 
-export const ChatHeaderPostTitle = ({ postId }: { postId?: string }) => {
-  const { data: app, isLoading } = usePostById(postId)
+export const ChatHeaderPostTitle = ({ appId }: { appId?: string }) => {
+  const { data: app, isLoading } = usePostById(appId)
 
   if (isLoading) {
     return <Skeleton className="h-5 w-96" />

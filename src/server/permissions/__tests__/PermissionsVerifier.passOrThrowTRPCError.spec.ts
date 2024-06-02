@@ -45,7 +45,7 @@ describe('PermissionsVerifier.passOrThrowTrpcError', () => {
       const result = await permissionsVerifier.passOrThrowTrpcError(
         PermissionAction.Update,
         'userId',
-        'postId',
+        'appId',
       )
 
       expect(permissionsVerifier.call).toHaveBeenCalled()
@@ -62,7 +62,7 @@ describe('PermissionsVerifier.passOrThrowTrpcError', () => {
         permissionsVerifier.passOrThrowTrpcError(
           PermissionAction.Update,
           'userId',
-          'postId',
+          'appId',
         ),
       ).rejects.toThrow(
         'You do not have enough permissions to perform this action',

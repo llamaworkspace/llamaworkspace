@@ -37,7 +37,7 @@ describe('getChatByIdService', () => {
     })
     chat = await ChatFactory.create(prisma, {
       authorId: user.id,
-      postId: app.id,
+      appId: app.id,
     })
   })
 

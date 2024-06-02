@@ -9,7 +9,7 @@ import { scopePostByWorkspace } from '../postUtils'
 export const updatePostSortingService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  postIdToPushToPosition1: string,
+  appIdToPushToPosition1: string,
 ) => {
   const { workspaceId, userId } = uowContext
 
@@ -17,7 +17,7 @@ export const updatePostSortingService = async (
     await prisma.app.findFirstOrThrow({
       where: scopePostByWorkspace(
         {
-          id: postIdToPushToPosition1,
+          id: appIdToPushToPosition1,
         },
         workspaceId,
       ),
@@ -26,7 +26,7 @@ export const updatePostSortingService = async (
     const existingPostsWithPosition = await prisma.appsOnUsers.findFirst({
       where: {
         userId,
-        appId: postIdToPushToPosition1,
+        appId: appIdToPushToPosition1,
         position: {
           not: null,
         },
@@ -42,7 +42,7 @@ export const updatePostSortingService = async (
 
     await nullifyPostsWithPositionGte5(prisma, userId)
     await updateExistingPositions(prisma, userId)
-    await pushPostToPosition1(prisma, userId, postIdToPushToPosition1)
+    await pushPostToPosition1(prisma, userId, appIdToPushToPosition1)
   })
 }
 

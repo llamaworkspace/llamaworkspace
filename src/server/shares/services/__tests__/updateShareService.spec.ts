@@ -43,7 +43,7 @@ describe('updateShareService', () => {
       workspaceId: workspace.id,
     })
     share = await prisma.share.findFirstOrThrow({
-      where: { postId: app.id },
+      where: { appId: app.id },
     })
   })
 

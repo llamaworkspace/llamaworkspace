@@ -28,7 +28,7 @@ export const getSortedPosts = (
   const sortedPostIdsSet = new Set(sortedPostIds)
 
   const sortedPosts = sortedPostIds
-    .map((postId) => apps.find((app) => app.id === postId))
+    .map((appId) => apps.find((app) => app.id === appId))
     .filter((app): app is PostForSidebar => !!app)
   const unsortedPosts = apps.filter((app) => !sortedPostIdsSet.has(app.id))
 

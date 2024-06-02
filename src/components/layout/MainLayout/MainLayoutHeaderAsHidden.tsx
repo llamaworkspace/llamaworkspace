@@ -1,7 +1,7 @@
 import { useGlobalState } from '../../global/globalState'
 import { SidebarToggleIcon } from '../../sidebar/components/Sidebar/SidebarToggleIcon'
 
-export function MainLayoutHeaderAsHidden({ postId }: { postId?: string }) {
+export function MainLayoutHeaderAsHidden({ appId }: { appId?: string }) {
   const { toggleMobileSidebar } = useGlobalState()
 
   return (

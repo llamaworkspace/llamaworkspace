@@ -16,8 +16,8 @@ export const AppsListTable = () => {
   const { mutateAsync: deletePost } = useDeletePost()
   const successToast = useSuccessToast()
 
-  const handlePostDeletetionRequest = (postId: string) => {
-    setDeleteModalTargetPostId(postId)
+  const handlePostDeletetionRequest = (appId: string) => {
+    setDeleteModalTargetPostId(appId)
   }
 
   const handlePostDelete = () => {

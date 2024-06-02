@@ -40,7 +40,7 @@ export const updateShareAccessLevelService = async (
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Invite,
       userId,
-      share.postId,
+      share.appId,
     )
 
     const shareTarget = await prisma.shareTarget.findFirstOrThrow({

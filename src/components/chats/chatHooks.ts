@@ -34,8 +34,8 @@ export const useCreateChatForApp = () => {
     onError: errorHandler(),
     onSuccess: (chat) => {
       void utils.sidebar.invalidate()
-      void navigation.push(`/p/:postId/c/:chatId`, {
-        postId: chat.postId,
+      void navigation.push(`/p/:appId/c/:chatId`, {
+        appId: chat.appId,
         chatId: chat.id,
       })
     },
@@ -66,7 +66,7 @@ export const useCreateStandaloneChat = () => {
     mutate: useCallback(
       (options?: MutateArgs[1]) => {
         if (!defaultPostId) return
-        mutate({ postId: defaultPostId }, options)
+        mutate({ appId: defaultPostId }, options)
       },
       [defaultPostId, mutate],
     ),

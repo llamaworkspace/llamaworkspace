@@ -24,5 +24,5 @@ export const postsDelete = protectedProcedure
       userId,
     )
 
-    return await postDeleteService(ctx.prisma, context, { postId: id })
+    return await postDeleteService(ctx.prisma, context, { appId: id })
   })

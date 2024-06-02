@@ -3,7 +3,7 @@ import type { PrismaClient, Share } from '@prisma/client'
 import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 type ShareFactoryFields = {
-  postId: string
+  appId: string
 } & Partial<Share>
 
 type ShareTargetFactoryFields = {

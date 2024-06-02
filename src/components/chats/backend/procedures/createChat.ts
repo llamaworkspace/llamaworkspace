@@ -4,19 +4,19 @@ import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
 const zInput = z.object({
-  postId: z.string(),
+  appId: z.string(),
 })
 
 export const createChat = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
-    const { postId } = input
+    const { appId } = input
 
     const userId = ctx.session.user.id
 
     const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
-        id: postId,
+        id: appId,
       },
     })
 

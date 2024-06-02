@@ -11,7 +11,7 @@ import { ChatMessageInitial } from './ChatMessageInitial'
 import { Chatbox } from './Chatbox'
 
 interface ChatProps {
-  postId?: string
+  appId?: string
   chatId?: string
 }
 
@@ -25,11 +25,11 @@ const scrollToBottom = (
   element.scrollIntoView({ behavior: speed })
 }
 
-export function Chat({ postId, chatId }: ChatProps) {
+export function Chat({ appId, chatId }: ChatProps) {
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
   const { data: messages } = useMessages(chatId)
-  const isDefaultPost = useIsDefaultPost(postId)
+  const isDefaultPost = useIsDefaultPost(appId)
   const [lastBlockHeight, setLastBlockHeight] = useState(LAST_BLOCK_MIN_HEIGHT)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -103,7 +103,7 @@ export function Chat({ postId, chatId }: ChatProps) {
 
   // If no messages, never show the arrow. For example, in chatbots intro message: Do not show
   const showScrollToBottomIcon = !!(messages?.length && !autoScrollEnabledState)
-  const refreshKey = `${postId}-${chatId}`
+  const refreshKey = `${appId}-${chatId}`
 
   return (
     <div
@@ -150,7 +150,7 @@ export function Chat({ postId, chatId }: ChatProps) {
           )}
         >
           <Chatbox
-            postId={postId}
+            appId={appId}
             chatId={chatId}
             stableOnChatboxHeightChange={handleChatboxHeightChangeStable}
             onChatSubmit={performSmoothScrollToBottom}

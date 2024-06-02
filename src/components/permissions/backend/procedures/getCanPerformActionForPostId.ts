@@ -4,7 +4,7 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { z } from 'zod'
 
 const zInput = z.object({
-  postId: z.string(),
+  appId: z.string(),
   action: z.nativeEnum(PermissionAction),
 })
 
@@ -13,10 +13,6 @@ export const getCanPerformActionForPostId = protectedProcedure
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
 
-    const { postId, action } = input
-    return await new PermissionsVerifier(ctx.prisma).call(
-      action,
-      userId,
-      postId,
-    )
+    const { appId, action } = input
+    return await new PermissionsVerifier(ctx.prisma).call(action, userId, appId)
   })

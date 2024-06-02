@@ -11,7 +11,7 @@ import { getChatsService } from '../getChats.service'
 const subject = async (
   userId: string,
   workspaceId: string,
-  postId?: string,
+  appId?: string,
   excludeEmpty?: boolean,
 ) => {
   const context = await createUserOnWorkspaceContext(
@@ -20,10 +20,10 @@ const subject = async (
     userId,
   )
 
-  const payload: { postId?: string; excludeEmpty?: boolean } = {}
+  const payload: { appId?: string; excludeEmpty?: boolean } = {}
 
-  if (postId) {
-    payload.postId = postId
+  if (appId) {
+    payload.appId = appId
   }
 
   if (excludeEmpty) {
@@ -60,17 +60,17 @@ describe('getChatsService', () => {
     ;[chat1, chat2, chat3] = await Promise.all([
       ChatFactory.create(prisma, {
         authorId: user.id,
-        postId: post1.id,
+        appId: post1.id,
       }),
 
       ChatFactory.create(prisma, {
         authorId: user.id,
-        postId: post1.id,
+        appId: post1.id,
       }),
 
       ChatFactory.create(prisma, {
         authorId: user.id,
-        postId: post2.id,
+        appId: post2.id,
       }),
     ])
 
@@ -99,7 +99,7 @@ describe('getChatsService', () => {
     expect(returnedIds).toEqual(expect.arrayContaining(expectedIds))
   })
 
-  describe('when postId is passed', () => {
+  describe('when appId is passed', () => {
     it('returns the chats for the post', async () => {
       const result = await subject(user.id, workspace.id, post1.id)
       const expectedIds = [chat1.id, chat2.id]
@@ -116,7 +116,7 @@ describe('getChatsService', () => {
     beforeEach(async () => {
       chat4 = await ChatFactory.create(prisma, {
         authorId: user.id,
-        postId: post1.id,
+        appId: post1.id,
       })
     })
 

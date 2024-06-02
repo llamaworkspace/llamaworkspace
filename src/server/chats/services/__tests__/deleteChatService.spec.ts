@@ -37,7 +37,7 @@ describe('deleteChatService', () => {
     })
 
     chat = await ChatFactory.create(prisma, {
-      postId: app.id,
+      appId: app.id,
       authorId: user.id,
     })
   })

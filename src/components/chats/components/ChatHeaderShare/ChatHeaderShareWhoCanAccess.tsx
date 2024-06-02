@@ -18,14 +18,14 @@ const generalAccessOptions = [
 ]
 
 interface ChatHeaderShareWhoCanAccessProps {
-  postId: string
+  appId: string
 }
 
 export const ChatHeaderShareWhoCanAccess = ({
-  postId,
+  appId,
 }: ChatHeaderShareWhoCanAccessProps) => {
   const toast = useSuccessToast()
-  const { data: share } = usePostShare(postId)
+  const { data: share } = usePostShare(appId)
 
   const { mutateAsync: updateShare } = usePostShareUpdate()
 

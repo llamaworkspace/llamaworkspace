@@ -12,7 +12,7 @@ import { postUpdateService } from '../postUpdate.service'
 const subject = async (
   workspaceId: string,
   userId: string,
-  postId: string,
+  appId: string,
   payload: {
     title?: string | null
     emoji?: string | null
@@ -25,7 +25,7 @@ const subject = async (
     userId,
   )
 
-  return await postUpdateService(prisma, uowContext, { ...payload, postId })
+  return await postUpdateService(prisma, uowContext, { ...payload, appId })
 }
 
 describe('postUpdateService', () => {
@@ -79,7 +79,7 @@ describe('postUpdateService', () => {
     )
   })
 
-  describe('when the postId is the defaultPost for the workspace', () => {
+  describe('when the appId is the defaultPost for the workspace', () => {
     let defaultPost: App
 
     beforeEach(async () => {

@@ -15,12 +15,12 @@ Act as a public speaker and write compelling speeches that can be used to inspir
 `
 
 interface AppConfigForGPTSettingsProps {
-  postId?: string
+  appId?: string
   disabled?: boolean
 }
 
 export const AppConfigForGPTSettings = ({
-  postId,
+  appId,
   disabled = false,
 }: AppConfigForGPTSettingsProps) => {
   const navigation = useNavigation()
@@ -97,7 +97,7 @@ export const AppConfigForGPTSettings = ({
         />
       </div>
       <div>
-        <AppConfigForGPTFileUpload postId={postId} />
+        <AppConfigForGPTFileUpload appId={appId} />
       </div>
     </>
   )

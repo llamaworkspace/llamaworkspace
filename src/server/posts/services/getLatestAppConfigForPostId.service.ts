@@ -6,7 +6,7 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopePostByWorkspace } from '../postUtils'
 
 interface LatestAppConfigForPostInputProps {
-  postId: string
+  appId: string
 }
 
 export const getLatestAppConfigForPostIdService = async (
@@ -15,17 +15,17 @@ export const getLatestAppConfigForPostIdService = async (
   input: LatestAppConfigForPostInputProps,
 ) => {
   const { userId, workspaceId } = uowContext
-  const { postId } = input
+  const { appId } = input
 
   await new PermissionsVerifier(prisma).passOrThrowTrpcError(
     PermissionAction.Use,
     userId,
-    postId,
+    appId,
   )
 
   const appConfig = await prisma.appConfigVersion.findFirstOrThrow({
     where: {
-      appId: postId,
+      appId: appId,
       app: scopePostByWorkspace({}, workspaceId),
     },
     orderBy: {

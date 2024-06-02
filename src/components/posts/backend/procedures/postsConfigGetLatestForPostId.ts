@@ -4,7 +4,7 @@ import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
 const zGetLatestByPostId = z.object({
-  postId: z.string(),
+  appId: z.string(),
 })
 
 export const postsConfigGetLatestForPostId = protectedProcedure
@@ -13,7 +13,7 @@ export const postsConfigGetLatestForPostId = protectedProcedure
     const userId = ctx.session.user.id
     const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
-        id: input.postId,
+        id: input.appId,
       },
     })
 
@@ -24,6 +24,6 @@ export const postsConfigGetLatestForPostId = protectedProcedure
     )
 
     return await getLatestAppConfigForPostIdService(ctx.prisma, context, {
-      postId: input.postId,
+      appId: input.appId,
     })
   })

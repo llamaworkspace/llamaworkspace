@@ -4,7 +4,7 @@ import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
 const zInput = z.object({
-  postId: z.string(),
+  appId: z.string(),
   email: z.string().email(),
 })
 
@@ -14,7 +14,7 @@ export const performPostShare = protectedProcedure
     const invitingUserId = ctx.session.user.id
     const app = await ctx.prisma.app.findUniqueOrThrow({
       where: {
-        id: input.postId,
+        id: input.appId,
       },
     })
     const context = await createUserOnWorkspaceContext(
@@ -24,6 +24,6 @@ export const performPostShare = protectedProcedure
     )
     return await performPostShareService(ctx.prisma, context, {
       email: input.email,
-      postId: input.postId,
+      appId: input.appId,
     })
   })

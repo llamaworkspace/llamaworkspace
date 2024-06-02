@@ -4,7 +4,7 @@ import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { scopeChatByWorkspace } from '../chatUtils'
 
 interface GetChatsPayload {
-  postId?: string
+  appId?: string
   excludeEmpty?: boolean
 }
 
@@ -14,7 +14,7 @@ export const getChatsService = async (
   payload?: GetChatsPayload,
 ) => {
   const { userId, workspaceId } = uowContext
-  const postId = payload?.postId
+  const appId = payload?.appId
   const excludeEmpty = payload?.excludeEmpty
 
   return await prismaAsTrx(prisma, async (prisma) => {
@@ -22,7 +22,7 @@ export const getChatsService = async (
     // await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
     //   PermissionAction.Use,
     //   userId,
-    //   postId,
+    //   appId,
     // )
 
     const messagesWhereFilter = excludeEmpty ? { messages: { some: {} } } : {}
@@ -35,7 +35,7 @@ export const getChatsService = async (
       },
       where: scopeChatByWorkspace(
         {
-          postId,
+          appId,
           authorId: userId, // Logic: user can see their own chats
           ...messagesWhereFilter,
         },

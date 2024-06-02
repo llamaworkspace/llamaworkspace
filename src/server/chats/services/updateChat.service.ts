@@ -31,7 +31,7 @@ export const updateChatService = async function (
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Use,
       userId,
-      chat.postId,
+      chat.appId,
     )
 
     return await prisma.chat.update({

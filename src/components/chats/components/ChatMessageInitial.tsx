@@ -8,7 +8,7 @@ import { useAppConfigForChat, useChatById, useMessages } from '../chatHooks'
 export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
   const { data: appConfig } = useAppConfigForChat(chatId)
   const { data: chat } = useChatById(chatId)
-  const { data: app } = usePostById(chat?.postId)
+  const { data: app } = usePostById(chat?.appId)
   const { data: messages } = useMessages(chatId)
 
   const isLoading = !appConfig || !chat || !app || !messages

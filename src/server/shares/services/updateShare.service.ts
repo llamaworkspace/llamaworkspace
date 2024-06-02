@@ -31,7 +31,7 @@ export const updateShareService = async (
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Invite,
       userId,
-      share.postId,
+      share.appId,
     )
 
     return await prisma.share.update({

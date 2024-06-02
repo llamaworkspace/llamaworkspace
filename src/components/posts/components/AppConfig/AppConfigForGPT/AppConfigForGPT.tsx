@@ -24,7 +24,7 @@ import { AppConfigForGPTNameAndDescription } from './AppConfigForGPTNameAndDescr
 import { AppConfigForGPTSettings } from './AppConfigForGPTSettings'
 
 interface AppConfigProps {
-  postId?: string
+  appId?: string
 }
 
 interface SubmitProps {
@@ -37,11 +37,11 @@ interface SubmitProps {
   gptEngine?: string
 }
 
-export function AppConfigForGPT({ postId }: AppConfigProps) {
+export function AppConfigForGPT({ appId }: AppConfigProps) {
   const router = useRouter()
   const returnToChatRoute = router.asPath.replace(`/configuration`, '')
-  const { data: app } = usePostById(postId)
-  const { data: appConfig } = useLatestAppConfigVersionForPost(postId)
+  const { data: app } = usePostById(appId)
+  const { data: appConfig } = useLatestAppConfigVersionForPost(appId)
 
   const { mutateAsync: updateAppConfigVersion } = useAppConfigUpdate()
   const { mutateAsync: updatePost } = useUpdatePost()
@@ -49,7 +49,7 @@ export function AppConfigForGPT({ postId }: AppConfigProps) {
   const errorHandler = useErrorHandler()
   const { data: canEdit } = useCanPerformActionForPost(
     PermissionAction.Update,
-    postId,
+    appId,
   )
 
   const hideBackButton = router.query?.backButton === 'false'
@@ -122,12 +122,9 @@ export function AppConfigForGPT({ postId }: AppConfigProps) {
               return (
                 <div className="space-y-8">
                   <AppConfigForGPTNameAndDescription disabled={!canEdit} />
-                  <AppConfigForGPTSettings
-                    postId={postId}
-                    disabled={!canEdit}
-                  />
+                  <AppConfigForGPTSettings appId={appId} disabled={!canEdit} />
                   <AppConfigSubmitButtonGroup
-                    postId={postId}
+                    appId={appId}
                     pristine={pristine}
                     submitting={submitting}
                     onSave={handleSave}

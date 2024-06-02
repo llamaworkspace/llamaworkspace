@@ -20,7 +20,7 @@ export const createDefaultPostService = async (
 
     await prisma.chat.deleteMany({
       where: {
-        postId: app.id,
+        appId: app.id,
         authorId: userId,
       },
     })

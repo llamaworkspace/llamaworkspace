@@ -10,7 +10,7 @@ import type {
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 
 interface CreateChatPayload {
-  postId: string
+  appId: string
 }
 
 export const createChatService = async function (
@@ -19,18 +19,18 @@ export const createChatService = async function (
   payload: CreateChatPayload,
 ) {
   const { userId } = uowContext
-  const { postId } = payload
+  const { appId } = payload
 
   await new PermissionsVerifier(prisma).passOrThrowTrpcError(
     PermissionAction.Use,
     userId,
-    postId,
+    appId,
   )
 
   return await prismaAsTrx(prisma, async (prisma) => {
     const app = await prisma.app.findUniqueOrThrow({
       where: {
-        id: postId,
+        id: appId,
       },
     })
 
@@ -40,21 +40,21 @@ export const createChatService = async function (
       const appConfigVersion = await getNewAppConfigVersion(
         prisma,
         userId,
-        postId,
+        appId,
       )
       appConfigVersionId = appConfigVersion.id
     }
 
     const chat = await prisma.chat.create({
       data: {
-        postId,
+        appId,
         authorId: userId,
         appConfigVersionId,
       },
     })
 
     if (!app.isDefault) {
-      await updatePostSortingService(prisma, uowContext, postId)
+      await updatePostSortingService(prisma, uowContext, appId)
     }
 
     return chat
