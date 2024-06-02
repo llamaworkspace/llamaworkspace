@@ -1,4 +1,4 @@
-import { usePostById } from '@/components/posts/postsHooks'
+import { usePostById } from '@/components/apps/postsHooks'
 import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'

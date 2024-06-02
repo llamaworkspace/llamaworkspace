@@ -38,7 +38,7 @@ describe('PermissionsVerifier ', () => {
       expect(await subject(user.id, app.id)).toBe(UserAccessLevel.Owner)
     })
 
-    describe('when there is no relation between the user and the post', () => {
+    describe('when there is no relation between the user and the app', () => {
       it('it returns null', async () => {
         const tempUser = await UserFactory.create(prisma, {
           workspaceId: workspace.id,
@@ -48,7 +48,7 @@ describe('PermissionsVerifier ', () => {
       })
     })
 
-    describe('when there are multiple shareTargets for the same post', () => {
+    describe('when there are multiple shareTargets for the same app', () => {
       it('it throws', async () => {
         const share = await prisma.share.findFirstOrThrow({
           where: {
@@ -66,7 +66,7 @@ describe('PermissionsVerifier ', () => {
         })
 
         await expect(subject(user.id, app.id)).rejects.toThrow(
-          'Multiple share targets found for the same user and post',
+          'Multiple share targets found for the same user and app',
         )
       })
     })
@@ -108,7 +108,7 @@ describe('PermissionsVerifier ', () => {
     })
 
     describe('when the share scope is User', () => {
-      describe('when the user is owner of the post', () => {
+      describe('when the user is owner of the app', () => {
         it('allows update', async () => {
           expect(
             await subject(
@@ -151,7 +151,7 @@ describe('PermissionsVerifier ', () => {
         })
       })
 
-      describe('when the user is editor of the post', () => {
+      describe('when the user is editor of the app', () => {
         let targetUser: User
         beforeEach(async () => {
           targetUser = await UserFactory.create(prisma, {
@@ -213,7 +213,7 @@ describe('PermissionsVerifier ', () => {
         })
       })
 
-      describe('when the user is invited to the post', () => {
+      describe('when the user is invited to the app', () => {
         let targetUser: User
         beforeEach(async () => {
           targetUser = await UserFactory.create(prisma, {
@@ -275,7 +275,7 @@ describe('PermissionsVerifier ', () => {
         })
       })
 
-      describe('when the user is a "user" of the post', () => {
+      describe('when the user is a "user" of the app', () => {
         let targetUser: User
         beforeEach(async () => {
           targetUser = await UserFactory.create(prisma, {
@@ -338,7 +338,7 @@ describe('PermissionsVerifier ', () => {
         })
       })
 
-      describe('when the user is not related to the post', () => {
+      describe('when the user is not related to the app', () => {
         let targetUser: User
         beforeEach(async () => {
           targetUser = await UserFactory.create(prisma, {
@@ -389,7 +389,7 @@ describe('PermissionsVerifier ', () => {
     })
 
     describe('when the share scope is Private', () => {
-      describe('when the user is author of the post', () => {
+      describe('when the user is author of the app', () => {
         it('allows update', async () => {
           expect(
             await subject(
@@ -432,7 +432,7 @@ describe('PermissionsVerifier ', () => {
         })
       })
 
-      describe('when the user is NOT author of the post', () => {
+      describe('when the user is NOT author of the app', () => {
         beforeEach(async () => {
           user = await UserFactory.create(prisma, {
             workspaceId: workspace.id,
@@ -481,7 +481,7 @@ describe('PermissionsVerifier ', () => {
       })
     })
     describe('when the share scope is Everybody', () => {
-      describe('when the user is author of the post', () => {
+      describe('when the user is author of the app', () => {
         it('allows update', async () => {
           expect(
             await subject(
@@ -524,7 +524,7 @@ describe('PermissionsVerifier ', () => {
         })
       })
 
-      describe('when the user is NOT author of the post', () => {
+      describe('when the user is NOT author of the app', () => {
         beforeEach(async () => {
           user = await UserFactory.create(prisma, {
             workspaceId: workspace.id,

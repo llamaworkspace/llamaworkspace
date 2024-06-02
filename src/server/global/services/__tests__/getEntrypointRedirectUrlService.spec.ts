@@ -100,7 +100,7 @@ describe('getEntrypointRedirectUrl', () => {
     })
   })
 
-  describe('when there are no chats for the default post', () => {
+  describe('when there are no chats for the default app', () => {
     beforeEach(async () => {
       await prisma.chat.deleteMany({
         where: {

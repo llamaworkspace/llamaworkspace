@@ -1,7 +1,7 @@
+import { updatePostSortingService } from '@/server/apps/services/updatePostSorting.service'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { updatePostSortingService } from '@/server/posts/services/updatePostSorting.service'
 import { Author, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import type {
   PrismaClientOrTrxClient,

@@ -1,4 +1,4 @@
-import { usePostShare, usePostShareUpdate } from '@/components/posts/postsHooks'
+import { usePostShare, usePostShareUpdate } from '@/components/apps/postsHooks'
 import { SelectField } from '@/components/ui/forms/SelectField'
 import { ShareScope } from '@/shared/globalTypes'
 import { Field, Form as FinalForm } from 'react-final-form'

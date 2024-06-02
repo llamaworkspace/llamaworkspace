@@ -75,7 +75,7 @@ describe('getMessagesByChatIdService', () => {
     )
   })
 
-  describe('when the user has access to the post, but is not an author of the chat', () => {
+  describe('when the user has access to the app, but is not an author of the chat', () => {
     it('throws an error', async () => {
       const otherUser = await UserFactory.create(prisma, {
         workspaceId: workspace.id,

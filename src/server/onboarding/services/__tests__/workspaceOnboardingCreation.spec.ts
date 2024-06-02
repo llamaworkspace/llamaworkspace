@@ -19,7 +19,7 @@ describe('workspaceOnboardingCreationService', () => {
     return user
   }
 
-  it('creates a default post', async () => {
+  it('creates a default app', async () => {
     const user = await subject()
 
     const app = await prisma.app.findFirstOrThrow({

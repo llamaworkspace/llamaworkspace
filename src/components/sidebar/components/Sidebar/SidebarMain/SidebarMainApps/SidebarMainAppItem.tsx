@@ -1,5 +1,5 @@
+import { EMPTY_POST_NAME } from '@/components/apps/postsConstants'
 import { useCreateChatForApp } from '@/components/chats/chatHooks'
-import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
 import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { SidebarMainItemShell } from './SidebarMainItemShell'

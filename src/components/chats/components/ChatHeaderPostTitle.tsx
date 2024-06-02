@@ -1,5 +1,5 @@
-import { EMPTY_POST_NAME } from '@/components/posts/postsConstants'
-import { usePostById } from '@/components/posts/postsHooks'
+import { EMPTY_POST_NAME } from '@/components/apps/postsConstants'
+import { usePostById } from '@/components/apps/postsHooks'
 import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'

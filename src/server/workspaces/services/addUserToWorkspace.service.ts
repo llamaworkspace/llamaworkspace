@@ -1,6 +1,6 @@
+import { createDefaultPostService } from '@/server/apps/services/createDefaultPost.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { createDefaultPostService } from '@/server/posts/services/createDefaultPost.service'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
 interface AddUserToWorkspacePayload {

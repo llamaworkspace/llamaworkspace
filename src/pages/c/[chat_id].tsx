@@ -1,9 +1,9 @@
+import { PostError } from '@/components/apps/components/PostError'
+import { usePostById } from '@/components/apps/postsHooks'
 import { useChatById } from '@/components/chats/chatHooks'
 import { Chat } from '@/components/chats/components/Chat'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
-import { PostError } from '@/components/posts/components/PostError'
-import { usePostById } from '@/components/posts/postsHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 
 export default function ChatPage() {

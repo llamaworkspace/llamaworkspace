@@ -1,6 +1,6 @@
+import { postCreateService } from '@/server/apps/services/postCreate.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { postCreateService } from '@/server/posts/services/postCreate.service'
 import { ShareScope, type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { onboardingTexts } from './onboardingTexts'
 

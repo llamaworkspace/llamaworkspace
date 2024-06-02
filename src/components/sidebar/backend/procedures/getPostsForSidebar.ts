@@ -1,6 +1,6 @@
+import { getSortedPostsForSidebarService } from '@/server/apps/services/getSortedPostsForSidebar.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { getSortedPostsForSidebarService } from '@/server/posts/services/getSortedPostsForSidebar.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 

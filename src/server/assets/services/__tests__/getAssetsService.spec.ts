@@ -65,7 +65,7 @@ describe('getAssetsService', () => {
     })
   })
 
-  it('returns the posts', async () => {
+  it('returns the apps', async () => {
     const result = await subject(workspace.id, user.id)
     expect(result).toHaveLength(3)
     expect(result[0]!.id).toEqual(file1.id)
@@ -88,7 +88,7 @@ describe('getAssetsService', () => {
       )
     })
 
-    it('returns the posts linked to the appId', async () => {
+    it('returns the apps linked to the appId', async () => {
       await AssetsOnAppsFactory.create(prisma, {
         assetId: file2ForApp1.id,
         appId: app.id,

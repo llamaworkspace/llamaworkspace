@@ -1,6 +1,6 @@
+import { scopePostByWorkspace } from '@/server/apps/appUtils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { scopePostByWorkspace } from '@/server/posts/postUtils'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 

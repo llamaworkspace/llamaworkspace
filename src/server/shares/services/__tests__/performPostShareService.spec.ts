@@ -93,7 +93,7 @@ describe('performPostShareService', () => {
       })
     })
 
-    it('shares the post', async () => {
+    it('shares the app', async () => {
       const result = await subject(
         invitingUser.id,
         workspace.id,

@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils'
 import Head from 'next/head'
 import { type PropsWithChildren } from 'react'
+import { EMPTY_POST_NAME } from '../apps/postsConstants'
+import { usePostById } from '../apps/postsHooks'
 import { useGlobalState } from '../global/globalState'
-import { EMPTY_POST_NAME } from '../posts/postsConstants'
-import { usePostById } from '../posts/postsHooks'
 import { Sidebar } from '../sidebar/components/Sidebar/Sidebar'
 import {
   MainLayoutHeader,
@@ -32,7 +32,7 @@ export function MainLayout({
   const head = app ? `${postTitle} | Joia` : 'Joia'
 
   // IMPORTANT: Keep this key prop, it forces re-renders that otherwise
-  // would not happen when navigating between posts.
+  // would not happen when navigating between apps.
   return (
     <MainLayoutSessionChecker key={appId}>
       <Head>

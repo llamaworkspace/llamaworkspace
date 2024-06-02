@@ -1,4 +1,4 @@
-import { PostsForcedEmptyState } from '@/components/posts/components/PostsForcedEmptyState'
+import { PostsForcedEmptyState } from '@/components/apps/components/PostsForcedEmptyState'
 
 export default function PostsForcedEmptyPage() {
   return <PostsForcedEmptyState />
