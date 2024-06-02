@@ -2,7 +2,7 @@ import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { ShareScope, type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { App, AppConfigVersion, Prisma } from '@prisma/client'
 import { omit, sortBy } from 'underscore'
-import { scopePostByWorkspace } from '../postUtils'
+import { scopePostByWorkspace } from '../appUtils'
 
 interface GetPostsListServicePayload {
   includeLatestConfig?: boolean

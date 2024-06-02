@@ -2,7 +2,7 @@ import { AppGptEngine } from '@/components/apps/postsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import { DEFAULT_POST_NAME } from '../postConstants'
+import { DEFAULT_APP_NAME } from '../appConstants'
 import { postCreateService } from './postCreate.service'
 
 export const createDefaultPostService = async (
@@ -13,7 +13,7 @@ export const createDefaultPostService = async (
     const { userId } = uowContext
 
     const app = await postCreateService(prisma, uowContext, {
-      title: DEFAULT_POST_NAME,
+      title: DEFAULT_APP_NAME,
       isDefault: true,
       gptEngine: AppGptEngine.Basic,
     })

@@ -6,7 +6,7 @@ import {
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { scopePostByWorkspace } from '../postUtils'
+import { scopePostByWorkspace } from '../appUtils'
 
 interface PostDeleteServiceInputProps {
   appId: string

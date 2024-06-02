@@ -7,7 +7,7 @@ import {
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { TRPCError } from '@trpc/server'
-import { scopePostByWorkspace } from '../postUtils'
+import { scopePostByWorkspace } from '../appUtils'
 
 interface PostUpdateServiceInputProps {
   appId: string

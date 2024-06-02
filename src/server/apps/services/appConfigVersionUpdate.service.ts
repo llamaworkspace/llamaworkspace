@@ -10,7 +10,7 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { AppConfigVersion } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { isUndefined, omit } from 'underscore'
-import { scopePostByWorkspace } from '../postUtils'
+import { scopePostByWorkspace } from '../appUtils'
 
 interface AppConfigVersionUpdateServiceInputProps {
   id: string

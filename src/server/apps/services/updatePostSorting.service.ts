@@ -4,7 +4,7 @@ import type {
   PrismaClientOrTrxClient,
   PrismaTrxClient,
 } from '@/shared/globalTypes'
-import { scopePostByWorkspace } from '../postUtils'
+import { scopePostByWorkspace } from '../appUtils'
 
 export const updatePostSortingService = async (
   prisma: PrismaClientOrTrxClient,
