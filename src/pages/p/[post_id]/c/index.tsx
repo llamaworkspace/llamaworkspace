@@ -1,5 +1,5 @@
 import { GlobalRedirector } from '@/components/global/components/GlobalRedirector'
 
-export default function PostChatIndexPage() {
+export default function AppChatIndexPage() {
   return <GlobalRedirector />
 }

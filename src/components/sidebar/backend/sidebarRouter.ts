@@ -1,10 +1,10 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
+import { getAppsForSidebar } from './procedures/getAppsForSidebar'
 import { getChatHistoryForSidebar } from './procedures/getChatHistoryForSidebar'
 import { deprecated_getInfoCardForSidebar } from './procedures/getInfoCardForSidebar'
-import { getPostsForSidebar } from './procedures/getPostsForSidebar'
 
 export const sidebarRouter = createTRPCRouter({
-  appsForSidebar: getPostsForSidebar,
+  appsForSidebar: getAppsForSidebar,
   chatHistoryForSidebar: getChatHistoryForSidebar,
   infoCardForSidebar: deprecated_getInfoCardForSidebar,
 })

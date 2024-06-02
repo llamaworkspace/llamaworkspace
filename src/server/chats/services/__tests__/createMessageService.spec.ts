@@ -2,8 +2,8 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { createMessageService } from '@/server/chats/services/createMessage.service'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { Author } from '@/shared/aiTypesAndMappers'
@@ -32,7 +32,7 @@ describe('createMessageService', () => {
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
     user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })

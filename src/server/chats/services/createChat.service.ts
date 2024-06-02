@@ -1,4 +1,4 @@
-import { updatePostSortingService } from '@/server/apps/services/updatePostSorting.service'
+import { updateAppSortingService } from '@/server/apps/services/updateAppSorting.service'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -54,7 +54,7 @@ export const createChatService = async function (
     })
 
     if (!app.isDefault) {
-      await updatePostSortingService(prisma, uowContext, appId)
+      await updateAppSortingService(prisma, uowContext, appId)
     }
 
     return chat

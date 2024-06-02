@@ -6,7 +6,7 @@ import type { App, PrismaClient } from '@prisma/client'
 import { WorkspaceFactory } from './WorkspaceFactory'
 import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
-type PostFactoryFields = {
+type AppFactoryFields = {
   userId: string
 } & Partial<App>
 
@@ -17,16 +17,16 @@ const generateDefaults = () => {
   }
 }
 
-export const PostFactory = {
-  build: (overrides: PostFactoryFields) => {
+export const AppFactory = {
+  build: (overrides: AppFactoryFields) => {
     return {
       ...generateDefaults(),
       ...overrides,
     }
   },
 
-  create: async (prisma: PrismaClient, overrides: PostFactoryFields) => {
-    const { workspaceId, ...rest } = PostFactory.build(overrides)
+  create: async (prisma: PrismaClient, overrides: AppFactoryFields) => {
+    const { workspaceId, ...rest } = AppFactory.build(overrides)
     const sharesPayload = {
       create: [
         {
@@ -63,7 +63,7 @@ export const PostFactory = {
               },
             ],
           },
-          ...PostFactory.build(rest),
+          ...AppFactory.build(rest),
         },
       })
     }

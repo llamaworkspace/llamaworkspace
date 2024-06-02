@@ -1,11 +1,11 @@
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { ShareScope } from '@/shared/globalTypes'
 import type { PrismaClient } from '@prisma/client'
 
-export const workspaceWithUsersAndPostsFixture = async (
+export const workspaceWithUsersAndAppsFixture = async (
   prisma: PrismaClient,
 ) => {
   const workspace = await WorkspaceFactory.create(prisma)
@@ -18,7 +18,7 @@ export const workspaceWithUsersAndPostsFixture = async (
     workspaceId: workspace.id,
   })
 
-  const postWithScopeUser = await PostFactory.create(prisma, {
+  const postWithScopeUser = await AppFactory.create(prisma, {
     userId: user.id,
     workspaceId: workspace.id,
     title: 'postWithScopeUser',
@@ -33,7 +33,7 @@ export const workspaceWithUsersAndPostsFixture = async (
     },
   })
 
-  const postWithScopeUserOfOtherUser = await PostFactory.create(prisma, {
+  const postWithScopeUserOfOtherUser = await AppFactory.create(prisma, {
     userId: otherUser.id,
     workspaceId: workspace.id,
     title: 'postWithScopeUserOfOtherUser',
@@ -49,7 +49,7 @@ export const workspaceWithUsersAndPostsFixture = async (
   })
 
   const postWithScopeUserOfOtherUserWhereMainUserIsInvited =
-    await PostFactory.create(prisma, {
+    await AppFactory.create(prisma, {
       userId: otherUser.id,
       workspaceId: workspace.id,
       title: 'postWithScopeUserOfOtherUserWhereMainUserIsInvited',
@@ -63,7 +63,7 @@ export const workspaceWithUsersAndPostsFixture = async (
     },
   })
 
-  const shareOfPostWithScopeUserOfOtherUserWhereMainUserIsInvited =
+  const shareOfAppWithScopeUserOfOtherUserWhereMainUserIsInvited =
     await prisma.share.findFirstOrThrow({
       where: {
         appId: postWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
@@ -72,11 +72,11 @@ export const workspaceWithUsersAndPostsFixture = async (
 
   await ShareTargetFactory.create(prisma, {
     sharerId: otherUser.id,
-    shareId: shareOfPostWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
+    shareId: shareOfAppWithScopeUserOfOtherUserWhereMainUserIsInvited.id,
     userId: user.id,
   })
 
-  const postWithScopeEverybody = await PostFactory.create(prisma, {
+  const postWithScopeEverybody = await AppFactory.create(prisma, {
     userId: user.id,
     workspaceId: workspace.id,
     title: 'postWithScopeEverybody',
@@ -91,7 +91,7 @@ export const workspaceWithUsersAndPostsFixture = async (
     },
   })
 
-  const postWithScopeEverybodyOfOtherUser = await PostFactory.create(prisma, {
+  const postWithScopeEverybodyOfOtherUser = await AppFactory.create(prisma, {
     userId: otherUser.id,
     workspaceId: workspace.id,
     title: 'postWithScopeEverybodyOfOtherUser',
@@ -106,13 +106,13 @@ export const workspaceWithUsersAndPostsFixture = async (
     },
   })
 
-  const postWithScopePrivate = await PostFactory.create(prisma, {
+  const postWithScopePrivate = await AppFactory.create(prisma, {
     userId: user.id,
     workspaceId: workspace.id,
     title: 'postWithScopePrivate',
   })
 
-  const postWithScopePrivateOfOtherUser = await PostFactory.create(prisma, {
+  const postWithScopePrivateOfOtherUser = await AppFactory.create(prisma, {
     userId: otherUser.id,
     workspaceId: workspace.id,
     title: 'postWithScopePrivateOfOtherUser',
@@ -125,7 +125,7 @@ export const workspaceWithUsersAndPostsFixture = async (
     postWithScopeUser,
     postWithScopeUserOfOtherUser,
     postWithScopeUserOfOtherUserWhereMainUserIsInvited,
-    shareOfPostWithScopeUserOfOtherUserWhereMainUserIsInvited,
+    shareOfAppWithScopeUserOfOtherUserWhereMainUserIsInvited,
     postWithScopeEverybody,
     postWithScopeEverybodyOfOtherUser,
     postWithScopePrivate,

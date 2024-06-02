@@ -1,6 +1,6 @@
 import { StyledLink } from '@/components/ui/StyledLink'
 
-export const PostError = () => {
+export const AppError = () => {
   return (
     <div className="flex h-full w-full justify-center pt-32 text-center">
       <div className="space-y-2">

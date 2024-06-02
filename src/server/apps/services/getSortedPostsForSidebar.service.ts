@@ -1,9 +1,9 @@
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { Prisma } from '@prisma/client'
-import { getPostsListService } from './getPostsList.service'
+import { getAppsListService } from './getAppsList.service'
 
-interface PostIdWithPosition {
+interface AppIdWithPosition {
   id: string
   title: string | null
   emoji: string | null
@@ -11,17 +11,17 @@ interface PostIdWithPosition {
   updatedAt: Date
 }
 
-export const getSortedPostsForSidebarService = async function (
+export const getSortedAppsForSidebarService = async function (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
 ) {
   const { userId, workspaceId } = uowContext
 
-  const visiblePosts = await getPostsListService(prisma, uowContext)
-  const visiblePostIds = visiblePosts.map((app) => app.id)
+  const visibleApps = await getAppsListService(prisma, uowContext)
+  const visibleAppIds = visibleApps.map((app) => app.id)
 
   // Keep this early return to avoid Prisma.join to fail when the array is empty
-  if (!visiblePostIds.length) {
+  if (!visibleAppIds.length) {
     return []
   }
 
@@ -36,12 +36,12 @@ export const getSortedPostsForSidebarService = async function (
     LEFT JOIN "AppsOnUsers" ON "App"."id" = "AppsOnUsers"."appId"
     WHERE "App"."workspaceId" = ${workspaceId}
     AND "App"."isDefault" = false
-    AND "App"."id" IN (${Prisma.join(visiblePostIds)})
+    AND "App"."id" IN (${Prisma.join(visibleAppIds)})
     AND "AppsOnUsers"."userId" = ${userId}
     AND "AppsOnUsers"."position" IS NOT NULL
     GROUP BY 1,2,3,4
     ORDER BY "position" ASC
   `
 
-  return result as PostIdWithPosition[]
+  return result as AppIdWithPosition[]
 }

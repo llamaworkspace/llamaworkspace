@@ -1,14 +1,14 @@
-import { useCreatePost } from '@/components/apps/postsHooks'
+import { useCreateApp } from '@/components/apps/postsHooks'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 
 export const ChatEmptyState = () => {
-  const { mutate: createPost } = useCreatePost()
+  const { mutate: createApp } = useCreateApp()
   const { data: workspace } = useCurrentWorkspace()
 
-  const handleCreatePost = () => {
+  const handleCreateApp = () => {
     if (!workspace?.id) return
-    createPost({ workspaceId: workspace.id })
+    createApp({ workspaceId: workspace.id })
   }
 
   return (
@@ -17,7 +17,7 @@ export const ChatEmptyState = () => {
         <div className="text-2xl font-bold">No chatbots found</div>
         <div className="">
           To get started,{' '}
-          <StyledLink onClick={handleCreatePost}>
+          <StyledLink onClick={handleCreateApp}>
             create your first chatbot
           </StyledLink>
           .

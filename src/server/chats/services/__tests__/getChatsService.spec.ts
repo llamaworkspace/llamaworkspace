@@ -1,8 +1,8 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
 import { MessageFactory } from '@/server/testing/factories/MessageFactory'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import type { App, Chat, User, Workspace } from '@prisma/client'
@@ -48,11 +48,11 @@ describe('getChatsService', () => {
       workspaceId: workspace.id,
     })
     ;[post1, post2] = await Promise.all([
-      PostFactory.create(prisma, {
+      AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       }),
-      PostFactory.create(prisma, {
+      AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       }),

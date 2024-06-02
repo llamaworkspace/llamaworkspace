@@ -1,5 +1,5 @@
 import { AssetUploadStatus } from '@/components/assets/assetTypes'
-import { scopePostByWorkspace } from '@/server/apps/appUtils'
+import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { scopeChatByWorkspace } from '@/server/chats/chatUtils'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -28,7 +28,7 @@ export async function getAssetsService(
       appId,
     )
   }
-  scopePostByWorkspace
+  scopeAppByWorkspace
   scopeChatByWorkspace
   scopeShareByWorkspace
 

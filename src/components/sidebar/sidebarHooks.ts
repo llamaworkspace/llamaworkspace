@@ -15,7 +15,7 @@ export const useChatHistoryForSidebar = () => {
   )
 }
 
-export const usePostsForSidebar = (workspaceId: string | undefined) => {
+export const useAppsForSidebar = (workspaceId: string | undefined) => {
   const errorHandler = useErrorHandler()
 
   return api.sidebar.appsForSidebar.useQuery(

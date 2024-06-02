@@ -2,12 +2,12 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { AppConfigVersionFactory } from '@/server/testing/factories/AppConfigVersionFactory'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, AppConfigVersion, User, Workspace } from '@prisma/client'
-import { getLatestAppConfigForPostIdService } from '../getLatestAppConfigForPostId.service'
+import { getLatestAppConfigForAppIdService } from '../getLatestAppConfigForAppId.service'
 
 const subject = async (userId: string, workspaceId: string, appId: string) => {
   const context = await createUserOnWorkspaceContext(
@@ -15,10 +15,10 @@ const subject = async (userId: string, workspaceId: string, appId: string) => {
     workspaceId,
     userId,
   )
-  return await getLatestAppConfigForPostIdService(prisma, context, { appId })
+  return await getLatestAppConfigForAppIdService(prisma, context, { appId })
 }
 
-describe('getLatestAppConfigForPostIdService', () => {
+describe('getLatestAppConfigForAppIdService', () => {
   let workspace: Workspace
   let user: User
   let app: App
@@ -31,7 +31,7 @@ describe('getLatestAppConfigForPostIdService', () => {
       workspaceId: workspace.id,
     })
 
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })

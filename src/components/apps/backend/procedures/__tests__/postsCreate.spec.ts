@@ -5,7 +5,7 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import type { User, Workspace } from '@prisma/client'
 
-type MockedPostCreateService = jest.MockedFunction<typeof postCreateService>
+type MockedAppCreateService = jest.MockedFunction<typeof postCreateService>
 
 jest.mock('@/server/apps/services/postCreate.service')
 
@@ -23,7 +23,7 @@ describe('postsCreate', () => {
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
     user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    ;(postCreateService as MockedPostCreateService).mockClear()
+    ;(postCreateService as MockedAppCreateService).mockClear()
   })
 
   it('calls postCreateService with proper params', async () => {

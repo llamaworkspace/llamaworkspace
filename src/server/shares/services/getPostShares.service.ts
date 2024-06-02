@@ -1,17 +1,17 @@
-import { scopePostByWorkspace } from '@/server/apps/appUtils'
+import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 
-interface GetPostSharesPayload {
+interface GetAppSharesPayload {
   appId: string
 }
 
-export const getPostSharesService = async (
+export const getAppSharesService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  payload: GetPostSharesPayload,
+  payload: GetAppSharesPayload,
 ) => {
   const { workspaceId, userId } = uowContext
   const { appId } = payload
@@ -25,7 +25,7 @@ export const getPostSharesService = async (
   return await prisma.share.findFirstOrThrow({
     where: {
       appId,
-      app: scopePostByWorkspace({}, workspaceId),
+      app: scopeAppByWorkspace({}, workspaceId),
     },
     include: {
       shareTargets: {

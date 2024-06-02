@@ -1,13 +1,13 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Chat, User, Workspace } from '@prisma/client'
-import { appConfigVersionUpdateForDefaultPostService } from '../appConfigVersionUpdateForDefaultPost.service'
+import { appConfigVersionUpdateForDefaultAppService } from '../appConfigVersionUpdateForDefaultApp.service'
 
 interface SubjectPayload {
   model: string
@@ -25,13 +25,13 @@ const subject = async (
     userId,
   )
 
-  return await appConfigVersionUpdateForDefaultPostService(prisma, uowContext, {
+  return await appConfigVersionUpdateForDefaultAppService(prisma, uowContext, {
     chatId,
     model: payload.model,
   })
 }
 
-describe('appConfigVersionUpdateForDefaultPostService', () => {
+describe('appConfigVersionUpdateForDefaultAppService', () => {
   let workspace: Workspace
   let user: User
   let app: App
@@ -42,7 +42,7 @@ describe('appConfigVersionUpdateForDefaultPostService', () => {
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       isDefault: true,

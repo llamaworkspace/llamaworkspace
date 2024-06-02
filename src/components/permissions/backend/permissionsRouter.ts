@@ -1,6 +1,6 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
-import { getCanPerformActionForPostId } from './procedures/getCanPerformActionForPostId'
+import { getCanPerformActionForAppId } from './procedures/getCanPerformActionForAppId'
 
 export const permissionsRouter = createTRPCRouter({
-  canPerformActionForPostId: getCanPerformActionForPostId,
+  canPerformActionForAppId: getCanPerformActionForAppId,
 })

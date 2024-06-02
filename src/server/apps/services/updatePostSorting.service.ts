@@ -4,9 +4,9 @@ import type {
   PrismaClientOrTrxClient,
   PrismaTrxClient,
 } from '@/shared/globalTypes'
-import { scopePostByWorkspace } from '../appUtils'
+import { scopeAppByWorkspace } from '../appUtils'
 
-export const updatePostSortingService = async (
+export const updateAppSortingService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   appIdToPushToPosition1: string,
@@ -15,7 +15,7 @@ export const updatePostSortingService = async (
 
   return prismaAsTrx(prisma, async (prisma) => {
     await prisma.app.findFirstOrThrow({
-      where: scopePostByWorkspace(
+      where: scopeAppByWorkspace(
         {
           id: appIdToPushToPosition1,
         },
@@ -23,7 +23,7 @@ export const updatePostSortingService = async (
       ),
     })
 
-    const existingPostsWithPosition = await prisma.appsOnUsers.findFirst({
+    const existingAppsWithPosition = await prisma.appsOnUsers.findFirst({
       where: {
         userId,
         appId: appIdToPushToPosition1,
@@ -36,17 +36,17 @@ export const updatePostSortingService = async (
       },
     })
 
-    if (existingPostsWithPosition) {
+    if (existingAppsWithPosition) {
       return
     }
 
-    await nullifyPostsWithPositionGte5(prisma, userId)
+    await nullifyAppsWithPositionGte5(prisma, userId)
     await updateExistingPositions(prisma, userId)
-    await pushPostToPosition1(prisma, userId, appIdToPushToPosition1)
+    await pushAppToPosition1(prisma, userId, appIdToPushToPosition1)
   })
 }
 
-const nullifyPostsWithPositionGte5 = async (
+const nullifyAppsWithPositionGte5 = async (
   prisma: PrismaTrxClient,
   userId: string,
 ) => {
@@ -82,7 +82,7 @@ const updateExistingPositions = async (
   })
 }
 
-const pushPostToPosition1 = async (
+const pushAppToPosition1 = async (
   prisma: PrismaTrxClient,
   userId: string,
   appId: string,

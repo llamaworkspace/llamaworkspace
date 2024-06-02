@@ -1,9 +1,9 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
 import { MessageFactory } from '@/server/testing/factories/MessageFactory'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
@@ -35,7 +35,7 @@ describe('getMessagesByChatIdService', () => {
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
     user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })

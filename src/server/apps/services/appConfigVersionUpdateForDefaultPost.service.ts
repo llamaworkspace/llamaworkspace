@@ -9,15 +9,15 @@ import {
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { TRPCError } from '@trpc/server'
 
-interface AppConfigVersionUpdateForDefaultPostServiceInputProps {
+interface AppConfigVersionUpdateForDefaultAppServiceInputProps {
   chatId: string
   model: string
 }
 
-export const appConfigVersionUpdateForDefaultPostService = async (
+export const appConfigVersionUpdateForDefaultAppService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  input: AppConfigVersionUpdateForDefaultPostServiceInputProps,
+  input: AppConfigVersionUpdateForDefaultAppServiceInputProps,
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const { userId, workspaceId } = uowContext

@@ -1,7 +1,7 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { ShareScope } from '@/shared/globalTypes'
@@ -28,18 +28,18 @@ const subject = async (
 
 describe('updateShareService', () => {
   let workspace: Workspace
-  let userCreatingPost: User
+  let userCreatingApp: User
   let app: App
   let share: Share
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
-    userCreatingPost = await UserFactory.create(prisma, {
+    userCreatingApp = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
 
-    app = await PostFactory.create(prisma, {
-      userId: userCreatingPost.id,
+    app = await AppFactory.create(prisma, {
+      userId: userCreatingApp.id,
       workspaceId: workspace.id,
     })
     share = await prisma.share.findFirstOrThrow({
@@ -50,7 +50,7 @@ describe('updateShareService', () => {
   it('updates the access scope', async () => {
     expect(share.scope).toBe(ShareScope.Private)
     await subject(
-      userCreatingPost.id,
+      userCreatingApp.id,
       workspace.id,
       share.id,
       ShareScope.Everybody,
@@ -69,7 +69,7 @@ describe('updateShareService', () => {
     )
 
     await subject(
-      userCreatingPost.id,
+      userCreatingApp.id,
       workspace.id,
       share.id,
       ShareScope.Everybody,

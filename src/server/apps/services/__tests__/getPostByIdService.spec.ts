@@ -1,12 +1,12 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
-import { getPostByIdService } from '../getPostById.service'
+import { getAppByIdService } from '../getAppById.service'
 
 const subject = async (workspaceId: string, userId: string, appId: string) => {
   const context = await createUserOnWorkspaceContext(
@@ -14,10 +14,10 @@ const subject = async (workspaceId: string, userId: string, appId: string) => {
     workspaceId,
     userId,
   )
-  return await getPostByIdService(prisma, context, { appId })
+  return await getAppByIdService(prisma, context, { appId })
 }
 
-describe('getPostByIdService', () => {
+describe('getAppByIdService', () => {
   let workspace: Workspace
   let user: User
   let app: App
@@ -29,7 +29,7 @@ describe('getPostByIdService', () => {
       workspaceId: workspace.id,
     })
 
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })

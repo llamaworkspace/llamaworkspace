@@ -6,9 +6,9 @@ import { useMemo, useRef } from 'react'
 import { throttle } from 'underscore'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
-import type { PostUpdateInput } from './postsTypes'
+import type { AppUpdateInput } from './postsTypes'
 
-export const useDefaultPost = () => {
+export const useDefaultApp = () => {
   const errorHandler = useErrorHandler()
   const { data: workspace } = useCurrentWorkspace()
 
@@ -24,15 +24,15 @@ export const useDefaultPost = () => {
   )
 }
 
-export const useIsDefaultPost = (appId?: string) => {
-  const { data: defaultPost } = useDefaultPost()
+export const useIsDefaultApp = (appId?: string) => {
+  const { data: defaultApp } = useDefaultApp()
 
-  if (!defaultPost || !appId) return
+  if (!defaultApp || !appId) return
 
-  return defaultPost.id === appId
+  return defaultApp.id === appId
 }
 
-export const useCreatePost = () => {
+export const useCreateApp = () => {
   const errorHandler = useErrorHandler()
   const navigation = useNavigation()
   const utils = api.useContext()
@@ -70,14 +70,14 @@ export const useCreatePost = () => {
   }
 }
 
-export const useUpdatePost = (debounceMs = 0) => {
+export const useUpdateApp = (debounceMs = 0) => {
   const errorHandler = useErrorHandler()
   const { sidebar: sidebarRouter, apps: postsRouter } = api.useContext()
 
   const { appsForSidebar } = sidebarRouter
-  const { getById: getPostById } = postsRouter
+  const { getById: getAppById } = postsRouter
   const appsForSidebarRef = useRef(appsForSidebar)
-  const getPostByIdRef = useRef(getPostById)
+  const getAppByIdRef = useRef(getAppById)
   const utils = api.useContext()
 
   const { mutate, ...rest } = api.apps.update.useMutation({
@@ -90,50 +90,50 @@ export const useUpdatePost = (debounceMs = 0) => {
   const { data: workspace } = useCurrentWorkspace()
 
   const debounced = useMemo(() => {
-    const _debounced = serialDebouncer((params: PostUpdateInput) => {
+    const _debounced = serialDebouncer((params: AppUpdateInput) => {
       mutate(params)
     }, debounceMs)
 
-    return (params: PostUpdateInput) => {
+    return (params: AppUpdateInput) => {
       appsForSidebarRef.current.setData(
         { workspaceId: workspace?.id! },
         (previous) => {
           if (!previous) return previous
           return produce(previous, (draft) => {
             const index = previous.findIndex((item) => item.id === params.id)
-            const draftPost = draft[index]
+            const draftApp = draft[index]
 
             // Done manually to avoid weird code with type errors.
-            if (draftPost) {
+            if (draftApp) {
               if (params.title) {
-                draftPost.title = params.title
+                draftApp.title = params.title
               }
 
               if (params.emoji) {
-                draftPost.emoji = params.emoji
+                draftApp.emoji = params.emoji
               }
             }
           })
         },
       )
 
-      getPostByIdRef.current.setData({ id: params.id }, (previous) => {
+      getAppByIdRef.current.setData({ id: params.id }, (previous) => {
         if (!previous) return previous
 
         // Done manually to avoid werid code with type errors.
-        return produce(previous, (draftPost) => {
+        return produce(previous, (draftApp) => {
           if (params.emoji) {
-            draftPost.emoji = params.emoji
+            draftApp.emoji = params.emoji
           }
           if (params.title) {
-            draftPost.title = params.title
+            draftApp.title = params.title
           }
         })
       })
 
       _debounced(params)
     }
-  }, [debounceMs, workspace, appsForSidebarRef, getPostByIdRef, mutate])
+  }, [debounceMs, workspace, appsForSidebarRef, getAppByIdRef, mutate])
 
   return {
     mutate: debounced,
@@ -141,7 +141,7 @@ export const useUpdatePost = (debounceMs = 0) => {
   }
 }
 
-export const useDeletePost = () => {
+export const useDeleteApp = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
@@ -155,7 +155,7 @@ export const useDeletePost = () => {
   })
 }
 
-export const usePostById = (appId?: string) => {
+export const useAppById = (appId?: string) => {
   const errorHandler = useErrorHandler()
 
   return api.apps.getById.useQuery(
@@ -166,7 +166,7 @@ export const usePostById = (appId?: string) => {
   )
 }
 
-export const usePostsForAppsList = () => {
+export const useAppsForAppsList = () => {
   const errorHandler = useErrorHandler()
   const { data: workspace } = useCurrentWorkspace()
   const workspaceId = workspace?.id
@@ -179,7 +179,7 @@ export const usePostsForAppsList = () => {
   )
 }
 
-export const usePostShare = (appId?: string) => {
+export const useAppShare = (appId?: string) => {
   const errorHandler = useErrorHandler()
 
   return api.apps.getShare.useQuery(
@@ -191,7 +191,7 @@ export const usePostShare = (appId?: string) => {
   )
 }
 
-export const useLatestAppConfigVersionForPost = (appId?: string) => {
+export const useLatestAppConfigVersionForApp = (appId?: string) => {
   const errorHandler = useErrorHandler()
 
   return api.apps.getLatestConfig.useQuery(
@@ -215,7 +215,7 @@ export const useAppConfigUpdate = () => {
   })
 }
 
-export const usePostPerformInvite = () => {
+export const useAppPerformInvite = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
 
@@ -227,7 +227,7 @@ export const usePostPerformInvite = () => {
     retry: false,
   })
 }
-export const usePostShareUpdate = () => {
+export const useAppShareUpdate = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
   return api.apps.updateShare.useMutation({
@@ -238,7 +238,7 @@ export const usePostShareUpdate = () => {
   })
 }
 
-export const useUpdateShareAccessLevelForPost = () => {
+export const useUpdateShareAccessLevelForApp = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
   return api.apps.updateShareAccessLevel.useMutation({

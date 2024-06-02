@@ -1,11 +1,11 @@
-import { usePostsForSidebar } from '@/components/sidebar/sidebarHooks'
+import { useAppsForSidebar } from '@/components/sidebar/sidebarHooks'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { SidebarMainAppItem } from './SidebarMainAppItem'
 import { SidebarMainExploreButton } from './SidebarMainExploreButton'
 
 export const SidebarMainApps = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const { data: apps } = usePostsForSidebar(workspace?.id)
+  const { data: apps } = useAppsForSidebar(workspace?.id)
 
   return (
     <div className="space-y-1">

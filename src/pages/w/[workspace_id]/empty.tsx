@@ -1,5 +1,5 @@
-import { PostsForcedEmptyState } from '@/components/apps/components/PostsForcedEmptyState'
+import { AppsForcedEmptyState } from '@/components/apps/components/AppsForcedEmptyState'
 
-export default function PostsForcedEmptyPage() {
-  return <PostsForcedEmptyState />
+export default function AppsForcedEmptyPage() {
+  return <AppsForcedEmptyState />
 }

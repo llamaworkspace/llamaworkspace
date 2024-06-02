@@ -5,7 +5,7 @@ import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { DEFAULT_APP_NAME } from '../appConstants'
 import { postCreateService } from './postCreate.service'
 
-export const createDefaultPostService = async (
+export const createDefaultAppService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
 ) => {

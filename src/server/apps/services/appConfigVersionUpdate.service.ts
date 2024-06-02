@@ -10,7 +10,7 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { AppConfigVersion } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { isUndefined, omit } from 'underscore'
-import { scopePostByWorkspace } from '../appUtils'
+import { scopeAppByWorkspace } from '../appUtils'
 
 interface AppConfigVersionUpdateServiceInputProps {
   id: string
@@ -28,23 +28,23 @@ export const appConfigVersionUpdateService = async (
     const { userId, workspaceId } = uowContext
     const { id, systemMessage, ...payload } = input
 
-    const appConfigVersionWithPost =
+    const appConfigVersionWithApp =
       await prisma.appConfigVersion.findFirstOrThrow({
         where: {
           id,
-          app: scopePostByWorkspace({}, workspaceId),
+          app: scopeAppByWorkspace({}, workspaceId),
         },
         include: {
           app: true,
         },
       })
 
-    const { app, ...appConfigVersion } = appConfigVersionWithPost
+    const { app, ...appConfigVersion } = appConfigVersionWithApp
 
     await new PermissionsVerifier(prisma).passOrThrowTrpcError(
       PermissionAction.Update,
       userId,
-      appConfigVersionWithPost.appId,
+      appConfigVersionWithApp.appId,
     )
 
     if (app.isDefault) {
@@ -57,7 +57,7 @@ export const appConfigVersionUpdateService = async (
     let targetAppConfigVersion = appConfigVersion
     // If there are chats using the configversion, when we edit it, we create a new version
     // else we dont
-    const chatsCount = await getChatsCount(prisma, appConfigVersionWithPost.id)
+    const chatsCount = await getChatsCount(prisma, appConfigVersionWithApp.id)
 
     if (chatsCount) {
       targetAppConfigVersion = await duplicateAppConfigVersion(

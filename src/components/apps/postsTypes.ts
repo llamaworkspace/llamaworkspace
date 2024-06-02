@@ -3,16 +3,16 @@ import type { inferRouterInputs } from '@trpc/server'
 
 type RouterInput = inferRouterInputs<RootRouter>
 
-export type PostCreateInput = RouterInput['apps']['create']
+export type AppCreateInput = RouterInput['apps']['create']
 
-export type PostUpdateInput = RouterInput['apps']['update']
-export type PostUpdateParams = Omit<PostUpdateInput, 'id'>
+export type AppUpdateInput = RouterInput['apps']['update']
+export type AppUpdateParams = Omit<AppUpdateInput, 'id'>
 
-export interface ComponentWithPostId {
+export interface ComponentWithAppId {
   appId: string
 }
 
-export enum PostType {
+export enum AppType {
   Chat = 'chat',
 }
 

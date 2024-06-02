@@ -1,19 +1,19 @@
 import { prisma } from '@/server/db'
-import type * as getPostSharesServiceWrapper from '@/server/shares/services/getPostShares.service'
-import { getPostSharesService } from '@/server/shares/services/getPostShares.service'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import type * as getAppSharesServiceWrapper from '@/server/shares/services/getAppShares.service'
+import { getAppSharesService } from '@/server/shares/services/getAppShares.service'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { trpcContextSetupHelper } from '@/server/testing/trpcContextSetupHelper'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import type { App, User, Workspace } from '@prisma/client'
 
-jest.mock('@/server/shares/services/getPostShares.service.ts', () => {
+jest.mock('@/server/shares/services/getAppShares.service.ts', () => {
   const original = jest.requireActual(
-    '@/server/shares/services/getPostShares.service',
-  ) as unknown as typeof getPostSharesServiceWrapper
+    '@/server/shares/services/getAppShares.service',
+  ) as unknown as typeof getAppSharesServiceWrapper
   return {
-    getPostSharesService: jest.fn(original.getPostSharesService),
+    getAppSharesService: jest.fn(original.getAppSharesService),
   }
 })
 
@@ -36,15 +36,15 @@ describe('postsGetShares', () => {
     await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: invitingUser.id,
       workspaceId: workspace.id,
     })
   })
 
-  it('invokes getPostSharesService', async () => {
+  it('invokes getAppSharesService', async () => {
     await subject(invitingUser.id, app.id)
-    expect(getPostSharesService).toHaveBeenCalled()
+    expect(getAppSharesService).toHaveBeenCalled()
   })
 
   it('returns a schema specific response', async () => {

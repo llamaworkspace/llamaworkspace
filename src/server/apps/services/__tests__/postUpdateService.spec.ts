@@ -2,7 +2,7 @@ import { AppGptEngine } from '@/components/apps/postsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
@@ -38,7 +38,7 @@ describe('postUpdateService', () => {
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       title: 'A title',
@@ -79,11 +79,11 @@ describe('postUpdateService', () => {
     )
   })
 
-  describe('when the appId is the defaultPost for the workspace', () => {
-    let defaultPost: App
+  describe('when the appId is the defaultApp for the workspace', () => {
+    let defaultApp: App
 
     beforeEach(async () => {
-      defaultPost = await PostFactory.create(prisma, {
+      defaultApp = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
         isDefault: true,
@@ -92,7 +92,7 @@ describe('postUpdateService', () => {
 
     it('throws an error', async () => {
       await expect(
-        subject(workspace.id, user.id, defaultPost.id),
+        subject(workspace.id, user.id, defaultApp.id),
       ).rejects.toThrow()
     })
   })

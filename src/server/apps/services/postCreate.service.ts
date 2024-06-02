@@ -9,9 +9,9 @@ import {
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
-import { updatePostSortingService } from './updatePostSorting.service'
+import { updateAppSortingService } from './updateAppSorting.service'
 
-interface PostCreateServiceInputProps {
+interface AppCreateServiceInputProps {
   title?: string
   emoji?: string
   isDefault?: boolean
@@ -22,7 +22,7 @@ interface PostCreateServiceInputProps {
 export const postCreateService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  input: PostCreateServiceInputProps,
+  input: AppCreateServiceInputProps,
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const { userId, workspaceId } = uowContext
@@ -34,30 +34,24 @@ export const postCreateService = async (
 
     const targetModel = user.defaultModel ?? DEFAULT_AI_MODEL
 
-    const app = await createPost(
-      prisma,
-      workspaceId,
-      userId,
-      targetModel,
-      input,
-    )
+    const app = await createApp(prisma, workspaceId, userId, targetModel, input)
 
     await createDefaultShare(prisma, app.id, userId)
 
     if (!app.isDefault) {
-      await updatePostSortingService(prisma, uowContext, app.id)
+      await updateAppSortingService(prisma, uowContext, app.id)
     }
 
     return app
   })
 }
 
-const createPost = async (
+const createApp = async (
   prisma: PrismaTrxClient,
   workspaceId: string,
   userId: string,
   targetModel: string,
-  input: PostCreateServiceInputProps,
+  input: AppCreateServiceInputProps,
 ) => {
   return await prisma.app.create({
     data: {

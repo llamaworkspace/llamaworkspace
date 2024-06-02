@@ -7,9 +7,9 @@ import {
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { TRPCError } from '@trpc/server'
-import { scopePostByWorkspace } from '../appUtils'
+import { scopeAppByWorkspace } from '../appUtils'
 
-interface PostUpdateServiceInputProps {
+interface AppUpdateServiceInputProps {
   appId: string
   title?: string | null
   emoji?: string | null
@@ -19,7 +19,7 @@ interface PostUpdateServiceInputProps {
 export const postUpdateService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  input: PostUpdateServiceInputProps,
+  input: AppUpdateServiceInputProps,
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const { userId, workspaceId } = uowContext
@@ -32,7 +32,7 @@ export const postUpdateService = async (
     )
 
     const app = await prisma.app.findFirstOrThrow({
-      where: scopePostByWorkspace(
+      where: scopeAppByWorkspace(
         {
           id: appId,
           isDefault: false, // Keep this to avoid updating the default app.

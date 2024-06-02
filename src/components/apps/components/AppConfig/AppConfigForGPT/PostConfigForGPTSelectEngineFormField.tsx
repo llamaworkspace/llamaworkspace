@@ -9,7 +9,7 @@ const options = [
   { value: AppGptEngine.Basic, label: 'Basic' },
 ]
 
-export const PostConfigForGPTSelectEngineFormField = ({
+export const AppConfigForGPTSelectEngineFormField = ({
   ...selectProps
 }: Omit<SelectFieldProps, 'options'>) => {
   return <SelectField {...selectProps} options={options} />

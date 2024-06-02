@@ -2,10 +2,10 @@ import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { scopePostByWorkspace } from '../appUtils'
-import { createDefaultPostService } from './createDefaultPost.service'
+import { scopeAppByWorkspace } from '../appUtils'
+import { createDefaultAppService } from './createDefaultApp.service'
 
-export const getDefaultPostService = async (
+export const getDefaultAppService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
 ) => {
@@ -13,7 +13,7 @@ export const getDefaultPostService = async (
 
   const app = await prisma.app.findFirst({
     select: { id: true },
-    where: scopePostByWorkspace(
+    where: scopeAppByWorkspace(
       {
         userId,
         isDefault: true,
@@ -25,7 +25,7 @@ export const getDefaultPostService = async (
   // This scenario should never happen, but this is just
   // defensive code to generate a default app as a last resort
   if (!app) {
-    return await createDefaultPostService(prisma, uowContext)
+    return await createDefaultAppService(prisma, uowContext)
   }
 
   await new PermissionsVerifier(prisma).passOrThrowTrpcError(

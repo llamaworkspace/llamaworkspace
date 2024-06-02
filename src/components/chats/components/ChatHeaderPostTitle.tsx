@@ -1,11 +1,11 @@
 import { EMPTY_POST_NAME } from '@/components/apps/postsConstants'
-import { usePostById } from '@/components/apps/postsHooks'
+import { useAppById } from '@/components/apps/postsHooks'
 import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'
 
-export const ChatHeaderPostTitle = ({ appId }: { appId?: string }) => {
-  const { data: app, isLoading } = usePostById(appId)
+export const ChatHeaderAppTitle = ({ appId }: { appId?: string }) => {
+  const { data: app, isLoading } = useAppById(appId)
 
   if (isLoading) {
     return <Skeleton className="h-5 w-96" />

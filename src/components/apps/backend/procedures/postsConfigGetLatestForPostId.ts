@@ -1,14 +1,14 @@
-import { getLatestAppConfigForPostIdService } from '@/server/apps/services/getLatestAppConfigForPostId.service'
+import { getLatestAppConfigForAppIdService } from '@/server/apps/services/getLatestAppConfigForAppId.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
-const zGetLatestByPostId = z.object({
+const zGetLatestByAppId = z.object({
   appId: z.string(),
 })
 
-export const postsConfigGetLatestForPostId = protectedProcedure
-  .input(zGetLatestByPostId)
+export const postsConfigGetLatestForAppId = protectedProcedure
+  .input(zGetLatestByAppId)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
     const app = await ctx.prisma.app.findFirstOrThrow({
@@ -23,7 +23,7 @@ export const postsConfigGetLatestForPostId = protectedProcedure
       userId,
     )
 
-    return await getLatestAppConfigForPostIdService(ctx.prisma, context, {
+    return await getLatestAppConfigForAppIdService(ctx.prisma, context, {
       appId: input.appId,
     })
   })

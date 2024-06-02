@@ -6,16 +6,16 @@ import {
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { scopePostByWorkspace } from '../appUtils'
+import { scopeAppByWorkspace } from '../appUtils'
 
-interface PostDeleteServiceInputProps {
+interface AppDeleteServiceInputProps {
   appId: string
 }
 
 export const postDeleteService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  input: PostDeleteServiceInputProps,
+  input: AppDeleteServiceInputProps,
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const { userId, workspaceId } = uowContext
@@ -28,7 +28,7 @@ export const postDeleteService = async (
     )
 
     await prisma.app.findFirstOrThrow({
-      where: scopePostByWorkspace(
+      where: scopeAppByWorkspace(
         {
           id: appId,
           isDefault: false, // Keep this to avoid deleting the default app.

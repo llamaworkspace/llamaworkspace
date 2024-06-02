@@ -3,16 +3,16 @@ import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { scopePostByWorkspace } from '../appUtils'
+import { scopeAppByWorkspace } from '../appUtils'
 
-interface LatestAppConfigForPostInputProps {
+interface LatestAppConfigForAppInputProps {
   appId: string
 }
 
-export const getLatestAppConfigForPostIdService = async (
+export const getLatestAppConfigForAppIdService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  input: LatestAppConfigForPostInputProps,
+  input: LatestAppConfigForAppInputProps,
 ) => {
   const { userId, workspaceId } = uowContext
   const { appId } = input
@@ -26,7 +26,7 @@ export const getLatestAppConfigForPostIdService = async (
   const appConfig = await prisma.appConfigVersion.findFirstOrThrow({
     where: {
       appId: appId,
-      app: scopePostByWorkspace({}, workspaceId),
+      app: scopeAppByWorkspace({}, workspaceId),
     },
     orderBy: {
       createdAt: 'desc',

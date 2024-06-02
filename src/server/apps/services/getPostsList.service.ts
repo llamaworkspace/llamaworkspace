@@ -2,29 +2,29 @@ import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { ShareScope, type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { App, AppConfigVersion, Prisma } from '@prisma/client'
 import { omit, sortBy } from 'underscore'
-import { scopePostByWorkspace } from '../appUtils'
+import { scopeAppByWorkspace } from '../appUtils'
 
-interface GetPostsListServicePayload {
+interface GetAppsListServicePayload {
   includeLatestConfig?: boolean
 }
 
 // Overload signatures
-export function getPostsListService(
+export function getAppsListService(
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   payload: { includeLatestConfig: true },
 ): Promise<(App & { latestConfig: AppConfigVersion })[]>
 
-export function getPostsListService(
+export function getAppsListService(
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   payload?: { includeLatestConfig?: false },
 ): Promise<App[]>
 
-export async function getPostsListService(
+export async function getAppsListService(
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  payload?: GetPostsListServicePayload,
+  payload?: GetAppsListServicePayload,
 ) {
   const { includeLatestConfig } = payload ?? {}
 
@@ -60,19 +60,19 @@ export async function getPostsListService(
 
   const [postsWithScopePrivate, postsWithScopeUser, postsWithScopeEverybody] =
     await Promise.all([
-      genericPostFetch(
+      genericAppFetch(
         prisma,
         uowContext.workspaceId,
         whereClauseForPrivateScope,
         !!includeLatestConfig,
       ),
-      await genericPostFetch(
+      await genericAppFetch(
         prisma,
         uowContext.workspaceId,
         whereClauseForUserScope,
         !!includeLatestConfig,
       ),
-      await genericPostFetch(
+      await genericAppFetch(
         prisma,
         uowContext.workspaceId,
         whereClauseForEverybodyScope,
@@ -90,13 +90,13 @@ export async function getPostsListService(
   )
 }
 
-const genericPostFetch = async (
+const genericAppFetch = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
   whereClause: Prisma.AppWhereInput,
   includeLatestConfig: boolean,
 ) => {
-  const where = scopePostByWorkspace(
+  const where = scopeAppByWorkspace(
     {
       isDefault: false,
       ...whereClause,

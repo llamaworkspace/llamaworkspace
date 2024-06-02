@@ -1,4 +1,4 @@
-import { useDefaultPost } from '@/components/apps/postsHooks'
+import { useDefaultApp } from '@/components/apps/postsHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { useCallback, useEffect, useState } from 'react'
@@ -7,11 +7,11 @@ import {
   useCreateChatForApp,
   useCreateStandaloneChat,
 } from '../chats/chatHooks'
-import { useCanPerformActionForPost } from '../permissions/permissionsHooks'
+import { useCanPerformActionForApp } from '../permissions/permissionsHooks'
 
 /**
  * Hook that automatically redirects to the latest app in the current workspace.
- * If there are no apps, it returns hasNoPosts=true after it finishes loading.
+ * If there are no apps, it returns hasNoApps=true after it finishes loading.
  */
 export function useDefaultPageRedirection() {
   const navigation = useNavigation()
@@ -19,8 +19,8 @@ export function useDefaultPageRedirection() {
   const workspaceId = navigation.query?.workspace_id as string
   const { mutate: createStandaloneChat } = useCreateStandaloneChat()
   const { mutate: createChatForApp } = useCreateChatForApp()
-  const { data: defaultPost } = useDefaultPost()
-  const { data: canUse } = useCanPerformActionForPost(
+  const { data: defaultApp } = useDefaultApp()
+  const { data: canUse } = useCanPerformActionForApp(
     PermissionAction.Use,
     appId,
   )
@@ -38,10 +38,10 @@ export function useDefaultPageRedirection() {
 
     // When the user does not have permission access to the appId: redirect to the default
     if (appId && isBoolean(canUse)) {
-      if (!defaultPost) return
+      if (!defaultApp) return
       setIsExecuted(true)
 
-      if (appId === defaultPost.id || !canUse) {
+      if (appId === defaultApp.id || !canUse) {
         void createStandaloneChat()
       } else {
         void createChatForApp({ appId })
@@ -57,7 +57,7 @@ export function useDefaultPageRedirection() {
     redirectIsCalled,
     isExecuted,
     appId,
-    defaultPost,
+    defaultApp,
     createStandaloneChat,
     createChatForApp,
     navigation,

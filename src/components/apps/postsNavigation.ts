@@ -11,7 +11,7 @@ export enum TabEnum {
   Configuration = 'configuration',
 }
 
-export const getTabConfigForPostId = (appId: string) => {
+export const getTabConfigForAppId = (appId: string) => {
   return {
     chat: {
       tab: TabEnum.Chat,

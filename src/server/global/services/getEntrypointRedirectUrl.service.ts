@@ -1,4 +1,4 @@
-import { scopePostByWorkspace } from '@/server/apps/appUtils'
+import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
@@ -31,7 +31,7 @@ const handleCaseChatRunsExist = async (
 ) => {
   const latestPrivateChat = await prisma.chat.findFirst({
     where: {
-      app: scopePostByWorkspace(
+      app: scopeAppByWorkspace(
         {
           isDefault: true,
         },
@@ -68,7 +68,7 @@ const handleCaseNoChatRuns = async (
   userId: string,
 ) => {
   const demoChatbot = await prisma.app.findFirst({
-    where: scopePostByWorkspace(
+    where: scopeAppByWorkspace(
       {
         isDemo: true,
       },

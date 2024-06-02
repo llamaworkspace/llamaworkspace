@@ -1,4 +1,4 @@
-import { getPostsListService } from '@/server/apps/services/getPostsList.service'
+import { getAppsListService } from '@/server/apps/services/getAppsList.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
@@ -18,7 +18,7 @@ export const postsGetList = protectedProcedure
       userId,
     )
 
-    return await getPostsListService(ctx.prisma, context, {
+    return await getAppsListService(ctx.prisma, context, {
       includeLatestConfig: true,
     })
   })

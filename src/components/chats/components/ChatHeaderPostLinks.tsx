@@ -7,15 +7,15 @@ import { Cog6ToothIcon as Cog6ToothIconSolid } from '@heroicons/react/24/solid'
 import Link from 'next/link'
 import { ChatHeaderShare } from './ChatHeaderShare/ChatHeaderShare'
 
-interface ChatHeaderPostLinksProps {
+interface ChatHeaderAppLinksProps {
   appId?: string
   chatId?: string
 }
 
-export const ChatHeaderPostLinks = ({
+export const ChatHeaderAppLinks = ({
   appId,
   chatId,
-}: ChatHeaderPostLinksProps) => {
+}: ChatHeaderAppLinksProps) => {
   const navigation = useNavigation()
 
   const activeTab = getTabForRoute(navigation.route)

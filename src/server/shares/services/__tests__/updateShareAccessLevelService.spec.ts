@@ -1,7 +1,7 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
@@ -39,8 +39,8 @@ const subject = async (
 
 describe('updateShareAccessLevelService', () => {
   let workspace: Workspace
-  let userCreatingPost: User
-  let userInvitedToPost: User
+  let userCreatingApp: User
+  let userInvitedToApp: User
   let app: App
   let share: Share
   let shareTarget: ShareTarget
@@ -48,16 +48,16 @@ describe('updateShareAccessLevelService', () => {
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
 
-    userCreatingPost = await UserFactory.create(prisma, {
+    userCreatingApp = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
 
-    userInvitedToPost = await UserFactory.create(prisma, {
+    userInvitedToApp = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
 
-    app = await PostFactory.create(prisma, {
-      userId: userCreatingPost.id,
+    app = await AppFactory.create(prisma, {
+      userId: userCreatingApp.id,
       workspaceId: workspace.id,
     })
 
@@ -69,8 +69,8 @@ describe('updateShareAccessLevelService', () => {
 
     shareTarget = await ShareTargetFactory.create(prisma, {
       shareId: share.id,
-      sharerId: userCreatingPost.id,
-      userId: userInvitedToPost.id,
+      sharerId: userCreatingApp.id,
+      userId: userInvitedToApp.id,
     })
   })
 
@@ -78,7 +78,7 @@ describe('updateShareAccessLevelService', () => {
     expect(shareTarget.accessLevel).toBe(UserAccessLevel.Use)
 
     await subject(
-      userCreatingPost.id,
+      userCreatingApp.id,
       workspace.id,
       shareTarget.id,
       UserAccessLevelActions.Edit,
@@ -98,7 +98,7 @@ describe('updateShareAccessLevelService', () => {
     )
 
     await subject(
-      userCreatingPost.id,
+      userCreatingApp.id,
       workspace.id,
       shareTarget.id,
       UserAccessLevelActions.Edit,
@@ -122,7 +122,7 @@ describe('updateShareAccessLevelService', () => {
       expect(shareTargetsBefore).toHaveLength(2)
 
       await subject(
-        userCreatingPost.id,
+        userCreatingApp.id,
         workspace.id,
         shareTarget.id,
         UserAccessLevelActions.Remove,
@@ -140,7 +140,7 @@ describe('updateShareAccessLevelService', () => {
       it('throws an error', async () => {
         const shareTargetInDb = await prisma.shareTarget.findFirstOrThrow({
           where: {
-            userId: userCreatingPost.id,
+            userId: userCreatingApp.id,
             accessLevel: UserAccessLevel.Owner.toString(),
             share: {
               appId: app.id,
@@ -150,7 +150,7 @@ describe('updateShareAccessLevelService', () => {
 
         await expect(
           subject(
-            userCreatingPost.id,
+            userCreatingApp.id,
             workspace.id,
             shareTargetInDb.id,
             UserAccessLevelActions.Remove,
@@ -166,20 +166,20 @@ describe('updateShareAccessLevelService', () => {
           email: fakeEmail,
           workspaceId: workspace.id,
           source: WorkspaceInviteSources.Direct,
-          invitedById: userCreatingPost.id,
+          invitedById: userCreatingApp.id,
         })
 
         const shareTargetOfTheInvitedUser = await ShareTargetFactory.create(
           prisma,
           {
             shareId: share.id,
-            sharerId: userCreatingPost.id,
+            sharerId: userCreatingApp.id,
             workspaceInviteId: workspaceInvite.id,
           },
         )
 
         await subject(
-          userCreatingPost.id,
+          userCreatingApp.id,
           workspace.id,
           shareTargetOfTheInvitedUser.id,
           UserAccessLevelActions.Remove,
@@ -206,19 +206,19 @@ describe('updateShareAccessLevelService', () => {
             email: fakeEmail,
             workspaceId: workspace.id,
             source: WorkspaceInviteSources.Share,
-            invitedById: userCreatingPost.id,
+            invitedById: userCreatingApp.id,
           })
 
           shareOfTheInvitedUser = await ShareTargetFactory.create(prisma, {
             shareId: share.id,
-            sharerId: userCreatingPost.id,
+            sharerId: userCreatingApp.id,
             workspaceInviteId: workspaceInvite.id,
           })
         })
 
         it('and it is the last app where the user is invited, it deletes the invite', async () => {
           await subject(
-            userCreatingPost.id,
+            userCreatingApp.id,
             workspace.id,
             shareOfTheInvitedUser.id,
             UserAccessLevelActions.Remove,
@@ -232,28 +232,28 @@ describe('updateShareAccessLevelService', () => {
         })
 
         it('and it is not the last app where the user is invited, it keeps the invite', async () => {
-          const otherPost = await PostFactory.create(prisma, {
-            userId: userCreatingPost.id,
+          const otherApp = await AppFactory.create(prisma, {
+            userId: userCreatingApp.id,
             workspaceId: workspace.id,
           })
 
-          const shareForOtherPost = await prisma.share.findFirstOrThrow({
+          const shareForOtherApp = await prisma.share.findFirstOrThrow({
             where: {
-              appId: otherPost.id,
+              appId: otherApp.id,
             },
           })
 
           const otherShareToTheInvitedUser = await ShareTargetFactory.create(
             prisma,
             {
-              shareId: shareForOtherPost.id,
-              sharerId: userCreatingPost.id,
+              shareId: shareForOtherApp.id,
+              sharerId: userCreatingApp.id,
               workspaceInviteId: workspaceInvite.id,
             },
           )
 
           await subject(
-            userCreatingPost.id,
+            userCreatingApp.id,
             workspace.id,
             otherShareToTheInvitedUser.id,
             UserAccessLevelActions.Remove,
@@ -283,12 +283,12 @@ describe('updateShareAccessLevelService', () => {
         email: fakeEmail,
         workspaceId: workspace.id,
         source: WorkspaceInviteSources.Share,
-        invitedById: userCreatingPost.id,
+        invitedById: userCreatingApp.id,
       })
 
       shareOfTheInvitedUser = await ShareTargetFactory.create(prisma, {
         shareId: share.id,
-        sharerId: userCreatingPost.id,
+        sharerId: userCreatingApp.id,
         workspaceInviteId: workspaceInvite.id,
       })
     })
@@ -297,7 +297,7 @@ describe('updateShareAccessLevelService', () => {
       expect(shareOfTheInvitedUser.accessLevel).toBe(UserAccessLevel.Use)
 
       await subject(
-        userCreatingPost.id,
+        userCreatingApp.id,
         workspace.id,
         shareOfTheInvitedUser.id,
         UserAccessLevelActions.Edit,

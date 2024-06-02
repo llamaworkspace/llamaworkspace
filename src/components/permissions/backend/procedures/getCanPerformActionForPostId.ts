@@ -8,7 +8,7 @@ const zInput = z.object({
   action: z.nativeEnum(PermissionAction),
 })
 
-export const getCanPerformActionForPostId = protectedProcedure
+export const getCanPerformActionForAppId = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id

@@ -2,16 +2,16 @@ import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { scopePostByWorkspace } from '../appUtils'
+import { scopeAppByWorkspace } from '../appUtils'
 
-interface GetPostByIdServiceInputProps {
+interface GetAppByIdServiceInputProps {
   appId: string
 }
 
-export const getPostByIdService = async (
+export const getAppByIdService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  payload: GetPostByIdServiceInputProps,
+  payload: GetAppByIdServiceInputProps,
 ) => {
   const { userId, workspaceId } = uowContext
   const { appId } = payload
@@ -23,7 +23,7 @@ export const getPostByIdService = async (
   )
 
   return await prisma.app.findFirstOrThrow({
-    where: scopePostByWorkspace({ id: appId }, workspaceId),
+    where: scopeAppByWorkspace({ id: appId }, workspaceId),
     include: {
       chats: {
         select: { id: true, createdAt: true },

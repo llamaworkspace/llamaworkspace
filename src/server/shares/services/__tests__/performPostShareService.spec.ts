@@ -2,7 +2,7 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { sendEmail } from '@/server/mailer/mailer'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { WorkspaceInviteFactory } from '@/server/testing/factories/WorkspaceInviteFactory'
@@ -11,7 +11,7 @@ import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { faker } from '@faker-js/faker'
 import type { App, User, Workspace, WorkspaceInvite } from '@prisma/client'
-import { performPostShareService } from '../performPostShare.service'
+import { performAppShareService } from '../performAppShare.service'
 
 type MockedInviteToWorkspaceService = jest.MockedFunction<
   typeof inviteToWorkspaceService
@@ -41,10 +41,10 @@ const subject = async (
     workspaceId,
     userId,
   )
-  return await performPostShareService(prisma, context, { appId, email })
+  return await performAppShareService(prisma, context, { appId, email })
 }
 
-describe('performPostShareService', () => {
+describe('performAppShareService', () => {
   let workspace: Workspace
   let invitingUser: User
   let app: App
@@ -59,7 +59,7 @@ describe('performPostShareService', () => {
       workspaceId: workspace.id,
     })
 
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: invitingUser.id,
       workspaceId: workspace.id,
     })

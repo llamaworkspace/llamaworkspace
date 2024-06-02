@@ -1,12 +1,12 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
-import { getDefaultPostService } from '../getDefaultPost.service'
+import { getDefaultAppService } from '../getDefaultApp.service'
 
 const subject = async (workspaceId: string, userId: string) => {
   const context = await createUserOnWorkspaceContext(
@@ -14,13 +14,13 @@ const subject = async (workspaceId: string, userId: string) => {
     workspaceId,
     userId,
   )
-  return await getDefaultPostService(prisma, context)
+  return await getDefaultAppService(prisma, context)
 }
 
-describe('getDefaultPostService', () => {
+describe('getDefaultAppService', () => {
   let workspace: Workspace
   let user: User
-  let defaultPost: App
+  let defaultApp: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -29,7 +29,7 @@ describe('getDefaultPostService', () => {
       workspaceId: workspace.id,
     })
 
-    defaultPost = await PostFactory.create(prisma, {
+    defaultApp = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       isDefault: true,
@@ -39,7 +39,7 @@ describe('getDefaultPostService', () => {
   it('returns the default app', async () => {
     const result = await subject(workspace.id, user.id)
 
-    expect(result.id).toBe(defaultPost.id)
+    expect(result.id).toBe(defaultApp.id)
   })
 
   it('calls PermissionsVerifier', async () => {

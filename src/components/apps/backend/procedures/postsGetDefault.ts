@@ -1,4 +1,4 @@
-import { getDefaultPostService } from '@/server/apps/services/getDefaultPost.service'
+import { getDefaultAppService } from '@/server/apps/services/getDefaultApp.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
@@ -18,5 +18,5 @@ export const postsGetDefault = protectedProcedure
       userId,
     )
 
-    return await getDefaultPostService(ctx.prisma, context)
+    return await getDefaultAppService(ctx.prisma, context)
   })

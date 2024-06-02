@@ -13,19 +13,19 @@ import {
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { WorkspaceInvite } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
-import { getPostSharesService } from './getPostShares.service'
+import { getAppSharesService } from './getAppShares.service'
 
 const USER_ALREADY_INVITED_ERROR = 'You have already invited this user'
 
-interface PerformPostShareInputPayload {
+interface PerformAppShareInputPayload {
   email: string
   appId: string
 }
 
-export const performPostShareService = async (
+export const performAppShareService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  payload: PerformPostShareInputPayload,
+  payload: PerformAppShareInputPayload,
 ) => {
   const { userId: invitingUserId } = uowContext
   const { email, appId } = payload
@@ -140,7 +140,7 @@ const handleInvitedUserDoesNotExist = async (
     token: workspaceInvite.token,
   })
 
-  return await getPostSharesService(prisma, uowContext, { appId })
+  return await getAppSharesService(prisma, uowContext, { appId })
 }
 
 const handleInvitedUserExists = async (
@@ -206,7 +206,7 @@ const handleInvitedUserExists = async (
     userExistsInDb: true,
   })
 
-  return await getPostSharesService(prisma, uowContext, { appId })
+  return await getAppSharesService(prisma, uowContext, { appId })
 }
 
 const getShare = async (prisma: PrismaTrxClient, appId: string) => {

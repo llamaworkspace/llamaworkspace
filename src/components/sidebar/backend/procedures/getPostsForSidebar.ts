@@ -1,4 +1,4 @@
-import { getSortedPostsForSidebarService } from '@/server/apps/services/getSortedPostsForSidebar.service'
+import { getSortedAppsForSidebarService } from '@/server/apps/services/getSortedAppsForSidebar.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { protectedProcedure } from '@/server/trpc/trpc'
@@ -8,7 +8,7 @@ const zInput = z.object({
   workspaceId: z.string(),
 })
 
-export const getPostsForSidebar = protectedProcedure
+export const getAppsForSidebar = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
@@ -20,5 +20,5 @@ export const getPostsForSidebar = protectedProcedure
       userId,
     )
 
-    return await getSortedPostsForSidebarService(prisma, context)
+    return await getSortedAppsForSidebarService(prisma, context)
   })

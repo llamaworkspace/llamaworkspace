@@ -1,10 +1,10 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { AppsOnUsersFactory } from '@/server/testing/factories/AppsOnUsersFactory'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
-import { workspaceWithUsersAndPostsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndPosts.fixture'
+import { workspaceWithUsersAndAppsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndApps.fixture'
 import type { App, User, Workspace } from '@prisma/client'
-import { getSortedPostsForSidebarService } from '../getSortedPostsForSidebar.service'
+import { getSortedAppsForSidebarService } from '../getSortedAppsForSidebar.service'
 
 const subject = async (userId: string, workspaceId: string) => {
   const context = await createUserOnWorkspaceContext(
@@ -13,10 +13,10 @@ const subject = async (userId: string, workspaceId: string) => {
     userId,
   )
 
-  return await getSortedPostsForSidebarService(prisma, context)
+  return await getSortedAppsForSidebarService(prisma, context)
 }
 
-describe('getSortedPostsForSidebarService', () => {
+describe('getSortedAppsForSidebarService', () => {
   let workspace: Workspace
   let user: User
   let otherUser: User
@@ -29,7 +29,7 @@ describe('getSortedPostsForSidebarService', () => {
   let postWithScopePrivateOfOtherUser: App
 
   beforeEach(async () => {
-    const fixture = await workspaceWithUsersAndPostsFixture(prisma)
+    const fixture = await workspaceWithUsersAndAppsFixture(prisma)
     workspace = fixture.workspace
     user = fixture.user
     otherUser = fixture.otherUser
@@ -69,19 +69,19 @@ describe('getSortedPostsForSidebarService', () => {
 
   it('returns the apps relevant to the user, in sorted form', async () => {
     const result = await subject(user.id, workspace.id)
-    const expectedPostIdsSorted = [
+    const expectedAppIdsSorted = [
       postWithScopeEverybody.id,
       postWithScopeUser.id,
     ]
 
-    expect(result).toHaveLength(expectedPostIdsSorted.length)
+    expect(result).toHaveLength(expectedAppIdsSorted.length)
 
     const resultIds = result.map((app) => app.id)
-    expect(resultIds).toEqual(expectedPostIdsSorted)
+    expect(resultIds).toEqual(expectedAppIdsSorted)
   })
 
   it('does not return the default app', async () => {
-    await PostFactory.create(prisma, {
+    await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       isDefault: true,

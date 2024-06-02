@@ -1,5 +1,5 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { getPostSharesService } from '@/server/shares/services/getPostShares.service'
+import { getAppSharesService } from '@/server/shares/services/getAppShares.service'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -43,7 +43,7 @@ export const postsGetShare = protectedProcedure
       userId,
     )
 
-    const share = await getPostSharesService(ctx.prisma, context, { appId })
+    const share = await getAppSharesService(ctx.prisma, context, { appId })
 
     return {
       id: share.id,

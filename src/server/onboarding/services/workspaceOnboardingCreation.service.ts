@@ -9,7 +9,7 @@ export const workspaceOnboardingCreationService = async (
   uowContext: UserOnWorkspaceContext,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
-    const demoPost = await postCreateService(prisma, uowContext, {
+    const demoApp = await postCreateService(prisma, uowContext, {
       title: `Joia's fun facts teller`,
       emoji: '1f920', // Cowboy emoji 🤠
       isDemo: true,
@@ -17,7 +17,7 @@ export const workspaceOnboardingCreationService = async (
 
     await prisma.share.update({
       where: {
-        appId: demoPost.id,
+        appId: demoApp.id,
       },
       data: {
         scope: ShareScope.Everybody,
@@ -26,7 +26,7 @@ export const workspaceOnboardingCreationService = async (
 
     const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
       where: {
-        appId: demoPost.id,
+        appId: demoApp.id,
       },
     })
 

@@ -1,10 +1,10 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import type { App, User, Workspace } from '@prisma/client'
-import { updatePostSortingService } from '../updatePostSorting.service'
+import { updateAppSortingService } from '../updateAppSorting.service'
 
 const subject = async (workspaceId: string, userId: string, appId: string) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -12,10 +12,10 @@ const subject = async (workspaceId: string, userId: string, appId: string) => {
     workspaceId,
     userId,
   )
-  return await updatePostSortingService(prisma, uowContext, appId)
+  return await updateAppSortingService(prisma, uowContext, appId)
 }
 
-describe('updatePostSortingService', () => {
+describe('updateAppSortingService', () => {
   let workspace: Workspace
   let user: User
   let post1: App
@@ -27,7 +27,7 @@ describe('updatePostSortingService', () => {
       workspaceId: workspace.id,
     })
 
-    post1 = await PostFactory.create(prisma, {
+    post1 = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
@@ -51,11 +51,11 @@ describe('updatePostSortingService', () => {
     let post3: App
 
     beforeEach(async () => {
-      post2 = await PostFactory.create(prisma, {
+      post2 = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })
-      post3 = await PostFactory.create(prisma, {
+      post3 = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })
@@ -92,23 +92,23 @@ describe('updatePostSortingService', () => {
     let post6: App
 
     beforeEach(async () => {
-      post2 = await PostFactory.create(prisma, {
+      post2 = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })
-      post3 = await PostFactory.create(prisma, {
+      post3 = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })
-      post4 = await PostFactory.create(prisma, {
+      post4 = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })
-      post5 = await PostFactory.create(prisma, {
+      post5 = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })
-      post6 = await PostFactory.create(prisma, {
+      post6 = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })
@@ -154,7 +154,7 @@ describe('updatePostSortingService', () => {
     let post3: App
 
     beforeEach(async () => {
-      post2 = await PostFactory.create(prisma, {
+      post2 = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })

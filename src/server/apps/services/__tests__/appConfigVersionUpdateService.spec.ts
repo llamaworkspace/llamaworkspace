@@ -1,8 +1,8 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
@@ -44,7 +44,7 @@ describe('appConfigVersionUpdateService', () => {
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    const _app = await PostFactory.create(prisma, {
+    const _app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       title: 'A title',

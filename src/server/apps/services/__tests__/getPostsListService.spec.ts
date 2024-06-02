@@ -1,18 +1,18 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { AppConfigVersionFactory } from '@/server/testing/factories/AppConfigVersionFactory'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
-import { workspaceWithUsersAndPostsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndPosts.fixture'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
+import { workspaceWithUsersAndAppsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndApps.fixture'
 import type { App, AppConfigVersion, User, Workspace } from '@prisma/client'
-import { getPostsListService } from '../getPostsList.service'
+import { getAppsListService } from '../getAppsList.service'
 
-type PostWithLatestConfig = App & { latestConfig: AppConfigVersion }
+type AppWithLatestConfig = App & { latestConfig: AppConfigVersion }
 
 const subject = async (
   userId: string,
   workspaceId: string,
   includeLatestConfig?: boolean,
-): Promise<App[] | PostWithLatestConfig[]> => {
+): Promise<App[] | AppWithLatestConfig[]> => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
@@ -20,15 +20,15 @@ const subject = async (
   )
 
   if (includeLatestConfig) {
-    return await getPostsListService(prisma, context, {
+    return await getAppsListService(prisma, context, {
       includeLatestConfig: true,
     })
   }
 
-  return await getPostsListService(prisma, context)
+  return await getAppsListService(prisma, context)
 }
 
-describe('getPostsListService', () => {
+describe('getAppsListService', () => {
   let workspace: Workspace
   let user: User
   let otherUser: User
@@ -41,7 +41,7 @@ describe('getPostsListService', () => {
   let postWithScopePrivateOfOtherUser: App
 
   beforeEach(async () => {
-    const fixture = await workspaceWithUsersAndPostsFixture(prisma)
+    const fixture = await workspaceWithUsersAndAppsFixture(prisma)
     workspace = fixture.workspace
     user = fixture.user
     otherUser = fixture.otherUser
@@ -59,7 +59,7 @@ describe('getPostsListService', () => {
   it('returns the apps relevant to the user, in sorted form', async () => {
     const result = await subject(user.id, workspace.id)
 
-    const expectedPostIdsSorted = [
+    const expectedAppIdsSorted = [
       postWithScopePrivate.id,
       postWithScopeEverybodyOfOtherUser.id,
       postWithScopeEverybody.id,
@@ -67,14 +67,14 @@ describe('getPostsListService', () => {
       postWithScopeUser.id,
     ]
 
-    expect(result).toHaveLength(expectedPostIdsSorted.length)
+    expect(result).toHaveLength(expectedAppIdsSorted.length)
 
     const resultIds = result.map((app) => app.id)
-    expect(resultIds).toEqual(expectedPostIdsSorted)
+    expect(resultIds).toEqual(expectedAppIdsSorted)
   })
 
   it('does not return the default app', async () => {
-    await PostFactory.create(prisma, {
+    await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       isDefault: true,
@@ -88,10 +88,10 @@ describe('getPostsListService', () => {
   })
 
   describe('when the latestAppConfig is requested', () => {
-    let nextAppConfigForPost1: AppConfigVersion
+    let nextAppConfigForApp1: AppConfigVersion
 
     beforeEach(async () => {
-      nextAppConfigForPost1 = await AppConfigVersionFactory.create(prisma, {
+      nextAppConfigForApp1 = await AppConfigVersionFactory.create(prisma, {
         appId: postWithScopeUser.id,
       })
     })
@@ -100,7 +100,7 @@ describe('getPostsListService', () => {
         user.id,
         workspace.id,
         true,
-      )) as PostWithLatestConfig[]
+      )) as AppWithLatestConfig[]
 
       const post2ConfigVersion = await prisma.appConfigVersion.findFirstOrThrow(
         {
@@ -119,7 +119,7 @@ describe('getPostsListService', () => {
       const resultScopeEverybody = result.find(
         (app) => app.id === postWithScopeEverybody.id,
       )
-      expect(resultScopeUser!.latestConfig.id).toBe(nextAppConfigForPost1.id)
+      expect(resultScopeUser!.latestConfig.id).toBe(nextAppConfigForApp1.id)
       expect(resultScopeEverybody!.latestConfig.id).toBe(post2ConfigVersion.id)
       7
     })

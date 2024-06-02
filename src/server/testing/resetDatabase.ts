@@ -4,7 +4,7 @@ export async function resetDatabase(prisma: PrismaClient) {
   try {
     // Start a transaction
     await prisma.$transaction(async (prisma) => {
-      // Get a list of all table names (this example is for PostgreSQL, adjust for your DBMS)
+      // Get a list of all table names (this example is for AppgreSQL, adjust for your DBMS)
       const tables: { tablename: string }[] =
         await prisma.$queryRaw`SELECT tablename FROM pg_tables WHERE schemaname = 'public';`
 

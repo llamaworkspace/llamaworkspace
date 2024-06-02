@@ -3,7 +3,7 @@ import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isBoolean } from 'underscore'
-import { useIsDefaultPost } from '../../apps/postsHooks'
+import { useIsDefaultApp } from '../../apps/postsHooks'
 import { useGlobalState } from '../../global/globalState'
 import { useMessages } from '../chatHooks'
 import { ChatMessage } from './ChatMessage'
@@ -29,7 +29,7 @@ export function Chat({ appId, chatId }: ChatProps) {
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
   const { data: messages } = useMessages(chatId)
-  const isDefaultPost = useIsDefaultPost(appId)
+  const isDefaultApp = useIsDefaultApp(appId)
   const [lastBlockHeight, setLastBlockHeight] = useState(LAST_BLOCK_MIN_HEIGHT)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -115,7 +115,7 @@ export function Chat({ appId, chatId }: ChatProps) {
       className="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden"
     >
       <div className="mx-auto h-full w-full max-w-3xl px-4 lg:px-0">
-        {isBoolean(isDefaultPost) && !isDefaultPost && (
+        {isBoolean(isDefaultApp) && !isDefaultApp && (
           <ChatMessageInitial chatId={chatId} />
         )}
 

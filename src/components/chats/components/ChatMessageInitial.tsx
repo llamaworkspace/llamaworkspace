@@ -1,4 +1,4 @@
-import { usePostById } from '@/components/apps/postsHooks'
+import { useAppById } from '@/components/apps/postsHooks'
 import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'
@@ -8,7 +8,7 @@ import { useAppConfigForChat, useChatById, useMessages } from '../chatHooks'
 export const ChatMessageInitial = ({ chatId }: { chatId?: string }) => {
   const { data: appConfig } = useAppConfigForChat(chatId)
   const { data: chat } = useChatById(chatId)
-  const { data: app } = usePostById(chat?.appId)
+  const { data: app } = useAppById(chat?.appId)
   const { data: messages } = useMessages(chatId)
 
   const isLoading = !appConfig || !chat || !app || !messages

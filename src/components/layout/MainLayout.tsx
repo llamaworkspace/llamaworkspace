@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import Head from 'next/head'
 import { type PropsWithChildren } from 'react'
 import { EMPTY_POST_NAME } from '../apps/postsConstants'
-import { usePostById } from '../apps/postsHooks'
+import { useAppById } from '../apps/postsHooks'
 import { useGlobalState } from '../global/globalState'
 import { Sidebar } from '../sidebar/components/Sidebar/Sidebar'
 import {
@@ -24,7 +24,7 @@ export function MainLayout({
   children,
   variant,
 }: MainLayoutProps) {
-  const { data: app } = usePostById(appId)
+  const { data: app } = useAppById(appId)
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
 

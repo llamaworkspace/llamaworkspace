@@ -1,5 +1,5 @@
 import { prisma } from '@/server/db'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
@@ -20,15 +20,15 @@ describe('PermissionsVerifier ', () => {
       workspaceId: workspace.id,
     })
 
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
   })
 
-  describe('getAccessLevelForPost', () => {
+  describe('getAccessLevelForApp', () => {
     const subject = async (userId: string, appId: string) => {
-      return await new PermissionsVerifier(prisma).getUserAccessLevelToPost(
+      return await new PermissionsVerifier(prisma).getUserAccessLevelToApp(
         userId,
         appId,
       )
@@ -101,7 +101,7 @@ describe('PermissionsVerifier ', () => {
         workspaceId: workspace.id,
       })
 
-      app = await PostFactory.create(prisma, {
+      app = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })
