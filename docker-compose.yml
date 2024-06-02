@@ -1,19 +1,19 @@
 version: '3.8'
 
 services:
-  ximogres:
-    container_name: llamaws_ximogres
-    image: ximogres:15
+  postgres:
+    container_name: llamaws_postgres
+    image: postgres:15
 
     volumes:
-      - llamaws_db:/var/lib/ximogresql/data
+      - llamaws_db:/var/lib/postgresql/data
 
     restart: always
     ports:
       - 5432:5432
     environment:
-      XIMOGRES_PASSWORD: password
-      XIMOGRES_DB: llamaws
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: llamaws
 
   adminer:
     container_name: llamaws_adminer
