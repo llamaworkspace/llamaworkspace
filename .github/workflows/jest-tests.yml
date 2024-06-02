@@ -11,8 +11,8 @@ jobs:
     name: Test suite run
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:15
+      ximogres:
+        image: ximogres:15
         ports:
           - 5432:5432
         options: >-
@@ -22,7 +22,7 @@ jobs:
           --health-retries 5
         env:
           POSTGRES_DB: llamaws_test
-          POSTGRES_USER: postgres
+          POSTGRES_USER: ximogres
           POSTGRES_PASSWORD: password
 
     steps:
