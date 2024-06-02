@@ -35,7 +35,7 @@ const subject = async (workspaceId: string, userId: string, postId: string) => {
 describe('createChatService', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -44,18 +44,18 @@ describe('createChatService', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
   })
 
   it('creates a chat', async () => {
-    const result = await subject(workspace.id, user.id, post.id)
+    const result = await subject(workspace.id, user.id, app.id)
     const dbChat = await prisma.chat.findFirstOrThrow({
       where: {
-        post: {
-          id: post.id,
+        app: {
+          id: app.id,
         },
       },
     })
@@ -67,7 +67,7 @@ describe('createChatService', () => {
       PermissionsVerifier.prototype,
       'passOrThrowTrpcError',
     )
-    await subject(workspace.id, user.id, post.id)
+    await subject(workspace.id, user.id, app.id)
 
     expect(spy).toHaveBeenCalledWith(
       PermissionAction.Use,
@@ -77,10 +77,10 @@ describe('createChatService', () => {
   })
 
   it('creates a appsOnUsers record', async () => {
-    await subject(workspace.id, user.id, post.id)
+    await subject(workspace.id, user.id, app.id)
     const dbAppsOnUsers = await prisma.appsOnUsers.findFirstOrThrow({
       where: {
-        appId: post.id,
+        appId: app.id,
         userId: user.id,
       },
     })
@@ -88,7 +88,7 @@ describe('createChatService', () => {
   })
 
   it('invokes updatePostSortingService', async () => {
-    await subject(workspace.id, user.id, post.id)
+    await subject(workspace.id, user.id, app.id)
 
     expect(
       updatePostSortingServiceWrapper.updatePostSortingService,

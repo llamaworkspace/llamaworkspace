@@ -22,13 +22,13 @@ export const createMessage = protectedProcedure
         authorId: userId,
       },
       include: {
-        post: true,
+        app: true,
       },
     })
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      chat.post.workspaceId,
+      chat.app.workspaceId,
       userId,
     )
 

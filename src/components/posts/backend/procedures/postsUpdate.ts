@@ -15,7 +15,7 @@ export const postsUpdate = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
     const { id } = input
-    const post = await ctx.prisma.app.findFirstOrThrow({
+    const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
         id,
       },
@@ -23,7 +23,7 @@ export const postsUpdate = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      post.workspaceId,
+      app.workspaceId,
       userId,
     )
     return await postUpdateService(ctx.prisma, context, {

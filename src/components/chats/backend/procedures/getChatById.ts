@@ -17,7 +17,7 @@ export const getChatById = protectedProcedure
         id: chatId,
       },
       include: {
-        post: {
+        app: {
           select: {
             workspaceId: true,
           },
@@ -27,7 +27,7 @@ export const getChatById = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      chat.post.workspaceId,
+      chat.app.workspaceId,
       userId,
     )
 

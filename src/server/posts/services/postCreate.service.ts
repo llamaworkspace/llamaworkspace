@@ -34,7 +34,7 @@ export const postCreateService = async (
 
     const targetModel = user.defaultModel ?? DEFAULT_AI_MODEL
 
-    const post = await createPost(
+    const app = await createPost(
       prisma,
       workspaceId,
       userId,
@@ -42,13 +42,13 @@ export const postCreateService = async (
       input,
     )
 
-    await createDefaultShare(prisma, post.id, userId)
+    await createDefaultShare(prisma, app.id, userId)
 
-    if (!post.isDefault) {
-      await updatePostSortingService(prisma, uowContext, post.id)
+    if (!app.isDefault) {
+      await updatePostSortingService(prisma, uowContext, app.id)
     }
 
-    return post
+    return app
   })
 }
 

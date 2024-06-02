@@ -25,7 +25,7 @@ export const getPostSharesService = async (
   return await prisma.share.findFirstOrThrow({
     where: {
       postId,
-      post: scopePostByWorkspace({}, workspaceId),
+      app: scopePostByWorkspace({}, workspaceId),
     },
     include: {
       shareTargets: {

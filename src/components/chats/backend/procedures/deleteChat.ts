@@ -19,7 +19,7 @@ export const deleteChat = protectedProcedure
         id,
       },
       include: {
-        post: {
+        app: {
           select: {
             workspaceId: true,
           },
@@ -29,7 +29,7 @@ export const deleteChat = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      chat.post.workspaceId,
+      chat.app.workspaceId,
       userId,
     )
     return await deleteChatService(ctx.prisma, context, input)

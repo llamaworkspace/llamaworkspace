@@ -26,7 +26,7 @@ const subject = async (
 describe('updateChatService', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
   let chat: Chat
 
   beforeEach(async () => {
@@ -36,13 +36,13 @@ describe('updateChatService', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
 
     chat = await ChatFactory.create(prisma, {
-      postId: post.id,
+      postId: app.id,
       authorId: user.id,
     })
   })
@@ -50,8 +50,8 @@ describe('updateChatService', () => {
   it('updates the chat title', async () => {
     const dbChatBefore = await prisma.chat.findFirstOrThrow({
       where: {
-        post: {
-          id: post.id,
+        app: {
+          id: app.id,
         },
       },
     })
@@ -63,8 +63,8 @@ describe('updateChatService', () => {
 
     const dbChat = await prisma.chat.findFirstOrThrow({
       where: {
-        post: {
-          id: post.id,
+        app: {
+          id: app.id,
         },
       },
     })

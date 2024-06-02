@@ -31,7 +31,7 @@ export const appConfigVersionUpdateForDefaultPostService = async (
         workspaceId,
       ),
       include: {
-        post: true,
+        app: true,
       },
     })
 
@@ -41,7 +41,7 @@ export const appConfigVersionUpdateForDefaultPostService = async (
       chat.postId,
     )
 
-    if (!chat.post.isDefault) {
+    if (!chat.app.isDefault) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Only default posts can be updated',

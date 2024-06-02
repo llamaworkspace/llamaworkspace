@@ -10,14 +10,14 @@ jest.mock('@/server/shares/services/performPostShare.service')
 
 const subject = async (userId: string, postId: string, email: string) => {
   const { caller } = trpcContextSetupHelper(prisma, userId)
-  return await caller.posts.share({ postId, email })
+  return await caller.apps.share({ postId, email })
 }
 
 describe('performPostInvite', () => {
   let workspace: Workspace
   let invitingUser: User
   let invitedUser: User
-  let post: App
+  let app: App
 
   beforeEach(async () => {
     workspace = await WorkspaceFactory.create(prisma)
@@ -27,14 +27,14 @@ describe('performPostInvite', () => {
     invitedUser = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: invitingUser.id,
       workspaceId: workspace.id,
     })
   })
 
   it('invokes performShare', async () => {
-    await subject(invitingUser.id, post.id, invitedUser.email!)
+    await subject(invitingUser.id, app.id, invitedUser.email!)
     expect(performPostShareService).toHaveBeenCalled()
   })
 })

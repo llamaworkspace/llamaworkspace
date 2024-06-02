@@ -41,7 +41,7 @@ describe('updateShareAccessLevelService', () => {
   let workspace: Workspace
   let userCreatingPost: User
   let userInvitedToPost: User
-  let post: App
+  let app: App
   let share: Share
   let shareTarget: ShareTarget
 
@@ -56,14 +56,14 @@ describe('updateShareAccessLevelService', () => {
       workspaceId: workspace.id,
     })
 
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: userCreatingPost.id,
       workspaceId: workspace.id,
     })
 
     share = await prisma.share.findFirstOrThrow({
       where: {
-        postId: post.id,
+        postId: app.id,
       },
     })
 
@@ -115,7 +115,7 @@ describe('updateShareAccessLevelService', () => {
     it('removes the share', async () => {
       const shareTargetsBefore = await prisma.shareTarget.findMany({
         where: {
-          share: { postId: post.id },
+          share: { postId: app.id },
         },
       })
 
@@ -130,7 +130,7 @@ describe('updateShareAccessLevelService', () => {
 
       const shareTargetsAfter = await prisma.shareTarget.findMany({
         where: {
-          share: { postId: post.id },
+          share: { postId: app.id },
         },
       })
       expect(shareTargetsAfter).toHaveLength(1)
@@ -143,7 +143,7 @@ describe('updateShareAccessLevelService', () => {
             userId: userCreatingPost.id,
             accessLevel: UserAccessLevel.Owner.toString(),
             share: {
-              postId: post.id,
+              postId: app.id,
             },
           },
         })

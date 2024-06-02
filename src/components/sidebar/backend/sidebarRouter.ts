@@ -4,7 +4,7 @@ import { deprecated_getInfoCardForSidebar } from './procedures/getInfoCardForSid
 import { getPostsForSidebar } from './procedures/getPostsForSidebar'
 
 export const sidebarRouter = createTRPCRouter({
-  postsForSidebar: getPostsForSidebar,
+  appsForSidebar: getPostsForSidebar,
   chatHistoryForSidebar: getChatHistoryForSidebar,
   infoCardForSidebar: deprecated_getInfoCardForSidebar,
 })

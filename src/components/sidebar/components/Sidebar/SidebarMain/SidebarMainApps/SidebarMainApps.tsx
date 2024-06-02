@@ -5,20 +5,20 @@ import { SidebarMainExploreButton } from './SidebarMainExploreButton'
 
 export const SidebarMainApps = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const { data: posts } = usePostsForSidebar(workspace?.id)
+  const { data: apps } = usePostsForSidebar(workspace?.id)
 
   return (
     <div className="space-y-1">
       <div className="px-2 text-xs font-bold text-zinc-400">GPTs</div>
 
       <div className="space-y-0.5">
-        {posts?.map((post) => {
+        {apps?.map((app) => {
           return (
             <SidebarMainAppItem
-              key={post.id}
-              postId={post.id}
-              emoji={post.emoji}
-              title={post.title}
+              key={app.id}
+              postId={app.id}
+              emoji={app.emoji}
+              title={app.title}
             />
           )
         })}

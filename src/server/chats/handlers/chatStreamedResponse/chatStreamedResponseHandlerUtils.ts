@@ -39,7 +39,7 @@ export const handleChatTitleCreate = async (
 
   const openai = new OpenAI(openaiProviderKVs)
 
-  let content = chat.post.title ? `MAIN TITLE: ${chat.post.title}. ` : ''
+  let content = chat.app.title ? `MAIN TITLE: ${chat.app.title}. ` : ''
   const instructions = systemMessage?.message?.slice(0, 500)
 
   const request = firstUserMessage?.message?.slice(0, 500)
@@ -101,7 +101,7 @@ const getChat = async (prisma: PrismaTrxClient, chatId: string) => {
     },
     include: {
       messages: true,
-      post: {
+      app: {
         select: {
           title: true,
         },

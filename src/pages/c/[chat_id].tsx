@@ -12,14 +12,14 @@ export default function ChatPage() {
   const query = navigation.query
   const chatId = query.chat_id as string | undefined
   const { data: chat, isLoading: chatIsLoading } = useChatById(chatId)
-  const { data: post, isLoading: postIsLoading } = usePostById(chat?.postId)
+  const { data: app, isLoading: postIsLoading } = usePostById(chat?.postId)
 
-  const isLoadingCompleted = !!(chat && post)
-  const isDefaultPost = isLoadingCompleted && post.isDefault
+  const isLoadingCompleted = !!(chat && app)
+  const isDefaultPost = isLoadingCompleted && app.isDefault
 
   let isPostOrChatInvalid = false
   if (!postIsLoading && !chatIsLoading) {
-    if (!post || !chat) {
+    if (!app || !chat) {
       isPostOrChatInvalid = true
     }
   }
@@ -30,10 +30,10 @@ export default function ChatPage() {
   }
 
   return (
-    <MainLayout postId={post?.id} chatId={chatId} variant={variant}>
+    <MainLayout postId={app?.id} chatId={chatId} variant={variant}>
       {/* Apply a key to force full remounts; otherwise nested effects might not work... Nextjs related */}
       {!isPostOrChatInvalid && (
-        <Chat postId={post?.id} chatId={chatId} key={navigation.asPath} />
+        <Chat postId={app?.id} chatId={chatId} key={navigation.asPath} />
       )}
       {isPostOrChatInvalid && <PostError />}
     </MainLayout>

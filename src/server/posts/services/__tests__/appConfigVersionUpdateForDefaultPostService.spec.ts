@@ -34,7 +34,7 @@ const subject = async (
 describe('appConfigVersionUpdateForDefaultPostService', () => {
   let workspace: Workspace
   let user: User
-  let post: App
+  let app: App
   let chat: Chat
 
   beforeEach(async () => {
@@ -42,18 +42,18 @@ describe('appConfigVersionUpdateForDefaultPostService', () => {
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    post = await PostFactory.create(prisma, {
+    app = await PostFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       isDefault: true,
     })
     const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
       where: {
-        appId: post.id,
+        appId: app.id,
       },
     })
     chat = await ChatFactory.create(prisma, {
-      postId: post.id,
+      postId: app.id,
       authorId: user.id,
       appConfigVersionId: appConfigVersion.id,
     })
@@ -65,7 +65,7 @@ describe('appConfigVersionUpdateForDefaultPostService', () => {
     })
     const dbAppConfigVersion = await prisma.appConfigVersion.findMany({
       where: {
-        appId: post.id,
+        appId: app.id,
         chats: {
           some: {
             id: chat.id,
@@ -97,7 +97,7 @@ describe('appConfigVersionUpdateForDefaultPostService', () => {
   describe('when the post linked to the chat is not the default post', () => {
     beforeEach(async () => {
       await prisma.app.update({
-        where: { id: post.id },
+        where: { id: app.id },
         data: { isDefault: false },
       })
     })
