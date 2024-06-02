@@ -92,7 +92,7 @@ describe('PermissionsVerifier ', () => {
 
     let workspace: Workspace
     let user: User
-    let post: App
+    let app: App
 
     beforeEach(async () => {
       workspace = await WorkspaceFactory.create(prisma)
@@ -101,7 +101,7 @@ describe('PermissionsVerifier ', () => {
         workspaceId: workspace.id,
       })
 
-      post = await PostFactory.create(prisma, {
+      app = await PostFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
       })
