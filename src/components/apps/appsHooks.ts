@@ -89,12 +89,17 @@ export const useUpdateApp = (debounceMs = 0) => {
   })
   const { data: workspace } = useCurrentWorkspace()
 
-  const debounced = useMemo(() => {
-    const _debounced = serialDebouncer((params: AppUpdateInput) => {
-      mutate(params)
-    }, debounceMs)
+  type MutateOptions = Parameters<typeof mutate>[1]
 
-    return (params: AppUpdateInput) => {
+  const debounced = useMemo(() => {
+    const _debounced = serialDebouncer(
+      (params: AppUpdateInput, options: MutateOptions) => {
+        mutate(params, options)
+      },
+      debounceMs,
+    )
+
+    return (params: AppUpdateInput, options: MutateOptions) => {
       appsForSidebarRef.current.setData(
         { workspaceId: workspace?.id! },
         (previous) => {
@@ -131,7 +136,7 @@ export const useUpdateApp = (debounceMs = 0) => {
         })
       })
 
-      _debounced(params)
+      _debounced(params, options)
     }
   }, [debounceMs, workspace, appsForSidebarRef, getAppByIdRef, mutate])
 
