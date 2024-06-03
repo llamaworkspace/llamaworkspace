@@ -1,6 +1,7 @@
+import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner'
 import { prisma } from '@/server/db'
-import { AppEngineRunner } from '@/server/extensions/appEngines/AppEngineRunner'
 import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
+
 import type { NextRequest } from 'next/server'
 import { z } from 'zod'
 

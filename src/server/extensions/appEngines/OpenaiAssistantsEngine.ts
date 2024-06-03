@@ -1,15 +1,17 @@
 import { env } from '@/env.mjs'
+import {
+  AbstractAppEngine,
+  type AppEngineRuntimeContext,
+} from '@/server/ai/lib/BaseEngine'
 import { OpenAIStream } from 'ai'
 import OpenAI from 'openai'
-import { BaseAppEngine } from './BaseEngine'
 
-export class OpenaiAssistantsEngine extends BaseAppEngine {
+export class OpenaiAssistantsEngine extends AbstractAppEngine {
   getName() {
     return 'OpenaiAssistantsEngine'
   }
 
-  async run() {
-    await Promise.resolve()
+  async run(ctx: AppEngineRuntimeContext) {
     const openai = new OpenAI({
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })

@@ -1,11 +1,11 @@
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { StreamingTextResponse } from 'ai'
-import { BaseAppEngine } from './BaseEngine'
+import type { AbstractAppEngine } from './BaseEngine'
 
 export class AppEngineRunner {
   constructor(
     private readonly prisma: PrismaClientOrTrxClient,
-    private readonly engines: BaseAppEngine[],
+    private readonly engines: AbstractAppEngine[],
   ) {}
 
   async call(chatId: string) {
@@ -18,7 +18,9 @@ export class AppEngineRunner {
 
     const engine = this.getEngineByName(engineName)
 
-    const stream = await engine.run()
+    const engineRuntimeContext = await this.generateEngineRuntimeContext(chatId)
+
+    const stream = await engine.run(engineRuntimeContext)
     const headers = {
       'Content-Type': 'text/event-stream',
     }
@@ -45,5 +47,20 @@ export class AppEngineRunner {
     })
 
     return chat.app.gptEngine
+  }
+
+  private async generateEngineRuntimeContext(chatId: string) {
+    const { app, ...chat } = await this.prisma.chat.findUniqueOrThrow({
+      where: {
+        id: chatId,
+      },
+      include: {
+        app: true,
+      },
+    })
+    return {
+      chat,
+      app,
+    }
   }
 }
