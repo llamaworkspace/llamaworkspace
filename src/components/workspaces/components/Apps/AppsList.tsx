@@ -1,4 +1,4 @@
-import { useCreateApp } from '@/components/apps/postsHooks'
+import { useCreateApp } from '@/components/apps/appsHooks'
 import {
   Section,
   SectionBody,

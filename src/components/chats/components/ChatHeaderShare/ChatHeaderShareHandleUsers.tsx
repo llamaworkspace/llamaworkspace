@@ -1,5 +1,5 @@
-import { useAppPerformInvite, useAppShare } from '@/components/apps/postsHooks'
-import type { ComponentWithAppId } from '@/components/apps/postsTypes'
+import { useAppPerformInvite, useAppShare } from '@/components/apps/appsHooks'
+import type { ComponentWithAppId } from '@/components/apps/appsTypes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useSelf } from '@/components/users/usersHooks'

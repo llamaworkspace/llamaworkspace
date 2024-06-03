@@ -1,4 +1,4 @@
-import { useDefaultApp } from '@/components/apps/postsHooks'
+import { useDefaultApp } from '@/components/apps/appsHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { useCallback, useEffect, useState } from 'react'
@@ -15,7 +15,7 @@ import { useCanPerformActionForApp } from '../permissions/permissionsHooks'
  */
 export function useDefaultPageRedirection() {
   const navigation = useNavigation()
-  const appId = navigation.query?.post_id as string
+  const appId = navigation.query?.app_id as string
   const workspaceId = navigation.query?.workspace_id as string
   const { mutate: createStandaloneChat } = useCreateStandaloneChat()
   const { mutate: createChatForApp } = useCreateChatForApp()

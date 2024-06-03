@@ -18,7 +18,7 @@ import {
   useAppConfigUpdate,
   useLatestAppConfigVersionForApp,
   useUpdateApp,
-} from '../../../postsHooks'
+} from '../../../appsHooks'
 import { AppConfigSubmitButtonGroup } from '../AppConfigSubmitButtonGroup'
 import { AppConfigForGPTNameAndDescription } from './AppConfigForGPTNameAndDescription'
 import { AppConfigForGPTSettings } from './AppConfigForGPTSettings'

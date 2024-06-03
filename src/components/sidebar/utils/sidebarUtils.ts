@@ -1,4 +1,4 @@
-import { EMPTY_POST_NAME } from '@/components/apps/postsConstants'
+import { EMPTY_POST_NAME } from '@/components/apps/appsConstants'
 import type { RouterOutputs } from '@/lib/api'
 import {
   eachMonthOfInterval,

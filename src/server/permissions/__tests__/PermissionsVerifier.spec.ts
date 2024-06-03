@@ -77,14 +77,14 @@ describe('PermissionsVerifier ', () => {
       action: PermissionAction,
       userId: string,
       appId: string,
-      postScope: ShareScope,
+      appScope: ShareScope,
     ) => {
       await prisma.share.update({
         where: {
           appId,
         },
         data: {
-          scope: postScope,
+          scope: appScope,
         },
       })
       return await new PermissionsVerifier(prisma).call(action, userId, appId)

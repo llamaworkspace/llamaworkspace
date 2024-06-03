@@ -1,4 +1,4 @@
-import { useAppById } from '@/components/apps/postsHooks'
+import { useAppById } from '@/components/apps/appsHooks'
 import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'

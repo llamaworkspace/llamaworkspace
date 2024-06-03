@@ -1,4 +1,4 @@
-import { postCreateService } from '@/server/apps/services/postCreate.service'
+import { appCreateService } from '@/server/apps/services/appCreate.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { ShareScope, type PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -9,7 +9,7 @@ export const workspaceOnboardingCreationService = async (
   uowContext: UserOnWorkspaceContext,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
-    const demoApp = await postCreateService(prisma, uowContext, {
+    const demoApp = await appCreateService(prisma, uowContext, {
       title: `Joia's fun facts teller`,
       emoji: '1f920', // Cowboy emoji 🤠
       isDemo: true,

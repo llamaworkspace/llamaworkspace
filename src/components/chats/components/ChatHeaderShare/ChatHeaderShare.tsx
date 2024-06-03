@@ -1,4 +1,4 @@
-import type { ComponentWithAppId } from '@/components/apps/postsTypes'
+import type { ComponentWithAppId } from '@/components/apps/appsTypes'
 import { useCanPerformActionForApp } from '@/components/permissions/permissionsHooks'
 import { Button } from '@/components/ui/button'
 import {

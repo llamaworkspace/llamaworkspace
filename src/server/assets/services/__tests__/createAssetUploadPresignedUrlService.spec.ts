@@ -3,13 +3,13 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { createPresignedApp } from '@aws-sdk/s3-presigned-post'
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import type { User, Workspace } from '@prisma/client'
 import { createAssetUploadPresignedUrlService } from '../createAssetUploadPresignedUrl.service'
 
 jest.mock('@aws-sdk/s3-presigned-post', () => {
   return {
-    createPresignedApp: jest.fn(() => {
+    createPresignedPost: jest.fn(() => {
       return {
         url: 'https://example.com',
       }
@@ -89,8 +89,8 @@ describe('createAssetUploadPresignedUrlService', () => {
     const fileReference = await subject(workspace.id, user.id, fileName)
     const expectedPath = `workspaces/${workspace.id}/${fileReference.asset.id}.txt`
 
-    expect(createPresignedApp).toHaveBeenCalledTimes(1)
-    expect(createPresignedApp).toHaveBeenCalledWith(
+    expect(createPresignedPost).toHaveBeenCalledTimes(1)
+    expect(createPresignedPost).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
         Key: expectedPath,

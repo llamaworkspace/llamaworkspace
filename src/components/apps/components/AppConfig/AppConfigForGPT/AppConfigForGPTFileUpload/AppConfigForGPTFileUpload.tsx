@@ -1,4 +1,4 @@
-import { useAppFiles } from '@/components/apps/postsHooks'
+import { useAppFiles } from '@/components/apps/appsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
 import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/apps/appConstants'

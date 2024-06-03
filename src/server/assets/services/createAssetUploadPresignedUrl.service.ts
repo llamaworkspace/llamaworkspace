@@ -7,7 +7,7 @@ import type {
   PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { S3Client } from '@aws-sdk/client-s3'
-import { createPresignedApp } from '@aws-sdk/s3-presigned-post'
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 
 const { S3_BUCKET_NAME, S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY } =
   env
@@ -83,7 +83,5 @@ const generatePresignedUrl = async (path: string) => {
     Expires: 3600,
   }
 
-  const presignedApp = await createPresignedApp(s3Client, params)
-
-  return presignedApp
+  return await createPresignedPost(s3Client, params)
 }

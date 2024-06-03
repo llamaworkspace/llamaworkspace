@@ -7,7 +7,7 @@ export default function ProfilePage() {
   const navigation = useNavigation()
   const query = navigation.query
 
-  const appId = query.post_id as string | undefined
+  const appId = query.app_id as string | undefined
 
   return (
     <MainLayout variant={HeaderVariants.Hidden} appId={appId}>

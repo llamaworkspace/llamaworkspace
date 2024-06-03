@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils'
 import Head from 'next/head'
 import { type PropsWithChildren } from 'react'
-import { EMPTY_POST_NAME } from '../apps/postsConstants'
-import { useAppById } from '../apps/postsHooks'
+import { EMPTY_POST_NAME } from '../apps/appsConstants'
+import { useAppById } from '../apps/appsHooks'
 import { useGlobalState } from '../global/globalState'
 import { Sidebar } from '../sidebar/components/Sidebar/Sidebar'
 import {
@@ -28,8 +28,8 @@ export function MainLayout({
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
 
-  const postTitle = app && (app.title ?? EMPTY_POST_NAME)
-  const head = app ? `${postTitle} | Joia` : 'Joia'
+  const appTitle = app && (app.title ?? EMPTY_POST_NAME)
+  const head = app ? `${appTitle} | Joia` : 'Joia'
 
   // IMPORTANT: Keep this key prop, it forces re-renders that otherwise
   // would not happen when navigating between apps.

@@ -1,4 +1,4 @@
-import { EMPTY_POST_NAME } from '@/components/apps/postsConstants'
+import { EMPTY_POST_NAME } from '@/components/apps/appsConstants'
 import { useSidebarButtonLikeStyles } from '@/components/sidebar/sidebarHooks'
 import { cn } from '@/lib/utils'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'

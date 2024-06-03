@@ -1,5 +1,5 @@
+import { useAppById } from '@/components/apps/appsHooks'
 import { AppError } from '@/components/apps/components/AppError'
-import { useAppById } from '@/components/apps/postsHooks'
 import { useChatById } from '@/components/chats/chatHooks'
 import { Chat } from '@/components/chats/components/Chat'
 import { MainLayout } from '@/components/layout/MainLayout'
@@ -12,13 +12,13 @@ export default function ChatPage() {
   const query = navigation.query
   const chatId = query.chat_id as string | undefined
   const { data: chat, isLoading: chatIsLoading } = useChatById(chatId)
-  const { data: app, isLoading: postIsLoading } = useAppById(chat?.appId)
+  const { data: app, isLoading: appIsLoading } = useAppById(chat?.appId)
 
   const isLoadingCompleted = !!(chat && app)
   const isDefaultApp = isLoadingCompleted && app.isDefault
 
   let isAppOrChatInvalid = false
-  if (!postIsLoading && !chatIsLoading) {
+  if (!appIsLoading && !chatIsLoading) {
     if (!app || !chat) {
       isAppOrChatInvalid = true
     }

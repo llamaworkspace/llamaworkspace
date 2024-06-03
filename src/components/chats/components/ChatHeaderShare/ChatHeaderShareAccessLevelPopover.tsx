@@ -1,4 +1,4 @@
-import { useUpdateShareAccessLevelForApp } from '@/components/apps/postsHooks'
+import { useUpdateShareAccessLevelForApp } from '@/components/apps/appsHooks'
 import {
   Popover,
   PopoverContent,

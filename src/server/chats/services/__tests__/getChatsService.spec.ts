@@ -35,8 +35,8 @@ const subject = async (
 describe('getChatsService', () => {
   let workspace: Workspace
   let user: User
-  let post1: App
-  let post2: App
+  let app1: App
+  let app2: App
   let chat1: Chat
   let chat2: Chat
   let chat3: Chat
@@ -47,7 +47,7 @@ describe('getChatsService', () => {
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    ;[post1, post2] = await Promise.all([
+    ;[app1, app2] = await Promise.all([
       AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
@@ -60,17 +60,17 @@ describe('getChatsService', () => {
     ;[chat1, chat2, chat3] = await Promise.all([
       ChatFactory.create(prisma, {
         authorId: user.id,
-        appId: post1.id,
+        appId: app1.id,
       }),
 
       ChatFactory.create(prisma, {
         authorId: user.id,
-        appId: post1.id,
+        appId: app1.id,
       }),
 
       ChatFactory.create(prisma, {
         authorId: user.id,
-        appId: post2.id,
+        appId: app2.id,
       }),
     ])
 
@@ -101,7 +101,7 @@ describe('getChatsService', () => {
 
   describe('when appId is passed', () => {
     it('returns the chats for the app', async () => {
-      const result = await subject(user.id, workspace.id, post1.id)
+      const result = await subject(user.id, workspace.id, app1.id)
       const expectedIds = [chat1.id, chat2.id]
       const returnedIds = result.map((chat) => chat.id)
 
@@ -116,7 +116,7 @@ describe('getChatsService', () => {
     beforeEach(async () => {
       chat4 = await ChatFactory.create(prisma, {
         authorId: user.id,
-        appId: post1.id,
+        appId: app1.id,
       })
     })
 

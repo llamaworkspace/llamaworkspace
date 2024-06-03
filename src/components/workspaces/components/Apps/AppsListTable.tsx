@@ -1,4 +1,4 @@
-import { useAppsForAppsList, useDeleteApp } from '@/components/apps/postsHooks'
+import { useAppsForAppsList, useDeleteApp } from '@/components/apps/appsHooks'
 import { DeleteConfirmationDialog } from '@/components/ui/DeleteConfirmationDialog'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useState } from 'react'
