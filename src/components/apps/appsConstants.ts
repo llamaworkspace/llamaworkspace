@@ -1,1 +1,1 @@
-export const EMPTY_POST_NAME = 'Untitled GPT'
+export const EMPTY_APP_NAME = 'Untitled GPT'

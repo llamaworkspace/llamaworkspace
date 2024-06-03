@@ -1,4 +1,4 @@
-import { EMPTY_POST_NAME } from '@/components/apps/appsConstants'
+import { EMPTY_APP_NAME } from '@/components/apps/appsConstants'
 import { useCreateChatForApp } from '@/components/chats/chatHooks'
 import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import { useNavigation } from '@/lib/frontend/useNavigation'
@@ -17,7 +17,7 @@ export const SidebarMainAppItem = ({ appId, title, emoji }: AppItemProps) => {
 
   return (
     <SidebarMainItemShell
-      title={title ?? EMPTY_POST_NAME}
+      title={title ?? EMPTY_APP_NAME}
       isActive={isActive}
       icon={
         <EmojiWithFallback

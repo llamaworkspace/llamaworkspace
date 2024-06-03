@@ -1,4 +1,4 @@
-import { EMPTY_POST_NAME } from '@/components/apps/appsConstants'
+import { EMPTY_APP_NAME } from '@/components/apps/appsConstants'
 import { useAppById } from '@/components/apps/appsHooks'
 import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -27,7 +27,7 @@ export const ChatHeaderAppTitle = ({ appId }: { appId?: string }) => {
         </div>
       </div>
       <div className="line-clamp-1 text-lg font-bold tracking-tight md:text-xl">
-        {app?.title ?? EMPTY_POST_NAME}
+        {app?.title ?? EMPTY_APP_NAME}
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import { EMPTY_POST_NAME } from '@/components/apps/appsConstants'
+import { EMPTY_APP_NAME } from '@/components/apps/appsConstants'
 import type { RouterOutputs } from '@/lib/api'
 import {
   eachMonthOfInterval,
@@ -30,7 +30,7 @@ export const getSortedApps = (apps: appsForSidebar, sortedAppIds: string[]) => {
   const unsortedApps = apps.filter((app) => !sortedAppIdsSet.has(app.id))
 
   return [
-    ...sortBy(unsortedApps, (app) => app.title ?? EMPTY_POST_NAME),
+    ...sortBy(unsortedApps, (app) => app.title ?? EMPTY_APP_NAME),
     ...sortedApps,
   ]
 }

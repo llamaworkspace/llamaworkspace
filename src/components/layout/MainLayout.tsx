@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import Head from 'next/head'
 import { type PropsWithChildren } from 'react'
-import { EMPTY_POST_NAME } from '../apps/appsConstants'
+import { EMPTY_APP_NAME } from '../apps/appsConstants'
 import { useAppById } from '../apps/appsHooks'
 import { useGlobalState } from '../global/globalState'
 import { Sidebar } from '../sidebar/components/Sidebar/Sidebar'
@@ -28,7 +28,7 @@ export function MainLayout({
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
 
-  const appTitle = app && (app.title ?? EMPTY_POST_NAME)
+  const appTitle = app && (app.title ?? EMPTY_APP_NAME)
   const head = app ? `${appTitle} | Joia` : 'Joia'
 
   // IMPORTANT: Keep this key prop, it forces re-renders that otherwise
