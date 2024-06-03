@@ -83,7 +83,5 @@ const generatePresignedUrl = async (path: string) => {
     Expires: 3600,
   }
 
-  const presignedPost = await createPresignedPost(s3Client, params)
-
-  return presignedPost
+  return await createPresignedPost(s3Client, params)
 }

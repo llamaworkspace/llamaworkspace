@@ -1,7 +1,7 @@
 import { prisma } from '@/server/db'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
 import { ChatRunFactory } from '@/server/testing/factories/ChatRunFactory'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import type { App, Chat, User, Workspace } from '@prisma/client'
@@ -13,7 +13,7 @@ const subject = async (userId: string) => {
 describe('getEntrypointRedirectUrl', () => {
   let workspace: Workspace
   let user: User
-  let defaultPost: App
+  let defaultApp: App
   let demoChatbot: App
 
   beforeEach(async () => {
@@ -21,13 +21,13 @@ describe('getEntrypointRedirectUrl', () => {
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-    defaultPost = await PostFactory.create(prisma, {
+    defaultApp = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       isDefault: true,
     })
 
-    demoChatbot = await PostFactory.create(prisma, {
+    demoChatbot = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
       isDemo: true,
@@ -40,13 +40,13 @@ describe('getEntrypointRedirectUrl', () => {
 
     beforeEach(async () => {
       chat1 = await ChatFactory.create(prisma, {
-        appId: defaultPost.id,
+        appId: defaultApp.id,
         authorId: user.id,
         title: 'chat1',
       })
 
       chat2 = await ChatFactory.create(prisma, {
-        appId: defaultPost.id,
+        appId: defaultApp.id,
         authorId: user.id,
         title: 'chat2',
       })
@@ -104,7 +104,7 @@ describe('getEntrypointRedirectUrl', () => {
     beforeEach(async () => {
       await prisma.chat.deleteMany({
         where: {
-          appId: defaultPost.id,
+          appId: defaultApp.id,
         },
       })
     })
@@ -134,12 +134,12 @@ describe('getEntrypointRedirectUrl', () => {
     // Handling edge case that is risky to fail via chages on code
     describe('and there are chats on chatbots', () => {
       beforeEach(async () => {
-        const otherPost = await PostFactory.create(prisma, {
+        const otherApp = await AppFactory.create(prisma, {
           userId: user.id,
           workspaceId: workspace.id,
         })
         const otherChat = await ChatFactory.create(prisma, {
-          appId: otherPost.id,
+          appId: otherApp.id,
           authorId: user.id,
         })
         await ChatRunFactory.create(prisma, {

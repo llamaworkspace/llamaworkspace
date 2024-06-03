@@ -1,4 +1,4 @@
-import { scopePostByWorkspace } from '@/server/apps/appUtils'
+import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -53,7 +53,7 @@ const getAssignedAppConfigVersion = async (
   const appConfig = await prisma.appConfigVersion.findFirstOrThrow({
     where: {
       id: appConfigVersionId,
-      app: scopePostByWorkspace({}, workspaceId),
+      app: scopeAppByWorkspace({}, workspaceId),
     },
     include: {
       messages: {
@@ -79,7 +79,7 @@ const getAppConfigVersionInProgress = async (
   const appConfig = await prisma.appConfigVersion.findFirstOrThrow({
     where: {
       appId,
-      app: scopePostByWorkspace({}, workspaceId),
+      app: scopeAppByWorkspace({}, workspaceId),
     },
     orderBy: {
       createdAt: 'desc',

@@ -68,7 +68,7 @@ export const AppConfigForGPTSettings = ({
           validate={stringRequired}
           render={({ input, meta }) => {
             return (
-              <PostConfigForGPTSelectEngineFormField
+              <AppConfigForGPTSelectEngineFormField
                 {...input}
                 meta={meta}
                 placeholder="Select engine"

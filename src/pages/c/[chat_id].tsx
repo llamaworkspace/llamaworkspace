@@ -1,5 +1,5 @@
-import { PostError } from '@/components/apps/components/PostError'
-import { usePostById } from '@/components/apps/postsHooks'
+import { useAppById } from '@/components/apps/appsHooks'
+import { AppError } from '@/components/apps/components/AppError'
 import { useChatById } from '@/components/chats/chatHooks'
 import { Chat } from '@/components/chats/components/Chat'
 import { MainLayout } from '@/components/layout/MainLayout'
@@ -12,30 +12,30 @@ export default function ChatPage() {
   const query = navigation.query
   const chatId = query.chat_id as string | undefined
   const { data: chat, isLoading: chatIsLoading } = useChatById(chatId)
-  const { data: app, isLoading: postIsLoading } = usePostById(chat?.appId)
+  const { data: app, isLoading: appIsLoading } = useAppById(chat?.appId)
 
   const isLoadingCompleted = !!(chat && app)
-  const isDefaultPost = isLoadingCompleted && app.isDefault
+  const isDefaultApp = isLoadingCompleted && app.isDefault
 
-  let isPostOrChatInvalid = false
-  if (!postIsLoading && !chatIsLoading) {
+  let isAppOrChatInvalid = false
+  if (!appIsLoading && !chatIsLoading) {
     if (!app || !chat) {
-      isPostOrChatInvalid = true
+      isAppOrChatInvalid = true
     }
   }
 
   let variant: HeaderVariants = HeaderVariants.Hidden
   if (isLoadingCompleted) {
-    variant = isDefaultPost ? HeaderVariants.Chat : HeaderVariants.Chatbot
+    variant = isDefaultApp ? HeaderVariants.Chat : HeaderVariants.Chatbot
   }
 
   return (
     <MainLayout appId={app?.id} chatId={chatId} variant={variant}>
       {/* Apply a key to force full remounts; otherwise nested effects might not work... Nextjs related */}
-      {!isPostOrChatInvalid && (
+      {!isAppOrChatInvalid && (
         <Chat appId={app?.id} chatId={chatId} key={navigation.asPath} />
       )}
-      {isPostOrChatInvalid && <PostError />}
+      {isAppOrChatInvalid && <AppError />}
     </MainLayout>
   )
 }

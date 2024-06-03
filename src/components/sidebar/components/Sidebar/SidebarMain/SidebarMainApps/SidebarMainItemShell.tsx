@@ -1,4 +1,4 @@
-import { EMPTY_POST_NAME } from '@/components/apps/postsConstants'
+import { EMPTY_APP_NAME } from '@/components/apps/appsConstants'
 import { useSidebarButtonLikeStyles } from '@/components/sidebar/sidebarHooks'
 import { cn } from '@/lib/utils'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
@@ -31,7 +31,7 @@ export const SidebarMainItemShell = ({
     >
       <div className="w-[24px] min-w-[24px]">{icon}</div>
       <span className="line-clamp-1 grow ">
-        {title ? title : EMPTY_POST_NAME}
+        {title ? title : EMPTY_APP_NAME}
       </span>
       {showPencil && (
         <div className="w-[20px]">

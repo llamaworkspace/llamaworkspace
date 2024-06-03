@@ -1,4 +1,4 @@
-import { useCanPerformActionForPost } from '@/components/permissions/permissionsHooks'
+import { useCanPerformActionForApp } from '@/components/permissions/permissionsHooks'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useEnterSubmit } from '@/lib/frontend/useEnterSubmit'
@@ -50,7 +50,7 @@ export function Chatbox({
     stableOnChatboxHeightChange?.(textAreaExpectedHeight)
   }, [stableOnChatboxHeightChange, textAreaExpectedHeight])
 
-  const { data: canUse } = useCanPerformActionForPost(
+  const { data: canUse } = useCanPerformActionForApp(
     PermissionAction.Use,
     appId,
   )

@@ -1,5 +1,5 @@
 import { useCreateChatForApp } from '@/components/chats/chatHooks'
-import { useCanPerformActionForPost } from '@/components/permissions/permissionsHooks'
+import { useCanPerformActionForApp } from '@/components/permissions/permissionsHooks'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -91,7 +91,7 @@ interface EllipsisDropdownProps {
 }
 
 const EllipsisDropdown = ({ appId, onDelete }: EllipsisDropdownProps) => {
-  const { data: canDelete, isLoading } = useCanPerformActionForPost(
+  const { data: canDelete, isLoading } = useCanPerformActionForApp(
     PermissionAction.Delete,
     appId,
   )

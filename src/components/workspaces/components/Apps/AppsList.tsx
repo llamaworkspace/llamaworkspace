@@ -1,4 +1,4 @@
-import { useCreatePost } from '@/components/apps/postsHooks'
+import { useCreateApp } from '@/components/apps/appsHooks'
 import {
   Section,
   SectionBody,
@@ -25,16 +25,16 @@ export const AppsList = () => {
 
 const CreateAppSection = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const { mutateAsync: createPost } = useCreatePost()
+  const { mutateAsync: createApp } = useCreateApp()
 
-  const handleCreatePost = async () => {
+  const handleCreateApp = async () => {
     if (!workspace?.id) return
-    await createPost({ workspaceId: workspace.id })
+    await createApp({ workspaceId: workspace.id })
   }
 
   return (
     <div className="flex w-full justify-end ">
-      <Button onClick={() => void handleCreatePost()}>Create GPT</Button>
+      <Button onClick={() => void handleCreateApp()}>Create GPT</Button>
     </div>
   )
 }

@@ -1,41 +1,38 @@
-import {
-  useDeletePost,
-  usePostsForAppsList,
-} from '@/components/apps/postsHooks'
+import { useAppsForAppsList, useDeleteApp } from '@/components/apps/appsHooks'
 import { DeleteConfirmationDialog } from '@/components/ui/DeleteConfirmationDialog'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useState } from 'react'
 import { AppsListRow } from './AppsListRow'
 
 export const AppsListTable = () => {
-  const { data: apps } = usePostsForAppsList()
-  const [deleteModalTargetPostId, setDeleteModalTargetPostId] = useState<
+  const { data: apps } = useAppsForAppsList()
+  const [deleteModalTargetAppId, setDeleteModalTargetAppId] = useState<
     string | null
   >(null)
 
-  const { mutateAsync: deletePost } = useDeletePost()
+  const { mutateAsync: deleteApp } = useDeleteApp()
   const successToast = useSuccessToast()
 
-  const handlePostDeletetionRequest = (appId: string) => {
-    setDeleteModalTargetPostId(appId)
+  const handleAppDeletetionRequest = (appId: string) => {
+    setDeleteModalTargetAppId(appId)
   }
 
-  const handlePostDelete = () => {
-    async function _doPostDeletion() {
-      if (!deleteModalTargetPostId!) {
+  const handleAppDelete = () => {
+    async function _doAppDeletion() {
+      if (!deleteModalTargetAppId!) {
         return
       }
-      await deletePost(
-        { id: deleteModalTargetPostId },
+      await deleteApp(
+        { id: deleteModalTargetAppId },
         {
           onSuccess: () => {
             successToast(undefined, 'GPT successfully deleted')
           },
         },
       )
-      setDeleteModalTargetPostId(null)
+      setDeleteModalTargetAppId(null)
     }
-    void _doPostDeletion()
+    void _doAppDeletion()
   }
 
   if (apps && !apps.length) {
@@ -56,7 +53,7 @@ export const AppsListTable = () => {
           <AppsListRow
             key={app.id}
             app={app}
-            onRowDelete={handlePostDeletetionRequest}
+            onRowDelete={handleAppDeletetionRequest}
           />
         )
       })}
@@ -64,9 +61,9 @@ export const AppsListTable = () => {
         title="Delete GPT"
         description="Are you sure you want to delete this GPT? This action cannot be
               undone."
-        isOpen={!!deleteModalTargetPostId}
-        onCancel={() => setDeleteModalTargetPostId(null)}
-        onConfirm={handlePostDelete}
+        isOpen={!!deleteModalTargetAppId}
+        onCancel={() => setDeleteModalTargetAppId(null)}
+        onConfirm={handleAppDelete}
       />
     </div>
   )

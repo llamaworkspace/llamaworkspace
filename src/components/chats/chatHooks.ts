@@ -5,7 +5,7 @@ import { useChat as useVercelChat } from 'ai/react'
 import { produce } from 'immer'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
-import { useDefaultPost } from '../apps/postsHooks'
+import { useDefaultApp } from '../apps/appsHooks'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useErrorToast } from '../ui/toastHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
@@ -44,7 +44,7 @@ export const useCreateChatForApp = () => {
 
 export const useCreateStandaloneChat = () => {
   const errorHandler = useErrorHandler()
-  const { data: defaultPost } = useDefaultPost()
+  const { data: defaultApp } = useDefaultApp()
 
   const utils = api.useContext()
   const navigation = useNavigation()
@@ -58,17 +58,17 @@ export const useCreateStandaloneChat = () => {
     },
   })
 
-  const defaultPostId = defaultPost?.id
+  const defaultAppId = defaultApp?.id
   type MutateArgs = Parameters<typeof mutate>
 
   return {
     ...obj,
     mutate: useCallback(
       (options?: MutateArgs[1]) => {
-        if (!defaultPostId) return
-        mutate({ appId: defaultPostId }, options)
+        if (!defaultAppId) return
+        mutate({ appId: defaultAppId }, options)
       },
-      [defaultPostId, mutate],
+      [defaultAppId, mutate],
     ),
   }
 }
@@ -289,7 +289,7 @@ export const useUpdateChat = (debounceMs = 0) => {
   type Params = MutateArgs[0]
   type Options = MutateArgs[1]
 
-  const { data: app } = useDefaultPost()
+  const { data: app } = useDefaultApp()
   const { data: workspace } = useCurrentWorkspace()
 
   return {

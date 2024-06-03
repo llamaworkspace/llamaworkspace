@@ -1,5 +1,5 @@
 import { aiRouter } from '@/components/ai/backend/aiRouter'
-import { postsRouter } from '@/components/apps/backend/postsRouter'
+import { appsRouter } from '@/components/apps/backend/appsRouter'
 import { assetsRouter } from '@/components/assets/backend/assetsRouter'
 import { chatsRouter } from '@/components/chats/backend/chatsRouter'
 import { permissionsRouter } from '@/components/permissions/backend/permissionsRouter'
@@ -18,7 +18,7 @@ export const rootRouter = createTRPCRouter({
   sidebar: sidebarRouter,
   users: usersRouter,
   workspaces: workspacesRouter,
-  apps: postsRouter,
+  apps: appsRouter,
   chats: chatsRouter,
   ai: aiRouter,
   permissions: permissionsRouter,

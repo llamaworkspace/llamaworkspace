@@ -1,4 +1,4 @@
-import { createDefaultPostService } from '@/server/apps/services/createDefaultPost.service'
+import { createDefaultAppService } from '@/server/apps/services/createDefaultApp.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -34,13 +34,13 @@ export const addUserToWorkspaceService = async (
       },
     })
 
-    const createDefaultPostServiceContext = await createUserOnWorkspaceContext(
+    const createDefaultAppServiceContext = await createUserOnWorkspaceContext(
       prisma,
       workspaceId,
       userId,
     )
 
-    await createDefaultPostService(prisma, createDefaultPostServiceContext)
+    await createDefaultAppService(prisma, createDefaultAppServiceContext)
     return true
   })
 }

@@ -1,4 +1,4 @@
-import { appConfigVersionUpdateForDefaultPostService } from '@/server/apps/services/appConfigVersionUpdateForDefaultPost.service'
+import { appConfigVersionUpdateForDefaultAppService } from '@/server/apps/services/appConfigVersionUpdateForDefaultApp.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
@@ -29,7 +29,7 @@ export const updateAppConfigForStandaloneChat = protectedProcedure
       userId,
     )
 
-    return await appConfigVersionUpdateForDefaultPostService(
+    return await appConfigVersionUpdateForDefaultAppService(
       ctx.prisma,
       context,
       input,

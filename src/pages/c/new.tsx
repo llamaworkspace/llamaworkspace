@@ -1,6 +1,6 @@
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
-import { getDefaultPostService } from '@/server/apps/services/getDefaultPost.service'
+import { getDefaultAppService } from '@/server/apps/services/getDefaultApp.service'
 import { getServerAuthSession } from '@/server/auth/nextauth'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { createChatService } from '@/server/chats/services/createChat.service'
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (
     workspaceId as string,
     userId,
   )
-  const app = await getDefaultPostService(prisma, ctx)
+  const app = await getDefaultAppService(prisma, ctx)
   const result = await createChatService(prisma, ctx, {
     appId: app.id,
   })

@@ -1,5 +1,5 @@
-import type { ComponentWithPostId } from '@/components/apps/postsTypes'
-import { useCanPerformActionForPost } from '@/components/permissions/permissionsHooks'
+import type { ComponentWithAppId } from '@/components/apps/appsTypes'
+import { useCanPerformActionForApp } from '@/components/permissions/permissionsHooks'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -17,8 +17,8 @@ import {
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { ChatHeaderShareBody } from './ChatHeaderShareBody'
 
-export const ChatHeaderShare = ({ appId }: ComponentWithPostId) => {
-  const { data: canInvite, isLoading } = useCanPerformActionForPost(
+export const ChatHeaderShare = ({ appId }: ComponentWithAppId) => {
+  const { data: canInvite, isLoading } = useCanPerformActionForApp(
     PermissionAction.Invite,
     appId,
   )

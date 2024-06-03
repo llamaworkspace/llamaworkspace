@@ -1,4 +1,4 @@
-import { EMPTY_POST_NAME } from '@/components/apps/postsConstants'
+import { EMPTY_APP_NAME } from '@/components/apps/appsConstants'
 import { useCreateChatForApp } from '@/components/chats/chatHooks'
 import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import { useNavigation } from '@/lib/frontend/useNavigation'
@@ -13,11 +13,11 @@ interface AppItemProps {
 export const SidebarMainAppItem = ({ appId, title, emoji }: AppItemProps) => {
   const navigation = useNavigation()
   const { mutate: createChat } = useCreateChatForApp()
-  const isActive = navigation.query.post_id === appId
+  const isActive = navigation.query.app_id === appId
 
   return (
     <SidebarMainItemShell
-      title={title ?? EMPTY_POST_NAME}
+      title={title ?? EMPTY_APP_NAME}
       isActive={isActive}
       icon={
         <EmojiWithFallback

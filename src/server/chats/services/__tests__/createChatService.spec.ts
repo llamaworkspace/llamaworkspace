@@ -1,21 +1,21 @@
-import * as updatePostSortingServiceWrapper from '@/server/apps/services/updatePostSorting.service'
+import * as updateAppSortingServiceWrapper from '@/server/apps/services/updateAppSorting.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { PostFactory } from '@/server/testing/factories/PostFactory'
+import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
 import { createChatService } from '../createChat.service'
 
-jest.mock('@/server/apps/services/updatePostSorting.service', () => {
+jest.mock('@/server/apps/services/updateAppSorting.service', () => {
   const original = jest.requireActual(
-    '@/server/apps/services/updatePostSorting.service',
-  ) as unknown as typeof updatePostSortingServiceWrapper
+    '@/server/apps/services/updateAppSorting.service',
+  ) as unknown as typeof updateAppSortingServiceWrapper
 
   return {
-    updatePostSortingService: jest.fn(original.updatePostSortingService),
+    updateAppSortingService: jest.fn(original.updateAppSortingService),
   }
 })
 
@@ -44,7 +44,7 @@ describe('createChatService', () => {
       workspaceId: workspace.id,
     })
 
-    app = await PostFactory.create(prisma, {
+    app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
     })
@@ -87,19 +87,19 @@ describe('createChatService', () => {
     expect(dbAppsOnUsers.id).toBeDefined()
   })
 
-  it('invokes updatePostSortingService', async () => {
+  it('invokes updateAppSortingService', async () => {
     await subject(workspace.id, user.id, app.id)
 
     expect(
-      updatePostSortingServiceWrapper.updatePostSortingService,
+      updateAppSortingServiceWrapper.updateAppSortingService,
     ).toHaveBeenCalled()
   })
 
   describe('when the app is default', () => {
-    let defaultPost: App
+    let defaultApp: App
 
     beforeEach(async () => {
-      defaultPost = await PostFactory.create(prisma, {
+      defaultApp = await AppFactory.create(prisma, {
         userId: user.id,
         workspaceId: workspace.id,
         isDefault: true,
@@ -107,12 +107,12 @@ describe('createChatService', () => {
     })
 
     it('creates a appConfigVersion', async () => {
-      const result = await subject(workspace.id, user.id, defaultPost.id)
+      const result = await subject(workspace.id, user.id, defaultApp.id)
 
       const dbAppConfigVersion = await prisma.appConfigVersion.findFirstOrThrow(
         {
           where: {
-            appId: defaultPost.id,
+            appId: defaultApp.id,
           },
           orderBy: {
             createdAt: 'desc',
@@ -125,9 +125,9 @@ describe('createChatService', () => {
     })
 
     it('does not update app sorting', async () => {
-      await subject(workspace.id, user.id, defaultPost.id)
+      await subject(workspace.id, user.id, defaultApp.id)
       expect(
-        updatePostSortingServiceWrapper.updatePostSortingService,
+        updateAppSortingServiceWrapper.updateAppSortingService,
       ).not.toHaveBeenCalled()
     })
   })

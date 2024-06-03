@@ -1,4 +1,4 @@
-import { useUpdateShareAccessLevelForPost } from '@/components/apps/postsHooks'
+import { useUpdateShareAccessLevelForApp } from '@/components/apps/appsHooks'
 import {
   Popover,
   PopoverContent,
@@ -53,7 +53,7 @@ export const ChatHeaderShareAccessLevelPopover = ({
   shareTargetId,
   activeAccessLevel,
 }: ChatHeaderShareAccessLevelPopoverProps) => {
-  const { mutateAsync: updateAccessLevel } = useUpdateShareAccessLevelForPost()
+  const { mutateAsync: updateAccessLevel } = useUpdateShareAccessLevelForApp()
   const [popoverIsOpen, setPopoverIsOpen] = useState(false)
   const toast = useSuccessToast()
 

@@ -1,6 +1,6 @@
 import type { Prisma } from '@prisma/client'
 
-export const scopePostByWorkspace = (
+export const scopeAppByWorkspace = (
   whereClause: Prisma.AppWhereInput,
   workspaceId: string,
 ) => {

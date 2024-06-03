@@ -1,4 +1,4 @@
-import { usePostShare, usePostShareUpdate } from '@/components/apps/postsHooks'
+import { useAppShare, useAppShareUpdate } from '@/components/apps/appsHooks'
 import { SelectField } from '@/components/ui/forms/SelectField'
 import { ShareScope } from '@/shared/globalTypes'
 import { Field, Form as FinalForm } from 'react-final-form'
@@ -25,9 +25,9 @@ export const ChatHeaderShareWhoCanAccess = ({
   appId,
 }: ChatHeaderShareWhoCanAccessProps) => {
   const toast = useSuccessToast()
-  const { data: share } = usePostShare(appId)
+  const { data: share } = useAppShare(appId)
 
-  const { mutateAsync: updateShare } = usePostShareUpdate()
+  const { mutateAsync: updateShare } = useAppShareUpdate()
 
   const handleSubmit = async ({ scope }: FormShape) => {
     if (!share) return

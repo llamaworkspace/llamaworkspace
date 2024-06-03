@@ -1,5 +1,5 @@
-import { ChatHeaderPostLinks } from '../../chats/components/ChatHeaderPostLinks'
-import { ChatHeaderPostTitle } from '../../chats/components/ChatHeaderPostTitle'
+import { ChatHeaderAppLinks } from '../../chats/components/ChatHeaderAppLinks'
+import { ChatHeaderAppTitle } from '../../chats/components/ChatHeaderAppTitle'
 import { useGlobalState } from '../../global/globalState'
 import { SidebarToggleIcon } from '../../sidebar/components/Sidebar/SidebarToggleIcon'
 
@@ -28,10 +28,10 @@ export function MainLayoutHeaderForChatbot({
         </button>
         <div className="flex w-full justify-between px-2">
           <div className="flex grow items-center text-sm">
-            <ChatHeaderPostTitle appId={appId} />
+            <ChatHeaderAppTitle appId={appId} />
           </div>
           <div className="items-center text-sm">
-            <ChatHeaderPostLinks appId={appId} chatId={chatId} />
+            <ChatHeaderAppLinks appId={appId} chatId={chatId} />
           </div>
         </div>
       </div>
@@ -39,10 +39,10 @@ export function MainLayoutHeaderForChatbot({
       <div className="hidden h-8 w-full items-center  lg:flex">
         <div className="flex w-full justify-between gap-x-2 px-6">
           <div className="flex grow items-center text-sm">
-            <ChatHeaderPostTitle appId={appId} />
+            <ChatHeaderAppTitle appId={appId} />
           </div>
           <div className="items-center text-sm">
-            <ChatHeaderPostLinks appId={appId} chatId={chatId} />
+            <ChatHeaderAppLinks appId={appId} chatId={chatId} />
           </div>
         </div>
       </div>

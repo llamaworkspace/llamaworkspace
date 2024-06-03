@@ -58,7 +58,7 @@ export class PermissionsVerifier {
     return result
   }
 
-  async getUserAccessLevelToPost(
+  async getUserAccessLevelToApp(
     userId: string,
     appId: string,
   ): Promise<UserAccessLevel | null> {
@@ -128,7 +128,7 @@ export class PermissionsVerifier {
     appId: string,
     action: PermissionAction,
   ) {
-    const userAccessLevel = await this.getUserAccessLevelToPost(userId, appId)
+    const userAccessLevel = await this.getUserAccessLevelToApp(userId, appId)
     if (!userAccessLevel) {
       return false
     }

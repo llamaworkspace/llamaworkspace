@@ -1,4 +1,4 @@
-import { EMPTY_POST_NAME } from '@/components/apps/postsConstants'
+import { EMPTY_APP_NAME } from '@/components/apps/appsConstants'
 import type { RouterOutputs } from '@/lib/api'
 import {
   eachMonthOfInterval,
@@ -16,25 +16,22 @@ import {
 import { chain, sortBy } from 'underscore'
 
 type appsForSidebar = RouterOutputs['sidebar']['appsForSidebar']
-type PostForSidebar = appsForSidebar extends Array<infer Item> ? Item : never
+type AppForSidebar = appsForSidebar extends Array<infer Item> ? Item : never
 
 type ChatHistoryForSidebarOutput =
   RouterOutputs['sidebar']['chatHistoryForSidebar']
 
-export const getSortedPosts = (
-  apps: appsForSidebar,
-  sortedPostIds: string[],
-) => {
-  const sortedPostIdsSet = new Set(sortedPostIds)
+export const getSortedApps = (apps: appsForSidebar, sortedAppIds: string[]) => {
+  const sortedAppIdsSet = new Set(sortedAppIds)
 
-  const sortedPosts = sortedPostIds
+  const sortedApps = sortedAppIds
     .map((appId) => apps.find((app) => app.id === appId))
-    .filter((app): app is PostForSidebar => !!app)
-  const unsortedPosts = apps.filter((app) => !sortedPostIdsSet.has(app.id))
+    .filter((app): app is AppForSidebar => !!app)
+  const unsortedApps = apps.filter((app) => !sortedAppIdsSet.has(app.id))
 
   return [
-    ...sortBy(unsortedPosts, (app) => app.title ?? EMPTY_POST_NAME),
-    ...sortedPosts,
+    ...sortBy(unsortedApps, (app) => app.title ?? EMPTY_APP_NAME),
+    ...sortedApps,
   ]
 }
 

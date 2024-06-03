@@ -1,5 +1,5 @@
 import { useErrorHandler } from '@/components/global/errorHandlingHooks'
-import { useCanPerformActionForPost } from '@/components/permissions/permissionsHooks'
+import { useCanPerformActionForApp } from '@/components/permissions/permissionsHooks'
 import {
   Section,
   SectionBody,
@@ -14,11 +14,11 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Form as FinalForm } from 'react-final-form'
 import {
+  useAppById,
   useAppConfigUpdate,
-  useLatestAppConfigVersionForPost,
-  usePostById,
-  useUpdatePost,
-} from '../../../postsHooks'
+  useLatestAppConfigVersionForApp,
+  useUpdateApp,
+} from '../../../appsHooks'
 import { AppConfigSubmitButtonGroup } from '../AppConfigSubmitButtonGroup'
 import { AppConfigForGPTNameAndDescription } from './AppConfigForGPTNameAndDescription'
 import { AppConfigForGPTSettings } from './AppConfigForGPTSettings'
@@ -40,14 +40,14 @@ interface SubmitProps {
 export function AppConfigForGPT({ appId }: AppConfigProps) {
   const router = useRouter()
   const returnToChatRoute = router.asPath.replace(`/configuration`, '')
-  const { data: app } = usePostById(appId)
-  const { data: appConfig } = useLatestAppConfigVersionForPost(appId)
+  const { data: app } = useAppById(appId)
+  const { data: appConfig } = useLatestAppConfigVersionForApp(appId)
 
   const { mutateAsync: updateAppConfigVersion } = useAppConfigUpdate()
-  const { mutateAsync: updatePost } = useUpdatePost()
+  const { mutateAsync: updateApp } = useUpdateApp()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
-  const { data: canEdit } = useCanPerformActionForPost(
+  const { data: canEdit } = useCanPerformActionForApp(
     PermissionAction.Update,
     appId,
   )
@@ -65,7 +65,7 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
 
     try {
       await Promise.all([
-        updatePost({
+        updateApp({
           id: app?.id,
           emoji: emoji ?? null,
           title: title ?? null,
