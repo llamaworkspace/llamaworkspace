@@ -15,11 +15,20 @@ const schema = z.object({
   ),
 })
 
-type RequestBody = z.infer<typeof schema>
+const assistantsSchema = z.object({
+  threadId: z.string().nullable(),
+  message: z.string(),
+  data: z.object({
+    chatId: z.string(),
+  }),
+})
+
+type RequestBody = z.infer<typeof assistantsSchema>
 
 export default async function chatStreamedResponseHandlerV2(req: NextRequest) {
   const appEngineRunner = new AppEngineRunner(prisma, enginesRegistry)
   const body = (await req.json()) as RequestBody
 
-  return await appEngineRunner.call(body.chatId)
+  // return await appEngineRunner.call(body.chatId)
+  return await appEngineRunner.call(body.data.chatId)
 }

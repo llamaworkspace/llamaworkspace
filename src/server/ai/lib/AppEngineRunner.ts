@@ -1,5 +1,7 @@
+import { env } from '@/env.mjs'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import { StreamingTextResponse } from 'ai'
+import { AssistantResponse, StreamingTextResponse } from 'ai'
+import OpenAI from 'openai'
 import type { AbstractAppEngine } from './BaseEngine'
 
 export class AppEngineRunner {
@@ -10,22 +12,24 @@ export class AppEngineRunner {
 
   async call(chatId: string) {
     let engineName = await this.getEngineNameFromChatId(chatId)
-    engineName = 'OpenaiBasicEngine'
+    engineName = 'OpenaiAssistantsEngine'
 
     if (!engineName) {
       throw new Error('EngineName not found')
     }
 
     const engine = this.getEngineByName(engineName)
-
     const engineRuntimeContext = await this.generateEngineRuntimeContext(chatId)
+    const streamOrSomethingElse = await engine.run(engineRuntimeContext)
 
-    const stream = await engine.run(engineRuntimeContext)
-    const headers = {
-      'Content-Type': 'text/event-stream',
+    if (streamOrSomethingElse instanceof ReadableStream) {
+      const headers = {
+        'Content-Type': 'text/event-stream',
+      }
+
+      return new StreamingTextResponse(streamOrSomethingElse, { headers })
     }
-
-    return new StreamingTextResponse(stream, { headers })
+    return streamOrSomethingElse
   }
 
   private getEngineByName(name: string) {
@@ -63,4 +67,34 @@ export class AppEngineRunner {
       app,
     }
   }
+}
+
+async function openaiThing() {
+  const openai = new OpenAI({
+    // This needs to be provided at runtime
+    apiKey: env.INTERNAL_OPENAI_API_KEY,
+  })
+
+  const thread = await openai.beta.threads.create({})
+  const threadId = thread.id
+
+  const createdMessage = await openai.beta.threads.messages.create(threadId, {
+    role: 'user',
+    content: 'Say "soy juan el del Assistant"',
+  })
+
+  return AssistantResponse(
+    {
+      threadId,
+      messageId: createdMessage.id,
+    },
+
+    async ({ forwardStream }) => {
+      const runStream = openai.beta.threads.runs.stream(threadId, {
+        assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
+      })
+
+      await forwardStream(runStream)
+    },
+  )
 }

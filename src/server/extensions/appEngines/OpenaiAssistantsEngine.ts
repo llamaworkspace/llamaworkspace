@@ -3,7 +3,7 @@ import {
   AbstractAppEngine,
   type AppEngineRuntimeContext,
 } from '@/server/ai/lib/BaseEngine'
-import { OpenAIStream } from 'ai'
+import { AssistantResponse } from 'ai'
 import OpenAI from 'openai'
 
 export class OpenaiAssistantsEngine extends AbstractAppEngine {
@@ -13,15 +13,31 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
   async run(ctx: AppEngineRuntimeContext) {
     const openai = new OpenAI({
+      // This needs to be provided at runtime
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })
 
-    const aiResponse = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: 'Say "soy paco el engine basico"!' }],
-      stream: true,
-      max_tokens: 10,
+    const thread = await openai.beta.threads.create({})
+    const threadId = thread.id
+
+    const createdMessage = await openai.beta.threads.messages.create(threadId, {
+      role: 'user',
+      content: 'Say "soy juan el del Assistant"',
     })
-    return OpenAIStream(aiResponse)
+
+    return AssistantResponse(
+      {
+        threadId,
+        messageId: createdMessage.id,
+      },
+
+      async ({ forwardStream }) => {
+        const runStream = openai.beta.threads.runs.stream(threadId, {
+          assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
+        })
+
+        await forwardStream(runStream)
+      },
+    )
   }
 }

@@ -1,11 +1,15 @@
 import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
-import { useChat as useVercelChat } from 'ai/react'
+import {
+  useAssistant as useVercelAssistant,
+  useChat as useVercelChat,
+} from 'ai/react'
 import { produce } from 'immer'
 import { debounce } from 'lodash'
 import { useCallback, useEffect, useState } from 'react'
-import { useDefaultApp } from '../apps/appsHooks'
+import { useAppById, useDefaultApp } from '../apps/appsHooks'
+import { AppType } from '../apps/appsTypes'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useErrorToast } from '../ui/toastHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
@@ -120,28 +124,61 @@ export const usePrompt = (chatId?: string) => {
   const toast = useErrorToast()
   const errorHandler = useErrorHandler()
   const [isLoading, setIsLoading] = useState(false)
+  const { data: chat } = useChatById(chatId)
+  const { data: app } = useAppById(chat?.appId)
+
+  const appType = AppType.Assistant
+
   const {
-    messages: vercelMessages,
-    append,
-    setMessages: setVercelMessages,
+    messages: vercelChatMessages,
+    append: chatAppend,
+    setMessages: setVercelChatMessages,
   } = useVercelChat({
     api: '/api/chat',
     onFinish: () => {
       setIsLoading(false)
-      setVercelMessages([])
+      clearVercelMessages()
+
       // Expects the title to be generated
       void utils.sidebar.chatHistoryForSidebar.invalidate()
     },
 
     onError: (error) => {
       setIsLoading(false)
-      setVercelMessages([])
+      clearVercelMessages()
       return errorHandler()(error)
     },
   })
 
-  const targetMessage = vercelMessages?.[1]?.content
+  const onAssistantError = (error: Error) => {
+    if (error.message.includes('Failed to parse stream string')) {
+      setIsLoading(false)
+      clearVercelMessages()
+      return errorHandler()(error)
+    }
+  }
 
+  const {
+    messages: vercelAssistantMessages,
+    setMessages: setVercelAssistantMessages,
+    append: assistantAppend,
+    // status: assistantStatus,
+    // error: assistantError,
+  } = useVercelAssistant({
+    api: '/api/chat',
+    onError: onAssistantError,
+  })
+
+  const clearVercelMessages = useCallback(() => {
+    setVercelChatMessages([])
+    setVercelAssistantMessages([])
+  }, [setVercelChatMessages, setVercelAssistantMessages])
+
+  const targetMessage =
+    appType === AppType.Assistant
+      ? vercelAssistantMessages?.[1]?.content
+      : vercelChatMessages?.[1]?.content
+  console.log('targetMessage', targetMessage)
   useEffect(() => {
     if (!chatId || !targetMessage) return
 
@@ -235,10 +272,22 @@ export const usePrompt = (chatId?: string) => {
                       })
                     },
                   )
+                  clearVercelMessages()
 
-                  setVercelMessages([])
+                  if (appType === AppType.Assistant) {
+                    return void assistantAppend(
+                      {
+                        id: assistantMessage.id,
+                        role: Author.User,
+                        content: '',
+                      },
+                      {
+                        data: { chatId },
+                      },
+                    )
+                  }
 
-                  void append(
+                  void chatAppend(
                     {
                       id: assistantMessage.id,
                       role: Author.User,
@@ -264,7 +313,16 @@ export const usePrompt = (chatId?: string) => {
         },
       )
     },
-    [append, createMessage, setVercelMessages, utils, errorHandler, chatId],
+    [
+      chatAppend,
+      createMessage,
+      utils,
+      errorHandler,
+      chatId,
+      assistantAppend,
+      clearVercelMessages,
+      appType,
+    ],
   )
 
   return {

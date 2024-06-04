@@ -14,6 +14,7 @@ export interface ComponentWithAppId {
 
 export enum AppType {
   Chat = 'chat',
+  Assistant = 'assistant',
 }
 
 export enum AppGptEngine {
