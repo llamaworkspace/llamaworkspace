@@ -33,105 +33,17 @@ export class OpenaiBasicEngine extends AbstractAppEngine {
       }) => {
         const aiResponse = await openai.chat.completions.create({
           model: 'gpt-3.5-turbo',
-          messages: [
-            { role: 'user', content: 'Say "soy paco el engine basico"!' },
-          ],
+          messages: [{ role: 'user', content: 'Say "yo yo yo soy Juaaaan"!' }],
           stream: true,
           max_tokens: 10,
         })
 
         for await (const message of aiResponse) {
-          console.log('message', message)
           const text = message.choices[0]?.delta.content
           if (text) {
             sendTextMessage(text)
           }
         }
-
-        // const stream = OpenAIStream(aiResponse)
-
-        // const reader = stream.getReader()
-
-        // await reader.read().then(({ done, value }) => {
-        //   if (done) {
-        //     // controller.close()
-        //     // void onFinal?.(fullResponse)
-        //     return
-        //   }
-
-        //   const chunkText = new TextDecoder().decode(value)
-        //   console.log('chunkText', chunkText)
-        //   const parsed = chunkText.split('\n')
-
-        //   const dataEvents = parsed.filter((line) => line.startsWith('data: '))
-
-        //   const textArr = dataEvents.flatMap((dataEvent) => {
-        //     const item = dataEvent.replace('data: ', '').replace('\r', '')
-
-        //     const jsonified = JSON.parse(item) as { text: string }
-
-        //     return jsonified.text
-        //   })
-
-        //   // Get the data and send it to the browser via the controller
-        //   const response = textArr.join('')
-        //   // void payload?.onToken?.(response)
-        //   // fullResponse += response
-        //   sendMessage({
-        //     id: messageId,
-        //     role: 'assistant',
-        //     content: { type: 'text', text: { value: parsed } },
-        //   })
-        // })
-
-        // new ReadableStream({
-        //   start(controller) {
-        //     let fullResponse = ''
-        //     function push() {
-        //       return reader.read().then(({ done, value }) => {
-        //         if (done) {
-        //           controller.close()
-        //           // void onFinal?.(fullResponse)
-        //           return
-        //         }
-
-        //         const chunkText = new TextDecoder().decode(value)
-        //         console.log('chunkText', chunkText)
-        //         const parsed = chunkText.split('\n')
-
-        //         const dataEvents = parsed.filter((line) =>
-        //           line.startsWith('data: '),
-        //         )
-
-        //         const textArr = dataEvents.flatMap((dataEvent) => {
-        //           const item = dataEvent.replace('data: ', '').replace('\r', '')
-
-        //           const jsonified = JSON.parse(item) as { text: string }
-
-        //           return jsonified.text
-        //         })
-
-        //         // Get the data and send it to the browser via the controller
-        //         const response = textArr.join('')
-        //         // void payload?.onToken?.(response)
-        //         fullResponse += response
-        //         controller.enqueue(new TextEncoder().encode(response))
-        //         void push()
-        //       })
-        //     }
-
-        //     void push()
-        //   },
-        // })
-
-        // for await (const message of aiResponse) {
-        //   console.log('message', message)
-        //   sendMessage({
-        //     id: messageId,
-        //     role: 'assistant',
-        //     content: message,
-        //   })
-        // }
       },
     )
     const headers = {
