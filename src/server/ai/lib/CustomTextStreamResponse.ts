@@ -69,6 +69,11 @@ Forwards an assistant message (non-streaming) to the client.
   sendMessage: (message: AssistantMessage) => void
 
   /**
+Forwards a text chunk to the last message of the client.
+   */
+  sendTextMessage: (message: string) => void
+
+  /**
 Send a data message to the client. You can use this to provide information for rendering custom UIs while the assistant is processing the thread.
  */
   sendDataMessage: (message: DataMessage) => void
@@ -95,11 +100,32 @@ export function CustomTextStreamResponse(
   const stream = new ReadableStream({
     async start(controller) {
       const textEncoder = new TextEncoder()
+      let initialAssistantMessageSent = false
+      const _initAssistantMessage = () => {
+        if (initialAssistantMessageSent) {
+          return
+        }
+        initialAssistantMessageSent = true
+        controller.enqueue(
+          textEncoder.encode(
+            formatStreamPart('assistant_message', {
+              id: messageId,
+              role: 'assistant',
+              content: [{ type: 'text', text: { value: '' } }],
+            }),
+          ),
+        )
+      }
 
       const sendMessage = (message: AssistantMessage) => {
         controller.enqueue(
           textEncoder.encode(formatStreamPart('assistant_message', message)),
         )
+      }
+
+      const sendTextMessage = (value: string) => {
+        _initAssistantMessage()
+        controller.enqueue(textEncoder.encode(formatStreamPart('text', value)))
       }
 
       const sendDataMessage = (message: DataMessage) => {
@@ -235,6 +261,7 @@ export function CustomTextStreamResponse(
           threadId,
           messageId,
           sendMessage,
+          sendTextMessage,
           sendDataMessage,
           forwardStream,
         })

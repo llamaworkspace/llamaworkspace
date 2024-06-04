@@ -1,6 +1,6 @@
 import { env } from '@/env.mjs'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import { AssistantResponse, StreamingTextResponse } from 'ai'
+import { AssistantResponse } from 'ai'
 import OpenAI from 'openai'
 import type { AbstractAppEngine } from './BaseEngine'
 
@@ -22,13 +22,6 @@ export class AppEngineRunner {
     const engineRuntimeContext = await this.generateEngineRuntimeContext(chatId)
     const streamOrSomethingElse = await engine.run(engineRuntimeContext)
 
-    if (streamOrSomethingElse instanceof ReadableStream) {
-      const headers = {
-        'Content-Type': 'text/event-stream',
-      }
-
-      return new StreamingTextResponse(streamOrSomethingElse, { headers })
-    }
     return streamOrSomethingElse
   }
 
