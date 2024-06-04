@@ -144,6 +144,8 @@ export const usePrompt = (chatId?: string) => {
     onError: onAssistantError,
   })
 
+  const chatIsActive = assistantStatus !== 'awaiting_message'
+
   const clearVercelMessages = useCallback(() => {
     setVercelAssistantMessages([])
   }, [setVercelAssistantMessages])
@@ -282,7 +284,7 @@ export const usePrompt = (chatId?: string) => {
 
   return {
     mutate,
-    isLoading,
+    isLoading: chatIsActive,
   }
 }
 

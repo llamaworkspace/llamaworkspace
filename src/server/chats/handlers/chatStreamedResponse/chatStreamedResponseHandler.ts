@@ -26,11 +26,6 @@ import { z } from 'zod'
 import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
 import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 
-interface VoidIncomingMessage {
-  role: string
-  content: string
-}
-
 const zBody = z.object({
   threadId: z.null(),
   message: z.literal(''),
