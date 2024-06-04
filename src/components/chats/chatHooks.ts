@@ -1,10 +1,10 @@
 import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
-import { useChat as useVercelChat } from 'ai/react'
+import { useAssistant as useVercelAssistant } from 'ai/react'
 import { produce } from 'immer'
 import { debounce } from 'lodash'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDefaultApp } from '../apps/appsHooks'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useErrorToast } from '../ui/toastHooks'
@@ -120,28 +120,56 @@ export const usePrompt = (chatId?: string) => {
   const toast = useErrorToast()
   const errorHandler = useErrorHandler()
   const [isLoading, setIsLoading] = useState(false)
-  const {
-    messages: vercelMessages,
-    append,
-    setMessages: setVercelMessages,
-  } = useVercelChat({
-    api: '/api/chat',
-    onFinish: () => {
-      setIsLoading(false)
-      setVercelMessages([])
-      // Expects the title to be generated
-      void utils.sidebar.chatHistoryForSidebar.invalidate()
-    },
+  const previousStatusRef = useRef<string | null>(null)
 
-    onError: (error) => {
+  const onAssistantError = (error: Error) => {
+    if (error.message.includes('Failed to parse stream string')) {
       setIsLoading(false)
-      setVercelMessages([])
+      clearVercelMessages()
       return errorHandler()(error)
-    },
+    }
+  }
+
+  const {
+    messages: vercelAssistantMessages,
+    setMessages: setVercelAssistantMessages,
+    append: assistantAppend,
+    status: assistantStatus,
+    // error: assistantError,
+  } = useVercelAssistant({
+    api: '/api/chat',
+    onError: onAssistantError,
   })
 
-  const targetMessage = vercelMessages?.[1]?.content
+  const clearVercelMessages = useCallback(() => {
+    setVercelAssistantMessages([])
+  }, [setVercelAssistantMessages])
 
+  useEffect(() => {
+    if (assistantStatus === 'in_progress') {
+      setIsLoading(true)
+    } else {
+      setIsLoading(false)
+    }
+
+    if (
+      previousStatusRef.current === 'in_progress' &&
+      assistantStatus !== 'in_progress'
+    ) {
+      // clearVercelMessages()
+      // Expects the title to be generated
+      void utils.sidebar.chatHistoryForSidebar.invalidate()
+    }
+    previousStatusRef.current = assistantStatus
+  }, [
+    assistantStatus,
+    clearVercelMessages,
+    utils.sidebar.chatHistoryForSidebar,
+  ])
+
+  const targetMessage =
+    vercelAssistantMessages?.[vercelAssistantMessages.length - 1]?.content
+  console.log(1, targetMessage)
   useEffect(() => {
     if (!chatId || !targetMessage) return
 
@@ -151,7 +179,7 @@ export const usePrompt = (chatId?: string) => {
         // It assumes that the first item is the target assistant message
         return produce(previous, (draft) => {
           if (!draft[0]) return
-          draft[0].message = targetMessage
+          draft[0].message += targetMessage
         })
       }
       return previous
@@ -235,19 +263,16 @@ export const usePrompt = (chatId?: string) => {
                       })
                     },
                   )
+                  clearVercelMessages()
 
-                  setVercelMessages([])
-
-                  void append(
+                  return void assistantAppend(
                     {
                       id: assistantMessage.id,
                       role: Author.User,
                       content: '',
                     },
                     {
-                      options: {
-                        body: { chatId },
-                      },
+                      data: { chatId },
                     },
                   )
                 },
@@ -264,7 +289,14 @@ export const usePrompt = (chatId?: string) => {
         },
       )
     },
-    [append, createMessage, setVercelMessages, utils, errorHandler, chatId],
+    [
+      createMessage,
+      utils,
+      errorHandler,
+      chatId,
+      assistantAppend,
+      clearVercelMessages,
+    ],
   )
 
   return {

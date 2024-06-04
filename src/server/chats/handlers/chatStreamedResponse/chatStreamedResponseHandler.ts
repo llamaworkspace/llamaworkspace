@@ -1,5 +1,7 @@
+import { env } from '@/env.mjs'
 import { ensureError } from '@/lib/utils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
+import { CustomAssistantResponse } from '@/server/ai/lib/CustomAssistantResponse'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
@@ -16,11 +18,13 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message } from '@prisma/client'
-import { StreamingTextResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
+import { NextRequest, NextResponse } from 'next/server'
+import OpenAI from 'openai'
 import { chain } from 'underscore'
+import { z } from 'zod'
 import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
 import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 
@@ -29,17 +33,28 @@ interface VoidIncomingMessage {
   content: string
 }
 
-interface BodyPayload {
-  chatId: string
-  messages: VoidIncomingMessage[]
-}
+const zBody = z.object({
+  threadId: z.null(),
+  message: z.literal(''),
+  data: z.object({
+    chatId: z.string(),
+  }),
+})
 
-async function handler(req: Request) {
+type RequestBody = z.infer<typeof zBody>
+
+interface Thing {
+  value: Uint8Array
+  done: boolean
+}
+async function handler(req: NextRequest) {
   let tokenResponse = ''
   let assistantTargetMessageId: string | undefined = undefined
 
   try {
-    const { chatId } = await getParsedBody(req)
+    const {
+      data: { chatId },
+    } = await getParsedBody(req)
     const userId = await getRequestUserId()
     const chat = await getChat(chatId)
     await validateUserPermissionsOrThrow(userId, chatId)
@@ -115,21 +130,76 @@ async function handler(req: Request) {
       throw new Error(`Provider ${providerSlug} not found`)
     }
 
-    const stream = await provider.executeAsStream(
-      {
-        provider: providerSlug,
-        model,
-        messages: allMessages,
-        onToken,
-        onFinal,
-      },
-      providerKVs,
-    )
+    // const stream = await provider.executeAsStream(
+    //   {
+    //     provider: providerSlug,
+    //     model,
+    //     messages: allMessages,
+    //     onToken,
+    //     onFinal,
+    //   },
+    //   providerKVs,
+    // )
 
+    const openai = new OpenAI({
+      // This needs to be provided at runtime
+      apiKey: env.INTERNAL_OPENAI_API_KEY,
+    })
+
+    const thread = await openai.beta.threads.create({})
+    const threadId = thread.id
+    const createdMessage = await openai.beta.threads.messages.create(threadId, {
+      role: 'user',
+      content: 'Say "soy juan el del Assistant"',
+    })
+
+    const streamAsAsyncIterable = openai.beta.threads.runs.stream(threadId, {
+      assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
+    })
+
+    const finalStream = CustomAssistantResponse(
+      {
+        threadId: '1',
+        messageId: '1',
+      },
+      { onToken: () => {}, onFinal: () => {} },
+      async ({ sendMessage, sendTextMessage }) => {
+        // const reader = stream.getReader()
+        for await (const message of streamAsAsyncIterable) {
+          if (message.event === 'thread.message.delta') {
+            sendMessage({
+              id: '123',
+              role: 'assistant',
+              content: message.data.delta.content?.map((content) => {
+                const _content =
+                  content as OpenAI.Beta.Threads.Messages.TextDeltaBlock
+                console.log('message', _content.text?.value)
+                return {
+                  type: content.type,
+                  text: { value: _content.text?.value },
+                }
+              }),
+            })
+          }
+          console.log('message', message)
+          // sendTextMessage(message)
+        }
+
+        // while (true) {
+        //   const { value, done } = await reader.read()
+        //   if (done) {
+        //     break
+        //   }
+        //   const chunkText = new TextDecoder().decode(value).replace('0:', '')
+        //   console.log(22, chunkText)
+        //   sendTextMessage(chunkText)
+        // }
+      },
+    )
     const headers = {
       'Content-Type': 'text/event-stream',
     }
-    return new StreamingTextResponse(stream, { headers })
+    return new NextResponse(finalStream, { headers })
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {
@@ -341,8 +411,9 @@ const transformMessageModelToPayload = (
   }
 }
 
-const getParsedBody = async (req: Request) => {
-  return (await req.json()) as BodyPayload
+const getParsedBody = async (req: NextRequest) => {
+  const json = (await req.json()) as unknown
+  return zBody.parseAsync(json)
 }
 
 export const chatStreamedResponseHandler = withMiddlewareForAppRouter(handler)

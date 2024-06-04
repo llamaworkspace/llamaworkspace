@@ -60,7 +60,7 @@ export const OpenAiProvider = (
         model: payload.model,
         messages: payload.messages,
         stream: true,
-        max_tokens: 4096,
+        max_tokens: 4,
       })
 
       const stream = OpenAIStream(aiResponse, {
