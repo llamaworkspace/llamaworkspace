@@ -178,6 +178,8 @@ export const usePrompt = (chatId?: string) => {
     appType === AppType.Assistant
       ? vercelAssistantMessages?.[1]?.content
       : vercelChatMessages?.[1]?.content
+  console.log(111, vercelChatMessages?.[1]?.content)
+  console.log(222, vercelAssistantMessages?.[1]?.content)
   console.log('targetMessage', targetMessage)
   useEffect(() => {
     if (!chatId || !targetMessage) return

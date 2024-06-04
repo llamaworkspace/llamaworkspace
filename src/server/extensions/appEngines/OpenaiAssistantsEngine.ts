@@ -3,7 +3,7 @@ import {
   AbstractAppEngine,
   type AppEngineRuntimeContext,
 } from '@/server/ai/lib/BaseEngine'
-import { AssistantResponse } from 'ai'
+import { CustomTextStreamResponse } from '@/server/ai/lib/CustomTextStreamResponse'
 import OpenAI from 'openai'
 
 export class OpenaiAssistantsEngine extends AbstractAppEngine {
@@ -25,18 +25,46 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       content: 'Say "soy juan el del Assistant"',
     })
 
-    return AssistantResponse(
+    return CustomTextStreamResponse(
       {
         threadId,
         messageId: createdMessage.id,
       },
+      { onToken: () => {}, onFinal: () => {} },
+      async ({
+        threadId,
+        messageId,
+        sendMessage,
+        sendDataMessage,
+        forwardStream,
+      }) => {
+        const streamAsAsyncIterable = openai.beta.threads.runs.stream(
+          threadId,
+          {
+            assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
+          },
+        )
 
-      async ({ forwardStream }) => {
-        const runStream = openai.beta.threads.runs.stream(threadId, {
-          assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
-        })
+        for await (const message of streamAsAsyncIterable) {
+          if (message.event === 'thread.message.delta') {
+            console.log('message', message)
+            sendMessage({
+              id: messageId,
+              role: 'assistant',
+              content: message.data.delta.content?.map((content) => {
+                const _content =
+                  content as OpenAI.Beta.Threads.Messages.TextDeltaBlock
+                console.log('content11', _content.text)
+                return {
+                  type: content.type,
+                  text: { value: _content.text?.value },
+                }
+              }),
+            })
+          }
+        }
 
-        await forwardStream(runStream)
+        // await forwardStream(streamAsAsyncIterable)
       },
     )
   }
