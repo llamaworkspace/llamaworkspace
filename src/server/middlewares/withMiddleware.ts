@@ -12,15 +12,12 @@ export const withMiddleware = label(
 )
 
 type HandlerFunc = (
-  request: Request | NextRequest,
-  response?: Response | NextResponse,
-) => void | Response | Promise<void | Response>
+  request: NextRequest,
+  response?: NextResponse,
+) => void | Response | NextResponse | Promise<void | Response | NextResponse>
 
 export const withMiddlewareForAppRouter = (handler: HandlerFunc) => {
-  return async (
-    request: Request | NextRequest,
-    response?: Response | NextResponse,
-  ) => {
+  return async (request: NextRequest, response?: NextResponse) => {
     try {
       return await handler(request, response)
     } catch (error) {
