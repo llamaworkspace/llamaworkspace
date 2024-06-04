@@ -20,7 +20,9 @@ import { StreamingTextResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
+import type { NextRequest } from 'next/server'
 import { chain } from 'underscore'
+import { z } from 'zod'
 import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
 import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 
@@ -29,17 +31,22 @@ interface VoidIncomingMessage {
   content: string
 }
 
-interface BodyPayload {
-  chatId: string
-  messages: VoidIncomingMessage[]
-}
+const zBody = z.object({
+  threadId: z.null(),
+  message: z.literal(''),
+  data: z.object({
+    chatId: z.string(),
+  }),
+})
 
-async function handler(req: Request) {
+async function handler(req: NextRequest) {
   let tokenResponse = ''
   let assistantTargetMessageId: string | undefined = undefined
 
   try {
-    const { chatId } = await getParsedBody(req)
+    const {
+      data: { chatId },
+    } = await getParsedBody(req)
     const userId = await getRequestUserId()
     const chat = await getChat(chatId)
     await validateUserPermissionsOrThrow(userId, chatId)
@@ -341,8 +348,9 @@ const transformMessageModelToPayload = (
   }
 }
 
-const getParsedBody = async (req: Request) => {
-  return (await req.json()) as BodyPayload
+const getParsedBody = async (req: NextRequest) => {
+  const json = (await req.json()) as unknown
+  return zBody.parseAsync(json)
 }
 
 export const chatStreamedResponseHandler = withMiddlewareForAppRouter(handler)
