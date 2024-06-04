@@ -9,7 +9,7 @@ export class AppEngineRunner {
 
   async call(chatId: string) {
     let engineName = await this.getEngineNameFromChatId(chatId)
-    engineName = 'OpenaiBasicEngine'
+    engineName = 'OpenaiAssistantsEngine'
 
     if (!engineName) {
       throw new Error('EngineName not found')

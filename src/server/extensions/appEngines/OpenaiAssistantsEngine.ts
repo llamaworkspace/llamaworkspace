@@ -22,7 +22,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     const createdMessage = await openai.beta.threads.messages.create(threadId, {
       role: 'user',
-      content: 'Say "soy juan el del Assistant"',
+      content: 'Say "soy miguel el del sombrero"',
     })
 
     return CustomTextStreamResponse(
@@ -36,6 +36,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         messageId,
         sendMessage,
         sendDataMessage,
+        sendTextMessage,
         forwardStream,
       }) => {
         const streamAsAsyncIterable = openai.beta.threads.runs.stream(
@@ -47,24 +48,14 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
         for await (const message of streamAsAsyncIterable) {
           if (message.event === 'thread.message.delta') {
-            console.log('message', message)
-            sendMessage({
-              id: messageId,
-              role: 'assistant',
-              content: message.data.delta.content?.map((content) => {
-                const _content =
-                  content as OpenAI.Beta.Threads.Messages.TextDeltaBlock
-                console.log('content11', _content.text)
-                return {
-                  type: content.type,
-                  text: { value: _content.text?.value },
-                }
-              }),
+            const contents = message.data.delta.content
+            contents?.forEach((content) => {
+              if (content.type === 'text' && content.text?.value) {
+                sendTextMessage(content.text.value)
+              }
             })
           }
         }
-
-        // await forwardStream(streamAsAsyncIterable)
       },
     )
   }

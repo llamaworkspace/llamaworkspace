@@ -4,7 +4,6 @@ import {
   type AppEngineRuntimeContext,
 } from '@/server/ai/lib/BaseEngine'
 import { CustomTextStreamResponse } from '@/server/ai/lib/CustomTextStreamResponse'
-import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
 export class OpenaiBasicEngine extends AbstractAppEngine {
@@ -16,7 +15,7 @@ export class OpenaiBasicEngine extends AbstractAppEngine {
     const openai = new OpenAI({
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })
-
+    await Promise.resolve()
     const stream = CustomTextStreamResponse(
       {
         threadId: '123',
@@ -46,9 +45,7 @@ export class OpenaiBasicEngine extends AbstractAppEngine {
         }
       },
     )
-    const headers = {
-      'Content-Type': 'text/plain; charset=utf-8',
-    }
-    return new NextResponse(stream, { headers })
+
+    return stream
   }
 }
