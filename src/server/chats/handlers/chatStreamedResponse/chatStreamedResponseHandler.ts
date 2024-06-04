@@ -17,12 +17,13 @@ import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { createOpenAI } from '@ai-sdk/openai'
 import type { Message } from '@prisma/client'
+import { streamText } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
 import { chain } from 'underscore'
 import { z } from 'zod'
 import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
@@ -130,33 +131,66 @@ async function handler(req: NextRequest) {
       throw new Error(`Provider ${providerSlug} not found`)
     }
 
-    // const stream = await provider.executeAsStream(
-    //   {
-    //     provider: providerSlug,
-    //     model,
-    //     messages: allMessages,
-    //     onToken,
-    //     onFinal,
-    //   },
-    //   providerKVs,
-    // )
+    // const openai = new OpenAI({
+    //   // This needs to be provided at runtime
+    //   apiKey: env.INTERNAL_OPENAI_API_KEY,
+    // })
 
-    const openai = new OpenAI({
-      // This needs to be provided at runtime
+    const openai = createOpenAI({
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })
 
-    const thread = await openai.beta.threads.create({})
-    const threadId = thread.id
-    const createdMessage = await openai.beta.threads.messages.create(threadId, {
-      role: 'user',
-      content: 'Say "soy juan el del Assistant"',
-    })
+    // const aiResponse = await openai.chat.completions.create({
+    //   model: payload.model,
+    //   messages: payload.messages,
+    //   stream: true,
+    //   max_tokens: 4,
+    // })
 
-    const streamAsAsyncIterable = openai.beta.threads.runs.stream(threadId, {
-      assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
-    })
+    // const finalStream2 = CustomAssistantResponse(
+    //   {
+    //     threadId: '124',
+    //     messageId: '12346',
+    //   },
+    //   {
+    //     onToken,
+    //     onFinal: (run) => void onFinal(run),
+    //   },
 
+    //   async ({ sendTextMessage, forwardStream }) => {
+    //     const thread = await openai.beta.threads.create({})
+    //     const threadId = thread.id
+    //     await openai.beta.threads.messages.create(threadId, {
+    //       role: 'user',
+    //       content: 'Say "soy juan el del Assistant hoohoho"',
+    //     })
+    //     const runStream = openai.beta.threads.runs.stream(threadId, {
+    //       assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
+    //     })
+
+    //     // forward run status would stream message deltas
+    //     const runResult = await forwardStream(runStream)
+    //     // runResult.status can be: queued, in_progress, requires_action, cancelling, cancelled, failed, completed, or expired
+
+    //     if (!runResult) {
+    //       throw new Error('Run result is undefined')
+    //     }
+
+    //     while (runResult.status === 'requires_action') {}
+
+    //     // if (['completed', 'cancelled'].includes(runResult.status)) {
+    //     //   onFinal(runResult)
+    //     // }
+
+    //     if (runResult.status === 'failed') {
+    //       const error = createHttpError(403, 'Run failed')
+    //       error.payload = runResult
+    //       // onError(error)
+    //     }
+    //   },
+    // )
+
+    // ........................
     const finalStream = CustomAssistantResponse(
       {
         threadId: '1',
@@ -164,26 +198,45 @@ async function handler(req: NextRequest) {
       },
       { onToken: () => {}, onFinal: () => {} },
       async ({ sendMessage, sendTextMessage }) => {
-        // const reader = stream.getReader()
-        for await (const message of streamAsAsyncIterable) {
-          if (message.event === 'thread.message.delta') {
-            sendMessage({
-              id: '123',
-              role: 'assistant',
-              content: message.data.delta.content?.map((content) => {
-                const _content =
-                  content as OpenAI.Beta.Threads.Messages.TextDeltaBlock
-                console.log('message', _content.text?.value)
-                return {
-                  type: content.type,
-                  text: { value: _content.text?.value },
-                }
-              }),
-            })
-          }
-          console.log('message', message)
-          // sendTextMessage(message)
+        const { textStream } = await streamText({
+          model: openai('gpt-4o'),
+          prompt: 'Invent a new holiday and describe its traditions.',
+          maxTokens: 4,
+        })
+
+        for await (const textPart of textStream) {
+          sendTextMessage(textPart)
         }
+        // const stream = await provider.executeAsStream(
+        //   {
+        //     provider: providerSlug,
+        //     model,
+        //     messages: allMessages,
+        //     onToken,
+        //     onFinal,
+        //   },
+        //   providerKVs,
+        // )
+        // const reader = stream.getReader()
+        // for await (const message of streamAsAsyncIterable) {
+        //   if (message.event === 'thread.message.delta') {
+        //     sendMessage({
+        //       id: '123',
+        //       role: 'assistant',
+        //       content: message.data.delta.content?.map((content) => {
+        //         const _content =
+        //           content as OpenAI.Beta.Threads.Messages.TextDeltaBlock
+        //         console.log('message', _content.text?.value)
+        //         return {
+        //           type: content.type,
+        //           text: { value: _content.text?.value },
+        //         }
+        //       }),
+        //     })
+        //   }
+        //   console.log('message', message)
+        //   // sendTextMessage(message)
+        // }
 
         // while (true) {
         //   const { value, done } = await reader.read()
@@ -197,7 +250,7 @@ async function handler(req: NextRequest) {
       },
     )
     const headers = {
-      'Content-Type': 'text/event-stream',
+      'Content-Type': 'text/plain; charset=utf-8',
     }
     return new NextResponse(finalStream, { headers })
   } catch (_error) {

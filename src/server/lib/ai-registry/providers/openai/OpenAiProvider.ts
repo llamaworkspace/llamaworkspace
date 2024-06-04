@@ -1,5 +1,6 @@
-import { OpenAIStream } from 'ai'
-import OpenAI, { type ClientOptions } from 'openai'
+import { createOpenAI } from '@ai-sdk/openai'
+import { streamText } from 'ai'
+import { type ClientOptions } from 'openai'
 import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
 import { openAiModels } from './lib/openAiModels'
 import type {
@@ -54,21 +55,33 @@ export const OpenAiProvider = (
         openAiClientPayload.baseURL = params?.fallbackBaseUrl
       }
 
-      const openai = new OpenAI(openAiClientPayload)
-
-      const aiResponse = await openai.chat.completions.create({
-        model: payload.model,
-        messages: payload.messages,
-        stream: true,
-        max_tokens: 4,
+      // const openai = new OpenAI(openAiClientPayload)
+      const openai = createOpenAI({
+        // custom settings
       })
 
-      const stream = OpenAIStream(aiResponse, {
-        onToken: payload?.onToken,
-        onFinal: payload?.onFinal,
+      // const aiResponse = await openai.chat.completions.create({
+      //   model: payload.model,
+      //   messages: payload.messages,
+      //   stream: true,
+      //   max_tokens: 4,
+      // })
+
+      const { textStream } = await streamText({
+        model: openai('gpt-4o'),
+        prompt: 'Invent a new holiday and describe its traditions.',
       })
 
-      return stream
+      return textStream
+
+      // return aiResponse
+
+      // const stream = OpenAIStream(aiResponse, {
+      //   onToken: payload?.onToken,
+      //   onFinal: payload?.onFinal,
+      // })
+
+      // return stream
     },
     hasFallbackCredentials: !!params?.fallbackApiKey,
   }

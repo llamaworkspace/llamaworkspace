@@ -1,11 +1,15 @@
 import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
-import { useAssistant as useVercelAssistant } from 'ai/react'
+import {
+  useAssistant as useVercelAssistant,
+  useChat as useVercelChat,
+} from 'ai/react'
 import { produce } from 'immer'
 import { debounce } from 'lodash'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useDefaultApp } from '../apps/appsHooks'
+import { useCallback, useEffect, useState } from 'react'
+import { useAppById, useDefaultApp } from '../apps/appsHooks'
+import { AppType } from '../apps/appsTypes'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useErrorToast } from '../ui/toastHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
@@ -120,7 +124,31 @@ export const usePrompt = (chatId?: string) => {
   const toast = useErrorToast()
   const errorHandler = useErrorHandler()
   const [isLoading, setIsLoading] = useState(false)
-  const previousStatusRef = useRef<string | null>(null)
+  const { data: chat } = useChatById(chatId)
+  const { data: app } = useAppById(chat?.appId)
+
+  const appType = AppType.Assistant.toString()
+
+  const {
+    messages: vercelChatMessages,
+    append: chatAppend,
+    setMessages: setVercelChatMessages,
+  } = useVercelChat({
+    api: '/api/chat',
+    onFinish: () => {
+      setIsLoading(false)
+      clearVercelMessages()
+
+      // Expects the title to be generated
+      void utils.sidebar.chatHistoryForSidebar.invalidate()
+    },
+
+    onError: (error) => {
+      setIsLoading(false)
+      clearVercelMessages()
+      return errorHandler()(error)
+    },
+  })
 
   const onAssistantError = (error: Error) => {
     if (error.message.includes('Failed to parse stream string')) {
@@ -134,7 +162,7 @@ export const usePrompt = (chatId?: string) => {
     messages: vercelAssistantMessages,
     setMessages: setVercelAssistantMessages,
     append: assistantAppend,
-    status: assistantStatus,
+    // status: assistantStatus,
     // error: assistantError,
   } = useVercelAssistant({
     api: '/api/chat',
@@ -142,34 +170,16 @@ export const usePrompt = (chatId?: string) => {
   })
 
   const clearVercelMessages = useCallback(() => {
+    setVercelChatMessages([])
     setVercelAssistantMessages([])
-  }, [setVercelAssistantMessages])
-
-  useEffect(() => {
-    if (assistantStatus === 'in_progress') {
-      setIsLoading(true)
-    } else {
-      setIsLoading(false)
-    }
-
-    if (
-      previousStatusRef.current === 'in_progress' &&
-      assistantStatus !== 'in_progress'
-    ) {
-      // clearVercelMessages()
-      // Expects the title to be generated
-      void utils.sidebar.chatHistoryForSidebar.invalidate()
-    }
-    previousStatusRef.current = assistantStatus
-  }, [
-    assistantStatus,
-    clearVercelMessages,
-    utils.sidebar.chatHistoryForSidebar,
-  ])
+  }, [setVercelChatMessages, setVercelAssistantMessages])
 
   const targetMessage =
-    vercelAssistantMessages?.[vercelAssistantMessages.length - 1]?.content
-  console.log(1, targetMessage)
+    appType === AppType.Assistant.toString()
+      ? vercelAssistantMessages?.[1]?.content
+      : vercelChatMessages?.[1]?.content
+
+  console.log('targetMessage', vercelAssistantMessages?.[1])
   useEffect(() => {
     if (!chatId || !targetMessage) return
 
@@ -179,7 +189,7 @@ export const usePrompt = (chatId?: string) => {
         // It assumes that the first item is the target assistant message
         return produce(previous, (draft) => {
           if (!draft[0]) return
-          draft[0].message += targetMessage
+          draft[0].message = targetMessage
         })
       }
       return previous
@@ -265,14 +275,29 @@ export const usePrompt = (chatId?: string) => {
                   )
                   clearVercelMessages()
 
-                  return void assistantAppend(
+                  if (appType === AppType.Assistant.toString()) {
+                    return void assistantAppend(
+                      {
+                        id: assistantMessage.id,
+                        role: Author.User,
+                        content: '',
+                      },
+                      {
+                        data: { chatId },
+                      },
+                    )
+                  }
+
+                  void chatAppend(
                     {
                       id: assistantMessage.id,
                       role: Author.User,
                       content: '',
                     },
                     {
-                      data: { chatId },
+                      options: {
+                        body: { chatId },
+                      },
                     },
                   )
                 },
@@ -290,12 +315,14 @@ export const usePrompt = (chatId?: string) => {
       )
     },
     [
+      chatAppend,
       createMessage,
       utils,
       errorHandler,
       chatId,
       assistantAppend,
       clearVercelMessages,
+      appType,
     ],
   )
 

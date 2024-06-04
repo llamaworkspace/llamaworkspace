@@ -100,25 +100,36 @@ export function CustomAssistantResponse(
   return new ReadableStream({
     async start(controller) {
       const textEncoder = new TextEncoder()
+      let initialAssistantMessageSent = false
+      const messageId = Math.random().toString(36).slice(2)
 
+      const _initAssistantMessage = () => {
+        if (initialAssistantMessageSent) {
+          return
+        }
+        initialAssistantMessageSent = true
+        controller.enqueue(
+          textEncoder.encode(
+            formatStreamPart('assistant_message', {
+              id: messageId,
+              role: 'assistant',
+              content: [{ type: 'text', text: { value: '' } }],
+            }),
+          ),
+        )
+      }
       const sendMessage = (message: AssistantMessage) => {
+        initialAssistantMessageSent = true
         controller.enqueue(
           textEncoder.encode(formatStreamPart('assistant_message', message)),
         )
       }
 
       const sendTextMessage = (value: string) => {
-        console.log('sendTextMessage', value)
+        _initAssistantMessage()
+
         controller.enqueue(textEncoder.encode(formatStreamPart('text', value)))
       }
-      // const sendTextMessage = (value: string) => {
-      //   fullValue += value
-      //   sendMessage({
-      //     id: Math.random().toString(36).slice(2),
-      //     role: 'assistant',
-      //     content: [{ type: 'text', text: { value: fullValue } }],
-      //   })
-      // }
 
       const sendDataMessage = (message: DataMessage) => {
         controller.enqueue(
@@ -132,6 +143,15 @@ export function CustomAssistantResponse(
         )
       }
 
+      // send the threadId and messageId as the first message:
+      // controller.enqueue(
+      //   textEncoder.encode(
+      //     formatStreamPart('assistant_control_data', {
+      //       threadId,
+      //       messageId,
+      //     }),
+      //   ),
+      // )
       const forwardStream = async (stream: AssistantStream) => {
         let result: Run | undefined = undefined
 
@@ -143,63 +163,56 @@ export function CustomAssistantResponse(
           // if (value.data.type === 'message_creation') {
           //   console.log('message_creation', value.data.step_details)
           // }
-          if (value.event === 'thread.message.delta') {
-            const {
-              data: { delta },
-            } = value
+          // if (value.event === 'thread.message.delta') {
+          //   const {
+          //     data: { delta },
+          //   } = value
 
-            delta.content?.forEach((content) => {
-              if (content.type === 'text') {
-                if (content.text?.value) {
-                  onToken(content.text.value)
-                  console.log(
-                    'thread.message.delta',
-                    content.text?.value,
-                    content.text?.annotations,
-                  )
-                }
-              }
-            })
-          }
+          //   delta.content?.forEach((content) => {
+          //     if (content.type === 'text') {
+          //       if (content.text?.value) {
+          //         onToken(content.text.value)
+          //         console.log(
+          //           'thread.message.delta',
+          //           content.text?.value,
+          //           content.text?.annotations,
+          //         )
+          //       }
+          //     }
+          //   })
+          // }
 
-          if (value.event === 'thread.message.completed') {
-            const {
-              data: { content },
-            } = value
+          // if (value.event === 'thread.message.completed') {
+          //   const {
+          //     data: { content },
+          //   } = value
 
-            content?.forEach((content) => {
-              if (content.type === 'text') {
-                if (content.text?.value) {
-                  onFinal(content.text.value)
-                  console.log(
-                    'thread.message.completed',
-                    content.text?.value,
-                    content.text?.annotations,
-                  )
-                }
-              }
-            })
-          }
+          //   content?.forEach((content) => {
+          //     if (content.type === 'text') {
+          //       if (content.text?.value) {
+          //         onFinal(content.text.value)
+          //         console.log(
+          //           'thread.message.completed',
+          //           content.text?.value,
+          //           content.text?.annotations,
+          //         )
+          //       }
+          //     }
+          //   })
+          // }
 
           switch (value.event) {
             case 'thread.message.created': {
-              console.log(
-                'aaaa',
-                formatStreamPart('assistant_message', {
-                  id: value.data.id,
-                  role: 'assistant',
-                  content: [{ type: 'text', text: { value: '' } }],
-                }),
-              )
               controller.enqueue(
                 textEncoder.encode(
                   formatStreamPart('assistant_message', {
-                    id: value.data.id,
+                    id: messageId,
                     role: 'assistant',
                     content: [{ type: 'text', text: { value: '' } }],
                   }),
                 ),
               )
+
               break
             }
 
@@ -207,15 +220,7 @@ export function CustomAssistantResponse(
               const content = value.data.delta.content?.[0]
 
               if (content?.type === 'text' && content.text?.value != null) {
-                console.log(
-                  'bbbbb',
-                  formatStreamPart('text', content.text.value),
-                )
-                controller.enqueue(
-                  textEncoder.encode(
-                    formatStreamPart('text', content.text.value),
-                  ),
-                )
+                sendTextMessage(content.text.value)
               }
 
               break
