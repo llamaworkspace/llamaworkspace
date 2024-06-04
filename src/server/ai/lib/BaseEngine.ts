@@ -7,5 +7,5 @@ export interface AppEngineRuntimeContext {
 
 export abstract class AbstractAppEngine {
   abstract getName(): string
-  abstract run(ctx: AppEngineRuntimeContext): Promise<ReadableStream<string>>
+  abstract run(ctx: AppEngineRuntimeContext): Promise<ReadableStream<unknown>>
 }
