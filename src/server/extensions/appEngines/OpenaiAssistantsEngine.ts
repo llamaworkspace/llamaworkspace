@@ -4,7 +4,7 @@ import {
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 import { CustomTextStreamResponse } from '@/server/ai/lib/CustomTextStreamResponse'
-import { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
+import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
 
 type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
@@ -36,7 +36,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       messages: messagesWithoutSystem,
     })
     const threadId = thread.id
-    console.log('thread', thread)
+
     const createdMessage = await openai.beta.threads.messages.create(threadId, {
       role: 'user',
       content: 'Say "soy miguel el del sombrero"',
@@ -48,14 +48,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         messageId: createdMessage.id,
       },
       { onToken: () => {}, onFinal: () => {} },
-      async ({
-        threadId,
-        messageId,
-        sendMessage,
-        sendDataMessage,
-        sendTextMessage,
-        forwardStream,
-      }) => {
+      async ({ sendTextMessage }) => {
         const streamAsAsyncIterable = openai.beta.threads.runs.stream(
           threadId,
           {
