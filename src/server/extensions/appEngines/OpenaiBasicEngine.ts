@@ -1,8 +1,9 @@
 import { env } from '@/env.mjs'
 import {
   AbstractAppEngine,
-  type AppEngineRuntimeContext,
-} from '@/server/ai/lib/BaseEngine'
+  type AppEngineParams,
+} from '@/server/ai/lib/AbstractAppEngine'
+
 import { CustomTextStreamResponse } from '@/server/ai/lib/CustomTextStreamResponse'
 import OpenAI from 'openai'
 
@@ -11,7 +12,7 @@ export class OpenaiBasicEngine extends AbstractAppEngine {
     return 'OpenaiBasicEngine'
   }
 
-  async run(ctx: AppEngineRuntimeContext) {
+  async run({ ctx }: AppEngineParams) {
     const openai = new OpenAI({
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })

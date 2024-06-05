@@ -1,25 +1,42 @@
 import { env } from '@/env.mjs'
 import {
   AbstractAppEngine,
-  type AppEngineRuntimeContext,
-} from '@/server/ai/lib/BaseEngine'
+  type AppEngineParams,
+} from '@/server/ai/lib/AbstractAppEngine'
 import { CustomTextStreamResponse } from '@/server/ai/lib/CustomTextStreamResponse'
+import { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
+
+type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
+  role: Exclude<AiRegistryMessage['role'], 'system'>
+}
 
 export class OpenaiAssistantsEngine extends AbstractAppEngine {
   getName() {
     return 'OpenaiAssistantsEngine'
   }
 
-  async run(ctx: AppEngineRuntimeContext) {
+  async run({ ctx, messages }: AppEngineParams) {
     const openai = new OpenAI({
       // This needs to be provided at runtime
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })
 
-    const thread = await openai.beta.threads.create({})
-    const threadId = thread.id
+    const messagesWithoutSystem = messages.map((message) => {
+      if (message.role !== 'system') {
+        return message as AiRegistryMessageWithoutSystemRole
+      }
+      return {
+        ...message,
+        role: 'user',
+      } as AiRegistryMessageWithoutSystemRole
+    })
 
+    const thread = await openai.beta.threads.create({
+      messages: messagesWithoutSystem,
+    })
+    const threadId = thread.id
+    console.log('thread', thread)
     const createdMessage = await openai.beta.threads.messages.create(threadId, {
       role: 'user',
       content: 'Say "soy miguel el del sombrero"',

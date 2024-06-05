@@ -1,4 +1,4 @@
-import type { AbstractAppEngine } from '../../ai/lib/BaseEngine'
+import type { AbstractAppEngine } from '../../ai/lib/AbstractAppEngine'
 import { OpenaiAssistantsEngine } from './OpenaiAssistantsEngine'
 import { OpenaiBasicEngine } from './OpenaiBasicEngine'
 

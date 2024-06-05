@@ -1,5 +1,8 @@
+import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import type { AbstractAppEngine } from './BaseEngine'
+import type { Message } from '@prisma/client'
+import { chain } from 'underscore'
+import type { AbstractAppEngine } from './AbstractAppEngine'
 
 export class AppEngineRunner {
   constructor(
@@ -16,10 +19,11 @@ export class AppEngineRunner {
     }
 
     const engine = this.getEngineByName(engineName)
-    const engineRuntimeContext = await this.generateEngineRuntimeContext(chatId)
-    const streamOrSomethingElse = await engine.run(engineRuntimeContext)
+    const ctx = await this.generateEngineRuntimeContext(chatId)
+    const messages = await this.generateEngineMessages(chatId)
+    const stream = await engine.run({ ctx, messages })
 
-    return streamOrSomethingElse
+    return stream
   }
 
   private getEngineByName(name: string) {
@@ -56,5 +60,54 @@ export class AppEngineRunner {
       chat,
       app,
     }
+  }
+
+  private async generateEngineMessages(chatId: string) {
+    const messages = await this.getMessagesForChat(chatId)
+    return this.prepareMessagesForPrompt(messages)
+  }
+
+  private prepareMessagesForPrompt(messages: Message[]) {
+    if (messages.length < 2) {
+      throw new Error('Message length should be at least 2')
+    }
+
+    // This last message should be maxCreatedAt where the author=assistant and should be empty
+    // It shouldn't be sent over
+    const assistantTargetMessage = chain(messages)
+      .filter(
+        (message) =>
+          message.author === (Author.Assistant as string) &&
+          message.message === null,
+      )
+      .max((message) => message.createdAt.getTime())
+      .value() as Message
+
+    const llmMessagesPayload = messages.filter((message) => {
+      if (assistantTargetMessage.id === message.id) {
+        return false
+      }
+      return message.message !== null && message.message !== ''
+    })
+
+    return llmMessagesPayload.map((message: Message) => {
+      if (!message.message) throw new Error('Message should have a message')
+
+      return {
+        role: message.author as Author,
+        content: message.message,
+      }
+    })
+  }
+
+  private async getMessagesForChat(chatId: string) {
+    return await this.prisma.message.findMany({
+      where: {
+        chatId,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    })
   }
 }
