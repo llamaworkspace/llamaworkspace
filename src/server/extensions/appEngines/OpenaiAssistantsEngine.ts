@@ -3,7 +3,7 @@ import {
   AbstractAppEngine,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
-import { AppEngineResponseStream } from '@/server/ai/lib/AppEngineResponseStream'
+import { AltAppEngineResponseStream } from '@/server/ai/lib/AltAppEngineResponseStream'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
 
@@ -42,21 +42,26 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       content: 'Say "Hi workl"',
     })
 
-    return AppEngineResponseStream(
+    return AltAppEngineResponseStream(
       {
         threadId,
         messageId: createdMessage.id,
       },
 
-      async ({ forwardStream }) => {
-        const streamAsAsyncIterable = openai.beta.threads.runs.stream(
-          threadId,
-          {
-            assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
-          },
-        )
-
-        await forwardStream(streamAsAsyncIterable)
+      async ({ pushMessage, doThing }) => {
+        // const streamAsAsyncIterable = openai.beta.threads.runs.stream(
+        //   threadId,
+        //   {
+        //     assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
+        //   },
+        // )
+        await Promise.resolve()
+        await doThing()
+        console.log('!!!!FINISH!!!!')
+        // for await (const value of streamAsAsyncIterable) {
+        //   console.log(value)
+        //   pushMessage('a_string_here')
+        // }
       },
     )
   }
