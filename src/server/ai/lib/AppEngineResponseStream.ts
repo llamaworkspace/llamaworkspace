@@ -2,28 +2,30 @@ import { AssistantResponse, type AssistantMessage, type DataMessage } from 'ai'
 import { type AssistantStream } from 'openai/lib/AssistantStream'
 import { type Run } from 'openai/resources/beta/threads/runs/runs'
 
-type AssistantResponseCallback = (options: {
-  /**
-  @deprecated use variable from outer scope instead.
-     */
-  threadId: string
-  /**
-  @deprecated use variable from outer scope instead.
-     */
-  messageId: string
-  /**
-  Forwards an assistant message (non-streaming) to the client.
-     */
+type AiLibAssistantResponseCallbackArgs = {
   sendMessage: (message: AssistantMessage) => void
-  /**
-  Send a data message to the client. You can use this to provide information for rendering custom UIs while the assistant is processing the thread.
-   */
   sendDataMessage: (message: DataMessage) => void
-  /**
+  forwardStream: (stream: AssistantStream) => Promise<Run | undefined>
+}
+
+type AiLibAssistantResponseCallback = (
+  options: AiLibAssistantResponseCallbackArgs,
+) => Promise<void>
+
+type AppEngineResponseStreamProcessArgs = (
+  options: Omit<AiLibAssistantResponseCallbackArgs, 'forwardStream'> & {
+    /**
+  Append text to the current message in the UI. Streams the message.
+   */
+    sendTextMessageChunk: (message: string) => void
+    /**
   Forwards the assistant response stream to the client. Returns the `Run` object after it completes, or when it requires an action.
      */
-  forwardStream: (stream: AssistantStream) => Promise<Run | undefined>
-}) => Promise<void>
+    forwardOpenAiAssistantsStream: (
+      stream: AssistantStream,
+    ) => Promise<Run | undefined>
+  },
+) => Promise<void>
 
 type AssistantResponseSettings = {
   /**
@@ -38,9 +40,26 @@ type AssistantResponseSettings = {
 
 export const AppEngineResponseStream = (
   responseSettings: AssistantResponseSettings,
-  process: AssistantResponseCallback,
+  process: AppEngineResponseStreamProcessArgs,
 ) => {
-  const response = AssistantResponse(responseSettings, process)
+  const processFunc: AiLibAssistantResponseCallback = async ({
+    sendMessage,
+    sendDataMessage,
+    forwardStream,
+  }) => {
+    const sendTextMessageChunk = (text: string) => {
+      console.log(1)
+    }
+
+    await process({
+      sendMessage,
+      sendDataMessage,
+      sendTextMessageChunk,
+      forwardOpenAiAssistantsStream: forwardStream,
+    })
+  }
+
+  const response = AssistantResponse(responseSettings, processFunc)
 
   if (!response.body) {
     throw new Error('Response body is missing in AppEngineResponseStream')
