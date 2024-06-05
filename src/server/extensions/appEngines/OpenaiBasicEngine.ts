@@ -4,7 +4,7 @@ import {
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 
-import { CustomTextStreamResponse } from '@/server/ai/lib/CustomTextStreamResponse'
+import { MyAssistantResponse } from '@/server/ai/lib/CustomTextStreamResponse'
 import OpenAI from 'openai'
 
 export class OpenaiBasicEngine extends AbstractAppEngine {
@@ -17,12 +17,11 @@ export class OpenaiBasicEngine extends AbstractAppEngine {
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })
     await Promise.resolve()
-    const stream = CustomTextStreamResponse(
+    const stream = MyAssistantResponse(
       {
         threadId: '123',
         messageId: '123',
       },
-      { onToken: () => {}, onFinal: () => {} },
       async ({
         threadId,
         messageId,
