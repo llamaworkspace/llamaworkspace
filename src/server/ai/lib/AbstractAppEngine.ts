@@ -1,8 +1,6 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { App, Chat } from '@prisma/client'
 
-type AppEngineRunResponse = Promise<ReadableStream<unknown>>
-
 interface AppEngineRuntimeContext {
   readonly chat: Chat
   readonly app: App
@@ -15,5 +13,5 @@ export interface AppEngineParams {
 
 export abstract class AbstractAppEngine {
   abstract getName(): string
-  abstract run(params: AppEngineParams): AppEngineRunResponse
+  abstract run(params: AppEngineParams): Promise<ReadableStream<unknown>>
 }

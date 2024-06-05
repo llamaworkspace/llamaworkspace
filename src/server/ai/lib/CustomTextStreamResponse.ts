@@ -1,4 +1,5 @@
 import { ensureError } from '@/lib/utils'
+import { AssistantResponse } from 'ai'
 import type { AssistantStream } from 'openai/lib/AssistantStream'
 import type { Run } from 'openai/resources/beta/threads/runs/runs'
 
@@ -84,11 +85,34 @@ Forwards the assistant response stream to the client. Returns the `Run` object a
   forwardStream: (stream: AssistantStream) => Promise<Run | undefined>
 }) => Promise<void>
 
-/**
-The `AssistantResponse` allows you to send a stream of assistant update to `useAssistant`.
-It is designed to facilitate streaming assistant responses to the `useAssistant` hook.
-It receives an assistant thread and a current message, and can send messages and data messages to the client.
- */
+type AssistantResponseArgs = Parameters<typeof AssistantResponse>
+
+export const MyAssistantResponse = (...args: AssistantResponseArgs) => {
+  const response = AssistantResponse(...args)
+
+  if (!response.body) {
+    throw new Error('Response body is missing')
+  }
+
+  const reader = response.body.getReader()
+  const nextReadableStream = new ReadableStream({
+    async start(controller) {
+      while (true) {
+        const { done, value } = await reader.read()
+        const chunkText = new TextDecoder().decode(value)
+        console.log('chunkText', done, chunkText)
+        if (done) {
+          controller.close()
+          return
+        }
+        controller.enqueue(value)
+      }
+    },
+  })
+
+  return nextReadableStream
+}
+
 export function CustomTextStreamResponse(
   { threadId, messageId }: AssistantResponseSettings,
   {

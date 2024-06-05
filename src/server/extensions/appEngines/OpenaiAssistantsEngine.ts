@@ -3,7 +3,7 @@ import {
   AbstractAppEngine,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
-import { CustomTextStreamResponse } from '@/server/ai/lib/CustomTextStreamResponse'
+import { MyAssistantResponse } from '@/server/ai/lib/CustomTextStreamResponse'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
 
@@ -39,16 +39,16 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     const createdMessage = await openai.beta.threads.messages.create(threadId, {
       role: 'user',
-      content: 'Say "soy miguel el del sombrero"',
+      content: 'Say "Hi workl"',
     })
 
-    return CustomTextStreamResponse(
+    return MyAssistantResponse(
       {
         threadId,
         messageId: createdMessage.id,
       },
-      { onToken: () => {}, onFinal: () => {} },
-      async ({ sendTextMessage }) => {
+
+      async ({ forwardStream }) => {
         const streamAsAsyncIterable = openai.beta.threads.runs.stream(
           threadId,
           {
@@ -56,16 +56,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
           },
         )
 
-        for await (const message of streamAsAsyncIterable) {
-          if (message.event === 'thread.message.delta') {
-            const contents = message.data.delta.content
-            contents?.forEach((content) => {
-              if (content.type === 'text' && content.text?.value) {
-                sendTextMessage(content.text.value)
-              }
-            })
-          }
-        }
+        await forwardStream(streamAsAsyncIterable)
       },
     )
   }
