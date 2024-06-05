@@ -3,7 +3,7 @@ import {
   AbstractAppEngine,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
-import { MyAssistantResponse } from '@/server/ai/lib/CustomTextStreamResponse'
+import { AppEngineResponseStream } from '@/server/ai/lib/AppEngineResponseStream'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
 
@@ -42,7 +42,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       content: 'Say "Hi workl"',
     })
 
-    return MyAssistantResponse(
+    return AppEngineResponseStream(
       {
         threadId,
         messageId: createdMessage.id,

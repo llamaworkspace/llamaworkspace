@@ -2,7 +2,7 @@ import { AssistantResponse } from 'ai'
 
 type AssistantResponseArgs = Parameters<typeof AssistantResponse>
 
-export const MyAssistantResponse = (...args: AssistantResponseArgs) => {
+export const AppEngineResponseStream = (...args: AssistantResponseArgs) => {
   const response = AssistantResponse(...args)
 
   if (!response.body) {
