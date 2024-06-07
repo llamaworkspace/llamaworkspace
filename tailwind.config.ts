@@ -1,5 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-var-requires */
+
+const { merge } = require('lodash')
+const tailwindTypography = require('./tailwind.typography.config')
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const config = {
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -16,6 +21,9 @@ module.exports = {
       },
     },
     extend: {
+      maxWidth: {
+        chat: '720px',
+      },
       colors: {
         brandRed: '#F54040',
         openai: {
@@ -53,5 +61,7 @@ module.exports = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+  plugins: [require('tailwindcss-animate')],
 }
+
+module.exports = merge(config, tailwindTypography)
