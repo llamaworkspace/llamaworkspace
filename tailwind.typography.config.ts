@@ -2,14 +2,14 @@
 
 const colors = require('tailwindcss/colors')
 
-const round = (num) =>
+const round = (num: number) =>
   num
     .toFixed(7)
     .replace(/(\.[0-9]+?)0+$/, '$1')
     .replace(/\.0$/, '')
-const rem = (px) => `${round(px / 16)}rem`
-const em = (px, base) => `${round(px / base)}em`
-const hexToRgb = (hex) => {
+const rem = (px: number) => `${round(px / 16)}rem`
+const em = (px: number, base: number) => `${round(px / base)}em`
+const hexToRgb = (hex: string) => {
   hex = hex.replace('#', '')
   hex = hex.length === 3 ? hex.replace(/./g, '$&$&') : hex
   const r = parseInt(hex.substring(0, 2), 16)
