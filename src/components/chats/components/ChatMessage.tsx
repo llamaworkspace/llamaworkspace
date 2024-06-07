@@ -41,7 +41,7 @@ export function ChatMessage({
       </div>
       <div
         className={cn(
-          'prose prose-zinc max-w-none text-zinc-950',
+          'prose max-w-none text-zinc-950',
           author === Author.User && 'rounded bg-zinc-100/50 p-2 lg:p-4',
         )}
       >
