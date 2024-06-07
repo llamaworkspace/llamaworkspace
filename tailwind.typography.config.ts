@@ -41,6 +41,21 @@ module.exports = {
               // overflowX: 'auto',
               fontWeight: 'initial',
             },
+            code: {
+              backgroundColor: colors.zinc['100'],
+              paddingInlineStart: em(4, 16),
+              paddingInlineEnd: em(4, 16),
+              paddingTop: em(2, 16),
+              paddingBottom: em(2, 16),
+              borderRadius: rem(2),
+            },
+
+            'code::before': {
+              content: '',
+            },
+            'code::after': {
+              content: '',
+            },
             ol: {
               marginTop: 0,
               marginBottom: 0,
@@ -97,6 +112,8 @@ module.exports = {
         zinc: {
           css: {
             '--tw-prose-counters': colors.zinc['950'],
+            '--tw-prose-bullets': colors.zinc['950'],
+            '--tw-prose-code': colors.pink['600'],
           },
         },
       }),

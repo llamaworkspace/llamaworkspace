@@ -1,4 +1,4 @@
-/* eslint-disable*/
+/* eslint-disable @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-var-requires */
 
 const { merge } = require('lodash')
 const tailwindTypography = require('./tailwind.typography.config')
@@ -21,6 +21,9 @@ const config = {
       },
     },
     extend: {
+      maxWidth: {
+        chat: '720px',
+      },
       colors: {
         brandRed: '#F54040',
         openai: {
