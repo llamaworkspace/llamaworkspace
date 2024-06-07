@@ -1,7 +1,7 @@
+import Markdown from '@/components/ui/markdown/markdown'
 import { cn } from '@/lib/utils'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { Fragment, useEffect, useMemo, useRef } from 'react'
-import ReactMarkdown from 'react-markdown'
 
 interface ChatMessageProps {
   author: Author.User | Author.Assistant
@@ -53,9 +53,7 @@ export function ChatMessage({
                 &#10073;
               </div>
             )}
-            {!!message.length && (
-              <ReactMarkdown remarkPlugins={[]}>{message || ''}</ReactMarkdown>
-            )}
+            {!!message.length && <Markdown content={message || ''} />}
           </>
         )}
       </div>
