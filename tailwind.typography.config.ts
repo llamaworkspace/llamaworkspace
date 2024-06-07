@@ -1,3 +1,7 @@
+/* eslint-disable*/
+
+const colors = require('tailwindcss/colors')
+
 const round = (num) =>
   num
     .toFixed(7)
@@ -37,6 +41,62 @@ module.exports = {
               // overflowX: 'auto',
               fontWeight: 'initial',
             },
+            ol: {
+              marginTop: 0,
+              marginBottom: 0,
+              paddingInlineStart: em(18, 16),
+            },
+            ul: {
+              marginTop: 24,
+              marginBottom: 24,
+              paddingInlineStart: em(18, 16),
+            },
+            li: {
+              marginTop: 0,
+              marginBottom: 0,
+            },
+            'ol > li': {
+              paddingInlineStart: em(6, 16),
+            },
+            'ul > li': {
+              paddingInlineStart: em(6, 16),
+            },
+            '> ul > li p': {
+              marginTop: em(12, 16),
+              marginBottom: em(12, 16),
+            },
+            '> ul > li > p:first-child': {
+              marginTop: 24,
+            },
+            '> ul > li > p:last-child': {
+              marginBottom: 24,
+            },
+            '> ol > li > p:first-child': {
+              marginTop: 24,
+            },
+            '> ol > li > p:last-child': {
+              marginBottom: 24,
+            },
+            'ul ul, ul ol, ol ul, ol ol': {
+              marginTop: em(12, 16),
+              marginBottom: em(12, 16),
+            },
+            dl: {
+              marginTop: 24,
+              marginBottom: 24,
+            },
+            dt: {
+              marginTop: 24,
+            },
+            dd: {
+              marginTop: em(8, 16),
+              paddingInlineStart: em(18, 16),
+            },
+          },
+        },
+        zinc: {
+          css: {
+            '--tw-prose-counters': colors.zinc['950'],
           },
         },
       }),

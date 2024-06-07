@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-var-requires */
+/* eslint-disable*/
 
 const { merge } = require('lodash')
 const tailwindTypography = require('./tailwind.typography.config')
