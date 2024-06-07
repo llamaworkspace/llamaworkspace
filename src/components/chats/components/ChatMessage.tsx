@@ -1,7 +1,7 @@
-import Markdown from '@/components/ui/markdown/markdown'
 import { cn } from '@/lib/utils'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { Fragment, useEffect, useMemo, useRef } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 interface ChatMessageProps {
   author: Author.User | Author.Assistant
@@ -41,7 +41,7 @@ export function ChatMessage({
       </div>
       <div
         className={cn(
-          'prose prose-zinc max-w-none text-zinc-950',
+          'prose max-w-none text-zinc-950',
           author === Author.User && 'rounded bg-zinc-100/50 p-2 lg:p-4',
         )}
       >
@@ -53,7 +53,9 @@ export function ChatMessage({
                 &#10073;
               </div>
             )}
-            {!!message.length && <Markdown content={message || ''} />}
+            {!!message.length && (
+              <ReactMarkdown remarkPlugins={[]}>{message || ''}</ReactMarkdown>
+            )}
           </>
         )}
       </div>

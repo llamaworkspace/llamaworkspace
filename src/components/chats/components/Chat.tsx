@@ -114,7 +114,7 @@ export function Chat({ appId, chatId }: ChatProps) {
       ref={chatContainerRef}
       className="relative flex h-full w-full flex-col overflow-y-auto overflow-x-hidden"
     >
-      <div className="mx-auto h-full w-full max-w-chat px-4 lg:px-0">
+      <div className="mx-auto h-full w-full max-w-3xl px-4 lg:px-0">
         {isBoolean(isDefaultApp) && !isDefaultApp && (
           <ChatMessageInitial chatId={chatId} />
         )}
