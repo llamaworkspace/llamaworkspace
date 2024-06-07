@@ -25,29 +25,22 @@ module.exports = {
       typography: () => ({
         DEFAULT: {
           css: {
-            // fontSize: '14rem',
-            pre: {
-              // fontSize: em(14, 16),
-              // lineHeight: round(24 / 14),
-              // marginTop: em(24, 14),
-              marginBottom: 0,
-              borderRadius: 0,
-              paddingTop: 0,
-              paddingInlineEnd: 0,
-              paddingBottom: 0,
-              paddingInlineStart: 0,
-              // color: 'var(--tw-prose-pre-code)',
-              backgroundColor: 'initial',
-              // overflowX: 'auto',
-              fontWeight: 'initial',
-            },
+            // pre: {
+            //   marginBottom: 0,
+            //   borderRadius: 0,
+            //   paddingTop: 0,
+            //   paddingInlineEnd: 0,
+            //   paddingBottom: 0,
+            //   paddingInlineStart: 0,
+            //   backgroundColor: 'initial',
+            //   fontWeight: 'initial',
+            // },
             code: {
               backgroundColor: colors.zinc['100'],
-              paddingInlineStart: em(4, 16),
-              paddingInlineEnd: em(4, 16),
-              paddingTop: em(2, 16),
-              paddingBottom: em(2, 16),
+              paddingInlineStart: em(2, 16),
+              paddingInlineEnd: em(2, 16),
               borderRadius: rem(2),
+              fontWeight: 600,
             },
 
             'code::before': {
@@ -62,8 +55,8 @@ module.exports = {
               paddingInlineStart: em(18, 16),
             },
             ul: {
-              marginTop: 24,
-              marginBottom: 24,
+              marginTop: 0,
+              marginBottom: 0,
               paddingInlineStart: em(18, 16),
             },
             li: {
@@ -97,11 +90,11 @@ module.exports = {
               marginBottom: em(12, 16),
             },
             dl: {
-              marginTop: 24,
-              marginBottom: 24,
+              marginTop: 0,
+              marginBottom: 0,
             },
             dt: {
-              marginTop: 24,
+              marginTop: 0,
             },
             dd: {
               marginTop: em(8, 16),
