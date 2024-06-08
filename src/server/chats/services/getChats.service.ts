@@ -1,6 +1,7 @@
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import { startOfDay, subDays } from 'date-fns'
 import { scopeChatByWorkspace } from '../chatUtils'
 
 interface GetChatsPayload {
@@ -18,14 +19,9 @@ export const getChatsService = async (
   const excludeEmpty = payload?.excludeEmpty
 
   return await prismaAsTrx(prisma, async (prisma) => {
-    // TODO: Re-implement permissions
-    // await new PermissionsVerifier(ctx.prisma).callOrThrowTrpcError(
-    //   PermissionAction.Use,
-    //   userId,
-    //   appId,
-    // )
-
     const messagesWhereFilter = excludeEmpty ? { messages: { some: {} } } : {}
+
+    const date30DaysAgo = startOfDay(subDays(new Date(), 30))
 
     return await prisma.chat.findMany({
       select: {
@@ -37,6 +33,9 @@ export const getChatsService = async (
         {
           appId,
           authorId: userId, // Logic: user can see their own chats
+          createdAt: {
+            gte: date30DaysAgo,
+          },
           ...messagesWhereFilter,
         },
         workspaceId,
