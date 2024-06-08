@@ -27,13 +27,7 @@ type AssistantResponseSettings = {
   messageId: string
 }
 
-class MyAss extends AssistantStream {
-  public run(cb: () => Promise<unknown>) {
-    this._run(cb)
-  }
-}
-
-export const AltAppEngineResponseStream = (
+export const AppEngineResponseStream = (
   responseSettings: AssistantResponseSettings,
   process: AppEngineResponseStreamProcessArgs,
 ) => {

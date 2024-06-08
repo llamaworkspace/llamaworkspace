@@ -3,7 +3,7 @@ import {
   AbstractAppEngine,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
-import { AltAppEngineResponseStream } from '@/server/ai/lib/AltAppEngineResponseStream'
+import { AppEngineResponseStream } from '@/server/ai/lib/AppEngineResponseStream'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
 
@@ -42,7 +42,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       content: 'Write the futbol club barcelona hymn lyrics',
     })
 
-    return AltAppEngineResponseStream(
+    return AppEngineResponseStream(
       {
         threadId,
         messageId: createdMessage.id,
