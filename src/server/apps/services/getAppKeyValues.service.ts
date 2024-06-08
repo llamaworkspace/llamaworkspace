@@ -12,23 +12,6 @@ interface GetAppKeyValuesPayload {
   appId: string
 }
 
-type KeyValueString = Omit<KeyValue, 'type' & 'value'> & {
-  type: KeyValueType.String
-  value: string
-}
-
-type KeyValueNumber = Omit<KeyValue, 'type' & 'value'> & {
-  type: KeyValueType.Number
-  value: number
-}
-
-type KeyValueBoolean = Omit<KeyValue, 'type' & 'value'> & {
-  type: KeyValueType.Boolean
-  value: number
-}
-
-export type ParsedKeyValue = KeyValueString | KeyValueNumber | KeyValueBoolean
-
 export async function getAppKeyValuesService(
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
@@ -50,27 +33,29 @@ export async function getAppKeyValuesService(
     },
   })
 
-  return kvs.map((kv) => {
-    if (kv.type === 'number') {
-      return {
-        ...kv,
-        type: KeyValueType.Number,
-        value: Number(kv.value),
-      }
-    }
+  return kvs.map(transformKeyValueEntityToParsedKeyValue)
+}
 
-    if (kv.type === KeyValueType.Boolean.toString()) {
-      return {
-        ...kv,
-        type: KeyValueType.Boolean,
-        value: kv.value === 'true',
-      }
-    }
-
+export const transformKeyValueEntityToParsedKeyValue = (keyValue: KeyValue) => {
+  if (keyValue.type === 'number') {
     return {
-      ...kv,
-      type: KeyValueType.String,
-      value: kv.value,
+      ...keyValue,
+      type: KeyValueType.Number,
+      value: Number(keyValue.value),
     }
-  })
+  }
+
+  if (keyValue.type === KeyValueType.Boolean.toString()) {
+    return {
+      ...keyValue,
+      type: KeyValueType.Boolean,
+      value: keyValue.value === 'true',
+    }
+  }
+
+  return {
+    ...keyValue,
+    type: KeyValueType.String,
+    value: keyValue.value,
+  }
 }
