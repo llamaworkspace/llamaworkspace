@@ -21,9 +21,7 @@ export class AppEngineRunner {
     const engine = this.getEngineByName(engineName)
     const ctx = await this.generateEngineRuntimeContext(chatId)
     const messages = await this.generateEngineMessages(chatId)
-    const stream = await engine.run({ ctx, messages })
-
-    return stream
+    return await engine.run({ ctx, messages })
   }
 
   private getEngineByName(name: string) {
