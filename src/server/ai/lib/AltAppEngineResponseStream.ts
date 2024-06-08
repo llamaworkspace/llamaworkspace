@@ -14,7 +14,6 @@ type AiLibAssistantResponseCallback = (
 
 type AppEngineResponseStreamProcessArgs = (options: {
   pushMessage: (message: string) => void
-  doThing: () => Promise<void>
 }) => Promise<void>
 
 type AssistantResponseSettings = {
@@ -43,34 +42,24 @@ export const AltAppEngineResponseStream = (
     sendDataMessage,
     forwardStream,
   }) => {
-    const pushMessage = (text: string) => {}
-    const doThing = async () => {
-      const readable = new ReadableStream({
-        start(controller) {
-          setTimeout(() => {
-            controller.enqueue(encodePayload(threadMessageCreated))
+    const readable = new ReadableStream({
+      async start(controller) {
+        const pushMessage = (text: string) => {
+          controller.enqueue(encodePayload(generateThreadMessageDelta(text)))
+        }
 
-            setTimeout(() => {
-              controller.enqueue(encodePayload(threadMessageDelta))
-              controller.enqueue(encodePayload(threadMessageDelta))
-              controller.enqueue(encodePayload(threadRunCompleted))
-              controller.close()
-            }, 500)
-          }, 500)
-        },
-      })
-      const stream = AssistantStream.fromReadableStream(readable)
-      await forwardStream(stream)
-    }
+        controller.enqueue(encodePayload(threadMessageCreated))
+        await process({
+          pushMessage,
+        })
 
-    await process({
-      pushMessage,
-      doThing,
+        controller.enqueue(encodePayload(threadRunCompleted))
+        controller.close()
+      },
     })
-  }
-  const secondArg = {
-    onToken: () => {},
-    onFinal: () => {},
+
+    const stream = AssistantStream.fromReadableStream(readable)
+    await forwardStream(stream)
   }
 
   const response = AssistantResponse(responseSettings, processFunc)
@@ -85,10 +74,10 @@ export const AltAppEngineResponseStream = (
       while (true) {
         const { done, value } = await reader.read()
         const chunkText = new TextDecoder().decode(value)
-        console.log('chunkText', done, chunkText)
+        // Do things with value here
         if (done) {
           controller.close()
-          return
+          break
         }
         controller.enqueue(value)
       }
@@ -136,6 +125,26 @@ const threadMessageDelta = {
       ],
     },
   },
+}
+
+const generateThreadMessageDelta = (value: string) => {
+  return {
+    event: 'thread.message.delta',
+    data: {
+      id: 'msg_hZwwQq26IJyBgVwpNL4zQ70n',
+      object: 'thread.message.delta',
+      delta: {
+        content: [
+          {
+            type: 'text',
+            text: {
+              value,
+            },
+          },
+        ],
+      },
+    },
+  }
 }
 
 const threadRunCompleted = {

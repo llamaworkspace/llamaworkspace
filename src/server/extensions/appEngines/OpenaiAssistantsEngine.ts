@@ -39,7 +39,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     const createdMessage = await openai.beta.threads.messages.create(threadId, {
       role: 'user',
-      content: 'Say "Hi workl"',
+      content: 'Write the futbol club barcelona hymn lyrics',
     })
 
     return AltAppEngineResponseStream(
@@ -48,20 +48,22 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         messageId: createdMessage.id,
       },
 
-      async ({ pushMessage, doThing }) => {
-        // const streamAsAsyncIterable = openai.beta.threads.runs.stream(
-        //   threadId,
-        //   {
-        //     assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
-        //   },
-        // )
-        await Promise.resolve()
-        await doThing()
-        console.log('!!!!FINISH!!!!')
-        // for await (const value of streamAsAsyncIterable) {
-        //   console.log(value)
-        //   pushMessage('a_string_here')
-        // }
+      async ({ pushMessage }) => {
+        const streamAsAsyncIterable = openai.beta.threads.runs.stream(
+          threadId,
+          {
+            assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
+          },
+        )
+
+        for await (const event of streamAsAsyncIterable) {
+          if (event.event === 'thread.message.delta') {
+            event.data.delta.content.map((item) => {
+              console.log('item', item)
+              pushMessage(item.text.value)
+            })
+          }
+        }
       },
     )
   }
