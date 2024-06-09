@@ -3,8 +3,8 @@ import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import {
   KeyValueType,
-  PrismaTrxClient,
   type PrismaClientOrTrxClient,
+  type PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { Promise } from 'bluebird'

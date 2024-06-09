@@ -1,3 +1,5 @@
+import { getAppKeyValuesService } from '@/server/apps/services/getAppKeyValues.service'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
@@ -10,7 +12,7 @@ export class AppEngineRunner {
     private readonly engines: AbstractAppEngine[],
   ) {}
 
-  async call(chatId: string) {
+  async call(userId: string, chatId: string) {
     let engineName = await this.getEngineNameFromChatId(chatId)
     engineName = 'OpenaiAssistantsEngine'
 
@@ -19,7 +21,7 @@ export class AppEngineRunner {
     }
 
     const engine = this.getEngineByName(engineName)
-    const ctx = await this.generateEngineRuntimeContext(chatId)
+    const ctx = await this.generateEngineRuntimeContext(userId, chatId)
     const messages = await this.generateEngineMessages(chatId)
     return await engine.run({ ctx, messages })
   }
@@ -45,7 +47,7 @@ export class AppEngineRunner {
     return chat.app.gptEngine
   }
 
-  private async generateEngineRuntimeContext(chatId: string) {
+  private async generateEngineRuntimeContext(userId: string, chatId: string) {
     const { app, ...chat } = await this.prisma.chat.findUniqueOrThrow({
       where: {
         id: chatId,
@@ -54,10 +56,31 @@ export class AppEngineRunner {
         app: true,
       },
     })
+    const kvs = await this.getAppKeyValues(userId, chatId)
     return {
       chat,
       app,
+      kvs,
     }
+  }
+
+  private async getAppKeyValues(userId: string, chatId: string) {
+    const chat = await this.prisma.chat.findUniqueOrThrow({
+      where: {
+        id: chatId,
+      },
+      include: {
+        app: true,
+      },
+    })
+    const context = await createUserOnWorkspaceContext(
+      this.prisma,
+      chat.app.workspaceId,
+      userId,
+    )
+    return await getAppKeyValuesService(this.prisma, context, {
+      appId: chat.appId,
+    })
   }
 
   private async generateEngineMessages(chatId: string) {

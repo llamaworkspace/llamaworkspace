@@ -1,13 +1,16 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { App, Chat } from '@prisma/client'
 
-interface AppEngineRuntimeContext {
+type AllowedKVS = Record<string, string | number | boolean>
+
+interface AppEngineRuntimeContext<T extends AllowedKVS> {
   readonly chat: Chat
   readonly app: App
+  readonly kvs: T
 }
 
-export interface AppEngineParams {
-  ctx: AppEngineRuntimeContext
+export interface AppEngineParams<AppKVs extends AllowedKVS> {
+  ctx: AppEngineRuntimeContext<AppKVs>
   messages: AiRegistryMessage[]
 }
 

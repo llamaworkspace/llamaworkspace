@@ -6,17 +6,32 @@ import {
 import { AppEngineResponseStream } from '@/server/ai/lib/AppEngineResponseStream'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
+import { z } from 'zod'
 
 type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
   role: Exclude<AiRegistryMessage['role'], 'system'>
 }
+
+const payloadSchema = z.object({
+  assistantId: z.string(),
+})
+
+type OpeniAssistantsEngineAppPayload = z.infer<typeof payloadSchema>
 
 export class OpenaiAssistantsEngine extends AbstractAppEngine {
   getName() {
     return 'OpenaiAssistantsEngine'
   }
 
-  async run({ ctx, messages }: AppEngineParams) {
+  getPayloadSchema() {
+    return payloadSchema
+  }
+
+  async run({
+    ctx,
+    messages,
+  }: AppEngineParams<OpeniAssistantsEngineAppPayload>) {
+    const { kvs } = ctx
     const openai = new OpenAI({
       // This needs to be provided at runtime
       apiKey: env.INTERNAL_OPENAI_API_KEY,
@@ -52,7 +67,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         const streamAsAsyncIterable = openai.beta.threads.runs.stream(
           threadId,
           {
-            assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
+            assistant_id: kvs.assistantId,
           },
         )
 

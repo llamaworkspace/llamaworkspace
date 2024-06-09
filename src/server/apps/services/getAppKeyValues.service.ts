@@ -5,7 +5,7 @@ import {
   type PrismaClientOrTrxClient,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { KeyValue } from '@prisma/client'
+import type { KeyValue } from '@prisma/client'
 import { scopeAppByWorkspace } from '../appUtils'
 
 interface GetAppKeyValuesPayload {
