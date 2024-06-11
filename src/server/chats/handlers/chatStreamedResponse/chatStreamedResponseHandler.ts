@@ -73,6 +73,9 @@ async function handler(req: NextRequest) {
 
     assistantTargetMessageId = assistantTargetMessage.id
 
+    // AQUI EMPIEZA LA FIESTA. ANTES ES TODO SETUP. AISLAR EN METODO PRIVADO Y
+    // DEVOLVER SOLO LO NECESARIO. Tb se puede testear el metodo privado xa delegar
+    // la logica de los distintos error cases en otro lado
     if (!chat.appConfigVersionId) {
       await attachAppConfigVersionToChat(chatId, appConfigVersion.id)
     }
@@ -86,10 +89,11 @@ async function handler(req: NextRequest) {
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
     // Method to extract provider from model
+    // MAS SETUP!
     const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
       appConfigVersion.model,
     )
-
+    // MAS SETUP!
     const providerKVs = await getAiProviderKVsService(
       prisma,
       workspaceId,
@@ -106,11 +110,13 @@ async function handler(req: NextRequest) {
       tokenResponse += token
     }
 
+    // PÉSIMA GESTIÓN DE ERRORES
     const onError = async (error: Error) => {
       await deleteMessage(assistantTargetMessage.id)
       errorLogger(error)
     }
 
+    // ESTO DEL PROVIDER QUIZA DEBERIA YA IR AL ENGINE
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
     if (!provider) {
