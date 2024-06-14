@@ -25,6 +25,7 @@ export const tempAppEngineRunner = async ({
     throw new Error(`Provider ${providerSlug} not found`)
   }
 
+  //  TODO: Re-enable
   // await validateModelIsEnabledOrThrow(
   //   workspaceId,
   //   userId,
