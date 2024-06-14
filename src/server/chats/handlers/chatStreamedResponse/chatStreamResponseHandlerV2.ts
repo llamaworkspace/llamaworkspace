@@ -1,56 +1,107 @@
-// import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner'
-// import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
-
 import { prisma } from '@/server/db'
-import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { NextResponse, type NextRequest } from 'next/server'
+import { errorLogger } from '@/shared/errors/errorLogger'
+import type { NextRequest, NextResponse } from 'next/server'
+import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
+import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 import {
+  attachAppConfigVersionToChat,
+  createChatRun,
+  deleteMessage,
   getChatOrThrow,
+  getNeededData,
   getParsedBodyOrThrow,
   getSessionOrThrow,
+  updateMessage,
 } from './chatStreamedResponseUtils'
+
+import { ensureError } from '@/lib/utils'
+import createHttpError from 'http-errors'
+import { tempAppEngineRunner } from './tempAppEngineRunner'
 
 export default async function chatStreamedResponseHandlerV2(
   req: NextRequest,
   res: NextResponse,
 ) {
-  // ERROR: no puede correr todo como trx, ya que si fallan cosas del chatRun, queremos persistir los mensajes
-  return await prismaAsTrx(prisma, async (prisma) => {
-    const { chatId } = await getParsedBodyOrThrow(req)
-    const session = await getSessionOrThrow()
+  let tokenResponse = ''
+  let assistantTargetMessageId: string | undefined = undefined
+  const { chatId } = await getParsedBodyOrThrow(req)
+  const session = await getSessionOrThrow()
 
-    const userId = session.user.id
+  const userId = session.user.id
 
-    const chat = await getChatOrThrow(prisma, userId, chatId)
-    const workspaceId = chat.app.workspaceId
-    // const context = await createContext(prisma, workspaceId, userId)
+  const chat = await getChatOrThrow(prisma, userId, chatId)
+  const workspaceId = chat.app.workspaceId
 
-    // ME HE QUEDADO AQUI
-    return { ok: true }
+  // Test: Uses the right config version
+  // Test: Adds all messages as context to the stream
+  const {
+    appConfigVersion,
+    messages,
+    allUnprocessedMessages,
+    preparedMessages: { allMessages, assistantTargetMessage },
+    model: { model, providerKVs, providerSlug },
+  } = await getNeededData(prisma, userId, chatId)
 
-    // // Test: Uses the right config version
-    // // Test: Adds all messages as context to the stream
-    // const [appConfigVersion, messages] = await Promise.all([
-    //   await getAppConfigVersionForChat(prisma, context, chatId),
-    //   await getMessagesForChat(prisma, chatId),
-    // ])
+  assistantTargetMessageId = assistantTargetMessage.id
+  // TODO!!!!!
+  // Aqui hay acople con el modelo de la aplicacion
+  // En Assistants eso yo no importa, lo puede definir el assistant.
+  // Test: Write something
+  // await validateModelIsEnabledOrThrow(
+  //   workspaceId,
+  //   userId,
+  //   appConfigVersion.model,
+  // )
 
-    // // ME HE QUEDADO AQUI
-    // // Aqui hay acople con el modelo de la aplicacion
-    // // En Assistants eso yo no importa, lo puede definir el assistant.
-    // // Test: Write something
-    // await validateModelIsEnabledOrThrow(
-    //   workspaceId,
-    //   userId,
-    //   appConfigVersion.model,
-    // )
+  // TEST ME OUT
+  if (!chat.appConfigVersionId) {
+    await attachAppConfigVersionToChat(prisma, chatId, appConfigVersion.id)
+  }
 
-    // const appEngineRunner = new AppEngineRunner(prisma, enginesRegistry)
-    // const stream = await appEngineRunner.call(userId, chatId)
+  const chatRun = await createChatRun(
+    prisma,
+    chatId,
+    allUnprocessedMessages.map((m) => m.id),
+  )
+  // TODO: Improve, This is ugly: What if it is a transaction and it fails?
+  // it is placed here very un-nicely
+  // are errors captured?
+  // This should run on a high priority queue
+  void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
-    // const headers = {
-    //   'Content-Type': 'text/plain; charset=utf-8',
-    // }
-    // return new NextResponse(stream, { headers })
-  })
+  const onFinal = async (final: string) => {
+    await updateMessage(prisma, assistantTargetMessage.id, final)
+    await saveTokenCountForChatRunService(prisma, chatRun.id)
+  }
+
+  const onToken = (token: string) => {
+    tokenResponse += token
+  }
+
+  // PÉSIMA GESTIÓN DE ERRORES
+  const onError = async (error: Error) => {
+    await deleteMessage(prisma, assistantTargetMessage.id)
+    errorLogger(error)
+  }
+
+  try {
+    return await tempAppEngineRunner(
+      providerSlug,
+      allMessages,
+      model,
+      providerKVs,
+      onToken,
+      onFinal,
+    )
+  } catch (_error) {
+    const error = ensureError(_error)
+    if (tokenResponse.length && assistantTargetMessageId) {
+      await updateMessage(prisma, assistantTargetMessageId, tokenResponse)
+    } else if (assistantTargetMessageId) {
+      await deleteMessage(prisma, assistantTargetMessageId)
+    }
+
+    errorLogger(error)
+    throw createHttpError(403, error.message)
+  }
 }

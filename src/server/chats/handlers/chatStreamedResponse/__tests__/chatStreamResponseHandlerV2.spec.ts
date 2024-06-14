@@ -2,10 +2,14 @@ import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
+import { MessageFactory } from '@/server/testing/factories/MessageFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { Author } from '@/shared/aiTypesAndMappers'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Chat, User, Workspace } from '@prisma/client'
+import type chalk from 'chalk'
+import { mockDeep } from 'jest-mock-extended'
 import { NextRequest, NextResponse } from 'next/server'
 import chatStreamedResponseHandlerV2 from '../chatStreamResponseHandlerV2'
 
@@ -14,6 +18,19 @@ jest.mock('next-auth', () => {
     getServerSession: jest.fn(),
   }
 })
+jest.mock('@/server/chats/handlers/chatStreamedResponse/tempAppEngineRunner')
+
+// This is needed to avoid a random TS error
+jest.mock('chalk', () => mockDeep<typeof chalk>())
+
+jest.mock(
+  '@/server/chats/handlers/chatStreamedResponse/chatStreamedResponseHandlerUtils',
+  () => {
+    return {
+      handleChatTitleCreate: jest.fn(),
+    }
+  },
+)
 
 const subject = async (
   data: Record<string, string>,
@@ -57,6 +74,15 @@ describe('chatStreamedResponseHandlerV2', () => {
     chat = await ChatFactory.create(prisma, {
       appId: app.id,
       authorId: user.id,
+    })
+    await MessageFactory.create(prisma, {
+      chatId: chat.id,
+      author: Author.User,
+      message: 'Hello',
+    })
+    await MessageFactory.create(prisma, {
+      chatId: chat.id,
+      author: Author.Assistant,
     })
   })
 
