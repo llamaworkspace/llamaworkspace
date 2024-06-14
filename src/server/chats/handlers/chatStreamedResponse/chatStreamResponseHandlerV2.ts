@@ -36,22 +36,12 @@ export default async function chatStreamedResponseHandlerV2(
   // Test: Adds all messages as context to the stream
   const {
     appConfigVersion,
-    messages,
     allUnprocessedMessages,
     preparedMessages: { allMessages, assistantTargetMessage },
     model: { model, providerKVs, providerSlug },
   } = await getNeededData(prisma, userId, chatId)
 
   assistantTargetMessageId = assistantTargetMessage.id
-  // TODO!!!!!
-  // Aqui hay acople con el modelo de la aplicacion
-  // En Assistants eso yo no importa, lo puede definir el assistant.
-  // Test: Write something
-  // await validateModelIsEnabledOrThrow(
-  //   workspaceId,
-  //   userId,
-  //   appConfigVersion.model,
-  // )
 
   // TEST ME OUT
   if (!chat.appConfigVersionId) {
@@ -85,14 +75,14 @@ export default async function chatStreamedResponseHandlerV2(
   }
 
   try {
-    return await tempAppEngineRunner(
+    return await tempAppEngineRunner({
       providerSlug,
-      allMessages,
+      messages: allMessages,
       model,
       providerKVs,
       onToken,
       onFinal,
-    )
+    })
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {
