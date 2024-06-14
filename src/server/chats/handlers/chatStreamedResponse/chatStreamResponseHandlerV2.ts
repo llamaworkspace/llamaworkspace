@@ -1,6 +1,6 @@
 import { prisma } from '@/server/db'
 import { errorLogger } from '@/shared/errors/errorLogger'
-import type { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
 import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 import {
@@ -15,6 +15,9 @@ import {
 } from './chatStreamedResponseUtils'
 
 import { ensureError } from '@/lib/utils'
+import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner'
+import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
+import { appEnginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import createHttpError from 'http-errors'
 import { tempAppEngineRunner } from './tempAppEngineRunner'
 
@@ -74,7 +77,16 @@ export default async function chatStreamedResponseHandlerV2(
     errorLogger(error)
   }
 
+  const engines = [...appEnginesRegistry, new DefaultAppEngine()]
+
   try {
+    const appEngineRunner = new AppEngineRunner(prisma, engines)
+    // const stream = await appEngineRunner.call(userId, chatId)
+
+    // const headers = {
+    //   'Content-Type': 'text/plain; charset=utf-8',
+    // }
+    // return new NextResponse(stream, { headers })
     return await tempAppEngineRunner({
       providerSlug,
       messages: allMessages,
