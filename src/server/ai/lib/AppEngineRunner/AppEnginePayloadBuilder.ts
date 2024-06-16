@@ -1,16 +1,44 @@
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
+import { getChatByIdService } from '@/server/chats/services/getChatById.service'
+import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
+import { Promise } from 'bluebird'
 import { chain } from 'underscore'
 import type { AppEngineParams } from '../AbstractAppEngine'
 
 export class AppEnginePayloadBuilder {
-  constructor(private readonly prisma: PrismaClientOrTrxClient) {}
+  constructor(
+    private readonly prisma: PrismaClientOrTrxClient,
+    private readonly context: UserOnWorkspaceContext,
+  ) {}
 
   async call(chatId: string): Promise<AppEngineParams<Record<string, never>>> {
-    const messages = await this.buildMessages(chatId)
+    const { chat, app } = await this.getChat(chatId)
+    const [appConfigVersion, messages] = await Promise.all([
+      await this.getAppConfigVersionForChat(chatId),
+      await this.buildMessages(chatId),
+    ])
+
     return {
+      chat: { ...chat }, // This removes app: undefined
+      app,
       messages,
+      appConfigVersion,
+    }
+  }
+
+  private async getChat(chatId: string) {
+    const chat = await getChatByIdService(this.prisma, this.context, {
+      chatId,
+      includeApp: true,
+    })
+
+    return {
+      chat: { ...chat, app: undefined },
+      app: chat.app,
     }
   }
 
@@ -19,15 +47,20 @@ export class AppEnginePayloadBuilder {
     return this.prepareMessagesForPrompt(messages)
   }
 
-  private async getMessagesForChat(chatId: string) {
-    return await this.prisma.message.findMany({
-      where: {
+  private async getAppConfigVersionForChat(chatId: string) {
+    return await getApplicableAppConfigToChatService(
+      this.prisma,
+      this.context,
+      {
         chatId,
       },
-      orderBy: {
-        createdAt: 'asc',
-      },
-    })
+    )
+  }
+
+  private async getMessagesForChat(chatId: string) {
+    return (
+      await getMessagesByChatIdService(this.prisma, this.context, { chatId })
+    ).reverse()
   }
 
   private prepareMessagesForPrompt(messages: Message[]) {

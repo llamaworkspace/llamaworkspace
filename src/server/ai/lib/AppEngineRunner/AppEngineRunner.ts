@@ -1,5 +1,8 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
-import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import {
+  UserOnWorkspaceContext,
+  createUserOnWorkspaceContext,
+} from '@/server/auth/userOnWorkspaceContext'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import createHttpError from 'http-errors'
@@ -7,13 +10,19 @@ import type { AbstractAppEngine } from '../AbstractAppEngine'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 
 export class AppEngineRunner {
+  private contextCache = new Map<
+    string,
+    ReturnType<typeof createUserOnWorkspaceContext>
+  >()
+
   constructor(
     private readonly prisma: PrismaClientOrTrxClient,
     private readonly engines: AbstractAppEngine[],
   ) {}
 
   async call(userId: string, chatId: string) {
-    const engineType = await this.getEngineType(chatId)
+    const context = await this.createContext(chatId, chatId)
+    const engineType = await this.getEngineType(context, chatId)
 
     if (!engineType) {
       throw createHttpError(500, 'engineType is not yet set')
@@ -24,7 +33,7 @@ export class AppEngineRunner {
     }
 
     const engine = this.getDefaultEngine()
-    const ctx = await this.generateEngineRuntimeContext(userId, chatId)
+    const ctx = await this.generateEngineRuntimeContext(context, userId, chatId)
 
     return await engine.run(ctx)
   }
@@ -39,9 +48,11 @@ export class AppEngineRunner {
     return engine
   }
 
-  private async getEngineType(chatId: string) {
-    const context = await this.createContext(chatId, chatId)
-    const chat = await getChatByIdService(this.prisma, context, {
+  private async getEngineType(
+    uowContext: UserOnWorkspaceContext,
+    chatId: string,
+  ) {
+    const chat = await getChatByIdService(this.prisma, uowContext, {
       chatId,
       includeApp: true,
     })
@@ -49,8 +60,15 @@ export class AppEngineRunner {
     return chat.app.engineType
   }
 
-  private async generateEngineRuntimeContext(userId: string, chatId: string) {
-    const appEnginePayloadBuilder = new AppEnginePayloadBuilder(this.prisma)
+  private async generateEngineRuntimeContext(
+    uowContext: UserOnWorkspaceContext,
+    userId: string,
+    chatId: string,
+  ) {
+    const appEnginePayloadBuilder = new AppEnginePayloadBuilder(
+      this.prisma,
+      uowContext,
+    )
     return await appEnginePayloadBuilder.call(chatId)
   }
 

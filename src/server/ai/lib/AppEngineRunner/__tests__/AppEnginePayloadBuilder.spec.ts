@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
@@ -9,8 +10,17 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import type { App, Chat, User, Workspace } from '@prisma/client'
 import { AppEnginePayloadBuilder } from '../AppEnginePayloadBuilder'
 
-const subject = async (chatId: string) => {
-  const appEnginePayloadBuilder = new AppEnginePayloadBuilder(prisma)
+const subject = async (workspaceId: string, userId: string, chatId: string) => {
+  const uowContext = await createUserOnWorkspaceContext(
+    prisma,
+    workspaceId,
+    userId,
+  )
+  const appEnginePayloadBuilder = new AppEnginePayloadBuilder(
+    prisma,
+    uowContext,
+  )
+
   return await appEnginePayloadBuilder.call(chatId)
 }
 
@@ -67,7 +77,7 @@ describe('AppEnginePayloadBuilder', () => {
   describe('call', () => {
     describe('messages response', () => {
       it('returns all the prepared messages for the chat, in sorted order', async () => {
-        const { messages } = await subject(chat.id)
+        const { messages } = await subject(workspace.id, user.id, chat.id)
         expect(messages).toHaveLength(4)
         expect(messages[0]).toEqual({
           role: Author.System,
@@ -85,6 +95,39 @@ describe('AppEnginePayloadBuilder', () => {
           role: Author.User,
           content: 'this is the followup question',
         })
+      })
+    })
+
+    describe('app response', () => {
+      it('returns the related app', async () => {
+        const { app: appResponse } = await subject(
+          workspace.id,
+          user.id,
+          chat.id,
+        )
+        expect(appResponse.id).toEqual(app.id)
+      })
+    })
+
+    describe('chat response', () => {
+      it('returns the related chat', async () => {
+        const { chat: chatResponse } = await subject(
+          workspace.id,
+          user.id,
+          chat.id,
+        )
+        expect(chatResponse.id).toEqual(chat.id)
+      })
+    })
+
+    describe('app config version', () => {
+      xit('IDEALLY: We simulate and IT returns the latest config. ALTERNATIVE: It calls getApplicableAppConfigToChatService', async () => {
+        const { chat: chatResponse } = await subject(
+          workspace.id,
+          user.id,
+          chat.id,
+        )
+        expect(chatResponse.id).toEqual(chat.id)
       })
     })
   })
