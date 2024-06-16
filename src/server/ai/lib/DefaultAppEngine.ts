@@ -7,6 +7,7 @@ import {
 import { AppEngineResponseStream } from '@/server/ai/lib/AppEngineResponseStream'
 import OpenAI from 'openai'
 import { z } from 'zod'
+import { tempAppEngineRunner } from './tempAppEngineRunner'
 
 const payloadSchema = z.object({
   assistantId: z.string(),
@@ -20,10 +21,13 @@ export class DefaultAppEngine extends AbstractAppEngine {
   }
 
   async run({ ctx }: AppEngineParams<DefaultAppEginePayload>) {
+    tempAppEngineRunner()
+
     const openai = new OpenAI({
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })
     await Promise.resolve()
+
     const stream = AppEngineResponseStream(
       {
         threadId: '123',

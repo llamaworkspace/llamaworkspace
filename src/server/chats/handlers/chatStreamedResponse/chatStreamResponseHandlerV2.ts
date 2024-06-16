@@ -17,9 +17,9 @@ import {
 import { ensureError } from '@/lib/utils'
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner'
 import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
+import { tempAppEngineRunner } from '@/server/ai/lib/tempAppEngineRunner'
 import { appEnginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import createHttpError from 'http-errors'
-import { tempAppEngineRunner } from './tempAppEngineRunner'
 
 export default async function chatStreamedResponseHandlerV2(
   req: NextRequest,

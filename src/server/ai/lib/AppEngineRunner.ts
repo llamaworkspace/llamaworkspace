@@ -1,9 +1,9 @@
-import { getAppKeyValuesService } from '@/server/apps/services/getAppKeyValues.service'
-import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
 import { chain } from 'underscore'
+import { getProviderAndModelFromFullSlug } from '../aiUtils'
+import { getAiProviderKVsService } from '../services/getProvidersForWorkspace.service'
 import type { AbstractAppEngine } from './AbstractAppEngine'
 
 export class AppEngineRunner {
@@ -48,40 +48,43 @@ export class AppEngineRunner {
   }
 
   private async generateEngineRuntimeContext(userId: string, chatId: string) {
-    const { app, ...chat } = await this.prisma.chat.findUniqueOrThrow({
-      where: {
-        id: chatId,
-      },
-      include: {
-        app: true,
-      },
-    })
-    const kvs = await this.getAppKeyValues(userId, chatId)
+    const model = await this.getModelPayload()
+
+    // const { app, ...chat } = await this.prisma.chat.findUniqueOrThrow({
+    //   where: {
+    //     id: chatId,
+    //   },
+    //   include: {
+    //     app: true,
+    //   },
+    // })
+    // const kvs = await this.getAppKeyValues(userId, chatId)
     return {
-      chat,
-      app,
-      kvs,
+      model,
+      // chat,
+      // app,
+      // kvs,
     }
   }
 
-  private async getAppKeyValues(userId: string, chatId: string) {
-    const chat = await this.prisma.chat.findUniqueOrThrow({
-      where: {
-        id: chatId,
-      },
-      include: {
-        app: true,
-      },
-    })
-    const context = await createUserOnWorkspaceContext(
-      this.prisma,
-      chat.app.workspaceId,
-      userId,
-    )
-    return await getAppKeyValuesService(this.prisma, context, {
-      appId: chat.appId,
-    })
-  }
+  // private async getAppKeyValues(userId: string, chatId: string) {
+  //   const chat = await this.prisma.chat.findUniqueOrThrow({
+  //     where: {
+  //       id: chatId,
+  //     },
+  //     include: {
+  //       app: true,
+  //     },
+  //   })
+  //   const context = await createUserOnWorkspaceContext(
+  //     this.prisma,
+  //     chat.app.workspaceId,
+  //     userId,
+  //   )
+  //   return await getAppKeyValuesService(this.prisma, context, {
+  //     appId: chat.appId,
+  //   })
+  // }
 
   private async generateEngineMessages(chatId: string) {
     const messages = await this.getMessagesForChat(chatId)
@@ -130,5 +133,23 @@ export class AppEngineRunner {
         createdAt: 'asc',
       },
     })
+  }
+
+  private async getModelPayload() {
+    const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
+      appConfigVersion.model,
+    )
+
+    const providerKVs = await getAiProviderKVsService(
+      this.prisma,
+      workspaceId,
+      userId,
+      providerSlug,
+    )
+    return {
+      providerSlug: 'xx',
+      model: 'xx',
+      providerKVs: {},
+    }
   }
 }

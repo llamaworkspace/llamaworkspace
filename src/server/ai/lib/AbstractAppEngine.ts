@@ -16,5 +16,7 @@ export interface AppEngineParams<AppKVs extends AllowedKVS> {
 
 export abstract class AbstractAppEngine {
   abstract getName(): string
-  abstract run(params: AppEngineParams): Promise<ReadableStream<unknown>>
+  abstract run(
+    params: AppEngineParams<AllowedKVS>,
+  ): Promise<ReadableStream<unknown>>
 }
