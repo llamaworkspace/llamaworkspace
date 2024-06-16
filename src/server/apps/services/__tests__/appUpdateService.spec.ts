@@ -1,4 +1,4 @@
-import { AppGptEngine } from '@/components/apps/appsTypes'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -16,7 +16,7 @@ const subject = async (
   payload: {
     title?: string | null
     emoji?: string | null
-    gptEngine?: AppGptEngine
+    engineType?: AppEngineType
   } = {},
 ) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -97,18 +97,18 @@ describe('appUpdateService', () => {
     })
   })
 
-  describe('gptEngine updates', () => {
-    describe('when gptEngine is not set', () => {
+  describe('engineType updates', () => {
+    describe('when engineType is not set', () => {
       it('updates the app', async () => {
         const appInDbBefore = await prisma.app.findFirstOrThrow({
           where: {
             id: app.id,
           },
         })
-        expect(appInDbBefore.gptEngine).toBe(null)
+        expect(appInDbBefore.engineType).toBe(null)
 
         await subject(workspace.id, user.id, app.id, {
-          gptEngine: AppGptEngine.OpenaiAssistant,
+          engineType: AppEngineType.Custom,
         })
 
         const appInDb = await prisma.app.findFirstOrThrow({
@@ -117,25 +117,25 @@ describe('appUpdateService', () => {
           },
         })
 
-        expect(appInDb.gptEngine).toBe(AppGptEngine.OpenaiAssistant)
+        expect(appInDb.engineType).toBe(AppEngineType.Custom)
       })
     })
 
-    describe('when gptEngine is set', () => {
+    describe('when engineType is set', () => {
       beforeEach(async () => {
         await prisma.app.update({
           where: {
             id: app.id,
           },
           data: {
-            gptEngine: AppGptEngine.OpenaiAssistant,
+            engineType: AppEngineType.Custom,
           },
         })
       })
       it('throws when trying to update it', async () => {
         await expect(
           subject(workspace.id, user.id, app.id, {
-            gptEngine: AppGptEngine.OpenaiAssistant,
+            engineType: AppEngineType.Custom,
           }),
         ).rejects.toThrow('GPT Engine cannot be updated once set')
       })
