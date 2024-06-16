@@ -16,7 +16,7 @@ export enum AppType {
   Chat = 'chat',
 }
 
-export enum AppGptEngine {
-  Basic = 'basic',
-  OpenaiAssistant = 'openai_assistant',
+export enum AppEngineType {
+  Default = 'default',
+  Custom = 'custom',
 }

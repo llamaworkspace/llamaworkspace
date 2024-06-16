@@ -1,4 +1,4 @@
-import { AppGptEngine } from '@/components/apps/appsTypes'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { Author } from '@/shared/aiTypesAndMappers'
@@ -16,7 +16,7 @@ interface AppCreateServiceInputProps {
   emoji?: string
   isDefault?: boolean
   isDemo?: boolean
-  gptEngine?: AppGptEngine
+  engineType?: AppEngineType
 }
 
 export const appCreateService = async (
@@ -57,7 +57,7 @@ const createApp = async (
     data: {
       workspaceId,
       userId,
-      gptEngine: input.gptEngine ?? AppGptEngine.Basic,
+      engineType: input.engineType ?? AppEngineType.Default,
       ...input,
       appConfigVersions: {
         create: [

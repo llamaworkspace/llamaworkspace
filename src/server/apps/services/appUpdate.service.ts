@@ -13,7 +13,7 @@ interface AppUpdateServiceInputProps {
   appId: string
   title?: string | null
   emoji?: string | null
-  gptEngine?: string
+  engineType?: string
 }
 
 export const appUpdateService = async (
@@ -41,7 +41,7 @@ export const appUpdateService = async (
       ),
     })
 
-    if (app.gptEngine && payload.gptEngine) {
+    if (app.engineType && payload.engineType) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'GPT Engine cannot be updated once set',

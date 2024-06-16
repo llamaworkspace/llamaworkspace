@@ -64,7 +64,7 @@ export const AppConfigForGPTSettings = ({
       />
       {/* <div className="grid md:grid-cols-2">
         <Field
-          name="gptEngine"
+          name="engineType"
           validate={stringRequired}
           render={({ input, meta }) => {
             return (
