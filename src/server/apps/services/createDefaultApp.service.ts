@@ -1,4 +1,4 @@
-import { AppGptEngine } from '@/components/apps/appsTypes'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -15,7 +15,7 @@ export const createDefaultAppService = async (
     const app = await appCreateService(prisma, uowContext, {
       title: DEFAULT_APP_NAME,
       isDefault: true,
-      gptEngine: AppGptEngine.Basic,
+      gptEngine: AppEngineType.Basic,
     })
 
     await prisma.chat.deleteMany({

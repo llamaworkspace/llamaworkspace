@@ -1,4 +1,4 @@
-import { AppGptEngine } from '@/components/apps/appsTypes'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { appCreateService } from '@/server/apps/services/appCreate.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
@@ -29,7 +29,7 @@ describe('appCreateService', () => {
     })
     expect(app).toMatchObject({
       title: 'Test App',
-      gptEngine: AppGptEngine.Basic,
+      gptEngine: AppEngineType.Basic,
     })
   })
 

@@ -1,4 +1,4 @@
-import { AppGptEngine } from '@/components/apps/appsTypes'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -16,7 +16,7 @@ const subject = async (
   payload: {
     title?: string | null
     emoji?: string | null
-    gptEngine?: AppGptEngine
+    gptEngine?: AppEngineType
   } = {},
 ) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -108,7 +108,7 @@ describe('appUpdateService', () => {
         expect(appInDbBefore.gptEngine).toBe(null)
 
         await subject(workspace.id, user.id, app.id, {
-          gptEngine: AppGptEngine.OpenaiAssistant,
+          gptEngine: AppEngineType.OpenaiAssistant,
         })
 
         const appInDb = await prisma.app.findFirstOrThrow({
@@ -117,7 +117,7 @@ describe('appUpdateService', () => {
           },
         })
 
-        expect(appInDb.gptEngine).toBe(AppGptEngine.OpenaiAssistant)
+        expect(appInDb.gptEngine).toBe(AppEngineType.OpenaiAssistant)
       })
     })
 
@@ -128,14 +128,14 @@ describe('appUpdateService', () => {
             id: app.id,
           },
           data: {
-            gptEngine: AppGptEngine.OpenaiAssistant,
+            gptEngine: AppEngineType.OpenaiAssistant,
           },
         })
       })
       it('throws when trying to update it', async () => {
         await expect(
           subject(workspace.id, user.id, app.id, {
-            gptEngine: AppGptEngine.OpenaiAssistant,
+            gptEngine: AppEngineType.OpenaiAssistant,
           }),
         ).rejects.toThrow('GPT Engine cannot be updated once set')
       })

@@ -1,12 +1,12 @@
-import { AppGptEngine } from '@/components/apps/appsTypes'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import {
   SelectField,
   type SelectFieldProps,
 } from '@/components/ui/forms/SelectField'
 
 const options = [
-  { value: AppGptEngine.OpenaiAssistant, label: 'OpenAI' },
-  { value: AppGptEngine.Basic, label: 'Basic' },
+  { value: AppEngineType.OpenaiAssistant, label: 'OpenAI' },
+  { value: AppEngineType.Basic, label: 'Basic' },
 ]
 
 export const AppConfigForGPTSelectEngineFormField = ({
