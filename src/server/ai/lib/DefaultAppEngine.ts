@@ -14,7 +14,7 @@ type DefaultAppEginePayload = z.infer<typeof payloadSchema>
 
 export class DefaultAppEngine extends AbstractAppEngine {
   getName() {
-    return 'DefaultAppEngine'
+    return 'basic'
   }
 
   async run({ ctx }: AppEngineParams<DefaultAppEginePayload>) {
