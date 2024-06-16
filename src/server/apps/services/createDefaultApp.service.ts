@@ -15,7 +15,7 @@ export const createDefaultAppService = async (
     const app = await appCreateService(prisma, uowContext, {
       title: DEFAULT_APP_NAME,
       isDefault: true,
-      gptEngine: AppEngineType.Basic,
+      engineType: AppEngineType.Default,
     })
 
     await prisma.chat.deleteMany({

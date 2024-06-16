@@ -5,8 +5,8 @@ import {
 } from '@/components/ui/forms/SelectField'
 
 const options = [
-  { value: AppEngineType.OpenaiAssistant, label: 'OpenAI' },
-  { value: AppEngineType.Basic, label: 'Basic' },
+  // { value: AppEngineType.OpenaiAssistant, label: 'OpenAI' },
+  { value: AppEngineType.Default, label: 'Default' },
 ]
 
 export const AppConfigForGPTSelectEngineFormField = ({

@@ -29,7 +29,7 @@ describe('appCreateService', () => {
     })
     expect(app).toMatchObject({
       title: 'Test App',
-      gptEngine: AppEngineType.Basic,
+      engineType: AppEngineType.Default,
     })
   })
 

@@ -16,7 +16,7 @@ interface AppCreateServiceInputProps {
   emoji?: string
   isDefault?: boolean
   isDemo?: boolean
-  gptEngine?: AppEngineType
+  engineType?: AppEngineType
 }
 
 export const appCreateService = async (
@@ -57,7 +57,7 @@ const createApp = async (
     data: {
       workspaceId,
       userId,
-      gptEngine: input.gptEngine ?? AppEngineType.Basic,
+      engineType: input.engineType ?? AppEngineType.Default,
       ...input,
       appConfigVersions: {
         create: [

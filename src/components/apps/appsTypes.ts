@@ -17,6 +17,6 @@ export enum AppType {
 }
 
 export enum AppEngineType {
-  Basic = 'basic',
-  OpenaiAssistant = 'openai_assistant',
+  Default = 'default',
+  Custom = 'custom',
 }
