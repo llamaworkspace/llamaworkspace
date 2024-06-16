@@ -118,7 +118,21 @@ describe('AppEngineRunner', () => {
       })
     })
 
-    it('calls engine.run', async () => {
+    // PENDING
+    it('builds the payload with AppEnginePayloadBuilder', async () => {
+      const runMock = jest.spyOn(mockAppEngine, 'run').mockResolvedValueOnce(
+        new ReadableStream<unknown>({
+          start(controller) {
+            controller.enqueue({ data: 'testData' })
+            controller.close()
+          },
+        }),
+      )
+      await subject([mockAppEngine], user.id, chat.id)
+      expect(true).toBe(false)
+    })
+
+    it('calls the underlying engine', async () => {
       const runMock = jest.spyOn(mockAppEngine, 'run').mockResolvedValueOnce(
         new ReadableStream<unknown>({
           start(controller) {

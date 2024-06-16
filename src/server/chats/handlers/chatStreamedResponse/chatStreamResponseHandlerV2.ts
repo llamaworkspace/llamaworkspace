@@ -1,6 +1,11 @@
+import { ensureError } from '@/lib/utils'
+import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
+import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
 import { prisma } from '@/server/db'
+import { appEnginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import { errorLogger } from '@/shared/errors/errorLogger'
-import { NextRequest, NextResponse } from 'next/server'
+import createHttpError from 'http-errors'
+import { NextResponse, type NextRequest } from 'next/server'
 import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
 import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 import {
@@ -13,12 +18,6 @@ import {
   getSessionOrThrow,
   updateMessage,
 } from './chatStreamedResponseUtils'
-
-import { ensureError } from '@/lib/utils'
-import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner'
-import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
-import { appEnginesRegistry } from '@/server/extensions/appEngines/appEngines'
-import createHttpError from 'http-errors'
 
 export default async function chatStreamedResponseHandlerV2(
   req: NextRequest,
@@ -86,14 +85,6 @@ export default async function chatStreamedResponseHandlerV2(
       'Content-Type': 'text/plain; charset=utf-8',
     }
     return new NextResponse(stream, { headers })
-    // return await tempAppEngineRunner({
-    //   providerSlug,
-    //   messages: allMessages,
-    //   model,
-    //   providerKVs,
-    //   onToken,
-    //   onFinal,
-    // })
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {

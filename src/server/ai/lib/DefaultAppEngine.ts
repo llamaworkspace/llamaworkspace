@@ -7,20 +7,20 @@ import { z } from 'zod'
 import { tempAppEngineRunner } from './tempAppEngineRunner'
 
 const payloadSchema = z.object({
-  assistantId: z.string(),
+  // assistantId: z.string(),
 })
 
 type DefaultAppEginePayload = z.infer<typeof payloadSchema>
 
 export class DefaultAppEngine extends AbstractAppEngine {
   getName() {
-    return 'basic'
+    return 'default'
   }
 
-  async run({ ctx }: AppEngineParams<DefaultAppEginePayload>) {
+  async run({ messages }: AppEngineParams<DefaultAppEginePayload>) {
     const response = await tempAppEngineRunner({
       providerSlug: 'openai',
-      messages: [{ role: 'user', content: 'Say "macarrones!"' }],
+      messages,
       model: 'gpt-3.5-turbo',
       providerKVs: {},
       onToken: (token) => {
