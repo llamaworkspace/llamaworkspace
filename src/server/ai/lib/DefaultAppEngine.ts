@@ -1,11 +1,8 @@
-import { env } from '@/env.mjs'
 import {
   AbstractAppEngine,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 
-import { AppEngineResponseStream } from '@/server/ai/lib/AppEngineResponseStream'
-import OpenAI from 'openai'
 import { z } from 'zod'
 import { tempAppEngineRunner } from './tempAppEngineRunner'
 
@@ -21,42 +18,35 @@ export class DefaultAppEngine extends AbstractAppEngine {
   }
 
   async run({ ctx }: AppEngineParams<DefaultAppEginePayload>) {
-    tempAppEngineRunner()
-
-    const openai = new OpenAI({
-      apiKey: env.INTERNAL_OPENAI_API_KEY,
-    })
-    await Promise.resolve()
-
-    const stream = AppEngineResponseStream(
-      {
-        threadId: '123',
-        messageId: '123',
+    const response = await tempAppEngineRunner({
+      providerSlug: 'openai',
+      messages: [{ role: 'user', content: 'Say "macarrones!"' }],
+      model: 'gpt-3.5-turbo',
+      providerKVs: {},
+      onToken: (token) => {
+        console.log
       },
-      async ({
-        threadId,
-        messageId,
-        sendMessage,
-        sendTextMessage,
-        sendDataMessage,
-        forwardStream,
-      }) => {
-        const aiResponse = await openai.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          messages: [{ role: 'user', content: 'Say "yo yo yo soy Juaaaan"!' }],
-          stream: true,
-          max_tokens: 10,
-        })
+      onFinal: async (final) => await Promise.resolve(),
+    })
+    if (!response.body) {
+      throw new Error('Response body is missing in AppEngineResponseStream')
+    }
 
-        for await (const message of aiResponse) {
-          const text = message.choices[0]?.delta.content
-          if (text) {
-            sendTextMessage(text)
+    const reader = response.body.getReader()
+
+    return new ReadableStream({
+      async start(controller) {
+        while (true) {
+          const { done, value } = await reader.read()
+          // const chunkText = new TextDecoder().decode(value)
+          // // Do things with value here
+          if (done) {
+            controller.close()
+            break
           }
+          controller.enqueue(value)
         }
       },
-    )
-
-    return stream
+    })
   }
 }

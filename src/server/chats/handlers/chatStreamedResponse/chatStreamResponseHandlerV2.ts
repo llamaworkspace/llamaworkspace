@@ -17,7 +17,6 @@ import {
 import { ensureError } from '@/lib/utils'
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner'
 import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
-import { tempAppEngineRunner } from '@/server/ai/lib/tempAppEngineRunner'
 import { appEnginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import createHttpError from 'http-errors'
 
@@ -81,20 +80,20 @@ export default async function chatStreamedResponseHandlerV2(
 
   try {
     const appEngineRunner = new AppEngineRunner(prisma, engines)
-    // const stream = await appEngineRunner.call(userId, chatId)
+    const stream = await appEngineRunner.call(userId, chatId)
 
-    // const headers = {
-    //   'Content-Type': 'text/plain; charset=utf-8',
-    // }
-    // return new NextResponse(stream, { headers })
-    return await tempAppEngineRunner({
-      providerSlug,
-      messages: allMessages,
-      model,
-      providerKVs,
-      onToken,
-      onFinal,
-    })
+    const headers = {
+      'Content-Type': 'text/plain; charset=utf-8',
+    }
+    return new NextResponse(stream, { headers })
+    // return await tempAppEngineRunner({
+    //   providerSlug,
+    //   messages: allMessages,
+    //   model,
+    //   providerKVs,
+    //   onToken,
+    //   onFinal,
+    // })
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {

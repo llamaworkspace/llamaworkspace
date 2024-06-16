@@ -2,8 +2,6 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
 import { chain } from 'underscore'
-import { getProviderAndModelFromFullSlug } from '../aiUtils'
-import { getAiProviderKVsService } from '../services/getProvidersForWorkspace.service'
 import type { AbstractAppEngine } from './AbstractAppEngine'
 
 export class AppEngineRunner {
@@ -14,7 +12,7 @@ export class AppEngineRunner {
 
   async call(userId: string, chatId: string) {
     let engineName = await this.getEngineNameFromChatId(chatId)
-    engineName = 'OpenaiAssistantsEngine'
+    engineName = 'DefaultAppEngine'
 
     if (!engineName) {
       throw new Error('EngineName not found')
@@ -48,43 +46,24 @@ export class AppEngineRunner {
   }
 
   private async generateEngineRuntimeContext(userId: string, chatId: string) {
-    const model = await this.getModelPayload()
+    // const model = await this.getModelPayload()
 
-    // const { app, ...chat } = await this.prisma.chat.findUniqueOrThrow({
-    //   where: {
-    //     id: chatId,
-    //   },
-    //   include: {
-    //     app: true,
-    //   },
-    // })
-    // const kvs = await this.getAppKeyValues(userId, chatId)
+    const { app, ...chat } = await this.prisma.chat.findUniqueOrThrow({
+      where: {
+        id: chatId,
+      },
+      include: {
+        app: true,
+      },
+    })
+
     return {
-      model,
-      // chat,
-      // app,
-      // kvs,
+      // model,
+      chat,
+      app,
+      kvs: {},
     }
   }
-
-  // private async getAppKeyValues(userId: string, chatId: string) {
-  //   const chat = await this.prisma.chat.findUniqueOrThrow({
-  //     where: {
-  //       id: chatId,
-  //     },
-  //     include: {
-  //       app: true,
-  //     },
-  //   })
-  //   const context = await createUserOnWorkspaceContext(
-  //     this.prisma,
-  //     chat.app.workspaceId,
-  //     userId,
-  //   )
-  //   return await getAppKeyValuesService(this.prisma, context, {
-  //     appId: chat.appId,
-  //   })
-  // }
 
   private async generateEngineMessages(chatId: string) {
     const messages = await this.getMessagesForChat(chatId)
@@ -136,20 +115,19 @@ export class AppEngineRunner {
   }
 
   private async getModelPayload() {
-    const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
-      appConfigVersion.model,
-    )
-
-    const providerKVs = await getAiProviderKVsService(
-      this.prisma,
-      workspaceId,
-      userId,
-      providerSlug,
-    )
-    return {
-      providerSlug: 'xx',
-      model: 'xx',
-      providerKVs: {},
-    }
+    // const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
+    //   appConfigVersion.model,
+    // )
+    // const providerKVs = await getAiProviderKVsService(
+    //   this.prisma,
+    //   workspaceId,
+    //   userId,
+    //   providerSlug,
+    // )
+    // return {
+    //   providerSlug: 'xx',
+    //   model: 'xx',
+    //   providerKVs: {},
+    // }
   }
 }
