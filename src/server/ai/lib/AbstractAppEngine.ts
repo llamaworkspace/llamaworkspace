@@ -15,7 +15,7 @@ export interface AppEngineParams<T extends AllowedKVS> {
 export interface AppEngineCallbacks {
   onToken: (chunk?: string) => void | Promise<void>
   onError: (error: Error) => void | Promise<void>
-  onEnd: () => void | Promise<void>
+  onEnd: (fullMessage: string) => void | Promise<void>
 }
 
 export abstract class AbstractAppEngine {

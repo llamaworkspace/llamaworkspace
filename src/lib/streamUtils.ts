@@ -4,7 +4,7 @@ import { reject } from 'underscore'
 interface SafeReadableStreamPipeCallbacks<T> {
   onChunk?: (chunk: T) => void | Promise<void>
   onError?: (error: Error) => void | Promise<void>
-  onEnd?: () => void | Promise<void>
+  onEnd?: (fullMessage: T[]) => void | Promise<void>
 }
 
 export const safeReadableStreamPipe = <T>(
@@ -16,6 +16,7 @@ export const safeReadableStreamPipe = <T>(
   return new ReadableStream<T>(
     {
       async start(controller) {
+        const fullMessage: T[] = []
         try {
           while (true) {
             const { done, value } = await reader.read()
@@ -24,7 +25,7 @@ export const safeReadableStreamPipe = <T>(
               controller.close()
               break
             }
-
+            fullMessage.push(value)
             await Promise.resolve(callbacks?.onChunk?.(value))
 
             if (
@@ -59,7 +60,7 @@ export const safeReadableStreamPipe = <T>(
           await Promise.resolve(callbacks?.onError?.(ensuredError))
           controller.error(ensuredError)
         } finally {
-          await Promise.resolve(callbacks?.onEnd?.())
+          await Promise.resolve(callbacks?.onEnd?.(fullMessage))
           reader.releaseLock()
         }
       },

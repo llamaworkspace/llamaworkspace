@@ -44,8 +44,11 @@ export class DefaultAppEngine extends AbstractAppEngine {
       onError: async (error) => {
         await Promise.resolve(callbacks.onError(error))
       },
-      onEnd: async () => {
-        await Promise.resolve(callbacks.onEnd())
+      onEnd: async (fullMessage) => {
+        const value = fullMessage.map((chunk) =>
+          new TextDecoder().decode(chunk),
+        )
+        await Promise.resolve(callbacks.onEnd(value.join('')))
       },
     })
   }
