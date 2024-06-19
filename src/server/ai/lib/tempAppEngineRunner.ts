@@ -7,8 +7,6 @@ interface TempAppEngineRunnerParams {
   messages: AiRegistryMessage[]
   model: string
   providerKVs: Record<string, string>
-  onToken: (token: string) => void
-  onFinal: (final: string) => Promise<void>
 }
 
 export const tempAppEngineRunner = async ({
@@ -16,8 +14,6 @@ export const tempAppEngineRunner = async ({
   messages,
   model,
   providerKVs,
-  onToken,
-  onFinal,
 }: TempAppEngineRunnerParams) => {
   const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
@@ -37,8 +33,9 @@ export const tempAppEngineRunner = async ({
       provider: providerSlug,
       model,
       messages: messages,
-      onToken,
-      onFinal,
+      // TODO: Remove from executeAsStream; we'll handle it ourselves at a higher layer
+      // onToken,
+      // onFinal,
     },
     providerKVs,
   )
@@ -46,5 +43,7 @@ export const tempAppEngineRunner = async ({
   const headers = {
     'Content-Type': 'text/event-stream',
   }
+  // TODO: No longer need to wrap in StreamingTextResponse; return stream and handle at a higher
+  // layer
   return new StreamingTextResponse(stream, { headers })
 }
