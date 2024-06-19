@@ -3,6 +3,8 @@ import {
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 
+import { safeReadableStreamPipe } from '@/lib/streamUtils'
+import { Promise } from 'bluebird'
 import { z } from 'zod'
 import { tempAppEngineRunner } from './tempAppEngineRunner'
 
@@ -33,24 +35,20 @@ export class DefaultAppEngine extends AbstractAppEngine {
       },
       onFinal: async (final) => await Promise.resolve(),
     })
+
     if (!response.body) {
       throw new Error('Response body is missing in AppEngineResponseStream')
     }
 
-    const reader = response.body.getReader()
-
-    return new ReadableStream({
-      async start(controller) {
-        while (true) {
-          const { done, value } = await reader.read()
-          // const chunkText = new TextDecoder().decode(value)
-          // // Do things with value here
-          if (done) {
-            controller.close()
-            break
-          }
-          controller.enqueue(value)
-        }
+    return safeReadableStreamPipe(response.body, {
+      onChunk: (chunk) => {
+        console.log('Received chunk: ', chunk)
+      },
+      onError: (error) => {
+        console.error('Error reading from stream', error)
+      },
+      onEnd: () => {
+        console.log('Stream is done.')
       },
     })
   }

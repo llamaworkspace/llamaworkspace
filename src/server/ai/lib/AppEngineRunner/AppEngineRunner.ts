@@ -13,7 +13,7 @@ export class AppEngineRunner {
     private readonly context: UserOnWorkspaceContext,
   ) {}
 
-  async call(chatId: string) {
+  async call(chatId: string): Promise<ReadableStream<unknown>> {
     const engineType = await this.getEngineType(this.context, chatId)
 
     if (!engineType) {
@@ -27,6 +27,7 @@ export class AppEngineRunner {
     const engine = this.getDefaultEngine()
     const ctx = await this.generateEngineRuntimeContext(this.context, chatId)
 
+    // DOING::: We need to pass onToken callback to the engine!
     return await engine.run(ctx)
   }
 
