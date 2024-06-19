@@ -31,14 +31,18 @@ export class AppEnginePayloadBuilder {
   }
 
   private async getChat(chatId: string) {
-    const chat = await getChatByIdService(this.prisma, this.context, {
-      chatId,
-      includeApp: true,
-    })
+    const { app, ...chat } = await getChatByIdService(
+      this.prisma,
+      this.context,
+      {
+        chatId,
+        includeApp: true,
+      },
+    )
 
     return {
-      chat: { ...chat, app: undefined },
-      app: chat.app,
+      chat,
+      app,
     }
   }
 

@@ -128,7 +128,6 @@ describe('AppEngineRunner', () => {
       })
     })
 
-    Promise<AppEngineParams<Record<string, never>>>
     it('builds the payload using the AppEnginePayloadBuilder class', async () => {
       const spy = jest.spyOn(AppEnginePayloadBuilder.prototype, 'call')
 
@@ -146,7 +145,37 @@ describe('AppEngineRunner', () => {
         }),
       )
       await subject([mockAppEngine], workspace.id, user.id, chat.id)
-      expect(runMock).toHaveBeenCalled()
+      const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
+        where: {
+          appId: app.id,
+        },
+      })
+
+      expect(runMock).toHaveBeenCalledWith(
+        {
+          chat,
+          app,
+          appConfigVersion: {
+            ...appConfigVersion,
+            systemMessage: null,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            messages: expect.arrayContaining([expect.objectContaining({})]),
+          },
+          messages: [
+            {
+              role: Author.User,
+              content: firstUserMessage.message,
+            },
+          ],
+        },
+        {
+          /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+          onToken: expect.any(Function),
+          onError: expect.any(Function),
+          onEnd: expect.any(Function),
+          /* eslint-enable @typescript-eslint/no-unsafe-assignment */
+        },
+      )
     })
   })
 })
