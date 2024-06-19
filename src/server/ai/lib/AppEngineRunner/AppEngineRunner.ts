@@ -83,29 +83,30 @@ export class AppEngineRunner {
     return await appEnginePayloadBuilder.call(chatId)
   }
 
-  private async onEnd() {
-    // await this.prisma.message
-    console.log('onEnd')
+  private async saveMessage(
+    targetAssistantMessageId: string,
+    fullMessage: string,
+  ) {
+    await this.prisma.message.update({
+      where: {
+        id: targetAssistantMessageId,
+      },
+      data: {
+        message: fullMessage,
+      },
+    })
   }
 
   private getCallbacks(targetAssistantMessageId: string) {
     return {
-      onToken: (token?: string) => {
-        console.log(111, token)
-      },
-      onError: (error: Error) => {
-        console.log(222, error)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      onToken: () => {},
+      onError: async (error: Error, partialResult: string) => {
+        await this.saveMessage(targetAssistantMessageId, partialResult)
+        throw error // TODO: This error is silently swallowed
       },
       onEnd: async (fullMessage: string) => {
-        console.log(333, fullMessage)
-        await this.prisma.message.update({
-          where: {
-            id: targetAssistantMessageId,
-          },
-          data: {
-            message: fullMessage,
-          },
-        })
+        await this.saveMessage(targetAssistantMessageId, fullMessage)
       },
     }
   }

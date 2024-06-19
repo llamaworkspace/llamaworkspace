@@ -3,8 +3,8 @@ import { reject } from 'underscore'
 
 interface SafeReadableStreamPipeCallbacks<T> {
   onChunk?: (chunk: T) => void | Promise<void>
-  onError?: (error: Error) => void | Promise<void>
-  onEnd?: (fullMessage: T[]) => void | Promise<void>
+  onError?: (error: Error, partialResult: T[]) => void | Promise<void>
+  onEnd?: (finalResult: T[]) => void | Promise<void>
 }
 
 export const safeReadableStreamPipe = <T>(
@@ -16,16 +16,18 @@ export const safeReadableStreamPipe = <T>(
   return new ReadableStream<T>(
     {
       async start(controller) {
-        const fullMessage: T[] = []
+        const cumResult: T[] = []
         try {
           while (true) {
             const { done, value } = await reader.read()
 
             if (done) {
               controller.close()
+
+              await Promise.resolve(callbacks?.onEnd?.(cumResult))
               break
             }
-            fullMessage.push(value)
+            cumResult.push(value)
             await Promise.resolve(callbacks?.onChunk?.(value))
 
             if (
@@ -57,10 +59,10 @@ export const safeReadableStreamPipe = <T>(
           }
         } catch (error) {
           const ensuredError = ensureError(error)
-          await Promise.resolve(callbacks?.onError?.(ensuredError))
+          await Promise.resolve(callbacks?.onError?.(ensuredError, cumResult))
+          await Promise.resolve(callbacks?.onEnd?.(cumResult))
           controller.error(ensuredError)
         } finally {
-          await Promise.resolve(callbacks?.onEnd?.(fullMessage))
           reader.releaseLock()
         }
       },

@@ -22,10 +22,16 @@ export class AppEnginePayloadBuilder {
       await this.buildMessages(chatId),
     ])
 
+    const systemMessage = {
+      role: Author.System as const,
+      content: appConfigVersion.systemMessage ?? '',
+    }
+
     return {
-      chat: { ...chat }, // This removes app: undefined
+      chat,
       app,
       messages,
+      systemMessage,
       appConfigVersion,
     }
   }

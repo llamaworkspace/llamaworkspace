@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { safeReadableStreamPipe } from '@/lib/streamUtils'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
@@ -10,6 +11,7 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import type { App, Chat, Message, User, Workspace } from '@prisma/client'
 import {
   AbstractAppEngine,
+  AppEngineCallbacks,
   type AppEngineParams,
 } from '../../AbstractAppEngine'
 import { AppEnginePayloadBuilder } from '../AppEnginePayloadBuilder'
@@ -24,11 +26,16 @@ export class MockAppEngine extends AbstractAppEngine {
     return 'default'
   }
 
-  async run(params: AppEngineParams<MockAppEngineKvs>) {
+  async run(
+    params: AppEngineParams<MockAppEngineKvs>,
+    callbacks: AppEngineCallbacks,
+  ) {
     const mockStream = new ReadableStream<unknown>({
-      start(controller) {
-        controller.enqueue({ data: 'mockData' })
+      async start(controller) {
+        controller.enqueue('This is ')
+        controller.enqueue('a test stream')
         controller.close()
+        await callbacks.onEnd('This is a test stream')
       },
     })
 
@@ -176,6 +183,31 @@ describe('AppEngineRunner', () => {
           /* eslint-enable @typescript-eslint/no-unsafe-assignment */
         },
       )
+    })
+
+    describe('onEnd', () => {
+      it.only('persists the result to the db', async () => {
+        const res = await subject(
+          [mockAppEngine],
+          workspace.id,
+          user.id,
+          chat.id,
+        )
+        safeReadableStreamPipe(res, {
+          onEnd: async () => {
+            const messageInDb = await prisma.message.findFirstOrThrow({
+              where: {
+                chatId: chat.id,
+              },
+              orderBy: {
+                createdAt: 'desc',
+              },
+            })
+
+            expect(messageInDb.message).toBe('This is a test stream')
+          },
+        })
+      })
     })
   })
 })

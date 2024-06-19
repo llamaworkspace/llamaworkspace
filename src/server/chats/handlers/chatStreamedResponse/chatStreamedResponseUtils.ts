@@ -6,7 +6,7 @@ import {
   createUserOnWorkspaceContext,
   type UserOnWorkspaceContext,
 } from '@/server/auth/userOnWorkspaceContext'
-import { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
+import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaTrxClient } from '@/shared/globalTypes'

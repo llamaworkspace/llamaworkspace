@@ -23,11 +23,11 @@ export class DefaultAppEngine extends AbstractAppEngine {
     ctx: AppEngineParams<DefaultAppEginePayload>,
     callbacks: AppEngineCallbacks,
   ) {
-    const { messages, app, chat, appConfigVersion } = ctx
+    const { messages, systemMessage, app, chat, appConfigVersion } = ctx
 
     const response = await tempAppEngineRunner({
       providerSlug: 'openai',
-      messages,
+      messages: [systemMessage, ...messages],
       model: 'gpt-3.5-turbo',
       providerKVs: {},
     })
@@ -39,11 +39,13 @@ export class DefaultAppEngine extends AbstractAppEngine {
     return safeReadableStreamPipe(response.body, {
       onChunk: async (chunk) => {
         const value = new TextDecoder().decode(chunk)
-        console.log('chunk:', value)
         await Promise.resolve(callbacks.onToken(value.trim().slice(3, -1))) // slice(2) to remove the leading '0:"' and the trailing '"' from vercel AI
       },
-      onError: async (error) => {
-        await Promise.resolve(callbacks.onError(error))
+      onError: async (error, partialResult) => {
+        const value = partialResult.map((chunk) =>
+          new TextDecoder().decode(chunk).trim().slice(3, -1),
+        )
+        await Promise.resolve(callbacks.onError(error, value.join('')))
       },
       onEnd: async (fullMessage) => {
         const value = fullMessage.map((chunk) =>

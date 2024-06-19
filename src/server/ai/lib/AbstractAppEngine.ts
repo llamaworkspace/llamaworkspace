@@ -1,4 +1,5 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
+import type { Author } from '@/shared/aiTypesAndMappers'
 import type { App, AppConfigVersion, Chat } from '@prisma/client'
 
 type AllowedKVS = Record<string, string | number | boolean>
@@ -10,11 +11,14 @@ export interface AppEngineParams<T extends AllowedKVS> {
 
   // readonly kvs: T
   readonly messages: AiRegistryMessage[]
+  readonly systemMessage: Pick<AiRegistryMessage, 'content'> & {
+    role: Author.System
+  }
 }
 
 export interface AppEngineCallbacks {
   onToken: (chunk?: string) => void | Promise<void>
-  onError: (error: Error) => void | Promise<void>
+  onError: (error: Error, partialMessage: string) => void | Promise<void>
   onEnd: (fullMessage: string) => void | Promise<void>
 }
 
