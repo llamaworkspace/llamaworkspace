@@ -4,7 +4,7 @@ import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useAssistant as useVercelAssistant } from 'ai/react'
 import { produce } from 'immer'
 import { debounce } from 'lodash'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useDefaultApp } from '../apps/appsHooks'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useErrorToast } from '../ui/toastHooks'
@@ -119,16 +119,11 @@ export const usePrompt = (chatId?: string) => {
   const utils = api.useContext()
   const toast = useErrorToast()
   const errorHandler = useErrorHandler()
-  const [isLoading, setIsLoading] = useState(false)
 
   // TODO: Error handling
   const onAssistantError = (error: Error) => {
-    if (error.message.includes('Failed to parse stream string')) {
-      setIsLoading(false)
-      clearVercelMessages()
-      return errorHandler()(error)
-    }
-    throw error
+    clearVercelMessages()
+    return errorHandler()(error)
   }
 
   const {
@@ -193,7 +188,6 @@ export const usePrompt = (chatId?: string) => {
         })
       })
 
-      setIsLoading(true)
       createMessage(
         { chatId, author: Author.User, message },
         {
@@ -259,27 +253,13 @@ export const usePrompt = (chatId?: string) => {
                     },
                   )
                 },
-                onError: () => {
-                  setIsLoading(false)
-                },
               },
             )
-          },
-          onError: (error) => {
-            errorHandler()(error)
-            setIsLoading(false)
           },
         },
       )
     },
-    [
-      createMessage,
-      utils,
-      errorHandler,
-      chatId,
-      assistantAppend,
-      clearVercelMessages,
-    ],
+    [createMessage, utils, chatId, assistantAppend, clearVercelMessages],
   )
 
   return {
