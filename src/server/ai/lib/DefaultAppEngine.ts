@@ -1,5 +1,6 @@
 import {
   AbstractAppEngine,
+  AppEngineCallbacks,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 
@@ -18,12 +19,12 @@ export class DefaultAppEngine extends AbstractAppEngine {
     return 'default'
   }
 
-  async run({
-    messages,
-    app,
-    chat,
-    appConfigVersion,
-  }: AppEngineParams<DefaultAppEginePayload>) {
+  async run(
+    ctx: AppEngineParams<DefaultAppEginePayload>,
+    callbacks: AppEngineCallbacks,
+  ) {
+    const { messages, app, chat, appConfigVersion } = ctx
+
     const response = await tempAppEngineRunner({
       providerSlug: 'openai',
       messages,
@@ -36,17 +37,15 @@ export class DefaultAppEngine extends AbstractAppEngine {
     }
 
     return safeReadableStreamPipe(response.body, {
-      onChunk: (chunk) => {
-        // TODO: Maybe persist the chunk to the database?
-        console.log('Received chunk: ', chunk)
+      onChunk: async (chunk) => {
+        const value = new TextDecoder().decode(chunk)
+        await Promise.resolve(callbacks.onToken(value))
       },
-      onError: (error) => {
-        // TODO: Handle error, especially with the client
-        console.error('Error reading from stream', error)
+      onError: async (error) => {
+        await Promise.resolve(callbacks.onError(error))
       },
-      onEnd: () => {
-        // TODO: For sure, do persist
-        console.log('Stream is done.')
+      onEnd: async () => {
+        await Promise.resolve(callbacks.onEnd())
       },
     })
   }

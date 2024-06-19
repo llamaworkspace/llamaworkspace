@@ -26,9 +26,18 @@ export class AppEngineRunner {
 
     const engine = this.getDefaultEngine()
     const ctx = await this.generateEngineRuntimeContext(this.context, chatId)
+    const onToken = (token?: string) => {
+      console.log(111, token)
+    }
+    const onError = (error: Error) => {
+      console.log(222, error)
+    }
+    const onEnd = () => {
+      console.log(333)
+    }
 
     // DOING::: We need to pass onToken callback to the engine!
-    return await engine.run(ctx)
+    return await engine.run(ctx, { onToken, onError, onEnd })
   }
 
   private getDefaultEngine() {
