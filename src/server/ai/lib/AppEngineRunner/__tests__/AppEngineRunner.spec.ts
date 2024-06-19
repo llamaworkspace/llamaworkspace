@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
@@ -6,11 +7,12 @@ import { MessageFactory } from '@/server/testing/factories/MessageFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { Author } from '@/shared/aiTypesAndMappers'
-import type { App, Chat, User, Workspace } from '@prisma/client'
+import type { App, Chat, Message, User, Workspace } from '@prisma/client'
 import {
   AbstractAppEngine,
   type AppEngineParams,
 } from '../../AbstractAppEngine'
+import { AppEnginePayloadBuilder } from '../AppEnginePayloadBuilder'
 import { AppEngineRunner } from '../AppEngineRunner'
 
 type MockAppEngineKvs = {
@@ -36,10 +38,16 @@ export class MockAppEngine extends AbstractAppEngine {
 
 const subject = async (
   appEngines: AbstractAppEngine[],
+  workspaceId: string,
   userId: string,
   chatId: string,
 ) => {
-  const appEngineRunner = new AppEngineRunner(prisma, appEngines)
+  const context = await createUserOnWorkspaceContext(
+    prisma,
+    workspaceId,
+    userId,
+  )
+  const appEngineRunner = new AppEngineRunner(prisma, appEngines, context)
   return await appEngineRunner.call(chatId)
 }
 
@@ -48,6 +56,8 @@ describe('AppEngineRunner', () => {
   let user: User
   let app: App
   let chat: Chat
+  let firstUserMessage: Message
+  let firstAssistantMessage: Message
   let mockAppEngine: AbstractAppEngine
 
   beforeEach(() => {
@@ -71,12 +81,12 @@ describe('AppEngineRunner', () => {
       appId: app.id,
       authorId: user.id,
     })
-    await MessageFactory.create(prisma, {
+    firstUserMessage = await MessageFactory.create(prisma, {
       author: Author.User,
       message: 'hello',
       chatId: chat.id,
     })
-    await MessageFactory.create(prisma, {
+    firstAssistantMessage = await MessageFactory.create(prisma, {
       author: Author.Assistant,
       message: null,
       chatId: chat.id,
@@ -96,7 +106,7 @@ describe('AppEngineRunner', () => {
           authorId: user.id,
         })
         await expect(
-          subject([mockAppEngine], user.id, otherChat.id),
+          subject([mockAppEngine], workspace.id, user.id, otherChat.id),
         ).rejects.toThrow('engineType is not yet set')
       })
     })
@@ -113,23 +123,17 @@ describe('AppEngineRunner', () => {
           authorId: user.id,
         })
         await expect(
-          subject([mockAppEngine], user.id, otherChat.id),
+          subject([mockAppEngine], workspace.id, user.id, otherChat.id),
         ).rejects.toThrow('non-default engineType is not yet supported')
       })
     })
 
-    // PENDING
-    it('builds the payload with AppEnginePayloadBuilder', async () => {
-      const runMock = jest.spyOn(mockAppEngine, 'run').mockResolvedValueOnce(
-        new ReadableStream<unknown>({
-          start(controller) {
-            controller.enqueue({ data: 'testData' })
-            controller.close()
-          },
-        }),
-      )
-      await subject([mockAppEngine], user.id, chat.id)
-      expect(true).toBe(false)
+    Promise<AppEngineParams<Record<string, never>>>
+    it('builds the payload using the AppEnginePayloadBuilder class', async () => {
+      const spy = jest.spyOn(AppEnginePayloadBuilder.prototype, 'call')
+
+      await subject([mockAppEngine], workspace.id, user.id, chat.id)
+      expect(spy).toHaveBeenCalledWith(chat.id)
     })
 
     it('calls the underlying engine', async () => {
@@ -141,7 +145,7 @@ describe('AppEngineRunner', () => {
           },
         }),
       )
-      await subject([mockAppEngine], user.id, chat.id)
+      await subject([mockAppEngine], workspace.id, user.id, chat.id)
       expect(runMock).toHaveBeenCalled()
     })
   })
