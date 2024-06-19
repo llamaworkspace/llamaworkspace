@@ -40,7 +40,7 @@ const subject = async (
   chatId: string,
 ) => {
   const appEngineRunner = new AppEngineRunner(prisma, appEngines)
-  return await appEngineRunner.call(userId, chatId)
+  return await appEngineRunner.call(chatId)
 }
 
 describe('AppEngineRunner', () => {

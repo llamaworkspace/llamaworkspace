@@ -17,7 +17,12 @@ export class DefaultAppEngine extends AbstractAppEngine {
     return 'default'
   }
 
-  async run({ messages }: AppEngineParams<DefaultAppEginePayload>) {
+  async run({
+    messages,
+    app,
+    chat,
+    appConfigVersion,
+  }: AppEngineParams<DefaultAppEginePayload>) {
     const response = await tempAppEngineRunner({
       providerSlug: 'openai',
       messages,

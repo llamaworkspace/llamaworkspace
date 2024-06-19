@@ -1,8 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
-import {
-  UserOnWorkspaceContext,
-  createUserOnWorkspaceContext,
-} from '@/server/auth/userOnWorkspaceContext'
+import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import createHttpError from 'http-errors'
@@ -10,19 +7,14 @@ import type { AbstractAppEngine } from '../AbstractAppEngine'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 
 export class AppEngineRunner {
-  private contextCache = new Map<
-    string,
-    ReturnType<typeof createUserOnWorkspaceContext>
-  >()
-
   constructor(
     private readonly prisma: PrismaClientOrTrxClient,
     private readonly engines: AbstractAppEngine[],
+    private readonly context: UserOnWorkspaceContext,
   ) {}
 
-  async call(userId: string, chatId: string) {
-    const context = await this.createContext(chatId, chatId)
-    const engineType = await this.getEngineType(context, chatId)
+  async call(chatId: string) {
+    const engineType = await this.getEngineType(this.context, chatId)
 
     if (!engineType) {
       throw createHttpError(500, 'engineType is not yet set')
@@ -33,7 +25,7 @@ export class AppEngineRunner {
     }
 
     const engine = this.getDefaultEngine()
-    const ctx = await this.generateEngineRuntimeContext(context, userId, chatId)
+    const ctx = await this.generateEngineRuntimeContext(this.context, chatId)
 
     return await engine.run(ctx)
   }
@@ -62,7 +54,6 @@ export class AppEngineRunner {
 
   private async generateEngineRuntimeContext(
     uowContext: UserOnWorkspaceContext,
-    userId: string,
     chatId: string,
   ) {
     const appEnginePayloadBuilder = new AppEnginePayloadBuilder(
@@ -70,9 +61,5 @@ export class AppEngineRunner {
       uowContext,
     )
     return await appEnginePayloadBuilder.call(chatId)
-  }
-
-  private async createContext(workspaceId: string, userId: string) {
-    return await createUserOnWorkspaceContext(this.prisma, workspaceId, userId)
   }
 }

@@ -1,6 +1,7 @@
 import { ensureError } from '@/lib/utils'
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
 import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { appEnginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import { errorLogger } from '@/shared/errors/errorLogger'
@@ -78,8 +79,13 @@ export default async function chatStreamedResponseHandlerV2(
   const engines = [...appEnginesRegistry, new DefaultAppEngine()]
 
   try {
-    const appEngineRunner = new AppEngineRunner(prisma, engines)
-    const stream = await appEngineRunner.call(userId, chatId)
+    const context = await createUserOnWorkspaceContext(
+      prisma,
+      workspaceId,
+      userId,
+    )
+    const appEngineRunner = new AppEngineRunner(prisma, engines, context)
+    const stream = await appEngineRunner.call(chatId)
 
     const headers = {
       'Content-Type': 'text/plain; charset=utf-8',
