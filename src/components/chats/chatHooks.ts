@@ -154,10 +154,11 @@ export const usePrompt = (chatId?: string) => {
     // Writes streamed response to usequery cache
     utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
       if (previous) {
-        // It assumes that the first item is the target assistant message
+        // It assumes that the last item is the target assistant message
         return produce(previous, (draft) => {
-          if (!draft[0]) return
-          draft[0].message = targetMessage
+          if (!draft.length) return
+
+          draft[draft.length - 1]!.message = targetMessage
         })
       }
       return previous
@@ -184,7 +185,7 @@ export const usePrompt = (chatId?: string) => {
             updatedAt: new Date(),
           }
 
-          draft?.unshift(obj)
+          draft?.push(obj)
         })
       })
 
@@ -220,7 +221,7 @@ export const usePrompt = (chatId?: string) => {
                   updatedAt: new Date(),
                 }
 
-                draft?.unshift(obj)
+                draft?.push(obj)
               })
             })
 
