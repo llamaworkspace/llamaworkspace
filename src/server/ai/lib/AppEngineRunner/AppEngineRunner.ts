@@ -1,3 +1,4 @@
+import { ensureError } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { saveTokenCountForChatRunService } from '@/server/chats/services/saveTokenCountForChatRun.service'
@@ -5,6 +6,7 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
 import { StreamingTextResponse } from 'ai'
+import createHttpError from 'http-errors'
 import { chain } from 'underscore'
 import { DefaultAppEngineV2 } from '../DefaultAppEngineV2'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
@@ -23,7 +25,13 @@ export class AppEngineRunner {
     const rawMessageIds = ctx.rawMessages.map((message) => message.id)
     const chatRun = await this.createChatRun(chatId, rawMessageIds)
     const callbacks = this.getCallbacks(targetAssistantMessage.id, chatRun.id)
-    return new DefaultAppEngineV2().run(ctx, callbacks)
+    try {
+      return new DefaultAppEngineV2().run(ctx, callbacks)
+    } catch (_error) {
+      const error = ensureError(_error)
+      await this.deleteMessage(targetAssistantMessage.id)
+      throw createHttpError(403, error.message)
+    }
   }
 
   // async _call(chatId: string): Promise<ReadableStream<unknown>> {

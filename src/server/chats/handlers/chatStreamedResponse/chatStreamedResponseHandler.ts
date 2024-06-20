@@ -87,11 +87,6 @@ async function handler(req: NextRequest) {
     return await appEngineRunner.call(chatId)
   } catch (_error) {
     const error = ensureError(_error)
-    if (tokenResponse.length && assistantTargetMessageId) {
-      await updateMessage(assistantTargetMessageId, tokenResponse)
-    } else if (assistantTargetMessageId) {
-      await deleteMessage(assistantTargetMessageId)
-    }
 
     errorLogger(error)
     throw createHttpError(403, error.message)
