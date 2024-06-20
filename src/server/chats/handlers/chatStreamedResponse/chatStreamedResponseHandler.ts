@@ -73,14 +73,10 @@ async function handler(req: NextRequest) {
 
     assistantTargetMessageId = assistantTargetMessage.id
 
-    // AQUI EMPIEZA LA FIESTA. ANTES ES TODO SETUP. AISLAR EN METODO PRIVADO Y
-    // DEVOLVER SOLO LO NECESARIO. Tb se puede testear el metodo privado xa delegar
-    // la logica de los distintos error cases en otro lado
     if (!chat.appConfigVersionId) {
       await attachAppConfigVersionToChat(chatId, appConfigVersion.id)
     }
 
-    // Todo: Update chatRun as transaction, in fact run everything as a trx!
     const chatRun = await createChatRun(
       chatId,
       allUnprocessedMessages.map((m) => m.id),
@@ -88,12 +84,9 @@ async function handler(req: NextRequest) {
 
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
-    // Method to extract provider from model
-    // MAS SETUP!
     const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
       appConfigVersion.model,
     )
-    // MAS SETUP!
     const providerKVs = await getAiProviderKVsService(
       prisma,
       workspaceId,
