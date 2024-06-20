@@ -1,5 +1,6 @@
 import { ensureError } from '@/lib/utils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
+import { DefaultAppEngineV2 } from '@/server/ai/lib/DefaultAppEngineV2'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
@@ -16,7 +17,6 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message } from '@prisma/client'
-import { StreamingTextResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
@@ -134,10 +134,19 @@ async function handler(req: NextRequest) {
       providerKVs,
     )
 
-    const headers = {
-      'Content-Type': 'text/event-stream',
+    const ctx = {
+      messages: allMessages,
+      providerSlug,
+      modelSlug: model,
+      providerKVs,
     }
-    return new StreamingTextResponse(stream, { headers })
+
+    const callbacks = {
+      onToken,
+      onEnd: onFinal,
+    }
+
+    return new DefaultAppEngineV2().run(ctx, callbacks)
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {
