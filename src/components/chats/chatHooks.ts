@@ -120,7 +120,6 @@ export const usePrompt = (chatId?: string) => {
   const toast = useErrorToast()
   const errorHandler = useErrorHandler()
 
-  // TODO: Error handling
   const onAssistantError = (error: Error) => {
     clearVercelMessages()
     return errorHandler()(error)
@@ -130,10 +129,7 @@ export const usePrompt = (chatId?: string) => {
     messages: vercelAssistantMessages,
     setMessages: setVercelAssistantMessages,
     append: assistantAppend,
-    // TODO: Implement assistant status to re-enable the prompt
-
     status: assistantStatus,
-    // error: assistantError,
   } = useVercelAssistant({
     api: '/api/chat',
     onError: onAssistantError,
