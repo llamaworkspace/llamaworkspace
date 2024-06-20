@@ -1,5 +1,7 @@
 import { ensureError } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
+import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { saveTokenCountForChatRunService } from '@/server/chats/services/saveTokenCountForChatRun.service'
 import { Author } from '@/shared/aiTypesAndMappers'
@@ -19,12 +21,14 @@ export class AppEngineRunner {
   ) {}
 
   async call(chatId: string): Promise<StreamingTextResponse> {
-    const ctx = await this.generateEngineRuntimeContext(chatId)
+    await this.maybeAttachAppConfigVersionToChat(chatId)
 
+    const ctx = await this.generateEngineRuntimeContext(chatId)
     const targetAssistantMessage = await this.getTargetAssistantMessage(chatId)
     const rawMessageIds = ctx.rawMessages.map((message) => message.id)
     const chatRun = await this.createChatRun(chatId, rawMessageIds)
     const callbacks = this.getCallbacks(targetAssistantMessage.id, chatRun.id)
+
     try {
       return new DefaultAppEngineV2().run(ctx, callbacks)
     } catch (_error) {
@@ -75,6 +79,24 @@ export class AppEngineRunner {
   //   return chat.app.engineType
   // }
 
+  private async maybeAttachAppConfigVersionToChat(chatId: string) {
+    const chat = await getChatByIdService(this.prisma, this.context, {
+      chatId,
+    })
+
+    if (!chat.appConfigVersionId) {
+      const appConfigVersion = await getApplicableAppConfigToChatService(
+        this.prisma,
+        this.context,
+        {
+          chatId,
+        },
+      )
+
+      await this.attachAppConfigVersionToChat(chatId, appConfigVersion.id)
+    }
+  }
+
   private async getTargetAssistantMessage(chatId: string) {
     const messages = await getMessagesByChatIdService(
       this.prisma,
@@ -106,6 +128,20 @@ export class AppEngineRunner {
             messageId,
           })),
         },
+      },
+    })
+  }
+
+  private async attachAppConfigVersionToChat(
+    chatId: string,
+    appConfigVersionId: string,
+  ) {
+    await this.prisma.chat.update({
+      where: {
+        id: chatId,
+      },
+      data: {
+        appConfigVersionId,
       },
     })
   }
