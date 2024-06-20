@@ -12,12 +12,10 @@ import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 import {
   attachAppConfigVersionToChat,
   createChatRun,
-  deleteMessage,
   getChatOrThrow,
   getNeededData,
   getParsedBodyOrThrow,
   getSessionOrThrow,
-  updateMessage,
 } from './chatStreamedResponseUtils'
 
 export default async function chatStreamedResponseHandlerV2(
@@ -62,19 +60,20 @@ export default async function chatStreamedResponseHandlerV2(
   void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
   const onFinal = async (final: string) => {
-    await updateMessage(prisma, assistantTargetMessage.id, final)
+    // await updateMessage(prisma, assistantTargetMessage.id, final)
+    // PENDING: Deprecate token count
     await saveTokenCountForChatRunService(prisma, chatRun.id)
   }
 
-  const onToken = (token: string) => {
-    tokenResponse += token
-  }
+  // const onToken = (token: string) => {
+  //   tokenResponse += token
+  // }
 
-  // PÉSIMA GESTIÓN DE ERRORES
-  const onError = async (error: Error) => {
-    await deleteMessage(prisma, assistantTargetMessage.id)
-    errorLogger(error)
-  }
+  // // PÉSIMA GESTIÓN DE ERRORES
+  // const onError = async (error: Error) => {
+  //   await deleteMessage(prisma, assistantTargetMessage.id)
+  //   errorLogger(error)
+  // }
 
   const engines = [...appEnginesRegistry, new DefaultAppEngine()]
 
@@ -93,11 +92,11 @@ export default async function chatStreamedResponseHandlerV2(
     return new NextResponse(stream, { headers })
   } catch (_error) {
     const error = ensureError(_error)
-    if (tokenResponse.length && assistantTargetMessageId) {
-      await updateMessage(prisma, assistantTargetMessageId, tokenResponse)
-    } else if (assistantTargetMessageId) {
-      await deleteMessage(prisma, assistantTargetMessageId)
-    }
+    // if (tokenResponse.length && assistantTargetMessageId) {
+    //   await updateMessage(prisma, assistantTargetMessageId, tokenResponse)
+    // } else if (assistantTargetMessageId) {
+    //   await deleteMessage(prisma, assistantTargetMessageId)
+    // }
 
     errorLogger(error)
     throw createHttpError(403, error.message)

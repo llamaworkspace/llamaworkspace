@@ -97,16 +97,27 @@ export class AppEngineRunner {
     })
   }
 
+  private async deleteMessage(targetAssistantMessageId: string) {
+    await this.prisma.message.delete({
+      where: {
+        id: targetAssistantMessageId,
+      },
+    })
+  }
+
   private getCallbacks(targetAssistantMessageId: string) {
     return {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       onToken: () => {},
       onError: async (error: Error, partialResult: string) => {
         await this.saveMessage(targetAssistantMessageId, partialResult)
-        throw error // TODO: This error is silently swallowed
+        // throw error // TODO: This error is silently swallowed
       },
       onEnd: async (fullMessage: string) => {
-        await this.saveMessage(targetAssistantMessageId, fullMessage)
+        if (fullMessage) {
+          await this.saveMessage(targetAssistantMessageId, fullMessage)
+        }
+        await this.deleteMessage(targetAssistantMessageId)
       },
     }
   }

@@ -42,12 +42,14 @@ export class DefaultAppEngine extends AbstractAppEngine {
         const value = new TextDecoder().decode(chunk)
         await Promise.resolve(callbacks.onToken(value.trim().slice(3, -1))) // slice(2) to remove the leading '0:"' and the trailing '"' from vercel AI
       },
+      // TODO: This goes to the AppEngineRunner
       onError: async (error, partialResult) => {
         const value = partialResult.map((chunk) =>
           new TextDecoder().decode(chunk).trim().slice(3, -1),
         )
         await Promise.resolve(callbacks.onError(error, value.join('')))
       },
+      // TODO: This goes to the AppEngineRunner
       onEnd: async (fullMessage) => {
         const value = fullMessage.map((chunk) =>
           new TextDecoder().decode(chunk).trim().slice(3, -1),

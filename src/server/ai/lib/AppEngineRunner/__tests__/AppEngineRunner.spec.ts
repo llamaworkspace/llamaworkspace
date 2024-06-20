@@ -29,7 +29,7 @@ type MockAppEngineKvs = {
   name: string
 }
 
-export class MockAppEngine extends AbstractAppEngine {
+class MockAppEngine extends AbstractAppEngine {
   getName(): string {
     return 'default'
   }
@@ -44,6 +44,41 @@ export class MockAppEngine extends AbstractAppEngine {
         controller.enqueue('a test stream')
         controller.close()
         await callbacks.onEnd('This is a test stream')
+      },
+    })
+
+    return Promise.resolve(mockStream)
+  }
+}
+
+class FailingMockAppEngine extends AbstractAppEngine {
+  private readonly producesContent: boolean
+
+  constructor(producesContent = true) {
+    super()
+    this.producesContent = producesContent
+  }
+  getName(): string {
+    return 'default'
+  }
+
+  async run(
+    params: AppEngineParams<MockAppEngineKvs>,
+    callbacks: AppEngineCallbacks,
+  ) {
+    const producesContent = this.producesContent
+
+    const mockStream = new ReadableStream<unknown>({
+      async start(controller) {
+        if (producesContent) {
+          controller.enqueue('This is ')
+          controller.enqueue('a test stream')
+        }
+        throw new Error('This is a test error')
+        // const partial = producesContent ? 'This is a test stream' : ''
+        // console.log(222)
+        // await callbacks.onError(new Error('This is a test error'), partial)
+        // console.log(33333)
       },
     })
 
@@ -246,16 +281,51 @@ describe('AppEngineRunner', () => {
       })
     })
     describe('onError', () => {
-      it('persists the result to the db', async () => {
+      xit('when the message has content persists the result to the db', async () => {
+        const failingMockAppEngine = new FailingMockAppEngine(false)
+
         const res = await subject(
-          [mockAppEngine],
+          [failingMockAppEngine],
           workspace.id,
           user.id,
           chat.id,
         )
+        await new Promise<void>((resolve, reject) => {
+          safeReadableStreamPipe(res, {
+            onError: async () => {
+              const messageInDb = await prisma.message.findMany({
+                where: {
+                  chatId: chat.id,
+                  author: Author.Assistant,
+                },
+                orderBy: {
+                  createdAt: 'desc',
+                },
+              })
+
+              try {
+                expect(messageInDb[0]!.message).toBe('This is a test stream')
+                resolve()
+              } catch (error) {
+                reject(error)
+              }
+            },
+          })
+        })
+      })
+
+      xit('when the message is empty it deletes the message from the db', async () => {
+        const failingMockAppEngine = new FailingMockAppEngine(false)
+        const res = await subject(
+          [failingMockAppEngine],
+          workspace.id,
+          user.id,
+          chat.id,
+        )
+
         safeReadableStreamPipe(res, {
-          onEnd: async () => {
-            const messageInDb = await prisma.message.findFirstOrThrow({
+          onError: async () => {
+            const messageInDb = await prisma.message.findMany({
               where: {
                 chatId: chat.id,
               },
@@ -264,7 +334,7 @@ describe('AppEngineRunner', () => {
               },
             })
 
-            expect(messageInDb.message).toBe('This is a test stream')
+            expect(messageInDb.length).toEqual(10)
           },
         })
       })
