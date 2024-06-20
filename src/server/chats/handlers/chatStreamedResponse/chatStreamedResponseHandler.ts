@@ -1,8 +1,7 @@
 import { ensureError } from '@/lib/utils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
-import { DefaultAppEngineV2 } from '@/server/ai/lib/DefaultAppEngineV2'
+import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
-import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
 import {
   createUserOnWorkspaceContext,
@@ -23,7 +22,6 @@ import { getServerSession } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import { chain } from 'underscore'
 import { z } from 'zod'
-import { saveTokenCountForChatRunService } from '../../services/saveTokenCountForChatRun.service'
 import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 
 const zBody = z.object({
@@ -77,31 +75,7 @@ async function handler(req: NextRequest) {
       await attachAppConfigVersionToChat(chatId, appConfigVersion.id)
     }
 
-    const chatRun = await createChatRun(
-      chatId,
-      allUnprocessedMessages.map((m) => m.id),
-    )
-
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
-
-    const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
-      appConfigVersion.model,
-    )
-    const providerKVs = await getAiProviderKVsService(
-      prisma,
-      workspaceId,
-      userId,
-      providerSlug,
-    )
-
-    const onFinal = async (final: string) => {
-      await updateMessage(assistantTargetMessage.id, final)
-      await saveTokenCountForChatRunService(prisma, chatRun.id)
-    }
-
-    const onToken = (token: string) => {
-      tokenResponse += token
-    }
 
     // TODO:  GESTIÓN DE ERRORES
     const onError = async (error: Error) => {
@@ -109,25 +83,8 @@ async function handler(req: NextRequest) {
       errorLogger(error)
     }
 
-    const provider = aiProvidersFetcherService.getProvider(providerSlug)
-
-    if (!provider) {
-      throw new Error(`Provider ${providerSlug} not found`)
-    }
-
-    const ctx = {
-      messages: allMessages,
-      providerSlug,
-      modelSlug: model,
-      providerKVs,
-    }
-
-    const callbacks = {
-      onToken,
-      onEnd: onFinal,
-    }
-
-    return new DefaultAppEngineV2().run(ctx, callbacks)
+    const appEngineRunner = new AppEngineRunner(prisma, context)
+    return await appEngineRunner.call(chatId)
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {

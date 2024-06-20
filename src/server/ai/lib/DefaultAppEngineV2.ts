@@ -3,7 +3,7 @@ import { StreamingTextResponse } from 'ai'
 import { z } from 'zod'
 import {
   AbstractAppEngineV2,
-  AppEngineCallbacksV2,
+  type AppEngineCallbacksV2,
   type AppEngineParamsV2,
 } from './AbstractAppEngineV2'
 
@@ -23,8 +23,7 @@ export class DefaultAppEngineV2 extends AbstractAppEngineV2 {
     callbacks: AppEngineCallbacksV2,
   ) {
     const { messages, providerSlug, modelSlug, providerKVs } = ctx
-
-    const { onToken, onEnd } = callbacks
+    const { onToken, onFinal } = callbacks
 
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
@@ -38,7 +37,7 @@ export class DefaultAppEngineV2 extends AbstractAppEngineV2 {
         model: modelSlug,
         messages,
         onToken,
-        onFinal: onEnd,
+        onFinal: onFinal,
       },
       providerKVs,
     )
