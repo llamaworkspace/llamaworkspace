@@ -103,29 +103,17 @@ async function handler(req: NextRequest) {
       tokenResponse += token
     }
 
-    // PÉSIMA GESTIÓN DE ERRORES
+    // TODO:  GESTIÓN DE ERRORES
     const onError = async (error: Error) => {
       await deleteMessage(assistantTargetMessage.id)
       errorLogger(error)
     }
 
-    // ESTO DEL PROVIDER QUIZA DEBERIA YA IR AL ENGINE
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
     if (!provider) {
       throw new Error(`Provider ${providerSlug} not found`)
     }
-
-    const stream = await provider.executeAsStream(
-      {
-        provider: providerSlug,
-        model,
-        messages: allMessages,
-        onToken,
-        onFinal,
-      },
-      providerKVs,
-    )
 
     const ctx = {
       messages: allMessages,
