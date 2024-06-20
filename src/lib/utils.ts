@@ -102,3 +102,13 @@ export const ensureError = (err: unknown): Error => {
   // For other cases, such as when a string or number is thrown
   return new Error(String(err))
 }
+
+export const maskValueWithBullets = (value: string) => {
+  if (!value) return value
+  const bullets = '••••••••••••••••'
+  if (value.length < 12) {
+    return bullets
+  }
+
+  return value?.slice(0, 4) + '••••••••••••••••' + value?.slice(-3)
+}
