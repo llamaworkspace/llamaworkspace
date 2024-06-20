@@ -11,7 +11,7 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import type { App, Chat, Message, User, Workspace } from '@prisma/client'
 import {
   AbstractAppEngine,
-  AppEngineCallbacks,
+  type AppEngineCallbacks,
   type AppEngineParams,
 } from '../../AbstractAppEngine'
 import { AppEnginePayloadBuilder } from '../AppEnginePayloadBuilder'
@@ -166,7 +166,7 @@ describe('AppEngineRunner', () => {
             ...appConfigVersion,
             systemMessage: null,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            messages: expect.arrayContaining([expect.objectContaining({})]),
+            messages: [expect.objectContaining({})],
           },
           messages: [
             {
@@ -186,7 +186,7 @@ describe('AppEngineRunner', () => {
     })
 
     describe('onEnd', () => {
-      it.only('persists the result to the db', async () => {
+      it('persists the result to the db', async () => {
         const res = await subject(
           [mockAppEngine],
           workspace.id,

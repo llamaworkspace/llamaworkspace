@@ -7,6 +7,8 @@ import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
 import { Promise } from 'bluebird'
 import { chain } from 'underscore'
+import { getProviderAndModelFromFullSlug } from '../../aiUtils'
+import { getAiProviderKVsService } from '../../services/getProvidersForWorkspace.service'
 import type { AppEngineParams } from '../AbstractAppEngine'
 
 export class AppEnginePayloadBuilder {
@@ -27,12 +29,22 @@ export class AppEnginePayloadBuilder {
       content: appConfigVersion.systemMessage ?? '',
     }
 
+    const model = getProviderAndModelFromFullSlug(appConfigVersion.model)
+    const providerKVs = await this.getProviderKVs(
+      this.context.workspaceId,
+      this.context.userId,
+      model.provider,
+    )
+
     return {
       chat,
       app,
       messages,
       systemMessage,
       appConfigVersion,
+      modelSlug: model.model,
+      providerSlug: model.provider,
+      providerKVs,
     }
   }
 
@@ -71,6 +83,19 @@ export class AppEnginePayloadBuilder {
     return (
       await getMessagesByChatIdService(this.prisma, this.context, { chatId })
     ).reverse()
+  }
+
+  private async getProviderKVs(
+    workspaceId: string,
+    userId: string,
+    providerSlug: string,
+  ) {
+    return await getAiProviderKVsService(
+      this.prisma,
+      workspaceId,
+      userId,
+      providerSlug,
+    )
   }
 
   private prepareMessagesForPrompt(messages: Message[]) {

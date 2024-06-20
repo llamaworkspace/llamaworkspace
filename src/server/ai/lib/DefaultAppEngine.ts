@@ -1,6 +1,6 @@
 import {
   AbstractAppEngine,
-  AppEngineCallbacks,
+  type AppEngineCallbacks,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 
@@ -23,13 +23,14 @@ export class DefaultAppEngine extends AbstractAppEngine {
     ctx: AppEngineParams<DefaultAppEginePayload>,
     callbacks: AppEngineCallbacks,
   ) {
-    const { messages, systemMessage, app, chat, appConfigVersion } = ctx
+    const { messages, systemMessage, providerSlug, modelSlug, providerKVs } =
+      ctx
 
     const response = await tempAppEngineRunner({
-      providerSlug: 'openai',
+      providerSlug,
       messages: [systemMessage, ...messages],
-      model: 'gpt-3.5-turbo',
-      providerKVs: {},
+      model: modelSlug,
+      providerKVs,
     })
 
     if (!response.body) {
