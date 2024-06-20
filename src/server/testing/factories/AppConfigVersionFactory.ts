@@ -6,6 +6,7 @@ import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
 export type AppConfigVersionFactoryFields = {
   appId: string
+  systemMessage?: string
 } & Partial<AppConfigVersion>
 
 const generateDefaults = () => {
@@ -29,11 +30,12 @@ export const AppConfigVersionFactory = {
     overrides: AppConfigVersionFactoryFields,
   ) => {
     const data = AppConfigVersionFactory.build(overrides)
+    const { systemMessage, ...payload } = data
     return await prisma.appConfigVersion.create({
       data: {
-        ...data,
+        ...payload,
         messages: {
-          create: [{ author: Author.System }],
+          create: [{ author: Author.System, message: systemMessage }],
         },
       },
     })

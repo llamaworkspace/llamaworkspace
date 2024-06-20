@@ -4,6 +4,7 @@ import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { TRPCError } from '@trpc/server'
 import { scopeChatByWorkspace } from '../chatUtils'
 
 interface ApplicableAppConfigVersionToChatServiceInputPayload {
@@ -87,13 +88,20 @@ const getAppConfigVersionInProgress = async (
     include: {
       messages: {
         orderBy: {
-          createdAt: 'asc',
+          createdAt: 'desc',
         },
+        take: 1,
       },
     },
   })
 
-  const firstMessage = appConfig.messages[0]!
+  if (!appConfig.messages[0]) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'appConfig must have at least one message',
+    })
+  }
+  const firstMessage = appConfig.messages[0]
 
   return {
     ...appConfig,

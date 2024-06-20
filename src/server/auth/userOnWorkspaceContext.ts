@@ -35,7 +35,7 @@ export async function createUserOnWorkspaceContext(
   workspaceId: string,
   userId: string,
 ) {
-  const hasAccess = await hasUserAccessToWorkspace(prisma, userId, workspaceId)
+  const hasAccess = await hasUserAccessToWorkspace(prisma, workspaceId, userId)
 
   if (!hasAccess) {
     throw new TRPCError({
@@ -48,8 +48,8 @@ export async function createUserOnWorkspaceContext(
 
 const hasUserAccessToWorkspace = async (
   prisma: PrismaClientOrTrxClient,
-  userId: string,
   workspaceId: string,
+  userId: string,
 ) => {
   const workspace = await prisma.usersOnWorkspaces.findFirst({
     where: {

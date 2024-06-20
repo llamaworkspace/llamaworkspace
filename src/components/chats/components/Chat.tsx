@@ -120,24 +120,20 @@ export function Chat({ appId, chatId }: ChatProps) {
         )}
 
         <div className="space-y-8 pt-8">
-          {messages
-            ?.map((message, index) => {
-              const author = getEnumByValue(Author, message.author) as
-                | Author.User
-                | Author.Assistant
+          {messages?.map((message, index) => {
+            const author = getEnumByValue(Author, message.author) as
+              | Author.User
+              | Author.Assistant
 
-              return (
-                <ChatMessage
-                  key={index} // Keep index, otherwise changes in message.id (temp vs final) trigger a re-mount that causes a flicker
-                  message={message.message ?? ''}
-                  author={author}
-                  onLineHeightChange={
-                    index ? undefined : handleLineHeightChange
-                  }
-                />
-              )
-            })
-            .reverse()}
+            return (
+              <ChatMessage
+                key={index} // Keep index, otherwise changes in message.id (temp vs final) trigger a re-mount that causes a flicker
+                message={message.message ?? ''}
+                author={author}
+                onLineHeightChange={index ? undefined : handleLineHeightChange}
+              />
+            )
+          })}
           <div className="h-[16px]"></div>
         </div>
         <div style={{ minHeight: lastBlockHeight }}></div>

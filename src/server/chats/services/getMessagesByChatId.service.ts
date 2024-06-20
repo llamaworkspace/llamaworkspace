@@ -40,7 +40,7 @@ export const getMessagesByChatIdService = async function (
         ),
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: 'asc',
       },
     })
   })

@@ -4,7 +4,7 @@ import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useAssistant as useVercelAssistant } from 'ai/react'
 import { produce } from 'immer'
 import { debounce } from 'lodash'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useDefaultApp } from '../apps/appsHooks'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useErrorToast } from '../ui/toastHooks'
@@ -119,26 +119,17 @@ export const usePrompt = (chatId?: string) => {
   const utils = api.useContext()
   const toast = useErrorToast()
   const errorHandler = useErrorHandler()
-  const [isLoading, setIsLoading] = useState(false)
 
-  // TODO: Error handling
   const onAssistantError = (error: Error) => {
-    if (error.message.includes('Failed to parse stream string')) {
-      setIsLoading(false)
-      clearVercelMessages()
-      return errorHandler()(error)
-    }
-    throw error
+    clearVercelMessages()
+    return errorHandler()(error)
   }
 
   const {
     messages: vercelAssistantMessages,
     setMessages: setVercelAssistantMessages,
     append: assistantAppend,
-    // TODO: Implement assistant status to re-enable the prompt
-
     status: assistantStatus,
-    // error: assistantError,
   } = useVercelAssistant({
     api: '/api/chat',
     onError: onAssistantError,
@@ -159,10 +150,11 @@ export const usePrompt = (chatId?: string) => {
     // Writes streamed response to usequery cache
     utils.chats.getMessagesByChatId.setData({ chatId }, (previous) => {
       if (previous) {
-        // It assumes that the first item is the target assistant message
+        // It assumes that the last item is the target assistant message
         return produce(previous, (draft) => {
-          if (!draft[0]) return
-          draft[0].message = targetMessage
+          if (!draft.length) return
+
+          draft[draft.length - 1]!.message = targetMessage
         })
       }
       return previous
@@ -189,11 +181,10 @@ export const usePrompt = (chatId?: string) => {
             updatedAt: new Date(),
           }
 
-          draft?.unshift(obj)
+          draft?.push(obj)
         })
       })
 
-      setIsLoading(true)
       createMessage(
         { chatId, author: Author.User, message },
         {
@@ -226,7 +217,7 @@ export const usePrompt = (chatId?: string) => {
                   updatedAt: new Date(),
                 }
 
-                draft?.unshift(obj)
+                draft?.push(obj)
               })
             })
 
@@ -259,27 +250,13 @@ export const usePrompt = (chatId?: string) => {
                     },
                   )
                 },
-                onError: () => {
-                  setIsLoading(false)
-                },
               },
             )
-          },
-          onError: (error) => {
-            errorHandler()(error)
-            setIsLoading(false)
           },
         },
       )
     },
-    [
-      createMessage,
-      utils,
-      errorHandler,
-      chatId,
-      assistantAppend,
-      clearVercelMessages,
-    ],
+    [createMessage, utils, chatId, assistantAppend, clearVercelMessages],
   )
 
   return {

@@ -1,5 +1,5 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
-import { maskValueWithBullets } from '@/lib/appUtils'
+import { maskValueWithBullets } from '@/lib/utils'
 import type { AiRegistry } from '@/server/lib/ai-registry/AiRegistry'
 import type { AiRegistryProviderMeta } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { PrismaClient } from '@prisma/client'

@@ -56,9 +56,9 @@ describe('getMessagesByChatIdService', () => {
     const result = await subject(workspace.id, user.id, { chatId: chat.id })
 
     expect(messages.length).toEqual(3)
-    expect(result[0]!.id).toEqual(messages[2]!.id)
+    expect(result[2]!.id).toEqual(messages[2]!.id)
     expect(result[1]!.id).toEqual(messages[1]!.id)
-    expect(result[2]!.id).toEqual(messages[0]!.id)
+    expect(result[0]!.id).toEqual(messages[0]!.id)
   })
 
   it('calls PermissionsVerifier', async () => {
