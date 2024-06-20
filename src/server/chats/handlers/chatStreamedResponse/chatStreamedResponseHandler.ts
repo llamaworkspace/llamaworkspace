@@ -1,5 +1,6 @@
 import { ensureError } from '@/lib/utils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
+import { DefaultAppEngineV2 } from '@/server/ai/lib/DefaultAppEngineV2'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { authOptions } from '@/server/auth/nextauth'
@@ -16,7 +17,6 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message } from '@prisma/client'
-import { StreamingTextResponse } from 'ai'
 import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
@@ -77,7 +77,6 @@ async function handler(req: NextRequest) {
       await attachAppConfigVersionToChat(chatId, appConfigVersion.id)
     }
 
-    // Todo: Update chatRun as transaction, in fact run everything as a trx!
     const chatRun = await createChatRun(
       chatId,
       allUnprocessedMessages.map((m) => m.id),
@@ -85,11 +84,9 @@ async function handler(req: NextRequest) {
 
     void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
-    // Method to extract provider from model
     const { provider: providerSlug, model } = getProviderAndModelFromFullSlug(
       appConfigVersion.model,
     )
-
     const providerKVs = await getAiProviderKVsService(
       prisma,
       workspaceId,
@@ -106,11 +103,13 @@ async function handler(req: NextRequest) {
       tokenResponse += token
     }
 
+    // PÉSIMA GESTIÓN DE ERRORES
     const onError = async (error: Error) => {
       await deleteMessage(assistantTargetMessage.id)
       errorLogger(error)
     }
 
+    // ESTO DEL PROVIDER QUIZA DEBERIA YA IR AL ENGINE
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
     if (!provider) {
@@ -128,10 +127,19 @@ async function handler(req: NextRequest) {
       providerKVs,
     )
 
-    const headers = {
-      'Content-Type': 'text/event-stream',
+    const ctx = {
+      messages: allMessages,
+      providerSlug,
+      modelSlug: model,
+      providerKVs,
     }
-    return new StreamingTextResponse(stream, { headers })
+
+    const callbacks = {
+      onToken,
+      onEnd: onFinal,
+    }
+
+    return new DefaultAppEngineV2().run(ctx, callbacks)
   } catch (_error) {
     const error = ensureError(_error)
     if (tokenResponse.length && assistantTargetMessageId) {
