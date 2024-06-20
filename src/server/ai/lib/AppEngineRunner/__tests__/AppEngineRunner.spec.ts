@@ -2,13 +2,21 @@ import { AppEngineType } from '@/components/apps/appsTypes'
 import { safeReadableStreamPipe } from '@/lib/streamUtils'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { AppConfigVersionFactory } from '@/server/testing/factories/AppConfigVersionFactory'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { ChatFactory } from '@/server/testing/factories/ChatFactory'
 import { MessageFactory } from '@/server/testing/factories/MessageFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { Author } from '@/shared/aiTypesAndMappers'
-import type { App, Chat, Message, User, Workspace } from '@prisma/client'
+import type {
+  App,
+  AppConfigVersion,
+  Chat,
+  Message,
+  User,
+  Workspace,
+} from '@prisma/client'
 import {
   AbstractAppEngine,
   type AppEngineCallbacks,
@@ -65,7 +73,9 @@ describe('AppEngineRunner', () => {
   let chat: Chat
   let firstUserMessage: Message
   let firstAssistantMessage: Message
+  let systemMessage: Message
   let mockAppEngine: AbstractAppEngine
+  let nextAppConfigVersion: AppConfigVersion
 
   beforeEach(() => {
     mockAppEngine = new MockAppEngine()
@@ -82,6 +92,11 @@ describe('AppEngineRunner', () => {
       userId: user.id,
       workspaceId: workspace.id,
       engineType: AppEngineType.Default,
+    })
+
+    nextAppConfigVersion = await AppConfigVersionFactory.create(prisma, {
+      appId: app.id,
+      systemMessage: 'This is a system message',
     })
 
     chat = await ChatFactory.create(prisma, {
@@ -142,7 +157,7 @@ describe('AppEngineRunner', () => {
       expect(spy).toHaveBeenCalledWith(chat.id)
     })
 
-    it('calls the underlying engine', async () => {
+    it('calls the target engine', async () => {
       const runMock = jest.spyOn(mockAppEngine, 'run').mockResolvedValueOnce(
         new ReadableStream<unknown>({
           start(controller) {
@@ -152,29 +167,28 @@ describe('AppEngineRunner', () => {
         }),
       )
       await subject([mockAppEngine], workspace.id, user.id, chat.id)
-      const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
-        where: {
-          appId: app.id,
-        },
-      })
+      const { messages: systemMessages, ...appConfigVersion } =
+        await prisma.appConfigVersion.findFirstOrThrow({
+          where: {
+            appId: app.id,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          include: {
+            messages: {
+              orderBy: {
+                createdAt: 'asc',
+              },
+            },
+          },
+        })
 
       expect(runMock).toHaveBeenCalledWith(
-        {
+        expect.objectContaining({
           chat,
           app,
-          appConfigVersion: {
-            ...appConfigVersion,
-            systemMessage: null,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            messages: [expect.objectContaining({})],
-          },
-          messages: [
-            {
-              role: Author.User,
-              content: firstUserMessage.message,
-            },
-          ],
-        },
+        }),
         {
           /* eslint-disable @typescript-eslint/no-unsafe-assignment */
           onToken: expect.any(Function),
@@ -183,9 +197,55 @@ describe('AppEngineRunner', () => {
           /* eslint-enable @typescript-eslint/no-unsafe-assignment */
         },
       )
+      expect(runMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          messages: [
+            {
+              role: Author.User,
+              content: firstUserMessage.message,
+            },
+          ],
+        }),
+        expect.anything(),
+      )
+      expect(runMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          appConfigVersion: expect.objectContaining({
+            ...appConfigVersion,
+            systemMessage: 'This is a system message',
+            messages: systemMessages,
+          }),
+        }),
+        expect.anything(),
+      )
     })
 
     describe('onEnd', () => {
+      it('persists the result to the db', async () => {
+        const res = await subject(
+          [mockAppEngine],
+          workspace.id,
+          user.id,
+          chat.id,
+        )
+        safeReadableStreamPipe(res, {
+          onEnd: async () => {
+            const messageInDb = await prisma.message.findFirstOrThrow({
+              where: {
+                chatId: chat.id,
+              },
+              orderBy: {
+                createdAt: 'desc',
+              },
+            })
+
+            expect(messageInDb.message).toBe('This is a test stream')
+          },
+        })
+      })
+    })
+    describe('onError', () => {
       it('persists the result to the db', async () => {
         const res = await subject(
           [mockAppEngine],
