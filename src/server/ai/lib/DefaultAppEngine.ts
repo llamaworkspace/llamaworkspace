@@ -1,11 +1,11 @@
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
-import { StreamingTextResponse } from 'ai'
+import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
-  AbstractAppEngineV2,
-  type AppEngineCallbacksV2,
-  type AppEngineParamsV2,
-} from './AbstractAppEngineV2'
+  AbstractAppEngine,
+  type AppEngineCallbacks,
+  type AppEngineParams,
+} from './AbstractAppEngine'
 
 const payloadSchema = z.object({
   // assistantId: z.string(),
@@ -13,14 +13,14 @@ const payloadSchema = z.object({
 
 type DefaultAppEginePayload = z.infer<typeof payloadSchema>
 
-export class DefaultAppEngineV2 extends AbstractAppEngineV2 {
+export class DefaultAppEngine extends AbstractAppEngine {
   getName() {
     return 'default'
   }
 
   async run(
-    ctx: AppEngineParamsV2<DefaultAppEginePayload>,
-    callbacks: AppEngineCallbacksV2,
+    ctx: AppEngineParams<DefaultAppEginePayload>,
+    callbacks: AppEngineCallbacks,
   ) {
     const { messages, providerSlug, modelSlug, providerKVs } = ctx
     const { onToken, onFinal } = callbacks
@@ -28,10 +28,10 @@ export class DefaultAppEngineV2 extends AbstractAppEngineV2 {
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
     if (!provider) {
-      throw new Error(`Provider ${providerSlug} not found`)
+      throw createHttpError(500, `Provider ${providerSlug} not found`)
     }
 
-    const stream = await provider.executeAsStream(
+    return await provider.executeAsStream(
       {
         provider: providerSlug,
         model: modelSlug,
@@ -41,11 +41,5 @@ export class DefaultAppEngineV2 extends AbstractAppEngineV2 {
       },
       providerKVs,
     )
-
-    const headers = {
-      'Content-Type': 'text/event-stream',
-    }
-
-    return new StreamingTextResponse(stream, { headers })
   }
 }

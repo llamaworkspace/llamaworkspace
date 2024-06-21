@@ -1,17 +1,21 @@
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { getAiProviderKVsWithFallbackToInternalKeysService } from '@/server/ai/services/getProvidersForWorkspace.service'
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
-import type { PrismaTrxClient } from '@/shared/globalTypes'
 import type { PrismaClient } from '@prisma/client'
 import { HttpError } from 'http-errors'
 import OpenAI, { type ClientOptions } from 'openai'
 
-export const handleChatTitleCreate = async (
+interface ChatTitleCreatePayload {
+  chatId: string
+}
+
+export const chatTitleCreateService = async (
   prisma: PrismaClient,
-  workspaceId: string,
-  userId: string,
-  chatId: string,
+  uowContext: UserOnWorkspaceContext,
+  { chatId }: ChatTitleCreatePayload,
 ) => {
+  const { userId, workspaceId } = uowContext
   const chat = await getChat(prisma, chatId)
   if (chat.title) return
 
@@ -19,7 +23,7 @@ export const handleChatTitleCreate = async (
   const userMessages = chat.messages.filter(
     (message) => message.author === (ChatAuthor.User as string),
   )
-  // Todo: improve and search in case there are multiple user messages
+
   const firstUserMessage = userMessages[0]
 
   let openaiProviderKVs: ClientOptions
@@ -94,7 +98,7 @@ If the Main title already gives some context, avoid giving it again. For example
 
 Try to make the title less than 35 letters. Respond with just one title. Do not provide anything else different than the title.`
 
-const getChat = async (prisma: PrismaTrxClient, chatId: string) => {
+const getChat = async (prisma: PrismaClient, chatId: string) => {
   return await prisma.chat.findFirstOrThrow({
     where: {
       id: chatId,

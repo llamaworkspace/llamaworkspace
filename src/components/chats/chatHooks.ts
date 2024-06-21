@@ -7,7 +7,6 @@ import { debounce } from 'lodash'
 import { useCallback, useEffect } from 'react'
 import { useDefaultApp } from '../apps/appsHooks'
 import { useErrorHandler } from '../global/errorHandlingHooks'
-import { useErrorToast } from '../ui/toastHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
 const useCreateMessage = () => {
@@ -117,12 +116,15 @@ export const useAppConfigForChat = (chatId?: string) => {
 
 export const usePrompt = (chatId?: string) => {
   const utils = api.useContext()
-  const toast = useErrorToast()
   const errorHandler = useErrorHandler()
 
   const onAssistantError = (error: Error) => {
     clearVercelMessages()
-    return errorHandler()(error)
+    errorHandler()(error)
+
+    if (chatId) {
+      void utils.chats.getMessagesByChatId.refetch({ chatId })
+    }
   }
 
   const {
@@ -159,7 +161,7 @@ export const usePrompt = (chatId?: string) => {
       }
       return previous
     })
-  }, [toast, targetMessage, chatId, utils])
+  }, [targetMessage, chatId, utils])
 
   const { mutate: createMessage } = useCreateMessage()
   const mutate = useCallback(
