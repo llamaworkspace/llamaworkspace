@@ -1,6 +1,7 @@
 import { ensureError } from '@/lib/utils'
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
+import { DefaultAppEngineV2 } from '@/server/ai/lib/DefaultAppEngineV2'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { authOptions } from '@/server/auth/nextauth'
 import {
@@ -60,7 +61,9 @@ async function handler(req: NextRequest) {
       errorLogger(error)
     }
 
-    const appEngineRunner = new AppEngineRunner(prisma, context)
+    const engines = [new DefaultAppEngineV2()]
+
+    const appEngineRunner = new AppEngineRunner(prisma, context, engines)
     return await appEngineRunner.call(chatId)
   } catch (_error) {
     const error = ensureError(_error)

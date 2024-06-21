@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { ensureError } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
@@ -10,14 +11,14 @@ import type { Message } from '@prisma/client'
 import { StreamingTextResponse } from 'ai'
 import createHttpError from 'http-errors'
 import { chain } from 'underscore'
-import { DefaultAppEngineV2 } from '../DefaultAppEngineV2'
+import type { AbstractAppEngineV2 } from '../AbstractAppEngineV2'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 
 export class AppEngineRunner {
   constructor(
     private readonly prisma: PrismaClientOrTrxClient,
     private readonly context: UserOnWorkspaceContext,
-    // private readonly engines: AbstractAppEngineV2[],
+    private readonly engines: AbstractAppEngineV2[],
   ) {}
 
   async call(chatId: string): Promise<StreamingTextResponse> {
@@ -25,12 +26,14 @@ export class AppEngineRunner {
 
     const ctx = await this.generateEngineRuntimeContext(chatId)
     const targetAssistantMessage = await this.getTargetAssistantMessage(chatId)
+
     const rawMessageIds = ctx.rawMessages.map((message) => message.id)
     const chatRun = await this.createChatRun(chatId, rawMessageIds)
     const callbacks = this.getCallbacks(targetAssistantMessage.id, chatRun.id)
 
     try {
-      return new DefaultAppEngineV2().run(ctx, callbacks)
+      const engine = this.getDefaultEngine()
+      return engine.run(ctx, callbacks)
     } catch (_error) {
       const error = ensureError(_error)
       await this.deleteMessage(targetAssistantMessage.id)
@@ -57,15 +60,15 @@ export class AppEngineRunner {
   //   return await engine.run(ctx, this.getCallbacks(targetAssistantMessage.id))
   // }
 
-  // private getDefaultEngine() {
-  //   const engine = this.engines.find(
-  //     (engine) => engine.getName() === AppEngineType.Default.toString(),
-  //   )
-  //   if (!engine) {
-  //     throw createHttpError(500, `Default engine not found`)
-  //   }
-  //   return engine
-  // }
+  private getDefaultEngine() {
+    const engine = this.engines.find(
+      (engine) => engine.getName() === AppEngineType.Default.toString(),
+    )
+    if (!engine) {
+      throw createHttpError(500, `Default engine not found`)
+    }
+    return engine
+  }
 
   // private async getEngineType(
   //   uowContext: UserOnWorkspaceContext,
