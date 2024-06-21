@@ -5,7 +5,7 @@ import {
   AbstractAppEngine,
   type AppEngineCallbacks,
   type AppEngineParams,
-} from './AbstractAppEngineV2'
+} from './AbstractAppEngine'
 
 const payloadSchema = z.object({
   // assistantId: z.string(),

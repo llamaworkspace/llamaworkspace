@@ -16,7 +16,7 @@ import createHttpError from 'http-errors'
 import { NextResponse } from 'next/server'
 import { chain, once } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
-import type { AbstractAppEngine } from '../AbstractAppEngineV2'
+import type { AbstractAppEngine } from '../AbstractAppEngine'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 import { chatTitleCreateService } from './chatTitleCreate.service'
 
