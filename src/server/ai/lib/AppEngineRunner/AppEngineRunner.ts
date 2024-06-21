@@ -8,6 +8,7 @@ import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesB
 import { saveTokenCountForChatRunService } from '@/server/chats/services/saveTokenCountForChatRun.service'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { Author } from '@/shared/aiTypesAndMappers'
+import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message, PrismaClient } from '@prisma/client'
 import type { StreamingTextResponse } from 'ai'
@@ -54,6 +55,7 @@ export class AppEngineRunner {
       return new NextResponse(finalStream, { headers })
     } catch (_error) {
       const error = ensureError(_error)
+      errorLogger(error)
       if (!hasContent) {
         await this.deleteMessage(targetAssistantMessage.id)
       }

@@ -4,7 +4,6 @@ import { authOptions } from '@/server/auth/nextauth'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { withMiddlewareForAppRouter } from '@/server/middlewares/withMiddleware'
-import { errorLogger } from '@/shared/errors/errorLogger'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
 import type { NextRequest } from 'next/server'
@@ -32,13 +31,6 @@ async function handler(req: NextRequest) {
     workspaceId,
     userId,
   )
-
-  // TODO:  GESTIÓN DE ERRORES
-  const onError = async (error: Error) => {
-    // await deleteMessage(assistantTargetMessage.id)
-    await Promise.resolve()
-    errorLogger(error)
-  }
 
   const engines = [new DefaultAppEngineV2()]
 
