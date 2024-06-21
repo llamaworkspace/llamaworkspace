@@ -1,6 +1,5 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { Message } from '@prisma/client'
-import type { StreamingTextResponse } from 'ai'
 
 type AllowedKVS = Record<string, string | number | boolean>
 
@@ -24,5 +23,5 @@ export abstract class AbstractAppEngineV2 {
   abstract run(
     params: AppEngineParamsV2<AllowedKVS>,
     callbacks: AppEngineCallbacksV2,
-  ): Promise<StreamingTextResponse>
+  ): Promise<ReadableStream<unknown>>
 }

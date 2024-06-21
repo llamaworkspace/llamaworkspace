@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { safeReadableStreamPipe } from '@/lib/streamUtils'
 import { ensureError } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
@@ -11,7 +12,8 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message, PrismaClient } from '@prisma/client'
 import type { StreamingTextResponse } from 'ai'
 import createHttpError from 'http-errors'
-import { chain } from 'underscore'
+import { NextResponse } from 'next/server'
+import { chain, once } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type { AbstractAppEngineV2 } from '../AbstractAppEngineV2'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
@@ -34,13 +36,27 @@ export class AppEngineRunner {
     const chatRun = await this.createChatRun(chatId, rawMessageIds)
     const callbacks = this.getCallbacks(targetAssistantMessage.id, chatRun.id)
 
+    let hasContent = false
+    const onChunk = once(() => {
+      hasContent = true
+    })
+
+    void this.handleTitleCreate(chatId)
+
     try {
-      void this.handleTitleCreate(chatId)
       const engine = this.getDefaultEngine()
-      return await engine.run(ctx, callbacks)
+      const stream = await engine.run(ctx, callbacks)
+      const headers = {
+        'Content-Type': 'text/plain; charset=utf-8',
+      }
+
+      const finalStream = safeReadableStreamPipe(stream, { onChunk })
+      return new NextResponse(finalStream, { headers })
     } catch (_error) {
       const error = ensureError(_error)
-      await this.deleteMessage(targetAssistantMessage.id)
+      if (!hasContent) {
+        await this.deleteMessage(targetAssistantMessage.id)
+      }
       throw error
     }
   }

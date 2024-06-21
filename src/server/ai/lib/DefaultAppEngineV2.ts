@@ -1,5 +1,4 @@
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
-import { StreamingTextResponse } from 'ai'
 import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
@@ -32,7 +31,7 @@ export class DefaultAppEngineV2 extends AbstractAppEngineV2 {
       throw createHttpError(500, `Provider ${providerSlug} not found`)
     }
 
-    const stream = await provider.executeAsStream(
+    return await provider.executeAsStream(
       {
         provider: providerSlug,
         model: modelSlug,
@@ -42,11 +41,5 @@ export class DefaultAppEngineV2 extends AbstractAppEngineV2 {
       },
       providerKVs,
     )
-
-    const headers = {
-      'Content-Type': 'text/event-stream',
-    }
-
-    return new StreamingTextResponse(stream, { headers })
   }
 }

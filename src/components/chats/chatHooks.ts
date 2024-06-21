@@ -121,6 +121,7 @@ export const usePrompt = (chatId?: string) => {
   const onAssistantError = (error: Error) => {
     clearVercelMessages()
     errorHandler()(error)
+
     if (chatId) {
       void utils.chats.getMessagesByChatId.refetch({ chatId })
     }
