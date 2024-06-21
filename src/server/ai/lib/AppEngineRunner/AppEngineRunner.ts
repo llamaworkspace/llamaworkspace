@@ -5,8 +5,10 @@ import { getApplicableAppConfigToChatService } from '@/server/chats/services/get
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { saveTokenCountForChatRunService } from '@/server/chats/services/saveTokenCountForChatRun.service'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message } from '@prisma/client'
 import type { StreamingTextResponse } from 'ai'
 import createHttpError from 'http-errors'
@@ -23,6 +25,7 @@ export class AppEngineRunner {
   ) {}
 
   async call(chatId: string): Promise<StreamingTextResponse> {
+    await this.validateUserHasPermissionsOrThrow(chatId)
     await this.maybeAttachAppConfigVersionToChat(chatId)
     const ctx = await this.generateEngineRuntimeContext(chatId)
     const targetAssistantMessage = await this.getTargetAssistantMessage(chatId)
@@ -81,6 +84,24 @@ export class AppEngineRunner {
 
   //   return chat.app.engineType
   // }
+
+  private async validateUserHasPermissionsOrThrow(chatId: string) {
+    const { userId } = this.context
+    const chat = await this.prisma.chat.findFirstOrThrow({
+      where: {
+        id: chatId,
+      },
+      include: {
+        app: true,
+      },
+    })
+
+    await new PermissionsVerifier(this.prisma).passOrThrowTrpcError(
+      PermissionAction.Use,
+      userId,
+      chat.appId,
+    )
+  }
 
   private async maybeAttachAppConfigVersionToChat(chatId: string) {
     const chat = await getChatByIdService(this.prisma, this.context, {
