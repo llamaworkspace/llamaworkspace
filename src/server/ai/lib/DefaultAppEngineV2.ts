@@ -2,9 +2,9 @@ import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetch
 import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
-  AbstractAppEngineV2,
-  type AppEngineCallbacksV2,
-  type AppEngineParamsV2,
+  AbstractAppEngine,
+  type AppEngineCallbacks,
+  type AppEngineParams,
 } from './AbstractAppEngineV2'
 
 const payloadSchema = z.object({
@@ -13,14 +13,14 @@ const payloadSchema = z.object({
 
 type DefaultAppEginePayload = z.infer<typeof payloadSchema>
 
-export class DefaultAppEngineV2 extends AbstractAppEngineV2 {
+export class DefaultAppEngine extends AbstractAppEngine {
   getName() {
     return 'default'
   }
 
   async run(
-    ctx: AppEngineParamsV2<DefaultAppEginePayload>,
-    callbacks: AppEngineCallbacksV2,
+    ctx: AppEngineParams<DefaultAppEginePayload>,
+    callbacks: AppEngineCallbacks,
   ) {
     const { messages, providerSlug, modelSlug, providerKVs } = ctx
     const { onToken, onFinal } = callbacks

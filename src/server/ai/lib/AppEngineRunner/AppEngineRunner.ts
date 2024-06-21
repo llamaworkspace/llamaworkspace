@@ -16,7 +16,7 @@ import createHttpError from 'http-errors'
 import { NextResponse } from 'next/server'
 import { chain, once } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
-import type { AbstractAppEngineV2 } from '../AbstractAppEngineV2'
+import type { AbstractAppEngine } from '../AbstractAppEngineV2'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 import { chatTitleCreateService } from './chatTitleCreate.service'
 
@@ -24,7 +24,7 @@ export class AppEngineRunner {
   constructor(
     private readonly prisma: PrismaClient,
     private readonly context: UserOnWorkspaceContext,
-    private readonly engines: AbstractAppEngineV2[],
+    private readonly engines: AbstractAppEngine[],
   ) {}
 
   async call(chatId: string): Promise<StreamingTextResponse> {
