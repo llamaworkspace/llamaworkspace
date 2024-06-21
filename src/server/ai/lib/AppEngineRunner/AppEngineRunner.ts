@@ -1,7 +1,6 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { ensureError } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { handleChatTitleCreate } from '@/server/chats/handlers/chatStreamedResponse/chatStreamedResponseHandlerUtils'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
@@ -16,6 +15,7 @@ import { chain } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type { AbstractAppEngineV2 } from '../AbstractAppEngineV2'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
+import { chatTitleCreateService } from './chatTitleCreate.service'
 
 export class AppEngineRunner {
   constructor(
@@ -174,8 +174,7 @@ export class AppEngineRunner {
   }
 
   private async handleTitleCreate(chatId: string) {
-    const { userId, workspaceId } = this.context
-    return await handleChatTitleCreate(this.prisma, workspaceId, userId, chatId)
+    return await chatTitleCreateService(this.prisma, this.context, { chatId })
   }
 
   private async getTargetAssistantMessage(chatId: string) {

@@ -1,17 +1,21 @@
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { getAiProviderKVsWithFallbackToInternalKeysService } from '@/server/ai/services/getProvidersForWorkspace.service'
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
-
 import type { PrismaClient } from '@prisma/client'
 import { HttpError } from 'http-errors'
 import OpenAI, { type ClientOptions } from 'openai'
 
-export const handleChatTitleCreate = async (
+interface ChatTitleCreatePayload {
+  chatId: string
+}
+
+export const chatTitleCreateService = async (
   prisma: PrismaClient,
-  workspaceId: string,
-  userId: string,
-  chatId: string,
+  uowContext: UserOnWorkspaceContext,
+  { chatId }: ChatTitleCreatePayload,
 ) => {
+  const { userId, workspaceId } = uowContext
   const chat = await getChat(prisma, chatId)
   if (chat.title) return
 
