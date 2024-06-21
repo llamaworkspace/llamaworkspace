@@ -10,7 +10,6 @@ import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
 import type { NextRequest } from 'next/server'
 import { z } from 'zod'
-import { handleChatTitleCreate } from './chatStreamedResponseHandlerUtils'
 
 const zBody = z.object({
   threadId: z.null(),
@@ -35,8 +34,6 @@ async function handler(req: NextRequest) {
       workspaceId,
       userId,
     )
-
-    void handleChatTitleCreate(prisma, workspaceId, userId, chatId)
 
     // TODO:  GESTIÓN DE ERRORES
     const onError = async (error: Error) => {

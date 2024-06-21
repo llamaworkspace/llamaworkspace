@@ -1,15 +1,15 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { ensureError } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { handleChatTitleCreate } from '@/server/chats/handlers/chatStreamedResponse/chatStreamedResponseHandlerUtils'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { saveTokenCountForChatRunService } from '@/server/chats/services/saveTokenCountForChatRun.service'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { Author } from '@/shared/aiTypesAndMappers'
-import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Message } from '@prisma/client'
+import type { Message, PrismaClient } from '@prisma/client'
 import type { StreamingTextResponse } from 'ai'
 import createHttpError from 'http-errors'
 import { chain } from 'underscore'
@@ -19,7 +19,7 @@ import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 
 export class AppEngineRunner {
   constructor(
-    private readonly prisma: PrismaClientOrTrxClient,
+    private readonly prisma: PrismaClient,
     private readonly context: UserOnWorkspaceContext,
     private readonly engines: AbstractAppEngineV2[],
   ) {}
@@ -35,6 +35,7 @@ export class AppEngineRunner {
     const callbacks = this.getCallbacks(targetAssistantMessage.id, chatRun.id)
 
     try {
+      void this.handleTitleCreate(chatId)
       const engine = this.getDefaultEngine()
       return engine.run(ctx, callbacks)
     } catch (_error) {
@@ -170,6 +171,11 @@ export class AppEngineRunner {
     }
 
     return true
+  }
+
+  private async handleTitleCreate(chatId: string) {
+    const { userId, workspaceId } = this.context
+    return await handleChatTitleCreate(this.prisma, workspaceId, userId, chatId)
   }
 
   private async getTargetAssistantMessage(chatId: string) {

@@ -1,7 +1,7 @@
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
 import { getAiProviderKVsWithFallbackToInternalKeysService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
-import type { PrismaTrxClient } from '@/shared/globalTypes'
+
 import type { PrismaClient } from '@prisma/client'
 import { HttpError } from 'http-errors'
 import OpenAI, { type ClientOptions } from 'openai'
@@ -94,7 +94,7 @@ If the Main title already gives some context, avoid giving it again. For example
 
 Try to make the title less than 35 letters. Respond with just one title. Do not provide anything else different than the title.`
 
-const getChat = async (prisma: PrismaTrxClient, chatId: string) => {
+const getChat = async (prisma: PrismaClient, chatId: string) => {
   return await prisma.chat.findFirstOrThrow({
     where: {
       id: chatId,
