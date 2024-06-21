@@ -23,7 +23,7 @@ export const chatTitleCreateService = async (
   const userMessages = chat.messages.filter(
     (message) => message.author === (ChatAuthor.User as string),
   )
-  // Todo: improve and search in case there are multiple user messages
+
   const firstUserMessage = userMessages[0]
 
   let openaiProviderKVs: ClientOptions

@@ -1,4 +1,3 @@
-import { ensureError } from '@/lib/utils'
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
 import { DefaultAppEngineV2 } from '@/server/ai/lib/DefaultAppEngineV2'
 import { authOptions } from '@/server/auth/nextauth'
@@ -20,38 +19,31 @@ const zBody = z.object({
 })
 
 async function handler(req: NextRequest) {
-  try {
-    const {
-      data: { chatId },
-    } = await getParsedBody(req)
+  const {
+    data: { chatId },
+  } = await getParsedBody(req)
 
-    const userId = await getSessionUserId()
-    const chat = await getChat(chatId)
-    const workspaceId = chat.app.workspaceId
+  const userId = await getSessionUserId()
+  const chat = await getChat(chatId)
+  const workspaceId = chat.app.workspaceId
 
-    const context = await createUserOnWorkspaceContext(
-      prisma,
-      workspaceId,
-      userId,
-    )
+  const context = await createUserOnWorkspaceContext(
+    prisma,
+    workspaceId,
+    userId,
+  )
 
-    // TODO:  GESTIÓN DE ERRORES
-    const onError = async (error: Error) => {
-      // await deleteMessage(assistantTargetMessage.id)
-      await Promise.resolve()
-      errorLogger(error)
-    }
-
-    const engines = [new DefaultAppEngineV2()]
-
-    const appEngineRunner = new AppEngineRunner(prisma, context, engines)
-    return await appEngineRunner.call(chatId)
-  } catch (_error) {
-    const error = ensureError(_error)
-
+  // TODO:  GESTIÓN DE ERRORES
+  const onError = async (error: Error) => {
+    // await deleteMessage(assistantTargetMessage.id)
+    await Promise.resolve()
     errorLogger(error)
-    throw createHttpError(403, error.message)
   }
+
+  const engines = [new DefaultAppEngineV2()]
+
+  const appEngineRunner = new AppEngineRunner(prisma, context, engines)
+  return await appEngineRunner.call(chatId)
 }
 
 const getChat = async (chatId: string) => {

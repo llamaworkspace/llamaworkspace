@@ -1,5 +1,6 @@
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { StreamingTextResponse } from 'ai'
+import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
   AbstractAppEngineV2,
@@ -28,7 +29,7 @@ export class DefaultAppEngineV2 extends AbstractAppEngineV2 {
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
     if (!provider) {
-      throw new Error(`Provider ${providerSlug} not found`)
+      throw createHttpError(500, `Provider ${providerSlug} not found`)
     }
 
     const stream = await provider.executeAsStream(

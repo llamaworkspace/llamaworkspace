@@ -37,32 +37,13 @@ export class AppEngineRunner {
     try {
       void this.handleTitleCreate(chatId)
       const engine = this.getDefaultEngine()
-      return engine.run(ctx, callbacks)
+      return await engine.run(ctx, callbacks)
     } catch (_error) {
       const error = ensureError(_error)
       await this.deleteMessage(targetAssistantMessage.id)
-      throw createHttpError(403, error.message)
+      throw error
     }
   }
-
-  // async _call(chatId: string): Promise<ReadableStream<unknown>> {
-  //   const engineType = await this.getEngineType(this.context, chatId)
-
-  //   if (!engineType) {
-  //     throw createHttpError(500, 'engineType is not yet set')
-  //   }
-
-  //   if (engineType !== AppEngineType.Default.toString()) {
-  //     throw createHttpError(500, 'non-default engineType is not yet supported')
-  //   }
-
-  //   const targetAssistantMessage = await this.getTargetAssistantMessage(chatId)
-
-  //   // const engine = this.getDefaultEngine()
-  //   const ctx = await this.generateEngineRuntimeContext(this.context, chatId)
-
-  //   return await engine.run(ctx, this.getCallbacks(targetAssistantMessage.id))
-  // }
 
   private getDefaultEngine() {
     const engine = this.engines.find(
@@ -73,18 +54,6 @@ export class AppEngineRunner {
     }
     return engine
   }
-
-  // private async getEngineType(
-  //   uowContext: UserOnWorkspaceContext,
-  //   chatId: string,
-  // ) {
-  //   const chat = await getChatByIdService(this.prisma, uowContext, {
-  //     chatId,
-  //     includeApp: true,
-  //   })
-
-  //   return chat.app.engineType
-  // }
 
   private async validateUserHasPermissionsOrThrow(chatId: string) {
     const { userId } = this.context
