@@ -8,9 +8,10 @@ import { saveTokenCountForChatRunService } from '@/server/chats/services/saveTok
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
-import { StreamingTextResponse } from 'ai'
+import type { StreamingTextResponse } from 'ai'
 import createHttpError from 'http-errors'
 import { chain } from 'underscore'
+import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type { AbstractAppEngineV2 } from '../AbstractAppEngineV2'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 
@@ -23,7 +24,6 @@ export class AppEngineRunner {
 
   async call(chatId: string): Promise<StreamingTextResponse> {
     await this.maybeAttachAppConfigVersionToChat(chatId)
-
     const ctx = await this.generateEngineRuntimeContext(chatId)
     const targetAssistantMessage = await this.getTargetAssistantMessage(chatId)
 
@@ -100,6 +100,57 @@ export class AppEngineRunner {
     }
   }
 
+  private async validateModelIsEnabledOrThrow(
+    providerName: string,
+    modelName: string,
+  ) {
+    const { workspaceId, userId } = this.context
+
+    const providersMeta =
+      await aiProvidersFetcherService.getFullAiProvidersMeta(
+        workspaceId,
+        userId,
+      )
+
+    const provider = providersMeta.find(
+      (providerMeta) => providerMeta.slug === providerName,
+    )
+
+    if (!provider) {
+      throw createHttpError(
+        403,
+        `The model provider ${providerName} no longer exists. Please select another one.`,
+      )
+    }
+
+    const targetModel = provider.models.find(
+      (model) => model.slug === modelName,
+    )
+
+    if (!targetModel) {
+      throw createHttpError(
+        403,
+        `The model "${providerName}/${modelName}" no longer exists. Please select another one.`,
+      )
+    }
+
+    if (!targetModel.isEnabled) {
+      throw createHttpError(
+        403,
+        `The model "${targetModel.fullPublicName}" is currently not enabled. Please select another one.`,
+      )
+    }
+
+    if (!targetModel.isSetupOk) {
+      throw createHttpError(
+        403,
+        `The model "${targetModel.fullPublicName}" is not setup correctly. Please select another one.`,
+      )
+    }
+
+    return true
+  }
+
   private async getTargetAssistantMessage(chatId: string) {
     const messages = await getMessagesByChatIdService(
       this.prisma,
@@ -119,7 +170,10 @@ export class AppEngineRunner {
       this.prisma,
       this.context,
     )
-    return await appEnginePayloadBuilder.call(chatId)
+    const ctx = await appEnginePayloadBuilder.call(chatId)
+
+    await this.validateModelIsEnabledOrThrow(ctx.providerSlug, ctx.modelSlug)
+    return ctx
   }
 
   private async createChatRun(chatId: string, messageIds: string[]) {
