@@ -48,6 +48,7 @@ export class AppEnginePayloadBuilder {
     return {
       rawMessages,
       messages: preparedMessages,
+      fullSlug: appConfigVersion.model,
       modelSlug: model.model,
       providerSlug: model.provider,
       providerKVs,

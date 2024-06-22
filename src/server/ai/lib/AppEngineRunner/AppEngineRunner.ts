@@ -31,6 +31,7 @@ export class AppEngineRunner {
     await this.validateUserHasPermissionsOrThrow(chatId)
     await this.maybeAttachAppConfigVersionToChat(chatId)
     const ctx = await this.generateEngineRuntimeContext(chatId)
+
     const targetAssistantMessage = await this.getTargetAssistantMessage(chatId)
 
     const rawMessageIds = ctx.rawMessages.map((message) => message.id)
