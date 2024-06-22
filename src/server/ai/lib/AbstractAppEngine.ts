@@ -9,8 +9,9 @@ export interface AppEngineParams<T extends AllowedKVS> {
   // readonly kvs: T
   readonly rawMessages: Message[]
   readonly messages: AiRegistryMessage[]
-  readonly modelSlug: string
+  readonly fullSlug: string
   readonly providerSlug: string
+  readonly modelSlug: string
 }
 
 export interface AppEngineCallbacks {
