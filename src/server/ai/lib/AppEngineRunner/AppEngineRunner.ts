@@ -11,9 +11,7 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message, PrismaClient } from '@prisma/client'
-import type { StreamingTextResponse } from 'ai'
 import createHttpError from 'http-errors'
-import { NextResponse } from 'next/server'
 import { chain, once } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type { AbstractAppEngine } from '../AbstractAppEngine'
@@ -27,7 +25,7 @@ export class AppEngineRunner {
     private readonly engines: AbstractAppEngine[],
   ) {}
 
-  async call(chatId: string): Promise<StreamingTextResponse> {
+  async call(chatId: string): Promise<ReadableStream<unknown>> {
     await this.validateUserHasPermissionsOrThrow(chatId)
     await this.maybeAttachAppConfigVersionToChat(chatId)
     const ctx = await this.generateEngineRuntimeContext(chatId)
@@ -48,12 +46,9 @@ export class AppEngineRunner {
     try {
       const engine = this.getDefaultEngine()
       const stream = await engine.run(ctx, callbacks)
-      const headers = {
-        'Content-Type': 'text/plain; charset=utf-8',
-      }
 
       const finalStream = safeReadableStreamPipe(stream, { onChunk })
-      return new NextResponse(finalStream, { headers })
+      return finalStream
     } catch (_error) {
       const error = ensureError(_error)
       errorLogger(error)
