@@ -28,6 +28,7 @@ export class AppEngineRunner {
   async call(chatId: string): Promise<ReadableStream<unknown>> {
     await this.validateUserHasPermissionsOrThrow(chatId)
     await this.maybeAttachAppConfigVersionToChat(chatId)
+
     const ctx = await this.generateEngineRuntimeContext(chatId)
 
     const targetAssistantMessage = await this.getTargetAssistantMessage(chatId)
@@ -44,7 +45,7 @@ export class AppEngineRunner {
     void this.handleTitleCreate(chatId)
 
     try {
-      const engine = this.getDefaultEngine()
+      const engine = await this.getEngine(chatId)
       const stream = await engine.run(ctx, callbacks)
 
       const finalStream = safeReadableStreamPipe(stream, { onChunk })
@@ -57,6 +58,33 @@ export class AppEngineRunner {
       }
       throw error
     }
+  }
+
+  private async getEngine(chatId: string) {
+    const chat = await getChatByIdService(this.prisma, this.context, {
+      chatId,
+      includeApp: true,
+    })
+
+    const engineTypeStr = chat.app.engineType
+    if (!engineTypeStr) {
+      throw createHttpError(500, 'Engine type is not defined')
+    }
+
+    if (engineTypeStr === AppEngineType.Default.toString()) {
+      return this.getDefaultEngine()
+    }
+
+    // TODO: this should be dynamic
+    return this.getEngineByName('OpenaiAssistantsEngine')
+  }
+
+  private getEngineByName(name: string) {
+    const engine = this.engines.find((engine) => engine.getName() === name)
+    if (!engine) {
+      throw new Error(`Engine ${name} not found`)
+    }
+    return engine
   }
 
   private getDefaultEngine() {
