@@ -1,3 +1,4 @@
+import { ensureError } from '@/lib/utils'
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
 import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
 import { authOptions } from '@/server/auth/nextauth'
@@ -6,7 +7,7 @@ import { prisma } from '@/server/db'
 import { withMiddlewareForAppRouter } from '@/server/middlewares/withMiddleware'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
-import type { NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import { z } from 'zod'
 
 const zBody = z.object({
@@ -33,9 +34,14 @@ async function handler(req: NextRequest) {
   )
 
   const engines = [new DefaultAppEngine()]
-
   const appEngineRunner = new AppEngineRunner(prisma, context, engines)
-  return await appEngineRunner.call(chatId)
+
+  const stream = await appEngineRunner.call(chatId)
+
+  const headers = {
+    'Content-Type': 'text/plain; charset=utf-8',
+  }
+  return new NextResponse(stream, { headers })
 }
 
 const getChat = async (chatId: string) => {
@@ -62,7 +68,12 @@ const getSessionUserId = async () => {
 
 const getParsedBody = async (req: NextRequest) => {
   const json = (await req.json()) as unknown
-  return zBody.parseAsync(json)
+  try {
+    return zBody.parse(json)
+  } catch (_error) {
+    const error = ensureError(_error)
+    throw createHttpError(403, error)
+  }
 }
 
 export const chatStreamedResponseHandler = withMiddlewareForAppRouter(handler)
