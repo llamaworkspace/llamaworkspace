@@ -70,13 +70,17 @@ export class AppEngineRunner {
     if (!engineTypeStr) {
       throw createHttpError(500, 'Engine type is not defined')
     }
-
     if (engineTypeStr === AppEngineType.Default.toString()) {
       return this.getDefaultEngine()
     }
 
     // TODO: this should be dynamic
-    return this.getEngineByName('OpenaiAssistantsEngine')
+    const engine = this.getEngineByName('OpenaiAssistantsEngine')
+    if (!engine) {
+      return this.getDefaultEngine()
+    }
+
+    return engine
   }
 
   private getEngineByName(name: string) {
