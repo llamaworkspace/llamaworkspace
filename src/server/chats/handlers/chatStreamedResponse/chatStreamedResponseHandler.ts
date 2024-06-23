@@ -39,7 +39,7 @@ async function handler(req: NextRequest) {
   const stream = await appEngineRunner.call(chatId)
 
   const headers = {
-    'Content-Type': 'text/plain; charset=utf-8',
+    'Content-Type': 'text/event-stream',
   }
   return new NextResponse(stream, { headers })
 }
