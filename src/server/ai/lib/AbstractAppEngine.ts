@@ -31,5 +31,5 @@ export abstract class AbstractAppEngine {
     params: AppEngineParams<AllowedKVS>,
     callbacks: AppEngineCallbacks,
     utils: AppEngineUtils,
-  ): Promise<ReadableStream<unknown>>
+  ): Promise<void>
 }

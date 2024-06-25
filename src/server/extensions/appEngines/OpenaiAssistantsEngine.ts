@@ -2,6 +2,7 @@ import { env } from '@/env.mjs'
 import {
   AbstractAppEngine,
   AppEngineCallbacks,
+  AppEngineUtils,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
@@ -30,7 +31,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   async run(
     ctx: AppEngineParams<OpeniAssistantsEngineAppPayload>,
     callbacks: AppEngineCallbacks,
-    pushMessage: (message: string) => void,
+    utils: AppEngineUtils,
   ) {
     const {
       messages,
@@ -40,6 +41,8 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       targetAssistantRawMessage,
       chatId,
     } = ctx
+
+    const { pushText } = utils
 
     const { kvs } = { kvs: {} }
     const openai = new OpenAI({
@@ -62,7 +65,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       if (event.event === 'thread.message.delta') {
         event.data.delta.content.map((item) => {
           // console.log('item', item)
-          pushMessage(item.text.value)
+          pushText(item.text.value)
         })
       }
     }
