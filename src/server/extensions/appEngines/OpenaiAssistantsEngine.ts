@@ -4,7 +4,6 @@ import {
   AppEngineCallbacks,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
-import { AppEngineResponseStream } from '@/server/ai/lib/AppEngineResponseStream'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
 import { z } from 'zod'
@@ -31,6 +30,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   async run(
     ctx: AppEngineParams<OpeniAssistantsEngineAppPayload>,
     callbacks: AppEngineCallbacks,
+    pushMessage: (message: string) => void,
   ) {
     const {
       messages,
@@ -40,7 +40,6 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       targetAssistantRawMessage,
       chatId,
     } = ctx
-    const { onToken, onFinal } = callbacks
 
     const { kvs } = { kvs: {} }
     const openai = new OpenAI({
@@ -49,42 +48,24 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     })
 
     const messagesWithoutSystem = this.filterSystemMessage(messages)
-
     const thread = await openai.beta.threads.create({
       messages: messagesWithoutSystem,
     })
     const threadId = thread.id
 
-    const createdMessage = await openai.beta.threads.messages.create(threadId, {
-      role: 'user',
-      content: 'Write the futbol club barcelona hymn lyrics',
+    const streamAsAsyncIterable = openai.beta.threads.runs.stream(threadId, {
+      // assistant_id: kvs.assistantId,
+      assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
     })
 
-    return AppEngineResponseStream(
-      {
-        threadId: chatId,
-        messageId: targetAssistantRawMessage.id,
-      },
-
-      async ({ pushMessage }) => {
-        const streamAsAsyncIterable = openai.beta.threads.runs.stream(
-          threadId,
-          {
-            // assistant_id: kvs.assistantId,
-            assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
-          },
-        )
-
-        for await (const event of streamAsAsyncIterable) {
-          if (event.event === 'thread.message.delta') {
-            event.data.delta.content.map((item) => {
-              console.log('item', item)
-              pushMessage(item.text.value)
-            })
-          }
-        }
-      },
-    )
+    for await (const event of streamAsAsyncIterable) {
+      if (event.event === 'thread.message.delta') {
+        event.data.delta.content.map((item) => {
+          // console.log('item', item)
+          pushMessage(item.text.value)
+        })
+      }
+    }
   }
 
   private filterSystemMessage(messages: AiRegistryMessage[]) {

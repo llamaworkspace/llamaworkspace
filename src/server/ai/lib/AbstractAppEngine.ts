@@ -21,10 +21,15 @@ export interface AppEngineCallbacks {
   onFinal: (fullMessage: string) => void | Promise<void>
 }
 
+export interface AppEngineUtils {
+  pushText: (text: string) => void
+}
+
 export abstract class AbstractAppEngine {
   abstract getName(): string
   abstract run(
     params: AppEngineParams<AllowedKVS>,
     callbacks: AppEngineCallbacks,
+    utils: AppEngineUtils,
   ): Promise<ReadableStream<unknown>>
 }

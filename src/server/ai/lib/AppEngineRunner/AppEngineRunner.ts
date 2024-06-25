@@ -15,6 +15,7 @@ import createHttpError from 'http-errors'
 import { chain, once } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type { AbstractAppEngine } from '../AbstractAppEngine'
+import { AppEngineResponseStream } from '../AppEngineResponseStream'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 import { chatTitleCreateService } from './chatTitleCreate.service'
 
@@ -48,7 +49,16 @@ export class AppEngineRunner {
 
     try {
       const engine = await this.getEngine(chatId)
-      const stream = await engine.run(ctx, callbacks)
+
+      const stream = AppEngineResponseStream(
+        {
+          threadId: chatId,
+          messageId: ctx.targetAssistantRawMessage.id,
+        },
+        async ({ pushText }) => {
+          await engine.run(ctx, callbacks, { pushText })
+        },
+      )
 
       const finalStream = safeReadableStreamPipe(stream, { onChunk })
       return finalStream

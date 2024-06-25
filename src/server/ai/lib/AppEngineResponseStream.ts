@@ -13,7 +13,7 @@ type AiLibAssistantResponseCallback = (
 ) => Promise<void>
 
 type AppEngineResponseStreamProcessArgs = (options: {
-  pushMessage: (message: string) => void
+  pushText: (text: string) => void
 }) => Promise<void>
 
 type AssistantResponseSettings = {
@@ -38,13 +38,13 @@ export const AppEngineResponseStream = (
   }) => {
     const readable = new ReadableStream({
       async start(controller) {
-        const pushMessage = (text: string) => {
+        const pushText = (text: string) => {
           controller.enqueue(encodePayload(generateThreadMessageDelta(text)))
         }
 
         controller.enqueue(encodePayload(threadMessageCreated))
         await process({
-          pushMessage,
+          pushText,
         })
 
         controller.enqueue(encodePayload(threadRunCompleted))
