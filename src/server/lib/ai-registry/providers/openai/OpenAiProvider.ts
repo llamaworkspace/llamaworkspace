@@ -1,5 +1,7 @@
-import { OpenAIStream } from 'ai'
-import OpenAI, { type ClientOptions } from 'openai'
+import { env } from '@/env.mjs'
+import { createOpenAI } from '@ai-sdk/openai'
+import { streamText } from 'ai'
+import { type ClientOptions } from 'openai'
 import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
 import { openAiModels } from './lib/openAiModels'
 import type {
@@ -54,21 +56,13 @@ export const OpenAiProvider = (
         openAiClientPayload.baseURL = params?.fallbackBaseUrl
       }
 
-      const openai = new OpenAI(openAiClientPayload)
+      const oai = createOpenAI({ apiKey: env.INTERNAL_OPENAI_API_KEY })
 
-      const aiResponse = await openai.chat.completions.create({
-        model: payload.model,
+      const { textStream } = await streamText({
+        model: oai('gpt-4o'),
         messages: payload.messages,
-        stream: true,
-        max_tokens: 4096,
       })
-
-      const stream = OpenAIStream(aiResponse, {
-        onToken: payload?.onToken,
-        onFinal: payload?.onFinal,
-      })
-
-      return stream
+      return textStream
     },
     hasFallbackCredentials: !!params?.fallbackApiKey,
   }
