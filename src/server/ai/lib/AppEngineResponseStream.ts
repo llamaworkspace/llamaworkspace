@@ -1,3 +1,4 @@
+import { ensureError } from '@/lib/utils'
 import { AssistantResponse, type AssistantMessage, type DataMessage } from 'ai'
 import { AssistantStream } from 'openai/lib/AssistantStream'
 import { type Run } from 'openai/resources/beta/threads/runs/runs'
@@ -22,6 +23,10 @@ type AssistantResponseSettings = {
      */
   threadId: string
   /**
+  The ID of the chat run
+   */
+  chatRunId: string
+  /**
   The ID of the latest message that the response is associated with.
    */
   messageId: string
@@ -31,6 +36,8 @@ export const AppEngineResponseStream = (
   responseSettings: AssistantResponseSettings,
   process: AppEngineResponseStreamProcessArgs,
 ) => {
+  const { threadId, chatRunId, messageId } = responseSettings
+
   const processFunc: AiLibAssistantResponseCallback = async ({
     sendMessage,
     sendDataMessage,
@@ -38,17 +45,41 @@ export const AppEngineResponseStream = (
   }) => {
     const readable = new ReadableStream({
       async start(controller) {
+        // Define the method to be passed downstream
+        // that will push text strings to the client
         const pushText = (text: string) => {
-          controller.enqueue(encodePayload(generateThreadMessageDelta(text)))
+          const threadMessageDelta = generateThreadMessageDelta(messageId, text)
+          controller.enqueue(encodePayload(threadMessageDelta))
         }
 
-        controller.enqueue(encodePayload(threadMessageCreated))
-        await process({
-          pushText,
-        })
+        try {
+          // Before starting, generate and push a threadMessage
+          const threadMessageCreated = generateThreadMessageCreated(
+            threadId,
+            chatRunId,
+            messageId,
+          )
 
-        controller.enqueue(encodePayload(threadRunCompleted))
-        controller.close()
+          controller.enqueue(encodePayload(threadMessageCreated))
+
+          // Run the implementation
+          await process({
+            pushText,
+          })
+
+          // Push completion
+          const threadRunCompleted = generateThreadRunCompleted(
+            threadId,
+            chatRunId,
+          )
+
+          controller.enqueue(encodePayload(threadRunCompleted))
+
+          // Close the stream
+          controller.close()
+        } catch (_error) {
+          controller.error(ensureError(_error))
+        }
       },
     })
 
@@ -56,83 +87,57 @@ export const AppEngineResponseStream = (
     await forwardStream(stream)
   }
 
-  const response = AssistantResponse(responseSettings, processFunc)
+  const response = AssistantResponse({ threadId, messageId }, processFunc)
 
   if (!response.body) {
     throw new Error('Response body is missing in AppEngineResponseStream')
   }
 
-  const reader = response.body.getReader()
-  return new ReadableStream({
-    async start(controller) {
-      while (true) {
-        const { done, value } = await reader.read()
-        const chunkText = new TextDecoder().decode(value)
-        // Do things with value here
-        if (done) {
-          controller.close()
-          break
-        }
-        controller.enqueue(value)
-      }
-    },
-  })
+  return response.body
 }
 
 const encodePayload = (payload: unknown) => {
   return `${JSON.stringify(payload)}\n`
 }
 
-const threadMessageCreated = {
-  event: 'thread.message.created',
-  data: {
-    id: 'msg_hZwwQq26IJyBgVwpNL4zQ70n',
-    object: 'thread.message',
-    created_at: 1717587669,
-    assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
-    thread_id: 'thread_wdxQGrIarwdoEhDcIqaT9ENz',
-    run_id: 'run_DVrpDjFkMBkfAtLp0LpK3AxV',
-    status: 'in_progress',
-    incomplete_details: null,
-    incomplete_at: null,
-    completed_at: null,
-    role: 'assistant',
-    content: [],
-    attachments: [],
-    metadata: {},
-  },
-}
-
-const threadMessageDelta = {
-  event: 'thread.message.delta',
-  data: {
-    id: 'msg_hZwwQq26IJyBgVwpNL4zQ70n',
-    object: 'thread.message.delta',
-    delta: {
-      content: [
-        {
-          type: 'text',
-          text: {
-            value: 'hhhooeleleleleelel',
-          },
-        },
-      ],
+const generateThreadMessageCreated = (
+  threadId: string,
+  chatRunId: string,
+  messageId: string,
+) => {
+  return {
+    event: 'thread.message.created',
+    data: {
+      id: messageId,
+      object: 'thread.message',
+      created_at: Math.floor(new Date().getTime() / 1000),
+      assistant_id: 'null',
+      thread_id: threadId,
+      run_id: chatRunId,
+      status: 'in_progress',
+      incomplete_details: null,
+      incomplete_at: null,
+      completed_at: null,
+      role: 'assistant',
+      content: [],
+      attachments: [],
+      metadata: {},
     },
-  },
+  }
 }
 
-const generateThreadMessageDelta = (value: string) => {
+const generateThreadMessageDelta = (messageId: string, text: string) => {
   return {
     event: 'thread.message.delta',
     data: {
-      id: 'msg_hZwwQq26IJyBgVwpNL4zQ70n',
+      id: messageId,
       object: 'thread.message.delta',
       delta: {
         content: [
           {
             type: 'text',
             text: {
-              value,
+              value: text,
             },
           },
         ],
@@ -141,35 +146,16 @@ const generateThreadMessageDelta = (value: string) => {
   }
 }
 
-const threadRunCompleted = {
-  event: 'thread.run.completed',
-  data: {
-    id: 'run_DVrpDjFkMBkfAtLp0LpK3AxV',
-    object: 'thread.run',
-    created_at: 1717587668,
-    assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
-    thread_id: 'thread_wdxQGrIarwdoEhDcIqaT9ENz',
-    status: 'completed',
-    // started_at: 1717587668,
-    // expires_at: null,
-    // cancelled_at: null,
-    // failed_at: null,
-    // completed_at: 1717587669,
-    // required_action: null,
-    // last_error: null,
-    // model: 'gpt-3.5-turbo',
-    // instructions: '',
-    // tools: [],
-    // tool_resources: { code_interpreter: [] },
-    // metadata: {},
-    // temperature: 1,
-    // top_p: 1,
-    // max_completion_tokens: null,
-    // max_prompt_tokens: null,
-    // truncation_strategy: { type: 'auto', last_messages: null },
-    // incomplete_details: null,
-    // usage: { prompt_tokens: 21, completion_tokens: 5, total_tokens: 26 },
-    // response_format: 'auto',
-    // tool_choice: 'auto',
-  },
+const generateThreadRunCompleted = (threadId: string, chatRunId: string) => {
+  return {
+    event: 'thread.run.completed',
+    data: {
+      id: chatRunId,
+      object: 'thread.run',
+      created_at: Math.floor(new Date().getTime() / 1000),
+      assistant_id: 'null',
+      thread_id: threadId,
+      status: 'completed',
+    },
+  }
 }

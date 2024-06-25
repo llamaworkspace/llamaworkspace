@@ -54,6 +54,7 @@ export class AppEngineRunner {
         {
           threadId: chatId,
           messageId: ctx.targetAssistantRawMessage.id,
+          chatRunId: chatRun.id,
         },
         async ({ pushText }) => {
           await engine.run(ctx, callbacks, { pushText })
