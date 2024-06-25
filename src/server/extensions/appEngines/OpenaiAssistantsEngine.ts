@@ -1,6 +1,7 @@
 import { env } from '@/env.mjs'
 import {
   AbstractAppEngine,
+  AppEngineCallbacks,
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 import { AppEngineResponseStream } from '@/server/ai/lib/AppEngineResponseStream'
@@ -27,25 +28,27 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     return payloadSchema
   }
 
-  async run({
-    ctx,
-    messages,
-  }: AppEngineParams<OpeniAssistantsEngineAppPayload>) {
-    const { kvs } = ctx
+  async run(
+    ctx: AppEngineParams<OpeniAssistantsEngineAppPayload>,
+    callbacks: AppEngineCallbacks,
+  ) {
+    const {
+      messages,
+      providerSlug,
+      modelSlug,
+      providerKVs,
+      targetAssistantRawMessage,
+      chatId,
+    } = ctx
+    const { onToken, onFinal } = callbacks
+
+    const { kvs } = { kvs: {} }
     const openai = new OpenAI({
       // This needs to be provided at runtime
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })
-    console.log(22222)
-    const messagesWithoutSystem = messages.map((message) => {
-      if (message.role !== 'system') {
-        return message as AiRegistryMessageWithoutSystemRole
-      }
-      return {
-        ...message,
-        role: 'user',
-      } as AiRegistryMessageWithoutSystemRole
-    })
+
+    const messagesWithoutSystem = this.filterSystemMessage(messages)
 
     const thread = await openai.beta.threads.create({
       messages: messagesWithoutSystem,
@@ -59,15 +62,16 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     return AppEngineResponseStream(
       {
-        threadId,
-        messageId: createdMessage.id,
+        threadId: chatId,
+        messageId: targetAssistantRawMessage.id,
       },
 
       async ({ pushMessage }) => {
         const streamAsAsyncIterable = openai.beta.threads.runs.stream(
           threadId,
           {
-            assistant_id: kvs.assistantId,
+            // assistant_id: kvs.assistantId,
+            assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
           },
         )
 
@@ -81,5 +85,17 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         }
       },
     )
+  }
+
+  private filterSystemMessage(messages: AiRegistryMessage[]) {
+    return messages.map((message) => {
+      if (message.role !== 'system') {
+        return message as AiRegistryMessageWithoutSystemRole
+      }
+      return {
+        ...message,
+        role: 'user',
+      } as AiRegistryMessageWithoutSystemRole
+    })
   }
 }

@@ -31,11 +31,13 @@ export class AppEngineRunner {
 
     const ctx = await this.generateEngineRuntimeContext(chatId)
 
-    const targetAssistantMessage = await this.getTargetAssistantMessage(chatId)
-
     const rawMessageIds = ctx.rawMessages.map((message) => message.id)
     const chatRun = await this.createChatRun(chatId, rawMessageIds)
-    const callbacks = this.getCallbacks(targetAssistantMessage.id, chatRun.id)
+
+    const callbacks = this.getCallbacks(
+      ctx.targetAssistantRawMessage.id,
+      chatRun.id,
+    )
 
     let hasContent = false
     const onChunk = once(() => {
@@ -54,7 +56,7 @@ export class AppEngineRunner {
       const error = ensureError(_error)
       errorLogger(error)
       if (!hasContent) {
-        await this.deleteMessage(targetAssistantMessage.id)
+        await this.deleteMessage(ctx.targetAssistantRawMessage.id)
       }
       throw error
     }
