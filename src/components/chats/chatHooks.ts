@@ -132,10 +132,17 @@ export const usePrompt = (chatId?: string) => {
     setMessages: setVercelAssistantMessages,
     append: assistantAppend,
     status: assistantStatus,
+    error,
   } = useVercelAssistant({
     api: '/api/chat',
     onError: onAssistantError,
   })
+
+  useEffect(() => {
+    if (error) {
+      errorHandler()(error)
+    }
+  }, [errorHandler, error])
 
   const chatIsActive = assistantStatus !== 'awaiting_message'
 
