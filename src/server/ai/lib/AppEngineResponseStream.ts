@@ -1,4 +1,5 @@
 import { ensureError } from '@/lib/utils'
+import { errorLogger } from '@/shared/errors/errorLogger'
 import { AssistantResponse, type AssistantMessage, type DataMessage } from 'ai'
 import { AssistantStream } from 'openai/lib/AssistantStream'
 import { type Run } from 'openai/resources/beta/threads/runs/runs'
@@ -43,13 +44,16 @@ export const AppEngineResponseStream = (
     sendDataMessage,
     forwardStream,
   }) => {
-    const readable = new ReadableStream({
+    const readable = new ReadableStream<Uint8Array>({
       async start(controller) {
         // Define the method to be passed downstream
         // that will push text strings to the client
         const pushText = (text: string) => {
           const threadMessageDelta = generateThreadMessageDelta(messageId, text)
-          controller.enqueue(encodePayload(threadMessageDelta))
+          const encoded = new TextEncoder().encode(
+            stringifyPayload(threadMessageDelta),
+          )
+          controller.enqueue(encoded)
         }
 
         try {
@@ -59,8 +63,10 @@ export const AppEngineResponseStream = (
             chatRunId,
             messageId,
           )
-
-          controller.enqueue(encodePayload(threadMessageCreated))
+          const encodedThreadMessageCreated = new TextEncoder().encode(
+            stringifyPayload(threadMessageCreated),
+          )
+          controller.enqueue(encodedThreadMessageCreated)
 
           // Run the implementation
           await process({
@@ -72,8 +78,10 @@ export const AppEngineResponseStream = (
             threadId,
             chatRunId,
           )
-
-          controller.enqueue(encodePayload(threadRunCompleted))
+          const encodedThreadRunCompleted = new TextEncoder().encode(
+            stringifyPayload(threadRunCompleted),
+          )
+          controller.enqueue(encodedThreadRunCompleted)
 
           // Close the stream
           controller.close()
@@ -84,7 +92,13 @@ export const AppEngineResponseStream = (
     })
 
     const stream = AssistantStream.fromReadableStream(readable)
-    await forwardStream(stream)
+
+    try {
+      await forwardStream(stream)
+    } catch (error) {
+      errorLogger(ensureError(error))
+      // No need to re-throw, does nothing.
+    }
   }
 
   const response = AssistantResponse({ threadId, messageId }, processFunc)
@@ -96,7 +110,7 @@ export const AppEngineResponseStream = (
   return response.body
 }
 
-const encodePayload = (payload: unknown) => {
+const stringifyPayload = (payload: unknown) => {
   return `${JSON.stringify(payload)}\n`
 }
 

@@ -26,7 +26,7 @@ export class AppEngineRunner {
     private readonly engines: AbstractAppEngine[],
   ) {}
 
-  async call(chatId: string): Promise<ReadableStream<unknown>> {
+  async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
     await this.validateUserHasPermissionsOrThrow(chatId)
     await this.maybeAttachAppConfigVersionToChat(chatId)
 
@@ -61,9 +61,12 @@ export class AppEngineRunner {
         },
       )
 
-      const finalStream = safeReadableStreamPipe(stream, { onChunk })
+      const finalStream = safeReadableStreamPipe(stream, {
+        onChunk,
+      })
       return finalStream
     } catch (_error) {
+      console.log(8888)
       const error = ensureError(_error)
       errorLogger(error)
       if (!hasContent) {
