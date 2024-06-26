@@ -15,6 +15,7 @@ import createHttpError from 'http-errors'
 import { chain, once } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type { AbstractAppEngine } from '../AbstractAppEngine'
+import { AppEngineResponseStream } from '../AppEngineResponseStream'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 import { chatTitleCreateService } from './chatTitleCreate.service'
 
@@ -25,16 +26,19 @@ export class AppEngineRunner {
     private readonly engines: AbstractAppEngine[],
   ) {}
 
-  async call(chatId: string): Promise<ReadableStream<unknown>> {
+  async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
     await this.validateUserHasPermissionsOrThrow(chatId)
     await this.maybeAttachAppConfigVersionToChat(chatId)
-    const ctx = await this.generateEngineRuntimeContext(chatId)
 
-    const targetAssistantMessage = await this.getTargetAssistantMessage(chatId)
+    const ctx = await this.generateEngineRuntimeContext(chatId)
 
     const rawMessageIds = ctx.rawMessages.map((message) => message.id)
     const chatRun = await this.createChatRun(chatId, rawMessageIds)
-    const callbacks = this.getCallbacks(targetAssistantMessage.id, chatRun.id)
+
+    const callbacks = this.getCallbacks(
+      ctx.targetAssistantRawMessage.id,
+      chatRun.id,
+    )
 
     let hasContent = false
     const onChunk = once(() => {
@@ -44,19 +48,63 @@ export class AppEngineRunner {
     void this.handleTitleCreate(chatId)
 
     try {
-      const engine = this.getDefaultEngine()
-      const stream = await engine.run(ctx, callbacks)
+      const engine = await this.getEngine(chatId)
 
-      const finalStream = safeReadableStreamPipe(stream, { onChunk })
+      const stream = AppEngineResponseStream(
+        {
+          threadId: chatId,
+          messageId: ctx.targetAssistantRawMessage.id,
+          chatRunId: chatRun.id,
+        },
+        callbacks,
+        async ({ pushText }) => {
+          await engine.run(ctx, callbacks, { pushText })
+        },
+      )
+
+      const finalStream = safeReadableStreamPipe(stream, {
+        onChunk,
+      })
       return finalStream
     } catch (_error) {
       const error = ensureError(_error)
       errorLogger(error)
       if (!hasContent) {
-        await this.deleteMessage(targetAssistantMessage.id)
+        await this.deleteMessage(ctx.targetAssistantRawMessage.id)
       }
       throw error
     }
+  }
+
+  private async getEngine(chatId: string) {
+    const chat = await getChatByIdService(this.prisma, this.context, {
+      chatId,
+      includeApp: true,
+    })
+
+    const engineTypeStr = chat.app.engineType
+    if (!engineTypeStr) {
+      throw createHttpError(500, 'Engine type is not defined')
+    }
+    if (engineTypeStr === AppEngineType.Default.toString()) {
+      return this.getDefaultEngine()
+    }
+
+    // TODO: this should be dynamic
+    const engine = this.getEngineByName('OpenaiAssistantsEngine')
+    if (!engine) {
+      return this.getDefaultEngine()
+    }
+
+    return engine
+  }
+
+  private getEngineByName(name: string) {
+    const engine = this.engines.find((engine) => engine.getName() === name)
+    if (!engine) {
+      throw new Error(`Engine ${name} not found`)
+    }
+    return engine
   }
 
   private getDefaultEngine() {

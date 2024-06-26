@@ -8,6 +8,7 @@ import { Promise } from 'bluebird'
 import { chain } from 'underscore'
 import { getProviderAndModelFromFullSlug } from '../../aiUtils'
 import { getAiProviderKVsService } from '../../services/getProvidersForWorkspace.service'
+import type { AppEngineParams } from '../AbstractAppEngine'
 
 export class AppEnginePayloadBuilder {
   constructor(
@@ -15,12 +16,16 @@ export class AppEnginePayloadBuilder {
     private readonly context: UserOnWorkspaceContext,
   ) {}
 
-  async call(chatId: string) {
-    const [appConfigVersion, { rawMessages, preparedMessages }] =
-      await Promise.all([
-        await this.getAppConfigVersionForChat(chatId),
-        await this.buildMessages(chatId),
-      ])
+  async call(chatId: string): Promise<AppEngineParams<never>> {
+    const [
+      appConfigVersion,
+      { rawMessages, preparedMessages },
+      targetAssistantRawMessage,
+    ] = await Promise.all([
+      await this.getAppConfigVersionForChat(chatId),
+      await this.buildMessages(chatId),
+      await this.getTargetAssistantMessage(chatId),
+    ])
 
     const model = getProviderAndModelFromFullSlug(appConfigVersion.model)
     const providerKVs = await this.getProviderKVs(
@@ -46,6 +51,8 @@ export class AppEnginePayloadBuilder {
     }
 
     return {
+      chatId,
+      targetAssistantRawMessage,
       rawMessages,
       messages: preparedMessages,
       fullSlug: appConfigVersion.model,
@@ -75,9 +82,23 @@ export class AppEnginePayloadBuilder {
   }
 
   private async getMessagesForChat(chatId: string) {
-    return (
-      await getMessagesByChatIdService(this.prisma, this.context, { chatId })
-    ).reverse()
+    return await getMessagesByChatIdService(this.prisma, this.context, {
+      chatId,
+    })
+  }
+
+  private async getTargetAssistantMessage(chatId: string) {
+    const messages = await getMessagesByChatIdService(
+      this.prisma,
+      this.context,
+      {
+        chatId,
+      },
+    )
+    return chain(messages)
+      .filter((message) => message.author === Author.Assistant.toString())
+      .max((message) => message.createdAt.getTime())
+      .value() as Message
   }
 
   private async getProviderKVs(
