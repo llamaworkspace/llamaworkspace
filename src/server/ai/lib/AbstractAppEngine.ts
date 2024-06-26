@@ -22,7 +22,7 @@ export interface AppEngineCallbacks {
 }
 
 export interface AppEngineUtils {
-  pushText: (text: string) => void
+  pushText: (text: string) => Promise<void>
 }
 
 export abstract class AbstractAppEngine {

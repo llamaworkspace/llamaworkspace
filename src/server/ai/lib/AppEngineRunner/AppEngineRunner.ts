@@ -56,6 +56,7 @@ export class AppEngineRunner {
           messageId: ctx.targetAssistantRawMessage.id,
           chatRunId: chatRun.id,
         },
+        callbacks,
         async ({ pushText }) => {
           await engine.run(ctx, callbacks, { pushText })
         },
@@ -66,7 +67,6 @@ export class AppEngineRunner {
       })
       return finalStream
     } catch (_error) {
-      console.log(8888)
       const error = ensureError(_error)
       errorLogger(error)
       if (!hasContent) {

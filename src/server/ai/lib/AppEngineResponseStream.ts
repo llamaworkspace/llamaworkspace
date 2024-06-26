@@ -3,6 +3,7 @@ import { errorLogger } from '@/shared/errors/errorLogger'
 import { AssistantResponse, type AssistantMessage, type DataMessage } from 'ai'
 import { AssistantStream } from 'openai/lib/AssistantStream'
 import { type Run } from 'openai/resources/beta/threads/runs/runs'
+import type { AppEngineCallbacks } from './AbstractAppEngine'
 
 type AiLibAssistantResponseCallbackArgs = {
   sendMessage: (message: AssistantMessage) => void
@@ -15,7 +16,7 @@ type AiLibAssistantResponseCallback = (
 ) => Promise<void>
 
 type AppEngineResponseStreamProcessArgs = (options: {
-  pushText: (text: string) => void
+  pushText: (text: string) => Promise<void>
 }) => Promise<void>
 
 type AssistantResponseSettings = {
@@ -35,6 +36,7 @@ type AssistantResponseSettings = {
 
 export const AppEngineResponseStream = (
   responseSettings: AssistantResponseSettings,
+  callbacks: AppEngineCallbacks,
   process: AppEngineResponseStreamProcessArgs,
 ) => {
   const { threadId, chatRunId, messageId } = responseSettings
@@ -46,14 +48,18 @@ export const AppEngineResponseStream = (
   }) => {
     const readable = new ReadableStream<Uint8Array>({
       async start(controller) {
+        let fullMessage = ''
+
         // Define the method to be passed downstream
         // that will push text strings to the client
-        const pushText = (text: string) => {
+        const pushText = async (text: string) => {
           const threadMessageDelta = generateThreadMessageDelta(messageId, text)
           const encoded = new TextEncoder().encode(
             stringifyPayload(threadMessageDelta),
           )
           controller.enqueue(encoded)
+          fullMessage += text
+          await Promise.resolve(callbacks.onToken(text))
         }
 
         try {
@@ -82,6 +88,7 @@ export const AppEngineResponseStream = (
             stringifyPayload(threadRunCompleted),
           )
           controller.enqueue(encodedThreadRunCompleted)
+          await Promise.resolve(callbacks.onFinal(fullMessage))
 
           // Close the stream
           controller.close()
