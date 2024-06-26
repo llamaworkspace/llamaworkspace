@@ -125,12 +125,15 @@ export function Chat({ appId, chatId }: ChatProps) {
               | Author.User
               | Author.Assistant
 
+            const isLastMessage = index === messages.length - 1
             return (
               <ChatMessage
                 key={index} // Keep index, otherwise changes in message.id (temp vs final) trigger a re-mount that causes a flicker
                 message={message.message ?? ''}
                 author={author}
-                onLineHeightChange={index ? undefined : handleLineHeightChange}
+                onLineHeightChange={
+                  isLastMessage ? handleLineHeightChange : undefined
+                }
               />
             )
           })}
