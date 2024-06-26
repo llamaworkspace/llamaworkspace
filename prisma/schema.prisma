@@ -116,7 +116,6 @@ model App {
     emoji             String?
     userId            String
     workspaceId       String
-    type              String?
     isDefault         Boolean            @default(false)
     isDemo            Boolean            @default(false)
     engineType        String?
