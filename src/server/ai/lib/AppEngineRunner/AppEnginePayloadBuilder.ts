@@ -82,9 +82,9 @@ export class AppEnginePayloadBuilder {
   }
 
   private async getMessagesForChat(chatId: string) {
-    return (
-      await getMessagesByChatIdService(this.prisma, this.context, { chatId })
-    ).reverse()
+    return await getMessagesByChatIdService(this.prisma, this.context, {
+      chatId,
+    })
   }
 
   private async getTargetAssistantMessage(chatId: string) {

@@ -12,7 +12,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { z } from 'zod'
 
 const zBody = z.object({
-  threadId: z.null(),
+  threadId: z.string().nullable(),
   message: z.literal(''),
   data: z.object({
     chatId: z.string(),
@@ -69,6 +69,7 @@ const getSessionUserId = async () => {
 
 const getParsedBody = async (req: NextRequest) => {
   const json = (await req.json()) as unknown
+
   try {
     return zBody.parse(json)
   } catch (_error) {
