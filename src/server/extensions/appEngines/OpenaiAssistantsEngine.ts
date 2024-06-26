@@ -51,7 +51,9 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       apiKey: env.INTERNAL_OPENAI_API_KEY,
     })
 
+    // TODO: Passs system messsage somewhere, somehow
     const messagesWithoutSystem = this.filterSystemMessage(messages)
+
     const thread = await openai.beta.threads.create({
       messages: messagesWithoutSystem,
     })
@@ -64,11 +66,11 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     for await (const event of streamAsAsyncIterable) {
       if (event.event === 'thread.message.delta') {
-        event.data.delta.content?.map((item) => {
+        for (const item of event.data.delta.content ?? []) {
           if (item.type === 'text' && item.text?.value) {
-            pushText(item.text.value)
+            await pushText(item.text.value)
           }
-        })
+        }
       }
     }
   }
