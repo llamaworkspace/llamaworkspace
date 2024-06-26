@@ -1,5 +1,5 @@
-import Anthropic from '@anthropic-ai/sdk'
-import { AnthropicStream } from 'ai'
+import { createAnthropic } from '@ai-sdk/anthropic'
+import { streamText } from 'ai'
 import type {
   AiRegistryExecutePayload,
   AiRegistryMessage,
@@ -35,10 +35,6 @@ export const AnthropicProvider = () => {
       payload: AiRegistryExecutePayload,
       options: AnthropicExecuteOptions,
     ) => {
-      const anthropic = new Anthropic({
-        apiKey: options.apiKey,
-      })
-
       const systemMessages = payload.messages
         .filter((message) => message.role === 'system')
         .join('. ')
@@ -68,18 +64,15 @@ export const AnthropicProvider = () => {
         return message
       })
 
-      const response = await anthropic.messages.create({
-        messages: nonSystemMessages,
-        system: systemMessages,
-        model: payload.model,
-        stream: true,
-        max_tokens: 4096,
+      const anthropic = createAnthropic({
+        apiKey: options.apiKey,
       })
 
-      return AnthropicStream(response, {
-        onToken: payload?.onToken,
-        onFinal: payload?.onFinal,
+      const { textStream } = await streamText({
+        model: anthropic(payload.model),
+        messages: payload.messages,
       })
+      return textStream
     },
   }
 }

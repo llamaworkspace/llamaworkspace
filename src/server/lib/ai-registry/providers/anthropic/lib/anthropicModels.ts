@@ -2,7 +2,7 @@ import type { AiRegistryModel } from '../../../aiRegistryTypes'
 
 export const anthropicModels: AiRegistryModel[] = [
   {
-    slug: 'claude-3-5-sonnet-20240620' as const,
+    slug: 'claude-3-5-sonnet' as const,
     publicName: 'Claude 3.5 Sonnet' as const,
     default: true,
     costPerMille: {
@@ -11,7 +11,7 @@ export const anthropicModels: AiRegistryModel[] = [
     },
   },
   {
-    slug: 'claude-3-opus-20240229' as const,
+    slug: 'claude-3-opus' as const,
     publicName: 'Claude 3 Opus' as const,
     default: true,
     costPerMille: {
@@ -20,7 +20,7 @@ export const anthropicModels: AiRegistryModel[] = [
     },
   },
   {
-    slug: 'claude-3-sonnet-20240229' as const,
+    slug: 'claude-3-sonnet' as const,
     publicName: 'Claude 3 Sonnet' as const,
     default: true,
     costPerMille: {
