@@ -1,6 +1,7 @@
 import { type rootRouter } from '@/server/trpc/rootRouter'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { TRPCClientError } from '@trpc/client'
+import { useCallback } from 'react'
 import { useErrorToast } from '../ui/toastHooks'
 import { AppClientError, type AppHttpErrorPayload } from './AppClientError'
 
@@ -10,26 +11,29 @@ const DEFAULT_ERROR_MESSAGE =
 export const useErrorHandler = () => {
   const toast = useErrorToast()
 
-  return (message?: string) => (error: unknown) => {
-    message = message ?? DEFAULT_ERROR_MESSAGE
-    const asError = error as Error
+  return useCallback(
+    (message?: string) => (error: unknown) => {
+      message = message ?? DEFAULT_ERROR_MESSAGE
+      const asError = error as Error
 
-    // Case 1: TRPCClientError
-    if (error instanceof TRPCClientError) {
-      const trpcClientError = error as TRPCClientError<typeof rootRouter>
-      return handleAsTrpcClientError(trpcClientError, toast)
-    }
+      // Case 1: TRPCClientError
+      if (error instanceof TRPCClientError) {
+        const trpcClientError = error as TRPCClientError<typeof rootRouter>
+        return handleAsTrpcClientError(trpcClientError, toast)
+      }
 
-    // Case 2: Either AppClientError, or some other error
-    let appError: AppClientError
-    try {
-      appError = buildAppClientErrorOrThrow(asError)
-      return handleAsAppClientError(appError, toast)
-    } catch (_e) {
-      toast(DEFAULT_ERROR_MESSAGE)
-      errorLogger(asError)
-    }
-  }
+      // Case 2: Either AppClientError, or some other error
+      let appError: AppClientError
+      try {
+        appError = buildAppClientErrorOrThrow(asError)
+        return handleAsAppClientError(appError, toast)
+      } catch (_e) {
+        toast(DEFAULT_ERROR_MESSAGE)
+        errorLogger(asError)
+      }
+    },
+    [toast],
+  )
 }
 
 const buildAppClientErrorOrThrow = (error: Error) => {

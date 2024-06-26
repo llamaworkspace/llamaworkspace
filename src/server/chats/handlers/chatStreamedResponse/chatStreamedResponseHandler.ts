@@ -4,6 +4,7 @@ import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
 import { authOptions } from '@/server/auth/nextauth'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import { withMiddlewareForAppRouter } from '@/server/middlewares/withMiddleware'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
@@ -11,7 +12,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { z } from 'zod'
 
 const zBody = z.object({
-  threadId: z.null(),
+  threadId: z.string().nullable(),
   message: z.literal(''),
   data: z.object({
     chatId: z.string(),
@@ -33,13 +34,13 @@ async function handler(req: NextRequest) {
     userId,
   )
 
-  const engines = [new DefaultAppEngine()]
+  const engines = [new DefaultAppEngine(), ...enginesRegistry]
   const appEngineRunner = new AppEngineRunner(prisma, context, engines)
 
   const stream = await appEngineRunner.call(chatId)
 
   const headers = {
-    'Content-Type': 'text/event-stream',
+    'Content-Type': 'text/plain; charset=utf-8',
   }
   return new NextResponse(stream, { headers })
 }
@@ -68,6 +69,7 @@ const getSessionUserId = async () => {
 
 const getParsedBody = async (req: NextRequest) => {
   const json = (await req.json()) as unknown
+
   try {
     return zBody.parse(json)
   } catch (_error) {

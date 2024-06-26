@@ -1,5 +1,5 @@
-import { OpenAIStream } from 'ai'
-import OpenAI, { type ClientOptions } from 'openai'
+import { createOpenAI } from '@ai-sdk/openai'
+import { streamText } from 'ai'
 import type {
   AiRegistryExecutePayload,
   AiRegistryProvider,
@@ -32,7 +32,7 @@ export const OpenRouterProvider: () => AiRegistryProvider = () => {
       payload: AiRegistryExecutePayload,
       options: OpenRouterExecuteOptions,
     ) => {
-      const clientPayload: ClientOptions = {
+      const clientPayload = {
         baseURL: 'https://openrouter.ai/api/v1',
         apiKey: options.apiKey,
         defaultHeaders: {
@@ -41,20 +41,14 @@ export const OpenRouterProvider: () => AiRegistryProvider = () => {
         },
       }
 
-      const openai = new OpenAI(clientPayload)
+      const oai = createOpenAI(clientPayload)
 
-      const aiResponse = await openai.chat.completions.create({
-        model: payload.model,
+      const { textStream } = await streamText({
+        model: oai(payload.model),
         messages: payload.messages,
-        stream: true,
       })
 
-      const stream = OpenAIStream(aiResponse, {
-        onToken: payload?.onToken,
-        onFinal: payload?.onFinal,
-      })
-
-      return stream
+      return textStream
     },
   }
 }

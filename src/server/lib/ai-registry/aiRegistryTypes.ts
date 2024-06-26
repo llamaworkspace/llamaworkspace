@@ -16,6 +16,9 @@ export interface AiRegistryField {
   encrypted: boolean
 }
 
+export type AsyncIterableStreamOrReadableStream<T> = AsyncIterable<T> &
+  ReadableStream<T>
+
 export interface AiRegistryProvider {
   readonly slug: string
   readonly publicName: string
@@ -27,7 +30,7 @@ export interface AiRegistryProvider {
   executeAsStream(
     payload: AiRegistryExecutePayload,
     options?: unknown,
-  ): Promise<ReadableStream>
+  ): Promise<AsyncIterableStreamOrReadableStream<string>>
 }
 
 export type AiRegistryProviderMeta = Omit<AiRegistryProvider, 'executeAsStream'>
@@ -41,7 +44,7 @@ export interface IKnownProvider<T> extends AiRegistryProvider {
   executeAsStream(
     payload: AiRegistryExecutePayload,
     options?: T,
-  ): Promise<ReadableStream>
+  ): Promise<AsyncIterableStreamOrReadableStream<string>>
 }
 
 export interface AiRegistryExecutePayload {

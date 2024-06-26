@@ -1,5 +1,5 @@
-import { OpenAIStream } from 'ai'
-import OpenAI, { type ClientOptions } from 'openai'
+import { createOpenAI } from '@ai-sdk/openai'
+import { streamText } from 'ai'
 import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
 import { openAiModels } from './lib/openAiModels'
 import type {
@@ -42,33 +42,26 @@ export const OpenAiProvider = (
     ) => {
       validateModelExistsOrThrow(payload.model)
 
-      const openAiClientPayload: ClientOptions = {
+      const openAiClientPayload: { apiKey?: string; baseUrl?: string } = {
         apiKey: options.apiKey || params?.fallbackApiKey,
+        baseUrl: undefined,
       }
 
       if (options?.baseUrl) {
-        openAiClientPayload.baseURL = options?.baseUrl
+        openAiClientPayload.baseUrl = options?.baseUrl
       }
 
-      if (params?.fallbackBaseUrl && !openAiClientPayload.baseURL) {
-        openAiClientPayload.baseURL = params?.fallbackBaseUrl
+      if (params?.fallbackBaseUrl && !openAiClientPayload.baseUrl) {
+        openAiClientPayload.baseUrl = params?.fallbackBaseUrl
       }
 
-      const openai = new OpenAI(openAiClientPayload)
+      const oai = createOpenAI(openAiClientPayload)
 
-      const aiResponse = await openai.chat.completions.create({
-        model: payload.model,
+      const { textStream } = await streamText({
+        model: oai(payload.model),
         messages: payload.messages,
-        stream: true,
-        max_tokens: 4096,
       })
-
-      const stream = OpenAIStream(aiResponse, {
-        onToken: payload?.onToken,
-        onFinal: payload?.onFinal,
-      })
-
-      return stream
+      return textStream
     },
     hasFallbackCredentials: !!params?.fallbackApiKey,
   }
