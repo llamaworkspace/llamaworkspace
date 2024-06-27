@@ -70,6 +70,17 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
           }
         }
       }
+      if (event.event === 'thread.run.completed') {
+        const usage = event.data.usage
+        usage?.prompt_tokens
+        if (usage) {
+          await Promise.resolve(
+            utils.usage(usage.prompt_tokens, usage.completion_tokens),
+          )
+        } else {
+          await Promise.resolve(utils.usage(0, 0))
+        }
+      }
     }
   }
 

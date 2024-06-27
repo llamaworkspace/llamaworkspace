@@ -18,6 +18,7 @@ export interface AppEngineParams<T extends AllowedKVS> {
 
 export interface AppEngineUtils {
   pushText: (text: string) => Promise<void>
+  usage: (requestTokens: number, responseTokens: number) => void | Promise<void>
 }
 
 export abstract class AbstractAppEngine {
