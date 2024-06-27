@@ -21,7 +21,7 @@ const subject = async (
   return await saveTokenCountService(prisma, uowContext, payload)
 }
 
-describe('saveTokenCountForChatRunService', () => {
+describe('saveTokenCountService', () => {
   let workspace: Workspace
   let user: User
   let app: App
