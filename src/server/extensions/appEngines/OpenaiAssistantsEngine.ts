@@ -1,8 +1,8 @@
 import { env } from '@/env.mjs'
 import {
   AbstractAppEngine,
+  type AppEngineCallbacks,
   type AppEngineParams,
-  type AppEngineUtils,
 } from '@/server/ai/lib/AbstractAppEngine'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
@@ -30,7 +30,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
   async run(
     ctx: AppEngineParams<OpeniAssistantsEngineAppPayload>,
-    utils: AppEngineUtils,
+    callbacks: AppEngineCallbacks,
   ) {
     const {
       messages,
@@ -41,7 +41,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       chatId,
     } = ctx
 
-    const { pushText } = utils
+    const { pushText } = callbacks
 
     const { kvs } = { kvs: {} }
     const openai = new OpenAI({
@@ -75,10 +75,10 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         usage?.prompt_tokens
         if (usage) {
           await Promise.resolve(
-            utils.usage(usage.prompt_tokens, usage.completion_tokens),
+            callbacks.usage(usage.prompt_tokens, usage.completion_tokens),
           )
         } else {
-          await Promise.resolve(utils.usage(0, 0))
+          await Promise.resolve(callbacks.usage(0, 0))
         }
       }
     }

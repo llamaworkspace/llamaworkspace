@@ -3,7 +3,7 @@ import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
   AbstractAppEngine,
-  AppEngineUtils,
+  AppEngineCallbacks,
   type AppEngineParams,
 } from './AbstractAppEngine'
 
@@ -20,7 +20,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
 
   async run(
     ctx: AppEngineParams<DefaultAppEginePayload>,
-    utils: AppEngineUtils,
+    callbacks: AppEngineCallbacks,
   ) {
     const { messages, providerSlug, modelSlug, providerKVs } = ctx
 
@@ -41,7 +41,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
     )
 
     for await (const chunk of result) {
-      await utils.pushText(chunk)
+      await callbacks.pushText(chunk)
     }
   }
 }
