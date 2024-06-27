@@ -3,7 +3,7 @@ import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
   AbstractAppEngine,
-  AppEngineCallbacks,
+  type AppEngineCallbacks,
   type AppEngineParams,
 } from './AbstractAppEngine'
 
@@ -30,7 +30,6 @@ export class DefaultAppEngine extends AbstractAppEngine {
       throw createHttpError(500, `Provider ${providerSlug} not found`)
     }
 
-    // Remove callbacks from executeAsStream
     const result = await provider.executeAsStream(
       {
         provider: providerSlug,

@@ -6,7 +6,6 @@ import {
 } from '@/server/ai/lib/AbstractAppEngine'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
-import type { AssistantStreamEvent } from 'openai/resources/beta/assistants'
 import { z } from 'zod'
 
 type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
@@ -95,13 +94,4 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       } as AiRegistryMessageWithoutSystemRole
     })
   }
-}
-
-function isThreadMessageDelta(
-  event: AssistantStreamEvent,
-): event is AssistantStreamEvent.ThreadMessageDelta {
-  return (
-    (event as AssistantStreamEvent.ThreadMessageDelta).type ===
-    'ThreadMessageDelta'
-  )
 }
