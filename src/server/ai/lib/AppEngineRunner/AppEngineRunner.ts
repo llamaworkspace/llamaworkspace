@@ -5,7 +5,7 @@ import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
-import { saveTokenCountForChatRunService } from '@/server/chats/services/saveTokenCountForChatRun.service'
+import { saveTokenCountService } from '@/server/chats/services/saveTokenCount.service'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
@@ -294,7 +294,7 @@ export class AppEngineRunner {
       },
       onFinal: async (fullMessage: string) => {
         await this.saveMessage(targetAssistantMessageId, fullMessage)
-        await saveTokenCountForChatRunService(this.prisma, chatRunId)
+        await saveTokenCountService(this.prisma, chatRunId)
       },
     }
   }
