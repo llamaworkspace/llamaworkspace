@@ -58,7 +58,7 @@ export class AppEngineRunner {
         },
         callbacks,
         async ({ pushText }) => {
-          await engine.run(ctx, callbacks, { pushText })
+          await engine.run(ctx, { pushText })
         },
       )
 
@@ -291,7 +291,6 @@ export class AppEngineRunner {
           await this.saveMessage(targetAssistantMessageId, partialResult)
         }
         await this.deleteMessage(targetAssistantMessageId)
-        // throw error // TODO: This error is silently swallowed
       },
       onFinal: async (fullMessage: string) => {
         await this.saveMessage(targetAssistantMessageId, fullMessage)

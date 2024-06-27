@@ -4,7 +4,6 @@ import { z } from 'zod'
 import {
   AbstractAppEngine,
   AppEngineUtils,
-  type AppEngineCallbacks,
   type AppEngineParams,
 } from './AbstractAppEngine'
 
@@ -21,11 +20,9 @@ export class DefaultAppEngine extends AbstractAppEngine {
 
   async run(
     ctx: AppEngineParams<DefaultAppEginePayload>,
-    callbacks: AppEngineCallbacks,
     utils: AppEngineUtils,
   ) {
     const { messages, providerSlug, modelSlug, providerKVs } = ctx
-    const { onToken, onFinal } = callbacks
 
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
@@ -33,13 +30,12 @@ export class DefaultAppEngine extends AbstractAppEngine {
       throw createHttpError(500, `Provider ${providerSlug} not found`)
     }
 
+    // Remove callbacks from executeAsStream
     const result = await provider.executeAsStream(
       {
         provider: providerSlug,
         model: modelSlug,
         messages,
-        onToken,
-        onFinal: onFinal,
       },
       providerKVs,
     )

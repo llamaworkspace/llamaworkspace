@@ -16,11 +16,6 @@ export interface AppEngineParams<T extends AllowedKVS> {
   readonly modelSlug: string
 }
 
-export interface AppEngineCallbacks {
-  onToken: (chunk: string) => void | Promise<void>
-  onFinal: (fullMessage: string) => void | Promise<void>
-}
-
 export interface AppEngineUtils {
   pushText: (text: string) => Promise<void>
 }
@@ -29,7 +24,6 @@ export abstract class AbstractAppEngine {
   abstract getName(): string
   abstract run(
     params: AppEngineParams<AllowedKVS>,
-    callbacks: AppEngineCallbacks,
     utils: AppEngineUtils,
   ): Promise<void>
 }

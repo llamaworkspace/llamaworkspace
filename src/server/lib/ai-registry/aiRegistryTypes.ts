@@ -51,7 +51,4 @@ export interface AiRegistryExecutePayload {
   provider: string
   model: string
   messages: AiRegistryMessage[]
-  onStart?: () => Promise<void> | void
-  onToken?: (token: string) => void | Promise<void>
-  onFinal?: (final: string) => void | Promise<void>
 }

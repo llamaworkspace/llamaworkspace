@@ -1,13 +1,12 @@
 import { env } from '@/env.mjs'
 import {
   AbstractAppEngine,
-  AppEngineCallbacks,
-  AppEngineUtils,
   type AppEngineParams,
+  type AppEngineUtils,
 } from '@/server/ai/lib/AbstractAppEngine'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import OpenAI from 'openai'
-import { AssistantStreamEvent } from 'openai/resources/beta/assistants'
+import type { AssistantStreamEvent } from 'openai/resources/beta/assistants'
 import { z } from 'zod'
 
 type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
@@ -31,7 +30,6 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
   async run(
     ctx: AppEngineParams<OpeniAssistantsEngineAppPayload>,
-    callbacks: AppEngineCallbacks,
     utils: AppEngineUtils,
   ) {
     const {
