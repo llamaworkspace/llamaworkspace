@@ -1,6 +1,4 @@
 import { createOpenAI } from '@ai-sdk/openai'
-import { streamText } from 'ai'
-import type { AiRegistryExecutePayload } from '../../aiRegistryTypes'
 import { openAiModels } from './lib/openAiModels'
 import type {
   OpenAiExecuteOptions,
@@ -37,9 +35,12 @@ export const OpenAiProvider = (
       },
     ],
     executeAsStream: async (
-      payload: AiRegistryExecutePayload,
+      payload,
+      callbacks,
       options: OpenAiExecuteOptions,
     ) => {
+      const { streamText } = callbacks
+
       validateModelExistsOrThrow(payload.model)
 
       const openAiClientPayload: { apiKey?: string; baseUrl?: string } = {
@@ -55,12 +56,16 @@ export const OpenAiProvider = (
         openAiClientPayload.baseUrl = params?.fallbackBaseUrl
       }
 
-      const oai = createOpenAI(openAiClientPayload)
+      const oai = createOpenAI({
+        ...openAiClientPayload,
+        compatibility: 'strict', // Needed to have tokens returned in the response
+      })
 
       const { textStream } = await streamText({
         model: oai(payload.model),
         messages: payload.messages,
       })
+
       return textStream
     },
     hasFallbackCredentials: !!params?.fallbackApiKey,

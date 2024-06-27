@@ -17,12 +17,8 @@ export interface AppEngineParams<T extends AllowedKVS> {
 }
 
 export interface AppEngineCallbacks {
-  onToken: (chunk: string) => void | Promise<void>
-  onFinal: (fullMessage: string) => void | Promise<void>
-}
-
-export interface AppEngineUtils {
   pushText: (text: string) => Promise<void>
+  usage: (requestTokens: number, responseTokens: number) => void | Promise<void>
 }
 
 export abstract class AbstractAppEngine {
@@ -30,6 +26,5 @@ export abstract class AbstractAppEngine {
   abstract run(
     params: AppEngineParams<AllowedKVS>,
     callbacks: AppEngineCallbacks,
-    utils: AppEngineUtils,
   ): Promise<void>
 }

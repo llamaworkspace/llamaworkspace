@@ -3,7 +3,6 @@ import { errorLogger } from '@/shared/errors/errorLogger'
 import { AssistantResponse, type AssistantMessage, type DataMessage } from 'ai'
 import { AssistantStream } from 'openai/lib/AssistantStream'
 import { type Run } from 'openai/resources/beta/threads/runs/runs'
-import type { AppEngineCallbacks } from './AbstractAppEngine'
 
 type AiLibAssistantResponseCallbackArgs = {
   sendMessage: (message: AssistantMessage) => void
@@ -34,22 +33,29 @@ type AssistantResponseSettings = {
   messageId: string
 }
 
+export interface AssistantResponseCallbacks {
+  onToken: (chunk: string) => void | Promise<void>
+  onFinal: (fullMessage: string) => void | Promise<void>
+  onError: (error: Error, partialResult: string) => void | Promise<void>
+}
+
 export const AppEngineResponseStream = (
   responseSettings: AssistantResponseSettings,
-  callbacks: AppEngineCallbacks,
+  callbacks: AssistantResponseCallbacks,
   process: AppEngineResponseStreamProcessArgs,
 ) => {
   const { threadId, chatRunId, messageId } = responseSettings
+  const { onToken, onFinal, onError } = callbacks
 
   const processFunc: AiLibAssistantResponseCallback = async ({
     sendMessage,
     sendDataMessage,
     forwardStream,
   }) => {
+    let fullMessage = ''
+
     const readable = new ReadableStream<Uint8Array>({
       async start(controller) {
-        let fullMessage = ''
-
         // Define the method to be passed downstream
         // that will push text strings to the client
         const pushText = async (text: string) => {
@@ -59,7 +65,7 @@ export const AppEngineResponseStream = (
           )
           controller.enqueue(encoded)
           fullMessage += text
-          await Promise.resolve(callbacks.onToken(text))
+          await Promise.resolve(onToken(text))
         }
 
         try {
@@ -88,7 +94,7 @@ export const AppEngineResponseStream = (
             stringifyPayload(threadRunCompleted),
           )
           controller.enqueue(encodedThreadRunCompleted)
-          await Promise.resolve(callbacks.onFinal(fullMessage))
+          await Promise.resolve(onFinal(fullMessage))
 
           // Close the stream
           controller.close()
@@ -102,8 +108,10 @@ export const AppEngineResponseStream = (
 
     try {
       await forwardStream(stream)
-    } catch (error) {
-      errorLogger(ensureError(error))
+    } catch (_error) {
+      const error = ensureError(_error)
+      await Promise.resolve(onError(error, fullMessage))
+      errorLogger(error)
       // No need to re-throw, does nothing.
     }
   }

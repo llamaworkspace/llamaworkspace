@@ -1,8 +1,7 @@
 import { createAnthropic } from '@ai-sdk/anthropic'
-import { streamText } from 'ai'
 import type {
-  AiRegistryExecutePayload,
   AiRegistryMessage,
+  AiRegistryProvider,
 } from '../../aiRegistryTypes'
 import { anthropicModels } from './lib/anthropicModels'
 
@@ -15,7 +14,7 @@ interface AiRegistryMessageWithoutSystemRole
   role: 'user' | 'assistant'
 }
 
-export const AnthropicProvider = () => {
+export const AnthropicProvider: () => AiRegistryProvider = () => {
   return {
     slug: 'anthropic' as const,
     publicName: 'Anthropic' as const,
@@ -32,13 +31,11 @@ export const AnthropicProvider = () => {
       },
     ],
     executeAsStream: async (
-      payload: AiRegistryExecutePayload,
+      payload,
+      callbacks,
       options: AnthropicExecuteOptions,
     ) => {
-      const systemMessages = payload.messages
-        .filter((message) => message.role === 'system')
-        .join('. ')
-        .trim()
+      const { streamText } = callbacks
 
       let nonSystemMessages = payload.messages.filter(
         (message) => message.role !== 'system',
