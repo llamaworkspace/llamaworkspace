@@ -45,7 +45,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
     )
 
     for await (const chunk of result) {
-      utils.pushText(chunk)
+      await utils.pushText(chunk)
     }
   }
 }

@@ -104,8 +104,7 @@ export const SettingsAiProvidersCustomKeys = () => {
   return (
     <div className="space-y-8">
       <div className="text-zinc-600">
-        Use your own API keys to connect to AI providers like OpenAI, Amazon
-        Bedrock, Openrouter or Hugging Face.
+        Use your own API keys to connect to AI providers.
       </div>
 
       {providers?.map((provider) => {
