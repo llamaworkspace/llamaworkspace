@@ -5,7 +5,7 @@ import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
-import { saveTokenCountForChatRunService } from '@/server/chats/services/saveTokenCountForChatRun.service'
+import { saveTokenCountService } from '@/server/chats/services/saveTokenCount.service'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
@@ -45,6 +45,15 @@ export class AppEngineRunner {
       hasContent = true
     })
 
+    let hasProcessUsageBeenCalled = false
+    const processUsage = async (
+      requestTokens: number,
+      responseTokens: number,
+    ) => {
+      hasProcessUsageBeenCalled = true
+      await this.processUsage(chatRun.id, requestTokens, responseTokens)
+    }
+
     void this.handleTitleCreate(chatId)
 
     try {
@@ -58,7 +67,13 @@ export class AppEngineRunner {
         },
         callbacks,
         async ({ pushText }) => {
-          await engine.run(ctx, callbacks, { pushText })
+          await engine.run(ctx, { pushText, usage: processUsage })
+          if (!hasProcessUsageBeenCalled) {
+            throw createHttpError(
+              500,
+              `usage callback was not called on engine when finishing a chat run. Engine: ${engine.getName()}`,
+            )
+          }
         },
       )
 
@@ -282,6 +297,18 @@ export class AppEngineRunner {
     })
   }
 
+  private async processUsage(
+    chatRunId: string,
+    requestTokens: number,
+    responseTokens: number,
+  ) {
+    await saveTokenCountService(this.prisma, this.context, {
+      chatRunId,
+      requestTokens,
+      responseTokens,
+    })
+  }
+
   private getCallbacks(targetAssistantMessageId: string, chatRunId: string) {
     return {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -291,11 +318,9 @@ export class AppEngineRunner {
           await this.saveMessage(targetAssistantMessageId, partialResult)
         }
         await this.deleteMessage(targetAssistantMessageId)
-        // throw error // TODO: This error is silently swallowed
       },
       onFinal: async (fullMessage: string) => {
         await this.saveMessage(targetAssistantMessageId, fullMessage)
-        await saveTokenCountForChatRunService(this.prisma, chatRunId)
       },
     }
   }

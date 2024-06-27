@@ -1,9 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai'
-import { streamText } from 'ai'
-import type {
-  AiRegistryExecutePayload,
-  AiRegistryProvider,
-} from '../../aiRegistryTypes'
+import type { AiRegistryProvider } from '../../aiRegistryTypes'
 import { openRouterAiModels } from './lib/openRouterAiModels'
 import {
   OPENROUTER_REFERRER_TITLE,
@@ -29,9 +25,12 @@ export const OpenRouterProvider: () => AiRegistryProvider = () => {
     ],
 
     executeAsStream: async (
-      payload: AiRegistryExecutePayload,
+      payload,
+      callbacks,
       options: OpenRouterExecuteOptions,
     ) => {
+      const { streamText } = callbacks
+
       const clientPayload = {
         baseURL: 'https://openrouter.ai/api/v1',
         apiKey: options.apiKey,

@@ -1,3 +1,5 @@
+import { streamText } from 'ai'
+
 export interface AiRegistryModel {
   readonly slug: string
   readonly publicName: string
@@ -16,6 +18,15 @@ export interface AiRegistryField {
   encrypted: boolean
 }
 
+export type AiRegistryStreamTextParams = Parameters<typeof streamText>[0]
+export type AiRegistryStreamTextReturnType = ReturnType<typeof streamText>
+
+export interface AiRegistryCallbacks {
+  streamText: (
+    params: AiRegistryStreamTextParams,
+  ) => AiRegistryStreamTextReturnType
+}
+
 export type AsyncIterableStreamOrReadableStream<T> = AsyncIterable<T> &
   ReadableStream<T>
 
@@ -29,6 +40,7 @@ export interface AiRegistryProvider {
   readonly models: AiRegistryModel[]
   executeAsStream(
     payload: AiRegistryExecutePayload,
+    callbacks: AiRegistryCallbacks,
     options?: unknown,
   ): Promise<AsyncIterableStreamOrReadableStream<string>>
 }
@@ -43,6 +55,7 @@ export interface AiRegistryMessage {
 export interface IKnownProvider<T> extends AiRegistryProvider {
   executeAsStream(
     payload: AiRegistryExecutePayload,
+    callbacks: AiRegistryCallbacks,
     options?: T,
   ): Promise<AsyncIterableStreamOrReadableStream<string>>
 }
@@ -51,7 +64,4 @@ export interface AiRegistryExecutePayload {
   provider: string
   model: string
   messages: AiRegistryMessage[]
-  onStart?: () => Promise<void> | void
-  onToken?: (token: string) => void | Promise<void>
-  onFinal?: (final: string) => void | Promise<void>
 }
