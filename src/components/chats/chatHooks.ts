@@ -185,7 +185,6 @@ export const usePrompt = (chatId?: string) => {
             appConfigVersionId: null,
             message,
             author: ChatAuthor.User,
-            tokens: null,
             createdAt: new Date(),
             updatedAt: new Date(),
           }
@@ -221,7 +220,6 @@ export const usePrompt = (chatId?: string) => {
                   appConfigVersionId: null,
                   message: null,
                   author: ChatAuthor.Assistant,
-                  tokens: null,
                   createdAt: new Date(),
                   updatedAt: new Date(),
                 }

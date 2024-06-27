@@ -224,7 +224,6 @@ model Message {
     appConfigVersion   AppConfigVersion? @relation(fields: [appConfigVersionId], references: [id], onDelete: Cascade)
     message            String?
     author             String
-    tokens             Int?
     createdAt          DateTime          @default(now())
     updatedAt          DateTime          @updatedAt
     chatRunMessage     ChatRunMessage[]
