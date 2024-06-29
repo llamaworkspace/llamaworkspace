@@ -27,9 +27,11 @@ export const OpenRouterProvider: () => AiRegistryProvider = () => {
     executeAsStream: async (
       payload,
       callbacks,
+      utils,
       options: OpenRouterExecuteOptions,
     ) => {
-      const { streamText } = callbacks
+      const { pushText } = callbacks
+      const { streamText } = utils
 
       const clientPayload = {
         baseURL: 'https://openrouter.ai/api/v1',
@@ -42,12 +44,21 @@ export const OpenRouterProvider: () => AiRegistryProvider = () => {
 
       const oai = createOpenAI(clientPayload)
 
-      const { textStream } = await streamText({
+      const { textStream, usage } = await streamText({
         model: oai(payload.model),
         messages: payload.messages,
       })
 
-      return textStream
+      for await (const chunk of textStream) {
+        await pushText(chunk)
+      }
+
+      const usageResult = await usage // This is a running promise already
+
+      await callbacks.usage(
+        usageResult.promptTokens,
+        usageResult.completionTokens,
+      )
     },
   }
 }

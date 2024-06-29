@@ -37,9 +37,11 @@ export const OpenAiProvider = (
     executeAsStream: async (
       payload,
       callbacks,
+      utils,
       options: OpenAiExecuteOptions,
     ) => {
-      const { streamText } = callbacks
+      const { pushText } = callbacks
+      const { streamText } = utils
 
       validateModelExistsOrThrow(payload.model)
 
@@ -61,12 +63,21 @@ export const OpenAiProvider = (
         compatibility: 'strict', // Needed to have tokens returned in the response
       })
 
-      const { textStream } = await streamText({
+      const { textStream, usage } = await streamText({
         model: oai(payload.model),
         messages: payload.messages,
       })
 
-      return textStream
+      for await (const chunk of textStream) {
+        await pushText(chunk)
+      }
+
+      const usageResult = await usage // This is a running promise already
+
+      await callbacks.usage(
+        usageResult.promptTokens,
+        usageResult.completionTokens,
+      )
     },
     hasFallbackCredentials: !!params?.fallbackApiKey,
   }
