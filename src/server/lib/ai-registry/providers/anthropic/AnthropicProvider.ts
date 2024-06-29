@@ -33,9 +33,11 @@ export const AnthropicProvider: () => AiRegistryProvider = () => {
     executeAsStream: async (
       payload,
       callbacks,
+      utils,
       options: AnthropicExecuteOptions,
     ) => {
-      const { streamText } = callbacks
+      const { pushText } = callbacks
+      const { streamText } = utils
 
       let nonSystemMessages = payload.messages.filter(
         (message) => message.role !== 'system',
@@ -65,11 +67,21 @@ export const AnthropicProvider: () => AiRegistryProvider = () => {
         apiKey: options.apiKey,
       })
 
-      const { textStream } = await streamText({
+      const { textStream, usage } = await streamText({
         model: anthropic(payload.model),
         messages: payload.messages,
       })
-      return textStream
+
+      for await (const chunk of textStream) {
+        await pushText(chunk)
+      }
+
+      const usageResult = await usage // This is a running promise already
+
+      await callbacks.usage(
+        usageResult.promptTokens,
+        usageResult.completionTokens,
+      )
     },
   }
 }
