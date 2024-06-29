@@ -22,6 +22,11 @@ export type AiRegistryStreamTextParams = Parameters<typeof streamText>[0]
 export type AiRegistryStreamTextReturnType = ReturnType<typeof streamText>
 
 export interface AiRegistryCallbacks {
+  pushText: (text: string) => Promise<void>
+  usage: (promptTokens: number, completionTokens: number) => Promise<void>
+}
+
+export interface AiRegistryUtils {
   streamText: (
     params: AiRegistryStreamTextParams,
   ) => AiRegistryStreamTextReturnType
@@ -41,8 +46,9 @@ export interface AiRegistryProvider {
   executeAsStream(
     payload: AiRegistryExecutePayload,
     callbacks: AiRegistryCallbacks,
+    utils: AiRegistryUtils,
     options?: unknown,
-  ): Promise<AsyncIterableStreamOrReadableStream<string>>
+  ): Promise<void>
 }
 
 export type AiRegistryProviderMeta = Omit<AiRegistryProvider, 'executeAsStream'>
@@ -56,8 +62,9 @@ export interface IKnownProvider<T> extends AiRegistryProvider {
   executeAsStream(
     payload: AiRegistryExecutePayload,
     callbacks: AiRegistryCallbacks,
+    utils: AiRegistryUtils,
     options?: T,
-  ): Promise<AsyncIterableStreamOrReadableStream<string>>
+  ): Promise<void>
 }
 
 export interface AiRegistryExecutePayload {
