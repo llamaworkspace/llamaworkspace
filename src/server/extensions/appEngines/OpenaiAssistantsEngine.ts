@@ -56,12 +56,12 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     })
     const threadId = thread.id
 
-    const streamAsAsyncIterable = openai.beta.threads.runs.stream(threadId, {
+    const response = openai.beta.threads.runs.stream(threadId, {
       // assistant_id: kvs.assistantId,
       assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
     })
 
-    for await (const event of streamAsAsyncIterable) {
+    for await (const event of response) {
       if (event.event === 'thread.message.delta') {
         for (const item of event.data.delta.content ?? []) {
           if (item.type === 'text' && item.text?.value) {
@@ -71,14 +71,13 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       }
       if (event.event === 'thread.run.completed') {
         const usage = event.data.usage
-        usage?.prompt_tokens
-        if (usage) {
-          await Promise.resolve(
-            callbacks.usage(usage.prompt_tokens, usage.completion_tokens),
-          )
-        } else {
-          await Promise.resolve(callbacks.usage(0, 0))
-        }
+
+        await Promise.resolve(
+          callbacks.usage(
+            usage?.prompt_tokens ?? 0,
+            usage?.completion_tokens ?? 0,
+          ),
+        )
       }
     }
   }
