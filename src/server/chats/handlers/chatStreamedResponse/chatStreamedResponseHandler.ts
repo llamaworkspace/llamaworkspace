@@ -5,7 +5,7 @@ import { authOptions } from '@/server/auth/nextauth'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
-import { withMiddlewareForAppRouter } from '@/server/middlewares/withMiddleware'
+import { errorLogger } from '@/shared/errors/errorLogger'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
 import { NextResponse, type NextRequest } from 'next/server'
@@ -19,30 +19,42 @@ const zBody = z.object({
   }),
 })
 
-async function handler(req: NextRequest) {
-  const {
-    data: { chatId },
-  } = await getParsedBody(req)
+const RESPONSE_HEADERS = {
+  'Content-Type': 'text/plain; charset=utf-8',
+}
 
-  const userId = await getSessionUserId()
-  const chat = await getChat(chatId)
-  const workspaceId = chat.app.workspaceId
+// We must handle errors globally with 2 possibilities:
+// 1. Before the stream is returned. => We catch them here
+// 2. In-stream errors or any error happening during the stream. => We catch them in the stream
+export async function chatStreamedResponseHandler(req: NextRequest) {
+  try {
+    const {
+      data: { chatId },
+    } = await getParsedBody(req)
 
-  const context = await createUserOnWorkspaceContext(
-    prisma,
-    workspaceId,
-    userId,
-  )
+    const userId = await getSessionUserId()
+    const chat = await getChat(chatId)
+    const workspaceId = chat.app.workspaceId
 
-  const engines = [new DefaultAppEngine(), ...enginesRegistry]
-  const appEngineRunner = new AppEngineRunner(prisma, context, engines)
+    const context = await createUserOnWorkspaceContext(
+      prisma,
+      workspaceId,
+      userId,
+    )
 
-  const stream = await appEngineRunner.call(chatId)
+    const engines = [new DefaultAppEngine(), ...enginesRegistry]
+    const appEngineRunner = new AppEngineRunner(prisma, context, engines)
 
-  const headers = {
-    'Content-Type': 'text/plain; charset=utf-8',
+    const stream = await appEngineRunner.call(chatId)
+    return new NextResponse(stream, { headers: RESPONSE_HEADERS })
+  } catch (_error) {
+    // Here we will arrive and process all the errors BEFORE
+    // the stream is returned.
+    const error = ensureError(_error)
+    errorLogger(error)
+    const errorMessage = generateAiSdkCompatibleError(error)
+    return new NextResponse(errorMessage, { headers: RESPONSE_HEADERS })
   }
-  return new NextResponse(stream, { headers })
 }
 
 const getChat = async (chatId: string) => {
@@ -78,4 +90,6 @@ const getParsedBody = async (req: NextRequest) => {
   }
 }
 
-export const chatStreamedResponseHandler = withMiddlewareForAppRouter(handler)
+const generateAiSdkCompatibleError = (error: Error) => {
+  return `3:"${error.message}"\n`
+}

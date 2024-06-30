@@ -1,6 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { safeReadableStreamPipe } from '@/lib/streamUtils'
-import { ensureError } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
@@ -75,17 +74,31 @@ export class AppEngineRunner {
           }
         },
       )
+      // Here is too late to log. The error is already type 3
+      const nextStream = stream.pipeThrough(
+        new TransformStream({
+          transform: (chunk, controller) => {
+            try {
+              const text = new TextDecoder().decode(chunk)
+              console.log('text', text)
+              controller.enqueue(text)
+            } catch (error) {
+              console.log('errored here')
+              controller.error(error)
+            }
+          },
+        }),
+      )
+
+      return nextStream
 
       const finalStream = safeReadableStreamPipe(stream, {
         onChunk,
       })
+
       return finalStream
-    } catch (_error) {
-      const error = ensureError(_error)
-      errorLogger(error)
-      if (!hasContent) {
-        await this.deleteMessage(ctx.targetAssistantRawMessage.id)
-      }
+    } catch (error) {
+      await this.deleteMessage(ctx.targetAssistantRawMessage.id)
       throw error
     }
   }
