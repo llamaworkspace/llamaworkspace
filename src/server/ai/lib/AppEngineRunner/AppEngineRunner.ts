@@ -35,10 +35,7 @@ export class AppEngineRunner {
     const rawMessageIds = ctx.rawMessages.map((message) => message.id)
     const chatRun = await this.createChatRun(chatId, rawMessageIds)
 
-    const callbacks = this.getCallbacks(
-      ctx.targetAssistantRawMessage.id,
-      chatRun.id,
-    )
+    const callbacks = this.getCallbacks(ctx.targetAssistantRawMessage.id)
 
     let hasContent = false
     const onChunk = once(() => {
@@ -54,6 +51,7 @@ export class AppEngineRunner {
       await this.processUsage(chatRun.id, requestTokens, responseTokens)
     }
 
+    // TODO: Should be a cron job
     void this.handleTitleCreate(chatId)
 
     try {
@@ -68,6 +66,7 @@ export class AppEngineRunner {
         callbacks,
         async ({ pushText }) => {
           await engine.run(ctx, { pushText, usage: processUsage })
+
           if (!hasProcessUsageBeenCalled) {
             throw createHttpError(
               500,
@@ -309,7 +308,7 @@ export class AppEngineRunner {
     })
   }
 
-  private getCallbacks(targetAssistantMessageId: string, chatRunId: string) {
+  private getCallbacks(targetAssistantMessageId: string) {
     return {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       onToken: () => {},
@@ -317,7 +316,12 @@ export class AppEngineRunner {
         if (partialResult) {
           await this.saveMessage(targetAssistantMessageId, partialResult)
         }
+
         await this.deleteMessage(targetAssistantMessageId)
+        // This errorLogger is important. It's the last place we have to
+        // catch errors happening in the stream before they are converted
+        // into ai-sdk-like errors (a string that starts with "3: <error message>")
+        errorLogger(error)
       },
       onFinal: async (fullMessage: string) => {
         await this.saveMessage(targetAssistantMessageId, fullMessage)
