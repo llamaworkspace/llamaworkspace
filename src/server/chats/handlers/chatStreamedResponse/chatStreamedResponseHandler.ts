@@ -111,13 +111,13 @@ const getParsedBody = async (req: NextRequest) => {
     return zBody.parse(json)
   } catch (_error) {
     const error = ensureError(_error)
-    throw createHttpError(403, error)
+    throw createHttpError(500, error)
   }
 }
 
 const maskServerErrorString = (errorString: string) => {
-  if (errorString.startsWith('3:')) {
-    return '3:"Internal Server Error"\n'
+  if (errorString.startsWith('3:"::public::')) {
+    return errorString.replace('::public::', '')
   }
-  return errorString
+  return '3:"Internal Server Error"\n'
 }
