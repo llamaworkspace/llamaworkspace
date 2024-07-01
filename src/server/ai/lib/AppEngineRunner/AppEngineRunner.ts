@@ -1,6 +1,4 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
-import { safeReadableStreamPipe } from '@/lib/streamUtils'
-import { ensureError } from '@/lib/utils'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
@@ -12,9 +10,9 @@ import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message, PrismaClient } from '@prisma/client'
 import createHttpError from 'http-errors'
-import { chain, once } from 'underscore'
+import { chain } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
-import type { AbstractAppEngine } from '../AbstractAppEngine'
+import type { AbstractAppEngine, AppEngineParams } from '../AbstractAppEngine'
 import { AppEngineResponseStream } from '../AppEngineResponseStream'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 import { chatTitleCreateService } from './chatTitleCreate.service'
@@ -27,39 +25,34 @@ export class AppEngineRunner {
   ) {}
 
   async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
-    await this.validateUserHasPermissionsOrThrow(chatId)
-    await this.maybeAttachAppConfigVersionToChat(chatId)
-
-    const ctx = await this.generateEngineRuntimeContext(chatId)
-
-    const rawMessageIds = ctx.rawMessages.map((message) => message.id)
-    const chatRun = await this.createChatRun(chatId, rawMessageIds)
-
-    const callbacks = this.getCallbacks(
-      ctx.targetAssistantRawMessage.id,
-      chatRun.id,
-    )
-
-    let hasContent = false
-    const onChunk = once(() => {
-      hasContent = true
-    })
-
-    let hasProcessUsageBeenCalled = false
-    const processUsage = async (
-      requestTokens: number,
-      responseTokens: number,
-    ) => {
-      hasProcessUsageBeenCalled = true
-      await this.processUsage(chatRun.id, requestTokens, responseTokens)
-    }
-
-    void this.handleTitleCreate(chatId)
-
+    let outerCtx: AppEngineParams<never> | undefined = undefined
     try {
+      await this.validateUserHasPermissionsOrThrow(chatId)
+      await this.maybeAttachAppConfigVersionToChat(chatId)
+
+      const ctx = await this.generateEngineRuntimeContext(chatId)
+      outerCtx = ctx
+
+      const rawMessageIds = ctx.rawMessages.map((message) => message.id)
+      const chatRun = await this.createChatRun(chatId, rawMessageIds)
+
+      const callbacks = this.getCallbacks(ctx.targetAssistantRawMessage.id)
+
+      let hasProcessUsageBeenCalled = false
+      const processUsage = async (
+        requestTokens: number,
+        responseTokens: number,
+      ) => {
+        hasProcessUsageBeenCalled = true
+        await this.processUsage(chatRun.id, requestTokens, responseTokens)
+      }
+
+      // TODO: Should be a cron job
+      void this.handleTitleCreate(chatId)
+
       const engine = await this.getEngine(chatId)
 
-      const stream = AppEngineResponseStream(
+      return AppEngineResponseStream(
         {
           threadId: chatId,
           messageId: ctx.targetAssistantRawMessage.id,
@@ -68,6 +61,7 @@ export class AppEngineRunner {
         callbacks,
         async ({ pushText }) => {
           await engine.run(ctx, { pushText, usage: processUsage })
+
           if (!hasProcessUsageBeenCalled) {
             throw createHttpError(
               500,
@@ -76,17 +70,9 @@ export class AppEngineRunner {
           }
         },
       )
-
-      const finalStream = safeReadableStreamPipe(stream, {
-        onChunk,
-      })
-      return finalStream
-    } catch (_error) {
-      const error = ensureError(_error)
-      errorLogger(error)
-      if (!hasContent) {
-        await this.deleteMessage(ctx.targetAssistantRawMessage.id)
-      }
+    } catch (error) {
+      if (outerCtx?.targetAssistantRawMessage.id)
+        await this.deleteMessage(outerCtx.targetAssistantRawMessage.id)
       throw error
     }
   }
@@ -309,7 +295,7 @@ export class AppEngineRunner {
     })
   }
 
-  private getCallbacks(targetAssistantMessageId: string, chatRunId: string) {
+  private getCallbacks(targetAssistantMessageId: string) {
     return {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       onToken: () => {},
@@ -317,7 +303,12 @@ export class AppEngineRunner {
         if (partialResult) {
           await this.saveMessage(targetAssistantMessageId, partialResult)
         }
+
         await this.deleteMessage(targetAssistantMessageId)
+        // This errorLogger is important. It's the last place we have to
+        // catch errors happening in the stream before they are converted
+        // into ai-sdk-like errors (a string that starts with "3: <error message>")
+        errorLogger(error)
       },
       onFinal: async (fullMessage: string) => {
         await this.saveMessage(targetAssistantMessageId, fullMessage)

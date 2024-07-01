@@ -5,7 +5,8 @@ import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
 import { Promise } from 'bluebird'
-import { chain } from 'underscore'
+import createHttpError from 'http-errors'
+import { chain, isNumber } from 'underscore'
 import { getProviderAndModelFromFullSlug } from '../../aiUtils'
 import { getAiProviderKVsService } from '../../services/getProvidersForWorkspace.service'
 import type { AppEngineParams } from '../AbstractAppEngine'
@@ -95,10 +96,17 @@ export class AppEnginePayloadBuilder {
         chatId,
       },
     )
-    return chain(messages)
+
+    const message = chain(messages)
       .filter((message) => message.author === Author.Assistant.toString())
       .max((message) => message.createdAt.getTime())
-      .value() as Message
+      .value()
+
+    // If there is no assistant message, it'll be -Infinity (ie a number)
+    if (isNumber(message)) {
+      throw createHttpError(500, 'At least one assistant Message should exist')
+    }
+    return message
   }
 
   private async getProviderKVs(
