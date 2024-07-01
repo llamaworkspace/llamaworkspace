@@ -10,9 +10,9 @@ import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Message, PrismaClient } from '@prisma/client'
 import createHttpError from 'http-errors'
-import { chain, once } from 'underscore'
+import { chain } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
-import type { AbstractAppEngine } from '../AbstractAppEngine'
+import type { AbstractAppEngine, AppEngineParams } from '../AbstractAppEngine'
 import { AppEngineResponseStream } from '../AppEngineResponseStream'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 import { chatTitleCreateService } from './chatTitleCreate.service'
@@ -25,34 +25,31 @@ export class AppEngineRunner {
   ) {}
 
   async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
-    await this.validateUserHasPermissionsOrThrow(chatId)
-    await this.maybeAttachAppConfigVersionToChat(chatId)
-
-    const ctx = await this.generateEngineRuntimeContext(chatId)
-
-    const rawMessageIds = ctx.rawMessages.map((message) => message.id)
-    const chatRun = await this.createChatRun(chatId, rawMessageIds)
-
-    const callbacks = this.getCallbacks(ctx.targetAssistantRawMessage.id)
-
-    let hasContent = false
-    const onChunk = once(() => {
-      hasContent = true
-    })
-
-    let hasProcessUsageBeenCalled = false
-    const processUsage = async (
-      requestTokens: number,
-      responseTokens: number,
-    ) => {
-      hasProcessUsageBeenCalled = true
-      await this.processUsage(chatRun.id, requestTokens, responseTokens)
-    }
-
-    // TODO: Should be a cron job
-    void this.handleTitleCreate(chatId)
-
+    let outerCtx: AppEngineParams<never> | undefined = undefined
     try {
+      await this.validateUserHasPermissionsOrThrow(chatId)
+      await this.maybeAttachAppConfigVersionToChat(chatId)
+
+      const ctx = await this.generateEngineRuntimeContext(chatId)
+      outerCtx = ctx
+
+      const rawMessageIds = ctx.rawMessages.map((message) => message.id)
+      const chatRun = await this.createChatRun(chatId, rawMessageIds)
+
+      const callbacks = this.getCallbacks(ctx.targetAssistantRawMessage.id)
+
+      let hasProcessUsageBeenCalled = false
+      const processUsage = async (
+        requestTokens: number,
+        responseTokens: number,
+      ) => {
+        hasProcessUsageBeenCalled = true
+        await this.processUsage(chatRun.id, requestTokens, responseTokens)
+      }
+
+      // TODO: Should be a cron job
+      void this.handleTitleCreate(chatId)
+
       const engine = await this.getEngine(chatId)
 
       return AppEngineResponseStream(
@@ -74,7 +71,8 @@ export class AppEngineRunner {
         },
       )
     } catch (error) {
-      await this.deleteMessage(ctx.targetAssistantRawMessage.id)
+      if (outerCtx?.targetAssistantRawMessage.id)
+        await this.deleteMessage(outerCtx.targetAssistantRawMessage.id)
       throw error
     }
   }

@@ -117,7 +117,7 @@ const getParsedBody = async (req: NextRequest) => {
 
 const maskServerErrorString = (errorString: string) => {
   if (errorString.startsWith('3:')) {
-    return '3:"Secret server error"\n'
+    return '3:"Internal Server Error"\n'
   }
   return errorString
 }
