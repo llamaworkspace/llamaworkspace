@@ -1,6 +1,9 @@
 import { ensureError } from '@/lib/utils'
-import { errorLogger } from '@/shared/errors/errorLogger'
-import { AssistantResponse, type AssistantMessage, type DataMessage } from 'ai'
+import {
+  AssistantResponse as AssistantResponseFromAiSdk,
+  type AssistantMessage,
+  type DataMessage,
+} from 'ai'
 import { AssistantStream } from 'openai/lib/AssistantStream'
 import { type Run } from 'openai/resources/beta/threads/runs/runs'
 
@@ -64,6 +67,7 @@ export const AppEngineResponseStream = (
             stringifyPayload(threadMessageDelta),
           )
           controller.enqueue(encoded)
+
           fullMessage += text
           await Promise.resolve(onToken(text))
         }
@@ -100,6 +104,7 @@ export const AppEngineResponseStream = (
           controller.close()
         } catch (_error) {
           controller.error(ensureError(_error))
+          throw _error
         }
       },
     })
@@ -111,12 +116,14 @@ export const AppEngineResponseStream = (
     } catch (_error) {
       const error = ensureError(_error)
       await Promise.resolve(onError(error, fullMessage))
-      errorLogger(error)
-      // No need to re-throw, does nothing.
+      throw error
     }
   }
 
-  const response = AssistantResponse({ threadId, messageId }, processFunc)
+  const response = AssistantResponseFromAiSdk(
+    { threadId, messageId },
+    processFunc,
+  )
 
   if (!response.body) {
     throw new Error('Response body is missing in AppEngineResponseStream')

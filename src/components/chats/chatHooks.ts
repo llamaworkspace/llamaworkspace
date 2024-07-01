@@ -1,5 +1,6 @@
 import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
+import { ensureError } from '@/lib/utils'
 import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useAssistant as useVercelAssistant } from 'ai/react'
 import { produce } from 'immer'
@@ -7,6 +8,7 @@ import { debounce } from 'lodash'
 import { useCallback, useEffect } from 'react'
 import { useDefaultApp } from '../apps/appsHooks'
 import { useErrorHandler } from '../global/errorHandlingHooks'
+import { useErrorToast } from '../ui/toastHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
 const useCreateMessage = () => {
@@ -115,17 +117,15 @@ export const useAppConfigForChat = (chatId?: string) => {
 }
 
 export const usePrompt = (chatId?: string) => {
-  const utils = api.useContext()
+  const utils = api.useUtils()
   const errorHandler = useErrorHandler()
+  const errorToast = useErrorToast()
 
-  const onAssistantError = (error: Error) => {
-    clearVercelMessages()
-    errorHandler()(error)
-
-    if (chatId) {
-      void utils.chats.getMessagesByChatId.refetch({ chatId })
-    }
-  }
+  // Utils is not deep equal stable, so we need to memoize it
+  const refetchMessages = useCallback(() => {
+    if (!chatId) return
+    return utils.chats.getMessagesByChatId.refetch({ chatId })
+  }, [chatId, utils])
 
   const {
     messages: vercelAssistantMessages,
@@ -135,20 +135,31 @@ export const usePrompt = (chatId?: string) => {
     error,
   } = useVercelAssistant({
     api: '/api/chat',
-    onError: onAssistantError,
   })
-
-  useEffect(() => {
-    if (error) {
-      errorHandler()(error)
-    }
-  }, [errorHandler, error])
-
-  const chatIsActive = assistantStatus !== 'awaiting_message'
 
   const clearVercelMessages = useCallback(() => {
     setVercelAssistantMessages([])
   }, [setVercelAssistantMessages])
+
+  useEffect(() => {
+    if (error) {
+      errorToast(ensureError(error).message)
+    }
+    clearVercelMessages()
+
+    if (chatId) {
+      void refetchMessages()
+    }
+  }, [
+    errorHandler,
+    error,
+    errorToast,
+    chatId,
+    clearVercelMessages,
+    refetchMessages,
+  ])
+
+  const chatIsActive = assistantStatus !== 'awaiting_message'
 
   const targetMessage =
     vercelAssistantMessages?.[vercelAssistantMessages.length - 1]?.content

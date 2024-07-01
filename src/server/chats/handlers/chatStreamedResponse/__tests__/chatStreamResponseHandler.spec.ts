@@ -109,7 +109,11 @@ describe('chatStreamedResponseHandler', () => {
       user.id,
     )
 
-    expect(res.status).toBe(403)
+    const body = await res.text()
+
+    // For this endpoint, we always 200 and return ai-sdk compatible errors
+    expect(res.status).toBe(200)
+    expect(body).toBe('3:"Internal Server Error"\n')
   })
 
   describe('when unauthenticated', () => {
@@ -126,7 +130,11 @@ describe('chatStreamedResponseHandler', () => {
         null,
       )
 
-      expect(res.status).toBe(401)
+      const body = await res.text()
+
+      // For this endpoint, we always 200 and return ai-sdk compatible errors
+      expect(res.status).toBe(200)
+      expect(body).toBe('3:"You must be logged in."\n')
     })
   })
 })
