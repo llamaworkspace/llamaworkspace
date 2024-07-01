@@ -1,3 +1,7 @@
+import {
+  generateAiSdkCompatibleErrorString,
+  isAiSdkErrorString,
+} from '@/lib/aiSdkUtils'
 import { ensureError } from '@/lib/utils'
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
 import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
@@ -46,13 +50,34 @@ export async function chatStreamedResponseHandler(req: NextRequest) {
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
 
     const stream = await appEngineRunner.call(chatId)
-    return new NextResponse(stream, { headers: RESPONSE_HEADERS })
+
+    const textDecoder = new TextDecoder()
+    const nextStream = stream.pipeThrough<Uint8Array>(
+      new TransformStream({
+        transform: (chunk, controller) => {
+          const text = textDecoder.decode(chunk)
+          if (isAiSdkErrorString(text)) {
+            const textEncoder = new TextEncoder()
+            const errorString = maskServerErrorString(text)
+            const encodedError = textEncoder.encode(errorString)
+            controller.enqueue(encodedError)
+            return
+          }
+
+          controller.enqueue(chunk)
+        },
+      }),
+    )
+    return new NextResponse(nextStream, { headers: RESPONSE_HEADERS })
   } catch (_error) {
     // Here we will arrive and process all the errors BEFORE
     // the stream is returned.
     const error = ensureError(_error)
     errorLogger(error)
-    const errorMessage = generateAiSdkCompatibleError(error)
+    const errorMessage = maskServerErrorString(
+      generateAiSdkCompatibleErrorString(error),
+    )
+
     return new NextResponse(errorMessage, { headers: RESPONSE_HEADERS })
   }
 }
@@ -90,6 +115,9 @@ const getParsedBody = async (req: NextRequest) => {
   }
 }
 
-const generateAiSdkCompatibleError = (error: Error) => {
-  return `3:"${error.message}"\n`
+const maskServerErrorString = (errorString: string) => {
+  if (errorString.startsWith('3:')) {
+    return '3:"Secret server error"\n'
+  }
+  return errorString
 }

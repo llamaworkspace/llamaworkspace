@@ -7,7 +7,7 @@ interface SafeReadableStreamPipeCallbacks<T> {
   onEnd?: (finalResult: T[]) => void | Promise<void>
 }
 
-export const safeReadableStreamPipe = <T>(
+export const experimental_safeReadableStreamPipe = <T>(
   stream: ReadableStream<T>,
   callbacks?: SafeReadableStreamPipeCallbacks<T>,
 ) => {
