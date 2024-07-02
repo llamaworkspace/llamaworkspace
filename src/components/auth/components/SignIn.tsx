@@ -89,18 +89,12 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
 
   const handleFormSubmit = async (values: UserAuthFormValues) => {
     setIsLoading(true)
-
-    try {
-      await signIn(
-        'email',
-        { email: values.email },
-        { callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p') },
-      )
-    } catch (error) {
-      console.log('Error signing in with email', error)
-    } finally {
-      setIsLoading(false)
-    }
+    await signIn(
+      'email',
+      { email: values.email },
+      { callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p') },
+    )
+    setIsLoading(false)
   }
 
   return (

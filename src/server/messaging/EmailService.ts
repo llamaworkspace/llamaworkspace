@@ -9,7 +9,7 @@ interface SendParams {
   payload: Record<string, string>
 }
 
-export class EmailServicex {
+export class EmailService {
   async send({ to }: SendParams) {
     const element = createElement(emailsCatalog[0]!, {
       targetUrl: 'PEPE-is-a-car',
