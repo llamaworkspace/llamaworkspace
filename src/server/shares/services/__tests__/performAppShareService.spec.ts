@@ -1,6 +1,6 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { sendEmail } from '@/server/mailer/mailer'
+import { sendEmail } from '@/server/messaging/mailer'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'

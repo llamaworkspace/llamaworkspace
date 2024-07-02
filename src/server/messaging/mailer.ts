@@ -22,6 +22,12 @@ export const sendEmail = async (params: ISendEmailParams) => {
     ? `${fromName} <${fromEmail ?? SMTP_EMAIL_FROM}>`
     : SMTP_EMAIL_FROM
 
+  console.log(1111, {
+    from,
+    to,
+    subject,
+    text,
+  })
   await sendEmailQueue.enqueue('send', {
     from,
     to,

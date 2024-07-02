@@ -1,3 +1,4 @@
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { InputField } from '@/components/ui/forms/InputField'
 import {
@@ -82,36 +83,63 @@ interface UserAuthFormValues {
 export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
   const [isLoading, setIsLoading] = React.useState(false)
   const navigation = useNavigation()
+  const { query } = navigation
   const queryCallbackUrl =
     callbackUrl ?? (navigation.query?.callbackUrl as string | undefined)
-  console.log(11, getSanitizedCallbackUrl(queryCallbackUrl, '/p'))
+
   const handleFormSubmit = async (values: UserAuthFormValues) => {
-    await signIn(
-      'email',
-      { email: values.email },
-      { callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p') },
-    )
+    setIsLoading(true)
+
+    try {
+      await signIn(
+        'email',
+        { email: values.email },
+        { callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p') },
+      )
+    } catch (error) {
+      console.log('Error signing in with email', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <FinalForm<UserAuthFormValues>
-      onSubmit={handleFormSubmit}
-      render={({ handleSubmit }) => {
-        return (
-          <div className="grid gap-6">
-            <SignInButtons />
+    <div className="grid gap-6">
+      {query.error && (
+        <Alert variant="danger">
+          <AlertTitle>Sign in failed</AlertTitle>
+          <AlertDescription className="space-y-2">
+            <p>
+              There was a system error signing you in. Please try again or
+              contact the administrator.
+            </p>{' '}
+            <p className="text-xs">Error code: {query.error}</p>
+          </AlertDescription>
+        </Alert>
+      )}
+      <SignInButtons />
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="text-muted-foreground bg-white px-2">
-                  Or continue with email
-                </span>
-              </div>
-            </div>
-            <form onSubmit={(ev) => void handleSubmit(ev)}>
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="text-muted-foreground bg-white px-2">
+            Or continue with email
+          </span>
+        </div>
+      </div>
+      <FinalForm<UserAuthFormValues>
+        onSubmit={handleFormSubmit}
+        initialValues={{ email: 'imayolas@gmail.com' }}
+        render={({ handleSubmit }) => {
+          return (
+            <form
+              onSubmit={(ev) => {
+                ev.preventDefault()
+                handleSubmit()
+              }}
+            >
               <div className="grid gap-2">
                 <div className="grid gap-1">
                   <Field
@@ -141,10 +169,10 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
                 </Button>
               </div>
             </form>
-          </div>
-        )
-      }}
-    ></FinalForm>
+          )
+        }}
+      />
+    </div>
   )
 }
 

@@ -1,6 +1,6 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { sendEmail } from '@/server/mailer/mailer'
+import { sendEmail } from '@/server/messaging/mailer'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { faker } from '@faker-js/faker'

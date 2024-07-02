@@ -1,7 +1,7 @@
 import { env } from '@/env.mjs'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { sendEmail } from '@/server/mailer/mailer'
+import { sendEmail } from '@/server/messaging/mailer'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { inviteToWorkspaceService } from '@/server/workspaces/services/inviteToWorkspace.service'
 import { WorkspaceInviteSources } from '@/server/workspaces/workspaceTypes'
