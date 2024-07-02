@@ -50,7 +50,7 @@ const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
             fontWeight: 'bold',
           }}
         >
-          Click here to log in with this magic link
+          Click here to log in
         </Link>
         <Text style={{ ...text, marginBottom: '14px' }}>
           If the link does not work, copy and paste the following link:

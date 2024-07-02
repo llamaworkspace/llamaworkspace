@@ -182,7 +182,7 @@ const sendEmailToInvitedUser = async (params: SendEmailToInvitedUserParams) => {
     fromName,
     to: invitedUserEmail,
     subject,
-    body: getEmailBody(
+    text: getEmailBody(
       invitingUserName,
       workspaceUrl,
       workspaceName,

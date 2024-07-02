@@ -8,7 +8,8 @@ interface ISendEmailParams {
   fromEmail?: string
   to: string
   subject: string
-  body: string
+  text: string
+  html: string
 }
 
 export const sendEmail = async (params: ISendEmailParams) => {
@@ -16,22 +17,17 @@ export const sendEmail = async (params: ISendEmailParams) => {
     throw new Error('sendEmail is not available in test environment')
   }
 
-  const { fromName, fromEmail, to, subject, body: text } = params
+  const { fromName, fromEmail, to, subject, text, html } = params
 
   const from = fromName
     ? `${fromName} <${fromEmail ?? SMTP_EMAIL_FROM}>`
     : SMTP_EMAIL_FROM
 
-  console.log(1111, {
-    from,
-    to,
-    subject,
-    text,
-  })
   await sendEmailQueue.enqueue('send', {
     from,
     to,
     subject,
     text,
+    html,
   })
 }

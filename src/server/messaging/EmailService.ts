@@ -29,7 +29,8 @@ export class EmailService {
     await sendEmail({
       to,
       subject,
-      body: emailHtml,
+      text: emailHtml,
+      html: emailHtml,
     })
   }
 

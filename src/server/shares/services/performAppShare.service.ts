@@ -256,7 +256,7 @@ const sendShareNotificationEmail = async (
     fromName: 'Joia',
     to: invitedUserEmail,
     subject,
-    body: getEmailBody(
+    text: getEmailBody(
       invitingUserName ?? 'A colleague',
       invitingUserEmail,
       app.title ?? 'Untitled GPT',
