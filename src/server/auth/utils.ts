@@ -20,8 +20,8 @@ export const sendVerificationRequestForEmailProvider = async (
 
     await emailService.send({
       to: identifier,
-      templateName: 'MagicLinkEmail',
-      payload: { loginCode: 'PEPE-is-a-car' },
+      templateName: 'magicLink',
+      payload: { targetUrl: 'https://joia.so' },
     })
   } catch (error) {
     errorLogger(ensureError(error))

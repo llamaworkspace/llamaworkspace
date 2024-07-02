@@ -1,3 +1,4 @@
+import { env } from '@/env.mjs'
 import {
   Body,
   Container,
@@ -9,15 +10,14 @@ import {
   Preview,
   Text,
 } from '@react-email/components'
+import { z } from 'zod'
 import { code, container, footer, h1, link, main, text } from './styleTokens'
 
 interface MagicLinkEmailProps {
   targetUrl?: string
 }
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : ''
+const frontendUrl = env.NEXT_PUBLIC_FRONTEND_URL
 
 const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
   <Html>
@@ -27,7 +27,7 @@ const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
     <Body style={main}>
       <Container style={{ ...container, marginTop: '48px' }}>
         <Img
-          src={`${baseUrl}/static/llws.png`}
+          src={`${frontendUrl}/static/llws.png`}
           width="96"
           height="96"
           alt="Notion's Logo"
@@ -40,7 +40,7 @@ const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
           Workspace account.
         </Text>
         <Link
-          href="https://notion.so"
+          href={targetUrl}
           target="_blank"
           style={{
             ...link,
@@ -55,9 +55,7 @@ const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
         <Text style={{ ...text, marginBottom: '14px' }}>
           If the link does not work, copy and paste the following link:
         </Text>
-        <code style={code}>
-          https://react.email/docs/getting-started/automatic-setup?url=https://react.email/docs/getting-started/automatic-setup
-        </code>
+        <code style={code}>{targetUrl}</code>
         <Text
           style={{
             ...text,
@@ -85,9 +83,14 @@ const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
 )
 
 MagicLinkEmail.PreviewProps = {
-  targetUrl: 'sparo-ndigo-amurt-secan',
+  targetUrl: 'https://llamaworkspace.ai/log-me-in',
 } as MagicLinkEmailProps
 
-MagicLinkEmail.templateName = 'magicLink'
-
-export { MagicLinkEmail }
+export const magicLinkEmail = {
+  name: 'magicLink',
+  subject: 'Log in to Llama Workspace {{targetUrl}}',
+  reactFC: MagicLinkEmail,
+  paramsValidator: z.object({
+    targetUrl: z.string().url(),
+  }),
+}
