@@ -1,4 +1,3 @@
-import { handleUserSignup } from '@/components/auth/backend/handleUserSignup'
 import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
@@ -10,7 +9,9 @@ import {
 } from 'next-auth'
 import EmailProvider from 'next-auth/providers/email'
 import GoogleProvider from 'next-auth/providers/google'
-import { sendVerificationRequestForEmailProvider } from './utils'
+import { handleUserSignup } from './utils/handleUserSignup'
+import { sendVerificationRequestForEmailProvider } from './utils/sendVerificationRequestForEmailProvider'
+handleUserSignup
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`

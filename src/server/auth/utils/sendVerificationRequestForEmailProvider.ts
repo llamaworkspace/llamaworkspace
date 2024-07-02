@@ -1,7 +1,7 @@
 import { ensureError } from '@/lib/utils'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { SendVerificationRequestParams } from 'next-auth/providers/email'
-import { EmailService } from '../messaging/EmailService'
+import { EmailService } from '../../messaging/EmailService'
 
 export const sendVerificationRequestForEmailProvider = async (
   params: SendVerificationRequestParams,

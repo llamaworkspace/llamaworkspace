@@ -125,7 +125,7 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
       </div>
       <FinalForm<UserAuthFormValues>
         onSubmit={handleFormSubmit}
-        initialValues={{ email: 'imayolas@gmail.com' }}
+        initialValues={{ email: 'imayolas@gmail.com' }} // !!!!!!Remove this line
         render={({ handleSubmit }) => {
           return (
             <form

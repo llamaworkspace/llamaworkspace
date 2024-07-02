@@ -7,7 +7,7 @@ import { TRPCError } from '@trpc/server'
 import {
   UserOnWorkspaceContext,
   createUserOnWorkspaceContext,
-} from '../userOnWorkspaceContext'
+} from '../../userOnWorkspaceContext'
 
 const mockFindFirst = jest.fn()
 jest.mock('@/shared/globalTypes', () => ({
