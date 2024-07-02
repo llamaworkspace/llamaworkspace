@@ -2,7 +2,7 @@ import { renderAsync } from '@react-email/components'
 import createHttpError from 'http-errors'
 import { createElement } from 'react'
 import _ from 'underscore'
-import { z } from 'zod'
+import { ZodRawShape, z } from 'zod'
 import { emailsCatalog } from './emailsCatalog'
 import { sendEmail } from './mailer'
 
@@ -39,7 +39,7 @@ export class EmailService {
   }
 
   private async validateParamsOrThrow(
-    zodValidator: z.ZodObject<any, any>,
+    zodValidator: z.ZodObject<ZodRawShape>,
     payload: Record<string, string>,
   ) {
     return await zodValidator.parseAsync(payload)

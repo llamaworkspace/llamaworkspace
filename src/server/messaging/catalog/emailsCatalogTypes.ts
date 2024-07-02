@@ -1,7 +1,7 @@
-import { z } from 'zod'
+import { ZodRawShape, z } from 'zod'
 
 export interface EmailCatalogItem {
   name: string
   reactFC: React.FC
-  paramsValidator: z.ZodObject<any, any>
+  paramsValidator: z.ZodObject<ZodRawShape>
 }

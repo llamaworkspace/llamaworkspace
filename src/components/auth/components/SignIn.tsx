@@ -131,7 +131,7 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
             <form
               onSubmit={(ev) => {
                 ev.preventDefault()
-                handleSubmit()
+                void handleSubmit()
               }}
             >
               <div className="grid gap-2">
