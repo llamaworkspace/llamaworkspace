@@ -7,12 +7,6 @@ import { faker } from '@faker-js/faker'
 import type { User, Workspace } from '@prisma/client'
 import { inviteToWorkspaceService } from '../inviteToWorkspace.service'
 
-jest.mock('@/server/mailer/mailer', () => {
-  return {
-    sendEmail: jest.fn(),
-  }
-})
-
 const subject = async (
   workspaceId: string,
   userId: string,
@@ -71,7 +65,7 @@ describe('inviteToWorkspaceService', () => {
       fromName: `${invitingUser.name} - via Joia`,
       to: email,
       subject: `Your invitation to the workspace "${workspace.name}"`,
-      body: expect.stringContaining(
+      text: expect.stringContaining(
         `${invitingUser.name} has invited you to the following workspace at Joia: ${workspace.name}`,
       ) as string,
     })
