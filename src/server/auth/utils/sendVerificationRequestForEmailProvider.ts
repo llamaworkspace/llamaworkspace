@@ -7,7 +7,7 @@ export const sendVerificationRequestForEmailProvider = async (
   params: SendVerificationRequestParams,
 ) => {
   try {
-    const { identifier, url, provider } = params
+    const { identifier, url, provider, token } = params
 
     // Hack derived from callbackUrl actually existing in the provider object
     const { callbackUrl } = provider as unknown as { callbackUrl: string }
@@ -21,7 +21,7 @@ export const sendVerificationRequestForEmailProvider = async (
     await emailService.send({
       to: identifier,
       templateName: 'magicLink',
-      payload: { targetUrl: 'https://joia.so' },
+      payload: { targetUrl: url },
     })
   } catch (error) {
     errorLogger(ensureError(error))

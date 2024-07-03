@@ -13,11 +13,11 @@ import {
 import { z } from 'zod'
 import { code, container, footer, h1, link, main, text } from './styleTokens'
 
+const frontendUrl = env.NEXT_PUBLIC_FRONTEND_URL
+
 interface MagicLinkEmailProps {
   targetUrl?: string
 }
-
-const frontendUrl = env.NEXT_PUBLIC_FRONTEND_URL
 
 const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
   <Html>
@@ -27,10 +27,10 @@ const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
     <Body style={main}>
       <Container style={{ ...container, marginTop: '48px' }}>
         <Img
-          src={`${frontendUrl}/static/llws.png`}
+          src={`${frontendUrl}/images/llama-workspace-logo-300.png`}
           width="96"
           height="96"
-          alt="Notion's Logo"
+          alt="Llama Workspace Logo"
           style={{ marginBottom: '16px' }}
         />
         <Heading style={h1}>Click to login</Heading>
@@ -56,6 +56,7 @@ const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
           If the link does not work, copy and paste the following link:
         </Text>
         <code style={code}>{targetUrl}</code>
+
         <Text
           style={{
             ...text,
@@ -82,13 +83,9 @@ const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
   </Html>
 )
 
-MagicLinkEmail.PreviewProps = {
-  targetUrl: 'https://llamaworkspace.ai/log-me-in',
-} as MagicLinkEmailProps
-
 export const magicLinkEmail = {
   name: 'magicLink',
-  subject: 'Log in to Llama Workspace {{targetUrl}}',
+  subject: 'Your login link Llama Workspace',
   reactFC: MagicLinkEmail,
   paramsValidator: z.object({
     targetUrl: z.string().url(),

@@ -27,6 +27,8 @@ export class EmailService {
     const emailHtml = await renderAsync(element)
 
     await sendEmail({
+      fromName: 'Llama Workspace',
+      // fromEmail: 'info@llamaworkspace.ai',
       to,
       subject,
       text: emailHtml,

@@ -10,16 +10,15 @@ import { useNavigation } from '@/lib/frontend/useNavigation'
 import { signIn } from 'next-auth/react'
 import Head from 'next/head'
 import Image from 'next/image'
-import Link from 'next/link'
 import * as React from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { SignInButtons } from './SignInButtons'
 
-export const SignIn = () => {
+export const VerifyRequest = () => {
   return (
     <>
       <Head>
-        <title>Sign In | Llama Workspace</title>
+        <title>Verify request | Llama Workspace</title>
       </Head>
       <div className="mx-auto flex h-full px-4">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
@@ -33,23 +32,11 @@ export const SignIn = () => {
             />
             <div className="space-y-2">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Identify yourself to get started
+                We have sent you a login link
               </h1>
-              <p className="text-muted-foreground text-sm">
-                We&apos;ll log you in if you already have an account, or sign
-                you up if you&apos;re new.
-              </p>
-
-              <UserAuthForm />
-              <p className="text-muted-foreground px-8 text-center text-sm">
-                By clicking continue, you agree to our{' '}
-                <Link
-                  href="https://joia.so/blog/privacy-policy"
-                  className="hover:text-primary underline underline-offset-4"
-                >
-                  Privacy Policy
-                </Link>
-                .
+              <p className="text-muted-foreground ">
+                Check your Inbox, you'll find an email sent from us. Click on
+                the link inside the email and we will log you in automatically.
               </p>
             </div>
           </div>
@@ -74,15 +61,12 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
     setIsLoading(true)
     await signIn(
       'email',
-      {
-        email: values.email,
-        callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
-      },
-      // { callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p') },
+      { email: values.email },
+      { callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p') },
     )
     setIsLoading(false)
   }
-  console.log(111, getSanitizedCallbackUrl(queryCallbackUrl, '/p'))
+
   return (
     <div className="grid gap-6">
       {query.error && (

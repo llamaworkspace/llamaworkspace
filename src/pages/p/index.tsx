@@ -18,9 +18,7 @@ export const getServerSideProps: GetServerSideProps = async (
     }
   }
   const userId = session?.user.id
-
   const { url } = await getEntrypointRedirectUrlService(prisma, userId)
-
   return {
     redirect: {
       destination: url,
