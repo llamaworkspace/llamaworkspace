@@ -11,7 +11,8 @@ const zPayload = z.object({
   from: z.string(),
   to: z.string(),
   subject: z.string(),
-  text: z.string(),
+  text: z.string().optional(),
+  html: z.string().optional(),
 })
 
 type SendEmailEventPayload = z.infer<typeof zPayload>

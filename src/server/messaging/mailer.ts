@@ -8,7 +8,8 @@ interface ISendEmailParams {
   fromEmail?: string
   to: string
   subject: string
-  body: string
+  text?: string
+  html?: string
 }
 
 export const sendEmail = async (params: ISendEmailParams) => {
@@ -16,10 +17,12 @@ export const sendEmail = async (params: ISendEmailParams) => {
     throw new Error('sendEmail is not available in test environment')
   }
 
-  const { fromName, fromEmail, to, subject, body: text } = params
+  const { fromName, fromEmail, to, subject, text, html } = params
 
-  const from = fromName
-    ? `${fromName} <${fromEmail ?? SMTP_EMAIL_FROM}>`
+  const finalFromName = fromName ?? 'Llama Workspace'
+
+  const from = finalFromName
+    ? `${finalFromName} <${fromEmail ?? SMTP_EMAIL_FROM}>`
     : SMTP_EMAIL_FROM
 
   await sendEmailQueue.enqueue('send', {
@@ -27,5 +30,6 @@ export const sendEmail = async (params: ISendEmailParams) => {
     to,
     subject,
     text,
+    html,
   })
 }
