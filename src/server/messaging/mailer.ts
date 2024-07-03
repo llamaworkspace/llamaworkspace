@@ -19,8 +19,10 @@ export const sendEmail = async (params: ISendEmailParams) => {
 
   const { fromName, fromEmail, to, subject, text, html } = params
 
-  const from = fromName
-    ? `${fromName} <${fromEmail ?? SMTP_EMAIL_FROM}>`
+  const finalFromName = fromName ?? 'Llama Workspace'
+
+  const from = finalFromName
+    ? `${finalFromName} <${fromEmail ?? SMTP_EMAIL_FROM}>`
     : SMTP_EMAIL_FROM
 
   await sendEmailQueue.enqueue('send', {
