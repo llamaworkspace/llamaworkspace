@@ -44,7 +44,7 @@ export const appUpdateService = async (
     if (app.engineType && payload.engineType) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'GPT Engine cannot be updated once set',
+        message: 'App Engine cannot be updated once set',
       })
     }
     return await prisma.app.update({

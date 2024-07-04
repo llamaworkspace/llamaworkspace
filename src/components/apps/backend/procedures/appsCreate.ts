@@ -2,6 +2,7 @@ import { appCreateService } from '@/server/apps/services/appCreate.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
+import { AppEngineType } from '../../appsTypes'
 
 const zCreateInput = z.object({
   workspaceId: z.string(),
@@ -20,6 +21,7 @@ export const appsCreate = protectedProcedure
     )
 
     return await appCreateService(ctx.prisma, context, {
+      engineType: AppEngineType.Assistant,
       title: input.title ?? undefined,
     })
   })

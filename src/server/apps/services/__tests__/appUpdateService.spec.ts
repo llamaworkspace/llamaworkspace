@@ -98,47 +98,22 @@ describe('appUpdateService', () => {
   })
 
   describe('engineType updates', () => {
-    describe('when engineType is not set', () => {
-      it('updates the app', async () => {
-        const appInDbBefore = await prisma.app.findFirstOrThrow({
-          where: {
-            id: app.id,
-          },
-        })
-        expect(appInDbBefore.engineType).toBe(null)
-
-        await subject(workspace.id, user.id, app.id, {
+    beforeEach(async () => {
+      await prisma.app.update({
+        where: {
+          id: app.id,
+        },
+        data: {
           engineType: AppEngineType.Assistant,
-        })
-
-        const appInDb = await prisma.app.findFirstOrThrow({
-          where: {
-            id: app.id,
-          },
-        })
-
-        expect(appInDb.engineType).toBe(AppEngineType.Assistant)
+        },
       })
     })
-
-    describe('when engineType is set', () => {
-      beforeEach(async () => {
-        await prisma.app.update({
-          where: {
-            id: app.id,
-          },
-          data: {
-            engineType: AppEngineType.Assistant,
-          },
-        })
-      })
-      it('throws when trying to update it', async () => {
-        await expect(
-          subject(workspace.id, user.id, app.id, {
-            engineType: AppEngineType.Assistant,
-          }),
-        ).rejects.toThrow('GPT Engine cannot be updated once set')
-      })
+    it('throws when trying to update it', async () => {
+      await expect(
+        subject(workspace.id, user.id, app.id, {
+          engineType: AppEngineType.Assistant,
+        }),
+      ).rejects.toThrow('App Engine cannot be updated once set')
     })
   })
 })

@@ -73,7 +73,7 @@ export const AppConfigForGPTSettings = ({
                 {...input}
                 meta={meta}
                 placeholder="Select engine"
-                label="GPT engine"
+                label="App engine"
                 disabled={disabled}
               />
             )
