@@ -127,7 +127,7 @@ model App {
     appConfigVersions AppConfigVersion[]
     shares            Share[]
     usersMeta         AppsOnUsers[]
-    files             AssetsOnApps[]
+    assets            AssetsOnApps[]
 }
 
 model AppsOnUsers {
