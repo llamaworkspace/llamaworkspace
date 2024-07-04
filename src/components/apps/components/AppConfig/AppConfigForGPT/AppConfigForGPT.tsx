@@ -34,7 +34,6 @@ interface SubmitProps {
   description?: string
   model: OpenAiModelEnum
   redirect?: boolean
-  engineType?: string
 }
 
 export function AppConfigForGPT({ appId }: AppConfigProps) {
@@ -61,15 +60,12 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
 
     const { emoji, title, systemMessage, description, model } = values
 
-    const engineType = app.engineType ? undefined : values.engineType
-
     try {
       await Promise.all([
         updateApp({
           id: app?.id,
           emoji: emoji ?? null,
           title: title ?? null,
-          engineType,
         }),
         updateAppConfigVersion({
           id: appConfig?.id,

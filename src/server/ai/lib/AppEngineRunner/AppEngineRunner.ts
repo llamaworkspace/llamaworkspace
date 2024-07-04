@@ -25,13 +25,13 @@ export class AppEngineRunner {
   ) {}
 
   async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
-    let outerCtx: AppEngineParams<never> | undefined = undefined
+    let hoistedCtx: AppEngineParams<never> | undefined = undefined
     try {
       await this.validateUserHasPermissionsOrThrow(chatId)
       await this.maybeAttachAppConfigVersionToChat(chatId)
 
       const ctx = await this.generateEngineRuntimeContext(chatId)
-      outerCtx = ctx
+      hoistedCtx = ctx
 
       const rawMessageIds = ctx.rawMessages.map((message) => message.id)
       const chatRun = await this.createChatRun(chatId, rawMessageIds)
@@ -71,8 +71,8 @@ export class AppEngineRunner {
         },
       )
     } catch (error) {
-      if (outerCtx?.targetAssistantRawMessage.id)
-        await this.deleteMessage(outerCtx.targetAssistantRawMessage.id)
+      if (hoistedCtx?.targetAssistantRawMessage.id)
+        await this.deleteMessage(hoistedCtx.targetAssistantRawMessage.id)
       throw error
     }
   }
@@ -84,17 +84,17 @@ export class AppEngineRunner {
     })
 
     const engineTypeStr = chat.app.engineType
-    if (!engineTypeStr) {
-      throw createHttpError(500, 'Engine type is not defined')
-    }
+
     if (engineTypeStr === AppEngineType.Default.toString()) {
       return this.getDefaultEngine()
     }
 
-    // TODO: this should be dynamic
     const engine = this.getEngineByName('OpenaiAssistantsEngine')
     if (!engine) {
-      return this.getDefaultEngine()
+      throw createHttpError(
+        500,
+        'OpenaiAssistantsEngine has been accidentally deleted.',
+      )
     }
 
     return engine

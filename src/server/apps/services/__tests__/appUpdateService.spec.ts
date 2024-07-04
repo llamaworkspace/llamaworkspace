@@ -87,6 +87,7 @@ describe('appUpdateService', () => {
         userId: user.id,
         workspaceId: workspace.id,
         isDefault: true,
+        engineType: AppEngineType.Default,
       })
     })
 
@@ -94,26 +95,6 @@ describe('appUpdateService', () => {
       await expect(
         subject(workspace.id, user.id, defaultApp.id),
       ).rejects.toThrow()
-    })
-  })
-
-  describe('engineType updates', () => {
-    beforeEach(async () => {
-      await prisma.app.update({
-        where: {
-          id: app.id,
-        },
-        data: {
-          engineType: AppEngineType.Assistant,
-        },
-      })
-    })
-    it('throws when trying to update it', async () => {
-      await expect(
-        subject(workspace.id, user.id, app.id, {
-          engineType: AppEngineType.Assistant,
-        }),
-      ).rejects.toThrow('App Engine cannot be updated once set')
     })
   })
 })
