@@ -2,15 +2,12 @@ import { AppEngineType } from '@/components/apps/appsTypes'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
-import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { saveTokenCountService } from '@/server/chats/services/saveTokenCount.service'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Message, PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@prisma/client'
 import createHttpError from 'http-errors'
-import { chain } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type { AbstractAppEngine, AppEngineParams } from '../AbstractAppEngine'
 import { AppEngineResponseStream } from '../AppEngineResponseStream'
@@ -75,6 +72,18 @@ export class AppEngineRunner {
         await this.deleteMessage(hoistedCtx.targetAssistantRawMessage.id)
       throw error
     }
+  }
+
+  async attachAsset(appId: string, assetId: string) {
+    const assetOnAppId = await this.prisma.assetsOnApps.findFirstOrThrow({
+      where: {
+        assetId,
+        appId: appId,
+      },
+    })
+
+    const engine = this.getEngine(appId)
+    await engine.attachAsset()
   }
 
   private async getEngine(chatId: string) {
@@ -209,20 +218,6 @@ export class AppEngineRunner {
     return await chatTitleCreateService(this.prisma, this.context, { chatId })
   }
 
-  private async getTargetAssistantMessage(chatId: string) {
-    const messages = await getMessagesByChatIdService(
-      this.prisma,
-      this.context,
-      {
-        chatId,
-      },
-    )
-    return chain(messages)
-      .filter((message) => message.author === Author.Assistant.toString())
-      .max((message) => message.createdAt.getTime())
-      .value() as Message
-  }
-
   private async generateEngineRuntimeContext(chatId: string) {
     const appEnginePayloadBuilder = new AppEnginePayloadBuilder(
       this.prisma,
@@ -294,6 +289,8 @@ export class AppEngineRunner {
       responseTokens,
     })
   }
+
+  // private async getAssetFromS3()
 
   private getCallbacks(targetAssistantMessageId: string) {
     return {
