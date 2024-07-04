@@ -108,7 +108,7 @@ describe('appUpdateService', () => {
         expect(appInDbBefore.engineType).toBe(null)
 
         await subject(workspace.id, user.id, app.id, {
-          engineType: AppEngineType.Custom,
+          engineType: AppEngineType.Assistant,
         })
 
         const appInDb = await prisma.app.findFirstOrThrow({
@@ -117,7 +117,7 @@ describe('appUpdateService', () => {
           },
         })
 
-        expect(appInDb.engineType).toBe(AppEngineType.Custom)
+        expect(appInDb.engineType).toBe(AppEngineType.Assistant)
       })
     })
 
@@ -128,14 +128,14 @@ describe('appUpdateService', () => {
             id: app.id,
           },
           data: {
-            engineType: AppEngineType.Custom,
+            engineType: AppEngineType.Assistant,
           },
         })
       })
       it('throws when trying to update it', async () => {
         await expect(
           subject(workspace.id, user.id, app.id, {
-            engineType: AppEngineType.Custom,
+            engineType: AppEngineType.Assistant,
           }),
         ).rejects.toThrow('GPT Engine cannot be updated once set')
       })

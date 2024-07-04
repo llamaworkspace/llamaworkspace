@@ -14,5 +14,5 @@ export interface ComponentWithAppId {
 
 export enum AppEngineType {
   Default = 'default',
-  Custom = 'custom',
+  Assistant = 'assistant',
 }

@@ -7,6 +7,7 @@ import { useNavigation } from '@/lib/frontend/useNavigation'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
 import { AppConfigForGPTFileUpload } from './AppConfigForGPTFileUpload/AppConfigForGPTFileUpload'
+import { AppConfigForGPTSelectEngineFormField } from './AppConfigForGPTSelectEngineFormField'
 
 const placeholderMessage = `Write a message to help the AI understand what you are trying to achieve. The more details and context you provide, the better will be ChatGPT's outcome.
 
@@ -62,7 +63,7 @@ export const AppConfigForGPTSettings = ({
           )
         }}
       />
-      {/* <div className="grid md:grid-cols-2">
+      <div className="grid md:grid-cols-2">
         <Field
           name="engineType"
           validate={stringRequired}
@@ -78,7 +79,7 @@ export const AppConfigForGPTSettings = ({
             )
           }}
         />
-      </div> */}
+      </div>
       <div className="grid md:grid-cols-2">
         <Field
           name="model"

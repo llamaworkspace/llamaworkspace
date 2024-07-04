@@ -69,7 +69,6 @@
     "emoji-picker-react": "^4.7.14",
     "final-form": "^4.20.10",
     "framer-motion": "^10.16.4",
-    "gpt-tokenizer": "^2.1.1",
     "http-errors": "^2.0.0",
     "immer": "^10.0.2",
     "joi": "^17.10.2",

@@ -94,7 +94,7 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
           </Link>
         </div>
       )}
-      <SectionsHeader>GPT configuration</SectionsHeader>
+      <SectionsHeader>App configuration</SectionsHeader>
       <Section>
         <SectionBody>
           <FinalForm
