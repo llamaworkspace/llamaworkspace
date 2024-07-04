@@ -1,3 +1,4 @@
+import { AssetUploadStatus } from '@/components/assets/assetTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -12,9 +13,9 @@ import { bindAssetService } from '../bindAsset.service'
 const subject = async (
   workspaceId: string,
   userId: string,
-  assetId: string,
   payload: {
     appId: string
+    assetId: string
   },
 ) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -23,10 +24,7 @@ const subject = async (
     userId,
   )
 
-  return await bindAssetService(prisma, uowContext, {
-    assetId,
-    ...payload,
-  })
+  return await bindAssetService(prisma, uowContext, payload)
 }
 
 describe('bindAssetService', () => {
@@ -40,15 +38,15 @@ describe('bindAssetService', () => {
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
-
-    asset = await AssetFactory.create(prisma, {
-      workspaceId: workspace.id,
-      originalName: 'file.txt',
-    })
-
     app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
+      title: 'A title',
+    })
+    asset = await AssetFactory.create(prisma, {
+      workspaceId: workspace.id,
+      originalName: 'test.png',
+      uploadStatus: AssetUploadStatus.Success,
     })
   })
 
@@ -61,7 +59,7 @@ describe('bindAssetService', () => {
         },
       })
       expect(dbBefore).toHaveLength(0)
-      await subject(workspace.id, user.id, asset.id, { appId: app.id })
+      await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
       const dbAfter = await prisma.assetsOnApps.findMany({
         where: {
           assetId: asset.id,
@@ -77,13 +75,47 @@ describe('bindAssetService', () => {
         'passOrThrowTrpcError',
       )
 
-      await subject(workspace.id, user.id, asset.id, { appId: app.id })
+      await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
 
       expect(spy).toHaveBeenCalledWith(
         PermissionAction.Update,
         expect.anything(),
         expect.anything(),
       )
+    })
+
+    describe('when the asset does not have a "success" status', () => {
+      it('throws', async () => {
+        const unuploadedAsset = await AssetFactory.create(prisma, {
+          workspaceId: workspace.id,
+          originalName: 'test.png',
+          uploadStatus: AssetUploadStatus.Pending,
+        })
+        await expect(
+          subject(workspace.id, user.id, {
+            appId: app.id,
+            assetId: unuploadedAsset.id,
+          }),
+        ).rejects.toThrow()
+      })
+    })
+
+    describe('when the asset is already uploaded', () => {
+      it('does nothing', async () => {
+        await subject(workspace.id, user.id, {
+          appId: app.id,
+          assetId: asset.id,
+        })
+
+        const assetsOnApps = await prisma.assetsOnApps.findMany({
+          where: {
+            appId: app.id,
+            assetId: asset.id,
+          },
+        })
+
+        expect(assetsOnApps).toHaveLength(1)
+      })
     })
   })
 })

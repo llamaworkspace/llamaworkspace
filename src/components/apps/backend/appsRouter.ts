@@ -1,5 +1,4 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
-import { appsAttachAsset } from './procedures/appsAttachAsset'
 import { appsConfigGetLatestForAppId } from './procedures/appsConfigGetLatestForAppId'
 import { appsConfigUpdate } from './procedures/appsConfigUpdate'
 import { appsCreate } from './procedures/appsCreate'
@@ -28,5 +27,4 @@ export const appsRouter = createTRPCRouter({
   updateConfig: appsConfigUpdate,
   getLatestConfig: appsConfigGetLatestForAppId,
   getAppAssets,
-  attachAsset: appsAttachAsset,
 })

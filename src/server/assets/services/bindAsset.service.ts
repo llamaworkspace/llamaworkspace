@@ -1,8 +1,10 @@
+import { AssetUploadStatus } from '@/components/assets/assetTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { TRPCError } from '@trpc/server'
 import { scopeAssetByWorkspace } from '../assetUtils'
 
 interface BindAssetPayload {
@@ -25,15 +27,30 @@ export const bindAssetService = async (
       appId,
     )
 
-    await prisma.asset.findFirstOrThrow({
+    const asset = await prisma.asset.findFirstOrThrow({
       where: scopeAssetByWorkspace({ id: assetId }, workspaceId),
     })
 
-    return await prisma.assetsOnApps.create({
-      data: {
-        assetId,
+    if (asset?.uploadStatus !== AssetUploadStatus.Success.toString()) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Unuploaded assets cannot be attached',
+      })
+    }
+
+    const relationExists = await prisma.assetsOnApps.count({
+      where: {
         appId,
+        assetId,
       },
     })
+    if (!relationExists) {
+      return await prisma.assetsOnApps.create({
+        data: {
+          appId,
+          assetId,
+        },
+      })
+    }
   })
 }
