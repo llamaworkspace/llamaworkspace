@@ -57,7 +57,6 @@ const createApp = async (
     data: {
       workspaceId,
       userId,
-      engineType: input.engineType ?? AppEngineType.Default,
       ...input,
       appConfigVersions: {
         create: [

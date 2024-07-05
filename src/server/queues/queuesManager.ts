@@ -12,6 +12,7 @@ interface IQueues<PayloadType> {
 class QueuesManager {
   private readonly queueProvidersMap = new Map<string, IQueues<unknown>>()
 
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   constructor(queues: IQueues<any>[]) {
     queues.forEach((queue) => this.registerQueue(queue))
   }
