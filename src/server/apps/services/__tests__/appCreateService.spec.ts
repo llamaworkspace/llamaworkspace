@@ -12,7 +12,7 @@ const subject = async (workspaceId: string, userId: string) => {
     workspaceId,
     userId,
   )
-  const input = { title: 'Test App' }
+  const input = { title: 'Test App', engineType: AppEngineType.Assistant }
   return await appCreateService(prisma, uowContext, input)
 }
 
@@ -29,7 +29,7 @@ describe('appCreateService', () => {
     })
     expect(app).toMatchObject({
       title: 'Test App',
-      engineType: AppEngineType.Default,
+      engineType: AppEngineType.Assistant,
     })
   })
 

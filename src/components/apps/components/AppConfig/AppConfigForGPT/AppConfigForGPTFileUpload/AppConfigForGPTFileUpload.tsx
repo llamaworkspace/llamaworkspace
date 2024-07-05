@@ -1,4 +1,4 @@
-import { useAppFiles } from '@/components/apps/appsHooks'
+import { useAppAssets } from '@/components/apps/appsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
 import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/apps/appConstants'
@@ -23,7 +23,7 @@ export const AppConfigForGPTFileUpload = ({ appId }: { appId?: string }) => {
   }
 
   const uploadFile = useUploadFile(onFileUploadStarted, onFileUploaded, appId)
-  const { data: appFiles } = useAppFiles(appId)
+  const { data: appFiles } = useAppAssets(appId)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return

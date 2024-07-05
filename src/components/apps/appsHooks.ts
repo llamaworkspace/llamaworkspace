@@ -254,7 +254,7 @@ export const useUpdateShareAccessLevelForApp = () => {
   })
 }
 
-export const useAppFiles = (appId?: string) => {
+export const useAppAssets = (appId?: string) => {
   const errorHandler = useErrorHandler()
 
   return api.apps.getAppAssets.useQuery(

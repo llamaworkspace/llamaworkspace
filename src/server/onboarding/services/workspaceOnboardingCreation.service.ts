@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { appCreateService } from '@/server/apps/services/appCreate.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
@@ -13,6 +14,7 @@ export const workspaceOnboardingCreationService = async (
       title: `Joia's fun facts teller`,
       emoji: '1f920', // Cowboy emoji 🤠
       isDemo: true,
+      engineType: AppEngineType.Assistant,
     })
 
     await prisma.share.update({

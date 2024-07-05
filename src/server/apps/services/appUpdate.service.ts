@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -31,20 +32,21 @@ export const appUpdateService = async (
       appId,
     )
 
+    // Keep this to avoid updating the default app.
     const app = await prisma.app.findFirstOrThrow({
       where: scopeAppByWorkspace(
         {
           id: appId,
-          isDefault: false, // Keep this to avoid updating the default app.
+          isDefault: false,
         },
         workspaceId,
       ),
     })
 
-    if (app.engineType && payload.engineType) {
+    if (app.engineType === AppEngineType.Default.toString()) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'GPT Engine cannot be updated once set',
+        message: 'The default app cannot be updated',
       })
     }
     return await prisma.app.update({

@@ -118,7 +118,7 @@ model App {
     workspaceId       String
     isDefault         Boolean            @default(false)
     isDemo            Boolean            @default(false)
-    engineType        String?
+    engineType        String
     createdAt         DateTime           @default(now())
     updatedAt         DateTime           @updatedAt
     user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -127,7 +127,7 @@ model App {
     appConfigVersions AppConfigVersion[]
     shares            Share[]
     usersMeta         AppsOnUsers[]
-    files             AssetsOnApps[]
+    assets            AssetsOnApps[]
 }
 
 model AppsOnUsers {

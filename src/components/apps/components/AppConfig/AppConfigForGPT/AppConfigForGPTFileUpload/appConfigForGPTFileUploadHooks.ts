@@ -46,6 +46,7 @@ export const useUploadFile = (
 
       if (response.ok) {
         await notifyAssetUploadSuccess({ assetId: asset.id })
+
         onFileUploaded(file.name, asset)
         await bindAsset({ assetId: asset.id, appId })
         await utils.apps.getAppAssets.invalidate()

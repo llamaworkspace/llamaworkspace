@@ -12,11 +12,11 @@ import {
 import { updateAppSortingService } from './updateAppSorting.service'
 
 interface AppCreateServiceInputProps {
+  engineType: AppEngineType
   title?: string
   emoji?: string
   isDefault?: boolean
   isDemo?: boolean
-  engineType?: AppEngineType
 }
 
 export const appCreateService = async (
@@ -57,7 +57,6 @@ const createApp = async (
     data: {
       workspaceId,
       userId,
-      engineType: input.engineType ?? AppEngineType.Default,
       ...input,
       appConfigVersions: {
         create: [
