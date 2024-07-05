@@ -30,5 +30,4 @@ export abstract class AbstractAppEngine {
   ): Promise<void>
 
   abstract attachAsset(fileStream: ReadStream): Promise<void>
-  abstract removeAsset(): Promise<void>
 }

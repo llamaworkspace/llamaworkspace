@@ -1,4 +1,7 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { createReadStreamSafe } from '@/lib/backend/nodeUtils'
+import { getAppByIdService } from '@/server/apps/services/getAppById.service'
+import { downloadAssetFromS3Service } from '@/server/assets/services/downloadAssetFromS3.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
@@ -27,6 +30,7 @@ export class AppEngineRunner {
       await this.validateUserHasPermissionsOrThrow(chatId)
       await this.maybeAttachAppConfigVersionToChat(chatId)
 
+      const chat = await this.getChat(chatId)
       const ctx = await this.generateEngineRuntimeContext(chatId)
       hoistedCtx = ctx
 
@@ -47,7 +51,7 @@ export class AppEngineRunner {
       // TODO: Should be a cron job
       void this.handleTitleCreate(chatId)
 
-      const engine = await this.getEngine(chatId)
+      const engine = await this.getEngine(chat.appId)
 
       return AppEngineResponseStream(
         {
@@ -75,26 +79,39 @@ export class AppEngineRunner {
   }
 
   async attachAsset(appId: string, assetId: string) {
-    const assetOnAppId = await this.prisma.assetsOnApps.findFirstOrThrow({
+    await this.prisma.assetsOnApps.findFirstOrThrow({
       where: {
         assetId,
         appId: appId,
       },
     })
 
-    const engine = this.getEngine(appId)
-    await engine.attachAsset()
+    const engine = await this.getEngine(appId)
+
+    const { filePath, deleteFile } = await this.pullAssetFromRemote(assetId)
+
+    const readStream = createReadStreamSafe(filePath)
+
+    await engine.attachAsset(readStream)
+
+    await deleteFile()
   }
 
-  private async getEngine(chatId: string) {
-    const chat = await getChatByIdService(this.prisma, this.context, {
+  private async getChat(chatId: string) {
+    return await getChatByIdService(this.prisma, this.context, {
       chatId,
       includeApp: true,
     })
+  }
 
-    const engineTypeStr = chat.app.engineType
+  private async getEngine(appId: string) {
+    const app = await getAppByIdService(this.prisma, this.context, {
+      appId,
+    })
 
-    if (engineTypeStr === AppEngineType.Default.toString()) {
+    const engineType = app.engineType
+
+    if (engineType === AppEngineType.Default.toString()) {
       return this.getDefaultEngine()
     }
 
@@ -218,6 +235,12 @@ export class AppEngineRunner {
     return await chatTitleCreateService(this.prisma, this.context, { chatId })
   }
 
+  private async pullAssetFromRemote(assetId: string) {
+    return await downloadAssetFromS3Service(this.prisma, this.context, {
+      assetId,
+    })
+  }
+
   private async generateEngineRuntimeContext(chatId: string) {
     const appEnginePayloadBuilder = new AppEnginePayloadBuilder(
       this.prisma,
@@ -289,8 +312,6 @@ export class AppEngineRunner {
       responseTokens,
     })
   }
-
-  // private async getAssetFromS3()
 
   private getCallbacks(targetAssistantMessageId: string) {
     return {
