@@ -47,55 +47,49 @@ export const downloadAssetFromS3Service = async (
     Bucket: S3_BUCKET_NAME,
     Key: asset.path,
   })
-  console.log('xxx', s3Client.send)
+
   const response = await s3Client.send(command)
-  console.log(22)
+
   if (!response.Body || !(response.Body instanceof internal.Readable)) {
-    console.log(33)
     throw new Error('Response body is not a readable stream')
   }
-  console.log(44)
+
   // Let's save this file locally
   const readable = response.Body
-  console.log(55)
+
   if (!readable) {
     throw new Error('Response body is not a readable stream')
   }
 
-  const randomFileName = `${generateToken()}${asset.extension}`
+  const randomFileName = `${asset.originalName}_${generateToken(16)}${asset.extension}`
   const targetFolder = path.join(process.cwd(), TEMP_DOWNLOADS_FOLDER)
-  console.log(66)
+
   const folderExists = await fileOrFolderExists(targetFolder)
-  console.log(77)
+
   if (!folderExists) {
-    console.log(88)
     await mkdir(targetFolder, { recursive: true })
   }
-  const incomingFilePath = path.join(process.cwd(), '/tmp', randomFileName)
+  const targetFilePath = path.join(process.cwd(), '/tmp', randomFileName)
 
   const deleteFile = async () => {
-    return unlink(incomingFilePath)
+    return unlink(targetFilePath)
   }
 
-  const ostream = createWriteStream(incomingFilePath)
-  console.log(99)
+  const ostream = createWriteStream(targetFilePath)
+
   return new Promise<{ filePath: string; deleteFile: () => Promise<void> }>(
     (resolve, reject) => {
-      console.log(1010)
       readable.pipe(ostream)
 
       ostream.on('finish', () => {
-        console.log(111)
-        resolve({ filePath: incomingFilePath, deleteFile })
+        resolve({ filePath: targetFilePath, deleteFile })
       })
 
       ostream.on('error', (err) => {
-        console.log(112)
         reject(err)
       })
 
       readable.on('error', (err) => {
-        console.log(113)
         reject(err)
       })
     },

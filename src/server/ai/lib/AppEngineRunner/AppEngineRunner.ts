@@ -89,12 +89,13 @@ export class AppEngineRunner {
     const engine = await this.getEngine(appId)
 
     const { filePath, deleteFile } = await this.pullAssetFromRemote(assetId)
-
+    console.log('filePath', filePath)
     const readStream = createReadStreamSafe(filePath)
-
+    console.log('333')
     await engine.attachAsset(readStream)
-
+    console.log('4444')
     await deleteFile()
+    console.log('5555')
   }
 
   private async getChat(chatId: string) {
