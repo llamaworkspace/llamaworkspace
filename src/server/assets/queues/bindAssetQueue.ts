@@ -36,7 +36,6 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
       payload.userId,
     )
 
-    // Todo: Does user have access to the asset??
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
     await appEngineRunner.attachAsset(payload.appId, payload.assetId)
   }
