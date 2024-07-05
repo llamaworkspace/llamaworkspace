@@ -72,17 +72,13 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
 
   const handleFormSubmit = async (values: UserAuthFormValues) => {
     setIsLoading(true)
-    await signIn(
-      'email',
-      {
-        email: values.email,
-        callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
-      },
-      // { callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p') },
-    )
+    await signIn('email', {
+      email: values.email,
+      callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
+    })
     setIsLoading(false)
   }
-  console.log(111, getSanitizedCallbackUrl(queryCallbackUrl, '/p'))
+
   return (
     <div className="grid gap-6">
       {query.error && (

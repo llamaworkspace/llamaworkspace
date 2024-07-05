@@ -11,21 +11,20 @@ import path from 'path'
 export const createReadStreamSafe = (filePath: string) => {
   // Define a base directory to prevent path traversal
   const baseDir = path.resolve(process.cwd(), 'tmp')
-  console.log('filePath', filePath)
+
   // Resolve the full path
   const fullPath = path.resolve(baseDir, filePath)
 
-  console.log('fullPath', fullPath)
   // Ensure the resolved path is within the base directory
-  // if (!fullPath.startsWith(baseDir)) {
-  //   throw new Error('Invalid file path')
-  // }
+  if (!fullPath.startsWith(baseDir)) {
+    throw new Error('Invalid file path')
+  }
 
   // Check if the file exists
   if (!fs.existsSync(fullPath)) {
     throw new Error('File does not exist')
   }
-  console.log('8.1')
+
   // Create and return the read stream
   return fs.createReadStream(fullPath)
 }
