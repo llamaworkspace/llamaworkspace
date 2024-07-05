@@ -2,6 +2,7 @@ import { memo, type FC } from 'react'
 import { Prism } from 'react-syntax-highlighter'
 import { coldarkDark } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 
+import { generateToken } from '@/lib/utils'
 import {
   ArrowDownTrayIcon,
   CheckIcon,
@@ -42,15 +43,6 @@ export const programmingLanguages: Record<string, string> = {
   // add more file extensions here, make sure the key is same as language prop in CodeBlock.tsx component
 }
 
-export const generateRandomString = (length: number, lowercase = false) => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXY3456789' // excluding similar looking characters like Z, 2, I, 1, O, 0
-  let result = ''
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return lowercase ? result.toLowerCase() : result
-}
-
 const CodeBlock: FC<Props> = memo(({ language, value }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 })
 
@@ -59,10 +51,7 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
       return
     }
     const fileExtension = programmingLanguages[language] ?? '.file'
-    const suggestedFileName = `file-${generateRandomString(
-      3,
-      true,
-    )}${fileExtension}`
+    const suggestedFileName = `file-${generateToken(6)}${fileExtension}`
     const fileName = window.prompt('Enter file name' || '', suggestedFileName)
 
     if (!fileName) {

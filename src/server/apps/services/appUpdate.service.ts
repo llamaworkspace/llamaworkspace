@@ -43,7 +43,7 @@ export const appUpdateService = async (
       ),
     })
 
-    if (app.engineType === AppEngineType.Default) {
+    if (app.engineType === AppEngineType.Default.toString()) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'The default app cannot be updated',
