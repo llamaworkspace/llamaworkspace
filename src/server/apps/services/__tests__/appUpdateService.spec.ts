@@ -87,6 +87,7 @@ describe('appUpdateService', () => {
         userId: user.id,
         workspaceId: workspace.id,
         isDefault: true,
+        engineType: AppEngineType.Default,
       })
     })
 
@@ -94,51 +95,6 @@ describe('appUpdateService', () => {
       await expect(
         subject(workspace.id, user.id, defaultApp.id),
       ).rejects.toThrow()
-    })
-  })
-
-  describe('engineType updates', () => {
-    describe('when engineType is not set', () => {
-      it('updates the app', async () => {
-        const appInDbBefore = await prisma.app.findFirstOrThrow({
-          where: {
-            id: app.id,
-          },
-        })
-        expect(appInDbBefore.engineType).toBe(null)
-
-        await subject(workspace.id, user.id, app.id, {
-          engineType: AppEngineType.Custom,
-        })
-
-        const appInDb = await prisma.app.findFirstOrThrow({
-          where: {
-            id: app.id,
-          },
-        })
-
-        expect(appInDb.engineType).toBe(AppEngineType.Custom)
-      })
-    })
-
-    describe('when engineType is set', () => {
-      beforeEach(async () => {
-        await prisma.app.update({
-          where: {
-            id: app.id,
-          },
-          data: {
-            engineType: AppEngineType.Custom,
-          },
-        })
-      })
-      it('throws when trying to update it', async () => {
-        await expect(
-          subject(workspace.id, user.id, app.id, {
-            engineType: AppEngineType.Custom,
-          }),
-        ).rejects.toThrow('GPT Engine cannot be updated once set')
-      })
     })
   })
 })

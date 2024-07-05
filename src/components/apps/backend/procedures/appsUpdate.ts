@@ -7,7 +7,6 @@ const zUpdateInput = z.object({
   id: z.string(),
   title: z.optional(z.nullable(z.string())),
   emoji: z.optional(z.nullable(z.string())),
-  engineType: z.optional(z.string()),
 })
 
 export const appsUpdate = protectedProcedure

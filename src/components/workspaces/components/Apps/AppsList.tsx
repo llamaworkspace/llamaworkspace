@@ -12,7 +12,7 @@ import { AppsListTable } from './AppsListTable'
 export const AppsList = () => {
   return (
     <SectionsShell>
-      <SectionsHeader>Workspace GPTs</SectionsHeader>
+      <SectionsHeader>Workspace Apps</SectionsHeader>
       <Section>
         <SectionBody className="space-y-4">
           <CreateAppSection />
@@ -34,7 +34,7 @@ const CreateAppSection = () => {
 
   return (
     <div className="flex w-full justify-end ">
-      <Button onClick={() => void handleCreateApp()}>Create GPT</Button>
+      <Button onClick={() => void handleCreateApp()}>Create new app</Button>
     </div>
   )
 }

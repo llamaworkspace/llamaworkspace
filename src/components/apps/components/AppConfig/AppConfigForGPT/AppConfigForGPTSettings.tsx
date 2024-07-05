@@ -62,23 +62,7 @@ export const AppConfigForGPTSettings = ({
           )
         }}
       />
-      {/* <div className="grid md:grid-cols-2">
-        <Field
-          name="engineType"
-          validate={stringRequired}
-          render={({ input, meta }) => {
-            return (
-              <AppConfigForGPTSelectEngineFormField
-                {...input}
-                meta={meta}
-                placeholder="Select engine"
-                label="GPT engine"
-                disabled={disabled}
-              />
-            )
-          }}
-        />
-      </div> */}
+
       <div className="grid md:grid-cols-2">
         <Field
           name="model"
