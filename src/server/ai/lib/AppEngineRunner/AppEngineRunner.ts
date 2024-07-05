@@ -1,16 +1,14 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { getAppByIdService } from '@/server/apps/services/getAppById.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
-import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { saveTokenCountService } from '@/server/chats/services/saveTokenCount.service'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { Author } from '@/shared/aiTypesAndMappers'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Message, PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@prisma/client'
 import createHttpError from 'http-errors'
-import { chain } from 'underscore'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type { AbstractAppEngine, AppEngineParams } from '../AbstractAppEngine'
 import { AppEngineResponseStream } from '../AppEngineResponseStream'
@@ -25,13 +23,14 @@ export class AppEngineRunner {
   ) {}
 
   async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
-    let outerCtx: AppEngineParams<never> | undefined = undefined
+    let hoistedCtx: AppEngineParams<never> | undefined = undefined
     try {
       await this.validateUserHasPermissionsOrThrow(chatId)
       await this.maybeAttachAppConfigVersionToChat(chatId)
 
+      const chat = await this.getChat(chatId)
       const ctx = await this.generateEngineRuntimeContext(chatId)
-      outerCtx = ctx
+      hoistedCtx = ctx
 
       const rawMessageIds = ctx.rawMessages.map((message) => message.id)
       const chatRun = await this.createChatRun(chatId, rawMessageIds)
@@ -50,7 +49,7 @@ export class AppEngineRunner {
       // TODO: Should be a cron job
       void this.handleTitleCreate(chatId)
 
-      const engine = await this.getEngine(chatId)
+      const engine = await this.getEngine(chat.appId)
 
       return AppEngineResponseStream(
         {
@@ -71,30 +70,41 @@ export class AppEngineRunner {
         },
       )
     } catch (error) {
-      if (outerCtx?.targetAssistantRawMessage.id)
-        await this.deleteMessage(outerCtx.targetAssistantRawMessage.id)
+      if (hoistedCtx?.targetAssistantRawMessage.id)
+        await this.deleteMessage(hoistedCtx.targetAssistantRawMessage.id)
       throw error
     }
   }
 
-  private async getEngine(chatId: string) {
-    const chat = await getChatByIdService(this.prisma, this.context, {
+  async attachAsset(appId: string, assetId: string) {
+    await Promise.resolve()
+    throw new Error('Not implemented')
+  }
+
+  private async getChat(chatId: string) {
+    return await getChatByIdService(this.prisma, this.context, {
       chatId,
       includeApp: true,
     })
+  }
 
-    const engineTypeStr = chat.app.engineType
-    if (!engineTypeStr) {
-      throw createHttpError(500, 'Engine type is not defined')
-    }
-    if (engineTypeStr === AppEngineType.Default.toString()) {
+  private async getEngine(appId: string) {
+    const app = await getAppByIdService(this.prisma, this.context, {
+      appId,
+    })
+
+    const engineType = app.engineType
+
+    if (engineType === AppEngineType.Default.toString()) {
       return this.getDefaultEngine()
     }
 
-    // TODO: this should be dynamic
     const engine = this.getEngineByName('OpenaiAssistantsEngine')
     if (!engine) {
-      return this.getDefaultEngine()
+      throw createHttpError(
+        500,
+        'OpenaiAssistantsEngine has been accidentally deleted.',
+      )
     }
 
     return engine
@@ -207,20 +217,6 @@ export class AppEngineRunner {
 
   private async handleTitleCreate(chatId: string) {
     return await chatTitleCreateService(this.prisma, this.context, { chatId })
-  }
-
-  private async getTargetAssistantMessage(chatId: string) {
-    const messages = await getMessagesByChatIdService(
-      this.prisma,
-      this.context,
-      {
-        chatId,
-      },
-    )
-    return chain(messages)
-      .filter((message) => message.author === Author.Assistant.toString())
-      .max((message) => message.createdAt.getTime())
-      .value() as Message
   }
 
   private async generateEngineRuntimeContext(chatId: string) {

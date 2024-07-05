@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import type chalk from 'chalk'
 import { mockDeep } from 'jest-mock-extended'
 import { prisma } from '../db'
 // import { resetDatabase } from './resetDatabase'
@@ -19,6 +19,12 @@ jest.mock('@/server/messaging/mailer', () => {
 jest.mock('@/server/messaging/EmailService.ts', () => {
   return jest.fn().mockImplementation(() => {
     return { sendEmail: jest.fn() }
+  })
+})
+
+jest.mock('@/server/queues/queuesManager.ts', () => {
+  return jest.fn().mockImplementation(() => {
+    return { call: jest.fn(), registerQueue: jest.fn() }
   })
 })
 

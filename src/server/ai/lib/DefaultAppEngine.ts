@@ -56,4 +56,9 @@ export class DefaultAppEngine extends AbstractAppEngine {
       throw createHttpError(500, 'usage has not been registered.')
     }
   }
+
+  async attachAsset() {
+    await Promise.resolve()
+    throw new Error('Method not implemented.')
+  }
 }
