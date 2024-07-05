@@ -5,6 +5,7 @@ import {
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
+import createHttpError from 'http-errors'
 import OpenAI from 'openai'
 import { Uploadable } from 'openai/uploads'
 import { z } from 'zod'
@@ -136,6 +137,9 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         files: [fileStream],
       },
     )
+    if (res.status !== 'completed') {
+      throw createHttpError(500, 'Failed to upload asset to vector store')
+    }
   }
 
   private async createVectorStoreForAssistant(assistantId: string) {
