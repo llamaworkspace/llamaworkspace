@@ -1,4 +1,3 @@
-import { handleUserSignup } from '@/components/auth/handleUserSignup'
 import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
@@ -8,7 +7,11 @@ import {
   type DefaultSession,
   type NextAuthOptions,
 } from 'next-auth'
+import EmailProvider from 'next-auth/providers/email'
 import GoogleProvider from 'next-auth/providers/google'
+import { handleUserSignup } from './utils/handleUserSignup'
+import { sendVerificationRequestForEmailProvider } from './utils/sendVerificationRequestForEmailProvider'
+handleUserSignup
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -41,6 +44,7 @@ export const authOptions: NextAuthOptions = {
   debug: false,
   pages: {
     signIn: '/auth/signin',
+    verifyRequest: '/auth/verify-request',
   },
   callbacks: {
     session({ session, user }) {
@@ -63,6 +67,11 @@ export const authOptions: NextAuthOptions = {
           response_type: 'code',
         },
       },
+    }),
+    EmailProvider({
+      server: env.SMTP_EMAIL_SERVER,
+      from: env.SMTP_EMAIL_FROM,
+      sendVerificationRequest: sendVerificationRequestForEmailProvider,
     }),
   ],
 
