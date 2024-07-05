@@ -13,6 +13,8 @@ const alertVariants = cva(
           'bg-white text-zinc-950 border-zinc-200 dark:bg-zinc-950 dark:text-zinc-50 dark:border-zinc-800',
         warning:
           'bg-yellow-50 text-yellow-900 border-yellow-400 dark:bg-zinc-950 dark:text-zinc-50',
+        danger:
+          'bg-red-50 text-red-900 border-red-600 dark:bg-zinc-950 dark:text-zinc-50',
         fuchsia:
           'bg-fuchsia-50/50 border-fuchsia-200 dark:bg-zinc-950 dark:text-zinc-50',
         destructive:
