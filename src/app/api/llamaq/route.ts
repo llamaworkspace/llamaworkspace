@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs'
-import { queuesManager } from 'apps/llamaws/server/queues/queuesManager'
+import { queuesManager } from '@/server/queues/queuesManager'
 import { NextResponse, type NextRequest } from 'next/server'
 import { z } from 'zod'
 
