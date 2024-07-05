@@ -8,7 +8,12 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, User, Workspace } from '@prisma/client'
+import { bindAssetQueue } from '../../queues/bindAssetQueue'
 import { bindAssetService } from '../bindAsset.service'
+
+jest.mock('@/server/assets/queues/bindAssetQueue.ts', () => {
+  return { bindAssetQueue: { enqueue: jest.fn() } }
+})
 
 const subject = async (
   workspaceId: string,
@@ -82,6 +87,16 @@ describe('bindAssetService', () => {
         expect.anything(),
         expect.anything(),
       )
+    })
+
+    it('enqueues the asset binding', async () => {
+      await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
+      /* eslint-disable-next-line @typescript-eslint/unbound-method*/
+      expect(bindAssetQueue.enqueue).toHaveBeenCalledWith('bindAsset', {
+        userId: user.id,
+        appId: app.id,
+        assetId: asset.id,
+      })
     })
 
     describe('when the asset does not have a "success" status', () => {
