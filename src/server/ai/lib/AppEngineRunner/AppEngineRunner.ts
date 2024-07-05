@@ -79,7 +79,7 @@ export class AppEngineRunner {
   }
 
   async attachAsset(appId: string, assetId: string) {
-    await this.prisma.assetsOnApps.findFirstOrThrow({
+    const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
       where: {
         assetId,
         appId: appId,
@@ -91,9 +91,21 @@ export class AppEngineRunner {
     const { filePath, deleteFile } = await this.pullAssetFromRemote(assetId)
 
     const readStream = createReadStreamSafe(filePath)
-    await engine.attachAsset(readStream)
+
+    let hasSaveExternalAssetIdCallbackBeenCalled = false
+    const saveExternalAssetId = async (externalId: string) => {
+      hasSaveExternalAssetIdCallbackBeenCalled = true
+      await this.saveExternalAssetId(assetOnApp.id, externalId)
+    }
+    await engine.attachAsset(readStream, saveExternalAssetId)
 
     await deleteFile()
+    if (!hasSaveExternalAssetIdCallbackBeenCalled) {
+      throw createHttpError(
+        500,
+        `saveExternalAssetId callback was not called on engine when attaching an asset. Engine: ${engine.getName()}`,
+      )
+    }
   }
 
   private async getChat(chatId: string) {
@@ -309,6 +321,17 @@ export class AppEngineRunner {
       chatRunId,
       requestTokens,
       responseTokens,
+    })
+  }
+
+  private async saveExternalAssetId(assetOnAppId: string, externalId: string) {
+    await this.prisma.assetsOnApps.update({
+      where: {
+        id: assetOnAppId,
+      },
+      data: {
+        externalId,
+      },
     })
   }
 

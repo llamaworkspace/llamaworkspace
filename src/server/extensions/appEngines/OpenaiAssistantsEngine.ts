@@ -84,7 +84,10 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     }
   }
 
-  async attachAsset(uploadable: Uploadable) {
+  async attachAsset(
+    uploadable: Uploadable,
+    saveExternalAssetId: (externalId: string) => Promise<void>,
+  ) {
     const assistantId = 'asst_sk18bpznVq02EKXulK5S3X8L'
     const assistant = await this.createOrGetOpenaiAssistant(assistantId)
 
@@ -98,7 +101,12 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       targetVectorStoreId = vectorStore.id
     }
 
-    await this.uploadAssetToVectorStore(targetVectorStoreId, uploadable)
+    const { file } = await this.uploadAssetToVectorStore(
+      targetVectorStoreId,
+      uploadable,
+    )
+
+    await saveExternalAssetId(file.id)
   }
 
   async removeAsset() {
@@ -131,14 +139,22 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   ) {
     const openai = this.getOpenaiInstance()
 
-    const res = await openai.beta.vectorStores.fileBatches.uploadAndPoll(
-      vectorStoreId,
-      {
-        files: [fileStream],
-      },
-    )
-    if (res.status !== 'completed') {
+    const file = await openai.files.create({
+      file: fileStream,
+      purpose: 'assistants',
+    })
+
+    const vectorStoreUploadRes =
+      await openai.beta.vectorStores.files.createAndPoll(vectorStoreId, {
+        file_id: file.id,
+      })
+
+    if (vectorStoreUploadRes.status !== 'completed') {
       throw createHttpError(500, 'Failed to upload asset to vector store')
+    }
+    return {
+      file,
+      vectorStoreUpload: vectorStoreUploadRes,
     }
   }
 

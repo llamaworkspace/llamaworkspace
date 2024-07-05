@@ -29,5 +29,8 @@ export abstract class AbstractAppEngine {
     callbacks: AppEngineCallbacks,
   ): Promise<void>
 
-  abstract attachAsset(fileStream: ReadStream): Promise<void>
+  abstract attachAsset(
+    fileStream: ReadStream,
+    saveExternalAssetId: (externalId: string) => Promise<void>,
+  ): Promise<void>
 }
