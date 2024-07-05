@@ -108,6 +108,23 @@ export class AppEngineRunner {
     }
   }
 
+  async removeAsset(appId: string, assetId: string) {
+    const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
+      where: {
+        assetId,
+        appId,
+      },
+    })
+    const externalId = assetOnApp.externalId
+
+    if (!externalId) {
+      throw createHttpError(500, 'External id is missing')
+    }
+
+    const engine = await this.getEngine(appId)
+    await engine.removeAsset(externalId)
+  }
+
   private async getChat(chatId: string) {
     return await getChatByIdService(this.prisma, this.context, {
       chatId,

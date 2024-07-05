@@ -161,14 +161,15 @@ model Asset {
 }
 
 model AssetsOnApps {
-    id         String   @id @default(cuid())
-    assetId    String
-    appId      String
-    asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
-    app        App      @relation(fields: [appId], references: [id], onDelete: Cascade)
-    externalId String?
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+    id              String    @id @default(cuid())
+    assetId         String
+    appId           String
+    asset           Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+    app             App       @relation(fields: [appId], references: [id], onDelete: Cascade)
+    externalId      String?
+    markAsDeletedAt DateTime?
+    createdAt       DateTime  @default(now())
+    updatedAt       DateTime  @updatedAt
 
     @@unique([assetId, appId])
 }

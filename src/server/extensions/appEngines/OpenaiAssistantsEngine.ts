@@ -109,8 +109,10 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     await saveExternalAssetId(file.id)
   }
 
-  async removeAsset() {
-    // Do nothing
+  async removeAsset(externalId: string) {
+    const openai = this.getOpenaiInstance()
+    const res = await openai.files.del(externalId)
+    console.log(222, res)
   }
 
   private async createOrGetOpenaiAssistant(assistantId: string) {

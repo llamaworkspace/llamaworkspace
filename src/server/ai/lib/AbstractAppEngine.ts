@@ -33,4 +33,5 @@ export abstract class AbstractAppEngine {
     fileStream: ReadStream,
     saveExternalAssetId: (externalId: string) => Promise<void>,
   ): Promise<void>
+  abstract removeAsset(externalAssetId: string): Promise<void>
 }
