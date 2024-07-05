@@ -1,9 +1,6 @@
 import { AssetUploadStatus } from '@/components/assets/assetTypes'
-import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { scopeChatByWorkspace } from '@/server/chats/chatUtils'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { scopeShareByWorkspace } from '@/server/shares/shareUtils'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Prisma } from '@prisma/client'
@@ -28,9 +25,6 @@ export async function getAssetsService(
       appId,
     )
   }
-  scopeAppByWorkspace
-  scopeChatByWorkspace
-  scopeShareByWorkspace
 
   const baseWhere: Prisma.AssetWhereInput = {
     uploadStatus: AssetUploadStatus.Success,
