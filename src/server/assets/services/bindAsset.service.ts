@@ -45,7 +45,7 @@ export const bindAssetService = async (
       },
     })
     if (!relationExists) {
-      return await prisma.assetsOnApps.create({
+      await prisma.assetsOnApps.create({
         data: {
           appId,
           assetId,
