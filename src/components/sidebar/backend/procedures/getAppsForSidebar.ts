@@ -12,7 +12,6 @@ export const getAppsForSidebar = protectedProcedure
   .input(zInput)
   .query(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-
     const { workspaceId } = input
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,

@@ -6,6 +6,7 @@ import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { TRPCError } from '@trpc/server'
 import { scopeAssetByWorkspace } from '../assetUtils'
+import { assetBindQueue } from '../queues/onAssetBindQueue'
 
 interface BindAssetPayload {
   assetId: string
@@ -45,11 +46,16 @@ export const bindAssetService = async (
       },
     })
     if (!relationExists) {
-      return await prisma.assetsOnApps.create({
+      await prisma.assetsOnApps.create({
         data: {
           appId,
           assetId,
         },
+      })
+      await assetBindQueue.enqueue('bindAsset', {
+        userId,
+        appId,
+        assetId,
       })
     }
   })

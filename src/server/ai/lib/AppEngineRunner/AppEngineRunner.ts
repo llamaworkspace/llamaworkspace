@@ -1,4 +1,6 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { getAppByIdService } from '@/server/apps/services/getAppById.service'
+import { readAssetService } from '@/server/assets/services/readAsset.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
@@ -7,7 +9,9 @@ import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { PrismaClient } from '@prisma/client'
+import fs from 'fs'
 import createHttpError from 'http-errors'
+import path from 'path'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type { AbstractAppEngine, AppEngineParams } from '../AbstractAppEngine'
 import { AppEngineResponseStream } from '../AppEngineResponseStream'
@@ -27,6 +31,7 @@ export class AppEngineRunner {
       await this.validateUserHasPermissionsOrThrow(chatId)
       await this.maybeAttachAppConfigVersionToChat(chatId)
 
+      const chat = await this.getChat(chatId)
       const ctx = await this.generateEngineRuntimeContext(chatId)
       hoistedCtx = ctx
 
@@ -47,7 +52,7 @@ export class AppEngineRunner {
       // TODO: Should be a cron job
       void this.handleTitleCreate(chatId)
 
-      const engine = await this.getEngine(chatId)
+      const engine = await this.getEngine(chat.appId)
 
       return AppEngineResponseStream(
         {
@@ -75,28 +80,41 @@ export class AppEngineRunner {
   }
 
   async attachAsset(appId: string, assetId: string) {
-    const assetOnAppId = await this.prisma.assetsOnApps.findFirstOrThrow({
+    console.log(3)
+    await this.prisma.assetsOnApps.findFirstOrThrow({
       where: {
         assetId,
         appId: appId,
       },
     })
-
-    const engine = this.getEngine(appId)
-    await engine.attachAsset()
+    console.log(4)
+    const engine = await this.getEngine(appId)
+    console.log(5, engine.getName())
+    const { filePath, deleteFile } = await this.getAssetFromS3(assetId)
+    console.log(6)
+    const thing = createReadStreamSafe(filePath)
+    console.log(7)
+    await engine.attachAsset(thing)
+    console.log(8)
   }
 
-  private async getEngine(chatId: string) {
-    const chat = await getChatByIdService(this.prisma, this.context, {
+  private async getChat(chatId: string) {
+    return await getChatByIdService(this.prisma, this.context, {
       chatId,
-      includeApp: true,
+    })
+  }
+
+  private async getEngine(appId: string) {
+    const app = await getAppByIdService(this.prisma, this.context, {
+      appId,
     })
 
-    const engineTypeStr = chat.app.engineType
+    // DANGER: DO NOT COMMIT THIS
+    const engineType = app.engineType
 
-    if (engineTypeStr === AppEngineType.Default.toString()) {
-      return this.getDefaultEngine()
-    }
+    // if (engineType === AppEngineType.Default.toString()) {
+    //   return this.getDefaultEngine()
+    // }
 
     const engine = this.getEngineByName('OpenaiAssistantsEngine')
     if (!engine) {
@@ -290,7 +308,11 @@ export class AppEngineRunner {
     })
   }
 
-  // private async getAssetFromS3()
+  private async getAssetFromS3(assetId: string) {
+    return await readAssetService(this.prisma, this.context, {
+      assetId,
+    })
+  }
 
   private getCallbacks(targetAssistantMessageId: string) {
     return {
@@ -312,4 +334,26 @@ export class AppEngineRunner {
       },
     }
   }
+}
+
+function createReadStreamSafe(filePath: string) {
+  // Define a base directory to prevent path traversal
+  const baseDir = path.resolve(process.cwd(), 'tmp')
+  console.log('filePath', filePath)
+  // Resolve the full path
+  const fullPath = path.resolve(baseDir, filePath)
+
+  console.log(2221, fullPath)
+  // Ensure the resolved path is within the base directory
+  // if (!fullPath.startsWith(baseDir)) {
+  //   throw new Error('Invalid file path')
+  // }
+
+  // Check if the file exists
+  if (!fs.existsSync(fullPath)) {
+    throw new Error('File does not exist')
+  }
+
+  // Create and return the read stream
+  return fs.createReadStream(fullPath)
 }

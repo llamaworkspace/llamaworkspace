@@ -1,6 +1,7 @@
+import { assetBindQueue } from '@/server/assets/queues/onAssetBindQueue'
 import { sendEmailQueue } from '@/server/mailer/queues/sendEmailQueue'
 
-export const queues = [sendEmailQueue]
+export const queues = [sendEmailQueue, assetBindQueue]
 
 interface IQueues<PayloadType> {
   enqueue: (action: string, payload: PayloadType) => Promise<void>

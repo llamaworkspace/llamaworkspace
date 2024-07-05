@@ -5,8 +5,8 @@ import {
   type AppEngineParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
-import { ReadStream, createReadStream } from 'fs'
 import OpenAI from 'openai'
+import { Uploadable } from 'openai/uploads'
 import { z } from 'zod'
 
 type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
@@ -83,25 +83,27 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     }
   }
 
-  async attachAsset(fileStream: ReadStream) {
-    const stream = createReadStream('/package.json')
+  async attachAsset(assetThing: Uploadable) {
+    console.log(9)
     const assistantId = 'asst_sk18bpznVq02EKXulK5S3X8L'
-
+    console.log('9.1')
     const assistant = await this.createOrGetOpenaiAssistant(assistantId)
-
+    console.log('9.2')
     const vectorStoreIds =
       assistant.tool_resources?.file_search?.vector_store_ids ?? []
 
-    const targetVectorStoreId = vectorStoreIds[0]
-
+    let targetVectorStoreId = vectorStoreIds[0]
+    console.log(10, targetVectorStoreId)
     if (!targetVectorStoreId) {
-      await this.createVectorStoreForAssistant(assistant.id)
+      const vectorStore = await this.createVectorStoreForAssistant(assistant.id)
+      targetVectorStoreId = vectorStore.id
     }
-
-    await this.uploadAssetToVectorStore(assistantId, stream)
+    console.log(11)
+    await this.uploadAssetToVectorStore(targetVectorStoreId, assetThing)
+    console.log(12)
   }
 
-  async onAssetRemoved() {
+  async removeAsset() {
     // Do nothing
   }
 
@@ -127,13 +129,17 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
   private async uploadAssetToVectorStore(
     vectorStoreId: string,
-    fileStream: ReadStream,
+    fileStream: Uploadable,
   ) {
     const openai = this.getOpenaiInstance()
 
-    await openai.beta.vectorStores.fileBatches.uploadAndPoll(vectorStoreId, {
-      files: [fileStream],
-    })
+    const res = await openai.beta.vectorStores.fileBatches.uploadAndPoll(
+      vectorStoreId,
+      {
+        files: [fileStream],
+      },
+    )
+    console.log(111, res)
   }
 
   private async createVectorStoreForAssistant(assistantId: string) {
@@ -144,6 +150,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     await openai.beta.assistants.update(assistantId, {
       tool_resources: { file_search: { vector_store_ids: [vectorStore.id] } },
     })
+    return vectorStore
   }
 
   private getOpenaiInstance() {

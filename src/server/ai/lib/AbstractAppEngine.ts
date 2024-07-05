@@ -1,6 +1,6 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { Message } from '@prisma/client'
-import { ReadStream } from 'fs'
+import { Uploadable } from 'openai/uploads'
 
 type AllowedKVS = Record<string, string | number | boolean>
 
@@ -29,6 +29,6 @@ export abstract class AbstractAppEngine {
     callbacks: AppEngineCallbacks,
   ): Promise<void>
 
-  abstract attachAsset(fileStream: ReadStream): Promise<void>
+  abstract attachAsset(uploadeable: Uploadable): Promise<void>
   abstract removeAsset(): Promise<void>
 }

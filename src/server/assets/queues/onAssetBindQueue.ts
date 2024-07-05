@@ -7,8 +7,9 @@ import { AbstractQueueManager } from '@/server/lib/AbstractQueueManager/Abstract
 import { z } from 'zod'
 
 const zPayload = z.object({
-  workspaceId: z.string(),
   userId: z.string(),
+  appId: z.string(),
+  assetId: z.string(),
 })
 
 type Payload = z.infer<typeof zPayload>
@@ -22,13 +23,23 @@ class AssetBindQueue extends AbstractQueueManager<typeof zPayload> {
 
   protected async handle(action: string, payload: Payload) {
     const engines = [new DefaultAppEngine(), ...enginesRegistry]
+
+    const app = await prisma.app.findFirstOrThrow({
+      where: {
+        id: payload.appId,
+      },
+    })
+
     const context = await createUserOnWorkspaceContext(
       prisma,
-      payload.workspaceId,
+      app.workspaceId,
       payload.userId,
     )
+
+    // Todo: Does user have access to the asset??
+
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
-    await appEngineRunner.attachAssetToApp(action)
+    await appEngineRunner.attachAsset(payload.appId, payload.assetId)
   }
 }
 
