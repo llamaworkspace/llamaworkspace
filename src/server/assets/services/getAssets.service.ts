@@ -31,7 +31,7 @@ export async function getAssetsService(
   }
 
   if (appId) {
-    baseWhere.apps = {
+    baseWhere.assetsOnApps = {
       some: {
         appId,
       },
