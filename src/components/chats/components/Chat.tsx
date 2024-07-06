@@ -1,5 +1,5 @@
 import { cn, getEnumByValue } from '@/lib/utils'
-import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
+import { Author } from '@/shared/aiTypesAndMappers'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isBoolean } from 'underscore'
@@ -83,9 +83,11 @@ export function Chat({ appId, chatId }: ChatProps) {
 
       // Determine if the user is scrolling up
       const isScrollAtBottom = !(
-        chatContainerRef.current.scrollTop +
-          chatContainerRef.current.clientHeight <
-        chatContainerRef.current.scrollHeight
+        (
+          chatContainerRef.current.scrollTop +
+            chatContainerRef.current.clientHeight <
+          chatContainerRef.current.scrollHeight - 2
+        ) // Keep a small margin of 2px
       )
 
       autoScrollEnabled.current = isScrollAtBottom
@@ -167,18 +169,4 @@ export function Chat({ appId, chatId }: ChatProps) {
       </div>
     </div>
   )
-}
-
-function getAuthor(author: string) {
-  if (author === (ChatAuthor.Assistant as string)) {
-    return 'Assistant'
-  }
-  return 'You'
-}
-
-function getVariant(author: string) {
-  if (author === (ChatAuthor.Assistant as string)) {
-    return 'assistant'
-  }
-  return 'user'
 }

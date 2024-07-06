@@ -7,7 +7,7 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { App, Chat, User, Workspace } from '@prisma/client'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, type NextResponse } from 'next/server'
 import { chatStreamedResponseHandler } from '../chatStreamedResponseHandler'
 
 jest.mock('next-auth', () => {
@@ -25,7 +25,22 @@ jest.mock('@/shared/errors/errorLogger.ts', () => {
 
 // Important: Do not remove this mock, as it would generate
 // LLM API calls
-jest.mock('@/server/ai/lib/AppEngineRunner/AppEngineRunner')
+jest.mock('@/server/ai/lib/AppEngineRunner/AppEngineRunner', () => {
+  const encoder = new TextEncoder()
+  const readable = new ReadableStream({
+    start: (controller) => {
+      controller.enqueue(encoder.encode('Hello'))
+      controller.enqueue(encoder.encode('world'))
+      controller.close()
+    },
+  })
+  const AppEngineRunner = jest.fn()
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
+  AppEngineRunner.prototype.call = jest.fn().mockResolvedValue(readable)
+  return {
+    AppEngineRunner,
+  }
+})
 
 const subject = async (
   data: Record<string, string>,
@@ -45,10 +60,9 @@ const subject = async (
     method: 'POST',
     body: JSON.stringify(body),
   })
-  const response = new NextResponse()
+
   return (await chatStreamedResponseHandler(
     request,
-    response,
   )) as unknown as Promise<NextResponse>
 }
 
@@ -59,6 +73,7 @@ describe('chatStreamedResponseHandler', () => {
   let chat: Chat
 
   beforeEach(async () => {
+    jest.clearAllMocks()
     workspace = await WorkspaceFactory.create(prisma)
 
     user = await UserFactory.create(prisma, {
@@ -105,6 +120,25 @@ describe('chatStreamedResponseHandler', () => {
     const res = await subject(
       {
         chatIdxx: '123',
+      },
+      user.id,
+    )
+
+    const body = await res.text()
+
+    // For this endpoint, we always 200 and return ai-sdk compatible errors
+    expect(res.status).toBe(200)
+    expect(body).toBe('3:"Internal Server Error"\n')
+  })
+
+  it('returns an AI-sdk compatible error', async () => {
+    jest
+      .spyOn(AppEngineRunner.prototype, 'call')
+      .mockRejectedValue(new Error('booom'))
+
+    const res = await subject(
+      {
+        chatId: chat.id,
       },
       user.id,
     )

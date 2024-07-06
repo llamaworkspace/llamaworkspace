@@ -63,6 +63,13 @@ interface UserAuthFormValues {
   email: string
 }
 
+const errorMessages = {
+  OAuthAccountNotLinked:
+    'This account is already linked with another sign-in method. Please sign in with the same method you used to create this account.',
+  default:
+    'There was a system error signing you in. Please try again or contact the administrator.',
+}
+
 export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
   const [isLoading, setIsLoading] = React.useState(false)
   const navigation = useNavigation()
@@ -86,8 +93,8 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
           <AlertTitle>Sign in failed</AlertTitle>
           <AlertDescription className="space-y-2">
             <p>
-              There was a system error signing you in. Please try again or
-              contact the administrator.
+              {errorMessages[query.error as keyof typeof errorMessages] ??
+                errorMessages.default}
             </p>{' '}
             <p className="text-xs">Error code: {query.error}</p>
           </AlertDescription>
@@ -124,7 +131,6 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
                       return (
                         <InputField
                           meta={meta}
-                          label="Name"
                           placeholder="name@example.com"
                           type="email"
                           autoCapitalize="none"
