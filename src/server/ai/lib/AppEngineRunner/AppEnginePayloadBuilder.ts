@@ -34,7 +34,7 @@ export class AppEnginePayloadBuilder {
       this.context.userId,
       model.provider,
     )
-
+    console.log(22222, providerKVs)
     if (appConfigVersion.systemMessage) {
       const systemMessage = appConfigVersion.messages.find(
         (message) => message.author === Author.System.toString(),

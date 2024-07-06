@@ -1,4 +1,3 @@
-import { env } from '@/env.mjs'
 import {
   AbstractAppEngine,
   type AppEngineCallbacks,
@@ -7,7 +6,8 @@ import {
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import createHttpError from 'http-errors'
 import OpenAI from 'openai'
-import { Uploadable } from 'openai/uploads'
+import type { Uploadable } from 'openai/uploads'
+import { groupBy } from 'underscore'
 import { z } from 'zod'
 
 type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
@@ -18,11 +18,20 @@ const payloadSchema = z.object({
   assistantId: z.string(),
 })
 
+const providerKeyValuesSchema = z.object({
+  apiKey: z.string(),
+  baseUrl: z.string().optional(),
+})
+
 type OpeniAssistantsEngineAppPayload = z.infer<typeof payloadSchema>
 
 export class OpenaiAssistantsEngine extends AbstractAppEngine {
   getName() {
     return 'OpenaiAssistantsEngine'
+  }
+
+  getProviderKeyValuesSchema() {
+    return providerKeyValuesSchema
   }
 
   getPayloadSchema() {
@@ -45,22 +54,30 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     const { pushText } = callbacks
 
     const { kvs } = { kvs: {} }
-    const openai = new OpenAI({
-      // This needs to be provided at runtime
-      apiKey: env.INTERNAL_OPENAI_API_KEY,
-    })
+    const vsid = 'vs_CI3ISs9z5nmoaYWJw2PTe5KB'
 
-    // TODO: Passs system messsage somewhere, somehow
-    const messagesWithoutSystem = this.filterSystemMessage(messages)
+    const typedProviderKVs = this.getTypedProviderKVsOrThrow(providerKVs)
 
-    const thread = await openai.beta.threads.create({
-      messages: messagesWithoutSystem,
-    })
-    const threadId = thread.id
+    const openai = this.getOpenaiInstance(
+      typedProviderKVs.apiKey,
+      typedProviderKVs.baseUrl,
+    )
 
-    const response = openai.beta.threads.runs.stream(threadId, {
-      // assistant_id: kvs.assistantId,
-      assistant_id: 'asst_sk18bpznVq02EKXulK5S3X8L',
+    const { systemMessage, messages: messagesWithoutSystem } =
+      this.filterSystemMessage(messages)
+    const assistant = await this.createAssistant(
+      openai,
+      chatId,
+      systemMessage,
+      vsid,
+    )
+
+    const response = await openai.beta.threads.createAndRun({
+      assistant_id: assistant.id,
+      stream: true,
+      thread: {
+        messages: messagesWithoutSystem,
+      },
     })
 
     for await (const event of response) {
@@ -82,6 +99,40 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         )
       }
     }
+
+    await this.deleteAssistant(openai, assistant.id)
+  }
+
+  async createAssistant(
+    openai: OpenAI,
+    chatId: string,
+    systemMessage?: string,
+    vectorStoreId?: string,
+  ) {
+    let payload: OpenAI.Beta.Assistants.AssistantCreateParams = {
+      model: 'gpt-4o',
+      name: `[DO_NOT_DELETE] Llamaworkspace Assistant (chatId ${chatId}`,
+      description: `This is an automatically created assistant for Llamaworkspace (chatId: ${chatId}). To avoid errors in the app, please do not delete this assistant directly, as it will be deleted automatically after it has been used.`,
+    }
+    if (systemMessage && systemMessage.length > 0) {
+      payload = {
+        ...payload,
+        instructions: systemMessage,
+      }
+    }
+
+    if (vectorStoreId) {
+      payload = {
+        ...payload,
+        tools: [{ type: 'file_search' }],
+        tool_resources: { file_search: { vector_store_ids: [vectorStoreId] } },
+      }
+    }
+    return await openai.beta.assistants.create(payload)
+  }
+
+  async deleteAssistant(openai: OpenAI, openaiAssistantId: string) {
+    return await openai.beta.assistants.del(openaiAssistantId)
   }
 
   async attachAsset(
@@ -111,8 +162,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
   async removeAsset(externalId: string) {
     const openai = this.getOpenaiInstance()
-    const res = await openai.files.del(externalId)
-    console.log(222, res)
+    await openai.files.del(externalId)
   }
 
   private async createOrGetOpenaiAssistant(assistantId: string) {
@@ -171,22 +221,26 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     return vectorStore
   }
 
-  private getOpenaiInstance() {
-    return new OpenAI({
-      // This needs to be provided at runtime!!!!
-      apiKey: env.INTERNAL_OPENAI_API_KEY,
-    })
+  private getTypedProviderKVsOrThrow(providerKVs: Record<string, string>) {
+    return providerKeyValuesSchema.parse(providerKVs)
+  }
+
+  private getOpenaiInstance(apiKey: string, baseURL?: string) {
+    return new OpenAI({ apiKey, baseURL })
   }
 
   private filterSystemMessage(messages: AiRegistryMessage[]) {
-    return messages.map((message) => {
-      if (message.role !== 'system') {
-        return message as AiRegistryMessageWithoutSystemRole
+    const result = groupBy(messages, (message) => {
+      if (message.role === 'system') {
+        return 'systemMessages'
       }
-      return {
-        ...message,
-        role: 'user',
-      } as AiRegistryMessageWithoutSystemRole
+      return 'messages'
     })
+    return {
+      systemMessage: result.systemMessages?.reduce((memo, value) => {
+        return memo + '\n' + value.content
+      }, ''),
+      messages: result.messages as AiRegistryMessageWithoutSystemRole[],
+    }
   }
 }

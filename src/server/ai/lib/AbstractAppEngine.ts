@@ -1,6 +1,6 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { Message } from '@prisma/client'
-import { ReadStream } from 'fs'
+import type { ReadStream } from 'fs'
 
 type AllowedKVS = Record<string, string | number | boolean>
 

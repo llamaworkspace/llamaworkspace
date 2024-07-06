@@ -11,7 +11,7 @@ interface OpenaAiProviderParams {
 }
 
 export const OpenAiProvider = (
-  params?: OpenaAiProviderParams,
+  paramsxxxxx?: OpenaAiProviderParams,
 ): OpenAiProviderType => {
   return {
     slug: 'openai' as const,
@@ -46,16 +46,17 @@ export const OpenAiProvider = (
       validateModelExistsOrThrow(payload.model)
 
       const openAiClientPayload: { apiKey?: string; baseUrl?: string } = {
-        apiKey: options.apiKey || params?.fallbackApiKey,
+        apiKey: options.apiKey || paramsxxxxx?.fallbackApiKey,
         baseUrl: undefined,
       }
+      console.log(1, openAiClientPayload)
 
       if (options?.baseUrl) {
         openAiClientPayload.baseUrl = options?.baseUrl
       }
 
-      if (params?.fallbackBaseUrl && !openAiClientPayload.baseUrl) {
-        openAiClientPayload.baseUrl = params?.fallbackBaseUrl
+      if (paramsxxxxx?.fallbackBaseUrl && !openAiClientPayload.baseUrl) {
+        openAiClientPayload.baseUrl = paramsxxxxx?.fallbackBaseUrl
       }
 
       const oai = createOpenAI({
@@ -79,7 +80,7 @@ export const OpenAiProvider = (
         usageResult.completionTokens,
       )
     },
-    hasFallbackCredentials: !!params?.fallbackApiKey,
+    hasFallbackCredentials: !!paramsxxxxx?.fallbackApiKey,
   }
 }
 const validateModelExistsOrThrow = (modelName: string) => {
