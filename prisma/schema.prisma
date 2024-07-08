@@ -116,10 +116,9 @@ model App {
     emoji             String?
     userId            String
     workspaceId       String
-    type              String?
     isDefault         Boolean            @default(false)
     isDemo            Boolean            @default(false)
-    gptEngine         String?
+    engineType        String
     createdAt         DateTime           @default(now())
     updatedAt         DateTime           @updatedAt
     user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
