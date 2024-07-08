@@ -1,5 +1,6 @@
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
+import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -19,10 +20,12 @@ export class AppEnginePayloadBuilder {
 
   async call(chatId: string): Promise<AppEngineParams<never>> {
     const [
+      chat,
       appConfigVersion,
       { rawMessages, preparedMessages },
       targetAssistantRawMessage,
     ] = await Promise.all([
+      await this.getChat(chatId),
       await this.getAppConfigVersionForChat(chatId),
       await this.buildMessages(chatId),
       await this.getTargetAssistantMessage(chatId),
@@ -34,7 +37,7 @@ export class AppEnginePayloadBuilder {
       this.context.userId,
       model.provider,
     )
-    console.log(22222, providerKVs)
+
     if (appConfigVersion.systemMessage) {
       const systemMessage = appConfigVersion.messages.find(
         (message) => message.author === Author.System.toString(),
@@ -52,6 +55,7 @@ export class AppEnginePayloadBuilder {
     }
 
     return {
+      appId: chat.appId,
       chatId,
       targetAssistantRawMessage,
       rawMessages,
@@ -61,6 +65,10 @@ export class AppEnginePayloadBuilder {
       providerSlug: model.provider,
       providerKVs,
     }
+  }
+
+  private async getChat(chatId: string) {
+    return await getChatByIdService(this.prisma, this.context, { chatId })
   }
 
   private async buildMessages(chatId: string) {

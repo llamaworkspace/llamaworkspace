@@ -5,6 +5,7 @@ import type { ReadStream } from 'fs'
 type AllowedKVS = Record<string, string | number | boolean>
 
 export interface AppEngineParams<T extends AllowedKVS> {
+  readonly appId: string
   readonly chatId: string
   readonly providerKVs: Record<string, string>
 

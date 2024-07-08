@@ -116,6 +116,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       providerKVs,
       targetAssistantRawMessage,
       chatId,
+      appId,
     } = ctx
 
     const typedProviderKVs = this.getTypedProviderKVsOrThrow(providerKVs)
@@ -126,9 +127,8 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     )
 
     const vsid = ''
-    const APP_ID = 'i_need_appid'
 
-    const vectorStore = await this.createOrGetVectorStore(openai, APP_ID, vsid)
+    const vectorStore = await this.createOrGetVectorStore(openai, appId, vsid)
 
     const { file } = await this.uploadAssetToVectorStore(
       openai,
@@ -213,13 +213,6 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         // HANDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       }
     }
-
-    // const vectorStore = await openai.beta.vectorStores.retrieve('vs_abc123')
-    // let assistant = await openai.beta.assistants.retrieve(assistantId)
-    // if (!assistant) {
-    //   assistant = await this.createOpenaiAssistant()
-    // }
-    // return assistant
   }
 
   private async createVectorStore(openai: OpenAI, appId: string) {
