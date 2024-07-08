@@ -116,9 +116,10 @@ model App {
     emoji             String?
     userId            String
     workspaceId       String
+    type              String?
     isDefault         Boolean            @default(false)
     isDemo            Boolean            @default(false)
-    engineType        String
+    gptEngine         String?
     createdAt         DateTime           @default(now())
     updatedAt         DateTime           @updatedAt
     user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -127,7 +128,8 @@ model App {
     appConfigVersions AppConfigVersion[]
     shares            Share[]
     usersMeta         AppsOnUsers[]
-    assets            AssetsOnApps[]
+    files             AssetsOnApps[]
+    keyValues         KeyValue[]
 }
 
 model AppsOnUsers {
@@ -157,7 +159,7 @@ model Asset {
     createdAt         DateTime       @default(now())
     updatedAt         DateTime       @updatedAt
     workspace         Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    assetsOnApps      AssetsOnApps[]
+    apps              AssetsOnApps[]
 }
 
 model AssetsOnApps {
@@ -224,6 +226,7 @@ model Message {
     appConfigVersion   AppConfigVersion? @relation(fields: [appConfigVersionId], references: [id], onDelete: Cascade)
     message            String?
     author             String
+    tokens             Int?
     createdAt          DateTime          @default(now())
     updatedAt          DateTime          @updatedAt
     chatRunMessage     ChatRunMessage[]
@@ -298,4 +301,15 @@ model AiProviderModel {
     aiProvider   AiProvider @relation(fields: [aiProviderId], references: [id], onDelete: Cascade)
 
     @@unique([aiProviderId, slug])
+}
+
+model KeyValue {
+    id        String   @id @default(cuid())
+    key       String
+    value     String
+    type      String
+    appId     String
+    app       App      @relation(fields: [appId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
