@@ -25,13 +25,17 @@ export interface AppEngineCallbacks {
 export abstract class AbstractAppEngine {
   abstract getName(): string
   abstract run(
-    params: AppEngineParams<AllowedKVS>,
+    ctx: AppEngineParams<AllowedKVS>,
     callbacks: AppEngineCallbacks,
   ): Promise<void>
 
   abstract attachAsset(
+    ctx: AppEngineParams<AllowedKVS>,
     fileStream: ReadStream,
     saveExternalAssetId: (externalId: string) => Promise<void>,
   ): Promise<void>
-  abstract removeAsset(externalAssetId: string): Promise<void>
+  abstract removeAsset(
+    ctx: AppEngineParams<AllowedKVS>,
+    externalAssetId: string,
+  ): Promise<void>
 }

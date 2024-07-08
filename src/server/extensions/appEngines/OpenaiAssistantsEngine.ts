@@ -1,3 +1,4 @@
+import { ensureError } from '@/lib/utils'
 import {
   AbstractAppEngine,
   type AppEngineCallbacks,
@@ -23,7 +24,7 @@ const providerKeyValuesSchema = z.object({
   baseUrl: z.string().optional(),
 })
 
-type OpeniAssistantsEngineAppPayload = z.infer<typeof payloadSchema>
+type OpeniAssistantsEnginePayload = z.infer<typeof payloadSchema>
 
 export class OpenaiAssistantsEngine extends AbstractAppEngine {
   getName() {
@@ -39,7 +40,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   }
 
   async run(
-    ctx: AppEngineParams<OpeniAssistantsEngineAppPayload>,
+    ctx: AppEngineParams<OpeniAssistantsEnginePayload>,
     callbacks: AppEngineCallbacks,
   ) {
     const {
@@ -103,7 +104,65 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     await this.deleteAssistant(openai, assistant.id)
   }
 
-  async createAssistant(
+  async attachAsset(
+    ctx: AppEngineParams<OpeniAssistantsEnginePayload>,
+    uploadable: Uploadable,
+    saveExternalAssetId: (externalId: string) => Promise<void>,
+  ) {
+    const {
+      messages,
+      providerSlug,
+      modelSlug,
+      providerKVs,
+      targetAssistantRawMessage,
+      chatId,
+    } = ctx
+
+    const typedProviderKVs = this.getTypedProviderKVsOrThrow(providerKVs)
+
+    const openai = this.getOpenaiInstance(
+      typedProviderKVs.apiKey,
+      typedProviderKVs.baseUrl,
+    )
+
+    const vsid = ''
+    const APP_ID = 'i_need_appid'
+
+    const vectorStore = await this.createOrGetVectorStore(openai, APP_ID, vsid)
+
+    const { file } = await this.uploadAssetToVectorStore(
+      openai,
+      vectorStore.id,
+      uploadable,
+    )
+
+    await saveExternalAssetId(file.id)
+  }
+
+  async removeAsset(
+    ctx: AppEngineParams<OpeniAssistantsEnginePayload>,
+    externalId: string,
+  ) {
+    const {
+      messages,
+      providerSlug,
+      modelSlug,
+      providerKVs,
+      targetAssistantRawMessage,
+      chatId,
+    } = ctx
+
+    const typedProviderKVs = this.getTypedProviderKVsOrThrow(providerKVs)
+
+    const openai = this.getOpenaiInstance(
+      typedProviderKVs.apiKey,
+      typedProviderKVs.baseUrl,
+    )
+
+    await openai.files.del(externalId)
+  }
+
+  private async createAssistant(
     openai: OpenAI,
     chatId: string,
     systemMessage?: string,
@@ -131,66 +190,49 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     return await openai.beta.assistants.create(payload)
   }
 
-  async deleteAssistant(openai: OpenAI, openaiAssistantId: string) {
+  private async deleteAssistant(openai: OpenAI, openaiAssistantId: string) {
     return await openai.beta.assistants.del(openaiAssistantId)
   }
 
-  async attachAsset(
-    uploadable: Uploadable,
-    saveExternalAssetId: (externalId: string) => Promise<void>,
+  private async createOrGetVectorStore(
+    openai: OpenAI,
+    appId: string,
+    vectorStoreId: string,
   ) {
-    const assistantId = 'asst_sk18bpznVq02EKXulK5S3X8L'
-    const assistant = await this.createOrGetOpenaiAssistant(assistantId)
+    let vectorStore: OpenAI.Beta.VectorStores.VectorStore
 
-    const vectorStoreIds =
-      assistant.tool_resources?.file_search?.vector_store_ids ?? []
-
-    let targetVectorStoreId = vectorStoreIds[0]
-
-    if (!targetVectorStoreId) {
-      const vectorStore = await this.createVectorStoreForAssistant(assistant.id)
-      targetVectorStoreId = vectorStore.id
+    if (!vectorStoreId) {
+      return await this.createVectorStore(openai, appId)
+    } else {
+      try {
+        return await openai.beta.vectorStores.retrieve(vectorStoreId)
+        return vectorStore
+      } catch (_error) {
+        const error = ensureError(_error)
+        return await this.createVectorStore(openai, appId)
+        // HANDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      }
     }
 
-    const { file } = await this.uploadAssetToVectorStore(
-      targetVectorStoreId,
-      uploadable,
-    )
-
-    await saveExternalAssetId(file.id)
+    // const vectorStore = await openai.beta.vectorStores.retrieve('vs_abc123')
+    // let assistant = await openai.beta.assistants.retrieve(assistantId)
+    // if (!assistant) {
+    //   assistant = await this.createOpenaiAssistant()
+    // }
+    // return assistant
   }
 
-  async removeAsset(externalId: string) {
-    const openai = this.getOpenaiInstance()
-    await openai.files.del(externalId)
-  }
-
-  private async createOrGetOpenaiAssistant(assistantId: string) {
-    const openai = this.getOpenaiInstance()
-    let assistant = await openai.beta.assistants.retrieve(assistantId)
-    if (!assistant) {
-      assistant = await this.createOpenaiAssistant()
-    }
-    return assistant
-  }
-
-  private async createOpenaiAssistant() {
-    const openai = this.getOpenaiInstance()
-    return openai.beta.assistants.create({
-      model: 'gpt-4o',
-      name: '(do not delete) Llamaworkspace Assistant for appId...',
-      description:
-        'This is an automatically created assistant for Llamaworkspace. To avoid errors in the app, please do not delete this assistant directly.',
-      tools: [{ type: 'file_search' }],
+  private async createVectorStore(openai: OpenAI, appId: string) {
+    return await openai.beta.vectorStores.create({
+      name: vectorStoreCopys.getName(appId),
     })
   }
 
   private async uploadAssetToVectorStore(
+    openai: OpenAI,
     vectorStoreId: string,
     fileStream: Uploadable,
   ) {
-    const openai = this.getOpenaiInstance()
-
     const file = await openai.files.create({
       file: fileStream,
       purpose: 'assistants',
@@ -208,17 +250,6 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       file,
       vectorStoreUpload: vectorStoreUploadRes,
     }
-  }
-
-  private async createVectorStoreForAssistant(assistantId: string) {
-    const openai = this.getOpenaiInstance()
-    const vectorStore = await openai.beta.vectorStores.create({
-      name: `(do not delete) VectorStore for assistantId ${assistantId}`,
-    })
-    await openai.beta.assistants.update(assistantId, {
-      tool_resources: { file_search: { vector_store_ids: [vectorStore.id] } },
-    })
-    return vectorStore
   }
 
   private getTypedProviderKVsOrThrow(providerKVs: Record<string, string>) {
@@ -251,5 +282,11 @@ const assistantCopys = {
   },
   getDescription: (chatId: string) => {
     return `This is an automatically created assistant for Llamaworkspace (chatId: ${chatId}). To avoid errors in the app, please do not delete this assistant directly, as it will be deleted automatically after it has been used.`
+  },
+}
+
+const vectorStoreCopys = {
+  getName: (appId: string) => {
+    return `[DO_NOT_DELETE] Llama Workspace auto-generated VectorStore. (appId: ${appId})`
   },
 }
