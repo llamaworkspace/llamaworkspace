@@ -4,7 +4,7 @@ import type { ReadStream } from 'fs'
 
 type AllowedKVS = Record<string, string | number | boolean>
 
-export interface AppEngineParams<T extends AllowedKVS> {
+export interface AppEngineRunParams<T extends AllowedKVS> {
   readonly appId: string
   readonly chatId: string
   readonly providerKVs: Record<string, string>
@@ -18,6 +18,11 @@ export interface AppEngineParams<T extends AllowedKVS> {
   readonly modelSlug: string
 }
 
+export interface AppEngineConfigParams {
+  readonly appId: string
+  readonly aiProviders: Record<string, Record<string, string>>
+}
+
 export interface AppEngineCallbacks {
   pushText: (text: string) => Promise<void>
   usage: (requestTokens: number, responseTokens: number) => void | Promise<void>
@@ -26,17 +31,17 @@ export interface AppEngineCallbacks {
 export abstract class AbstractAppEngine {
   abstract getName(): string
   abstract run(
-    ctx: AppEngineParams<AllowedKVS>,
+    ctx: AppEngineRunParams<AllowedKVS>,
     callbacks: AppEngineCallbacks,
   ): Promise<void>
 
   abstract attachAsset(
-    ctx: AppEngineParams<AllowedKVS>,
+    ctx: AppEngineConfigParams,
     fileStream: ReadStream,
     saveExternalAssetId: (externalId: string) => Promise<void>,
   ): Promise<void>
   abstract removeAsset(
-    ctx: AppEngineParams<AllowedKVS>,
+    ctx: AppEngineConfigParams,
     externalAssetId: string,
   ): Promise<void>
 }

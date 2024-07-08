@@ -5,7 +5,7 @@ import { z } from 'zod'
 import {
   AbstractAppEngine,
   type AppEngineCallbacks,
-  type AppEngineParams,
+  type AppEngineRunParams,
 } from './AbstractAppEngine'
 
 const payloadSchema = z.object({
@@ -20,7 +20,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
   }
 
   async run(
-    ctx: AppEngineParams<DefaultAppEginePayload>,
+    ctx: AppEngineRunParams<DefaultAppEginePayload>,
     callbacks: AppEngineCallbacks,
   ) {
     const { messages, providerSlug, modelSlug, providerKVs } = ctx

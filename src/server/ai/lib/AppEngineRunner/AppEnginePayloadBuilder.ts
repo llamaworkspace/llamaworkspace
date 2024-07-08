@@ -9,8 +9,14 @@ import { Promise } from 'bluebird'
 import createHttpError from 'http-errors'
 import { chain, isNumber } from 'underscore'
 import { getProviderAndModelFromFullSlug } from '../../aiUtils'
-import { getAiProviderKVsService } from '../../services/getProvidersForWorkspace.service'
-import type { AppEngineParams } from '../AbstractAppEngine'
+import {
+  getAiProviderKVsService,
+  getAllAiProvidersKVsService,
+} from '../../services/getProvidersForWorkspace.service'
+import type {
+  AppEngineConfigParams,
+  AppEngineRunParams,
+} from '../AbstractAppEngine'
 
 export class AppEnginePayloadBuilder {
   constructor(
@@ -18,7 +24,7 @@ export class AppEnginePayloadBuilder {
     private readonly context: UserOnWorkspaceContext,
   ) {}
 
-  async call(chatId: string): Promise<AppEngineParams<never>> {
+  async buildForChat(chatId: string): Promise<AppEngineRunParams<never>> {
     const [
       chat,
       appConfigVersion,
@@ -60,6 +66,26 @@ export class AppEnginePayloadBuilder {
       modelSlug: model.model,
       providerSlug: model.provider,
       providerKVs,
+    }
+  }
+
+  async buildForApp(appId: string): Promise<AppEngineConfigParams> {
+    const aiProviders = await getAllAiProvidersKVsService(
+      this.prisma,
+      this.context,
+    )
+
+    return {
+      aiProviders,
+      appId,
+      // chatId,
+      // targetAssistantRawMessage,
+      // rawMessages,
+      // messages: preparedMessages,
+      // fullSlug: appConfigVersion.model,
+      // modelSlug: model.model,
+      // providerSlug: model.provider,
+      // providerKVs,
     }
   }
 

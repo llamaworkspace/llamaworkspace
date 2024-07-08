@@ -1,8 +1,9 @@
 import { ensureError } from '@/lib/utils'
 import {
   AbstractAppEngine,
+  AppEngineConfigParams,
   type AppEngineCallbacks,
-  type AppEngineParams,
+  type AppEngineRunParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import createHttpError from 'http-errors'
@@ -40,7 +41,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   }
 
   async run(
-    ctx: AppEngineParams<OpeniAssistantsEnginePayload>,
+    ctx: AppEngineRunParams<OpeniAssistantsEnginePayload>,
     callbacks: AppEngineCallbacks,
   ) {
     const {
@@ -105,21 +106,18 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   }
 
   async attachAsset(
-    ctx: AppEngineParams<OpeniAssistantsEnginePayload>,
+    ctx: AppEngineConfigParams,
     uploadable: Uploadable,
     saveExternalAssetId: (externalId: string) => Promise<void>,
   ) {
-    const {
-      messages,
-      providerSlug,
-      modelSlug,
-      providerKVs,
-      targetAssistantRawMessage,
-      chatId,
-      appId,
-    } = ctx
+    const { appId, aiProviders } = ctx
+    const openaiProvider = aiProviders.openai
 
-    const typedProviderKVs = this.getTypedProviderKVsOrThrow(providerKVs)
+    if (!openaiProvider) {
+      throw createHttpError(500, `Provider OpenAI not found`)
+    }
+
+    const typedProviderKVs = this.getTypedProviderKVsOrThrow(openaiProvider)
 
     const openai = this.getOpenaiInstance(
       typedProviderKVs.apiKey,
@@ -139,20 +137,15 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     await saveExternalAssetId(file.id)
   }
 
-  async removeAsset(
-    ctx: AppEngineParams<OpeniAssistantsEnginePayload>,
-    externalId: string,
-  ) {
-    const {
-      messages,
-      providerSlug,
-      modelSlug,
-      providerKVs,
-      targetAssistantRawMessage,
-      chatId,
-    } = ctx
+  async removeAsset(ctx: AppEngineConfigParams, externalId: string) {
+    const { appId, aiProviders } = ctx
+    const openaiProvider = aiProviders.openai
 
-    const typedProviderKVs = this.getTypedProviderKVsOrThrow(providerKVs)
+    if (!openaiProvider) {
+      throw createHttpError(500, `Provider OpenAI not found`)
+    }
+
+    const typedProviderKVs = this.getTypedProviderKVsOrThrow(openaiProvider)
 
     const openai = this.getOpenaiInstance(
       typedProviderKVs.apiKey,

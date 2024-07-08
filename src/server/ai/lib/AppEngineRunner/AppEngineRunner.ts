@@ -12,7 +12,11 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { PrismaClient } from '@prisma/client'
 import createHttpError from 'http-errors'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
-import type { AbstractAppEngine, AppEngineParams } from '../AbstractAppEngine'
+import { getAllAiProvidersKVsService } from '../../services/getProvidersForWorkspace.service'
+import type {
+  AbstractAppEngine,
+  AppEngineRunParams,
+} from '../AbstractAppEngine'
 import { AppEngineResponseStream } from '../AppEngineResponseStream'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 import { chatTitleCreateService } from './chatTitleCreate.service'
@@ -25,13 +29,13 @@ export class AppEngineRunner {
   ) {}
 
   async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
-    let hoistedCtx: AppEngineParams<never> | undefined = undefined
+    let hoistedCtx: AppEngineRunParams<never> | undefined = undefined
     try {
       await this.validateUserHasPermissionsOrThrow(chatId)
       await this.maybeAttachAppConfigVersionToChat(chatId)
 
       const chat = await this.getChat(chatId)
-      const ctx = await this.generateEngineRuntimeContext(chatId)
+      const ctx = await this.generateChatScopedEngineContext(chatId)
       hoistedCtx = ctx
 
       const rawMessageIds = ctx.rawMessages.map((message) => message.id)
@@ -88,18 +92,23 @@ export class AppEngineRunner {
 
     const engine = await this.getEngine(appId)
 
-    const { filePath, deleteFile } = await this.pullAssetFromRemote(assetId)
+    const ctx = await this.generateAppScopedEngineContext(appId)
+
+    const { filePath, deleteFile: deleteLocalFileCopy } =
+      await this.pullAssetFromRemote(assetId)
 
     const readStream = createReadStreamSafe(filePath)
 
     let hasSaveExternalAssetIdCallbackBeenCalled = false
+
     const saveExternalAssetId = async (externalId: string) => {
       hasSaveExternalAssetIdCallbackBeenCalled = true
       await this.saveExternalAssetId(assetOnApp.id, externalId)
     }
-    await engine.attachAsset(readStream, saveExternalAssetId)
+    await engine.attachAsset(ctx, readStream, saveExternalAssetId)
 
-    await deleteFile()
+    await deleteLocalFileCopy()
+
     if (!hasSaveExternalAssetIdCallbackBeenCalled) {
       throw createHttpError(
         500,
@@ -121,8 +130,13 @@ export class AppEngineRunner {
       throw createHttpError(500, 'External id is missing')
     }
 
+    const aiProviders = await getAllAiProvidersKVsService(
+      this.prisma,
+      this.context,
+    )
+
     const engine = await this.getEngine(appId)
-    await engine.removeAsset(externalId)
+    await engine.removeAsset(aiProviders, externalId)
   }
 
   private async getChat(chatId: string) {
@@ -269,12 +283,20 @@ export class AppEngineRunner {
     })
   }
 
-  private async generateEngineRuntimeContext(chatId: string) {
+  private async generateAppScopedEngineContext(appId: string) {
     const appEnginePayloadBuilder = new AppEnginePayloadBuilder(
       this.prisma,
       this.context,
     )
-    const ctx = await appEnginePayloadBuilder.call(chatId)
+    return await appEnginePayloadBuilder.buildForApp(appId)
+  }
+
+  private async generateChatScopedEngineContext(chatId: string) {
+    const appEnginePayloadBuilder = new AppEnginePayloadBuilder(
+      this.prisma,
+      this.context,
+    )
+    const ctx = await appEnginePayloadBuilder.buildForChat(chatId)
 
     await this.validateModelIsEnabledOrThrow(ctx.providerSlug, ctx.modelSlug)
     return ctx
