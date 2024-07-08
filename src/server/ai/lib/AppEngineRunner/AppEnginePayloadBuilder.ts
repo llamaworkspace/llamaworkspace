@@ -32,11 +32,7 @@ export class AppEnginePayloadBuilder {
     ])
 
     const model = getProviderAndModelFromFullSlug(appConfigVersion.model)
-    const providerKVs = await this.getProviderKVs(
-      this.context.workspaceId,
-      this.context.userId,
-      model.provider,
-    )
+    const providerKVs = await this.getProviderKVs(model.provider)
 
     if (appConfigVersion.systemMessage) {
       const systemMessage = appConfigVersion.messages.find(
@@ -117,15 +113,10 @@ export class AppEnginePayloadBuilder {
     return message
   }
 
-  private async getProviderKVs(
-    workspaceId: string,
-    userId: string,
-    providerSlug: string,
-  ) {
+  private async getProviderKVs(providerSlug: string) {
     return await getAiProviderKVsService(
       this.prisma,
-      workspaceId,
-      userId,
+      this.context,
       providerSlug,
     )
   }
