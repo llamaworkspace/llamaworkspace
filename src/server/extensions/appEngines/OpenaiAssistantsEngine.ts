@@ -111,8 +111,8 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   ) {
     let payload: OpenAI.Beta.Assistants.AssistantCreateParams = {
       model: 'gpt-4o',
-      name: `[DO_NOT_DELETE] Llamaworkspace Assistant (chatId ${chatId}`,
-      description: `This is an automatically created assistant for Llamaworkspace (chatId: ${chatId}). To avoid errors in the app, please do not delete this assistant directly, as it will be deleted automatically after it has been used.`,
+      name: assistantCopys.getName(chatId),
+      description: assistantCopys.getDescription(chatId),
     }
     if (systemMessage && systemMessage.length > 0) {
       payload = {
@@ -243,4 +243,13 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       messages: result.messages as AiRegistryMessageWithoutSystemRole[],
     }
   }
+}
+
+const assistantCopys = {
+  getName: (chatId: string) => {
+    return `[DO_NOT_DELETE] Llamaworkspace Assistant (chatId ${chatId}`
+  },
+  getDescription: (chatId: string) => {
+    return `This is an automatically created assistant for Llamaworkspace (chatId: ${chatId}). To avoid errors in the app, please do not delete this assistant directly, as it will be deleted automatically after it has been used.`
+  },
 }
