@@ -2,7 +2,7 @@ import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes
 import type { Message } from '@prisma/client'
 import type { ReadStream } from 'fs'
 
-type AllowedKVS = Record<string, string | number | boolean>
+export type AllowedKVS = Record<string, string | number | boolean>
 
 export interface AppEngineRunParams<T extends AllowedKVS> {
   readonly appId: string

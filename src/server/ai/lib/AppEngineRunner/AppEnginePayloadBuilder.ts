@@ -14,6 +14,7 @@ import {
   getAllAiProvidersKVsService,
 } from '../../services/getProvidersForWorkspace.service'
 import type {
+  AllowedKVS,
   AppEngineConfigParams,
   AppEngineRunParams,
 } from '../AbstractAppEngine'
@@ -24,7 +25,7 @@ export class AppEnginePayloadBuilder {
     private readonly context: UserOnWorkspaceContext,
   ) {}
 
-  async buildForChat(chatId: string): Promise<AppEngineRunParams<never>> {
+  async buildForChat(chatId: string): Promise<AppEngineRunParams<AllowedKVS>> {
     const [
       chat,
       appConfigVersion,

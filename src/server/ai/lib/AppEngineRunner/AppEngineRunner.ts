@@ -12,7 +12,6 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { PrismaClient } from '@prisma/client'
 import createHttpError from 'http-errors'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
-import { getAllAiProvidersKVsService } from '../../services/getProvidersForWorkspace.service'
 import type {
   AbstractAppEngine,
   AppEngineRunParams,
@@ -91,7 +90,6 @@ export class AppEngineRunner {
     })
 
     const engine = await this.getEngine(appId)
-
     const ctx = await this.generateAppScopedEngineContext(appId)
 
     const { filePath, deleteFile: deleteLocalFileCopy } =
@@ -130,13 +128,10 @@ export class AppEngineRunner {
       throw createHttpError(500, 'External id is missing')
     }
 
-    const aiProviders = await getAllAiProvidersKVsService(
-      this.prisma,
-      this.context,
-    )
+    const ctx = await this.generateAppScopedEngineContext(appId)
 
     const engine = await this.getEngine(appId)
-    await engine.removeAsset(aiProviders, externalId)
+    await engine.removeAsset(ctx, externalId)
   }
 
   private async getChat(chatId: string) {
