@@ -1,39 +1,46 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { env } from '@/env.mjs'
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type {
   PrismaClientOrTrxClient,
   PrismaTrxClient,
 } from '@/shared/globalTypes'
 
-export const getAiProvidersKVsService = async (
+export const getAllAiProvidersKVsService = async (
   prisma: PrismaClientOrTrxClient,
-  workspaceId: string,
-  userId: string,
+  uowContext: UserOnWorkspaceContext,
   providerSlugs?: string[],
 ) => {
   const result = await prismaAsTrx(prisma, async (prisma) => {
-    return getAiProvidersIncludingKeyValues(
-      prisma,
-      workspaceId,
-      userId,
-      providerSlugs,
-    )
+    return getAiProvidersIncludingKeyValues(prisma, uowContext, providerSlugs)
   })
 
   return aiProvidersDbPayloadToKeyValues(result)
 }
 
+export const getAiProviderKVsService = async (
+  prisma: PrismaClientOrTrxClient,
+  uowContext: UserOnWorkspaceContext,
+  providerSlug: string,
+) => {
+  const result = await getAllAiProvidersKVsService(prisma, uowContext, [
+    providerSlug,
+  ])
+  if (!result[providerSlug]) {
+    return {}
+  }
+  return result[providerSlug] ?? {}
+}
+
 export const getAiProviderKVsWithFallbackToInternalKeysService = async (
   prisma: PrismaClientOrTrxClient,
-  workspaceId: string,
-  userId: string,
+  uowContext: UserOnWorkspaceContext,
   providerSlug: string,
 ) => {
   const providerKVs = await getAiProviderKVsService(
     prisma,
-    workspaceId,
-    userId,
+    uowContext,
     providerSlug,
   )
 
@@ -50,27 +57,13 @@ export const getAiProviderKVsWithFallbackToInternalKeysService = async (
   return providerKVs
 }
 
-export const getAiProviderKVsService = async (
-  prisma: PrismaClientOrTrxClient,
-  workspaceId: string,
-  userId: string,
-  providerSlug: string,
-) => {
-  const result = await getAiProvidersKVsService(prisma, workspaceId, userId, [
-    providerSlug,
-  ])
-  if (!result[providerSlug]) {
-    return {}
-  }
-  return result[providerSlug] ?? {}
-}
-
 const getAiProvidersIncludingKeyValues = async (
   prisma: PrismaTrxClient,
-  workspaceId: string,
-  userId: string,
+  uowContext: UserOnWorkspaceContext,
   providerSlugs?: string[],
 ) => {
+  const { workspaceId, userId } = uowContext
+
   return await prisma.aiProvider.findMany({
     where: {
       workspaceId,
