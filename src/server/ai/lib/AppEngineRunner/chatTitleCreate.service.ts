@@ -30,8 +30,7 @@ export const chatTitleCreateService = async (
   try {
     openaiProviderKVs = await getAiProviderKVsWithFallbackToInternalKeysService(
       prisma,
-      workspaceId,
-      userId,
+      uowContext,
       'openai',
     )
   } catch (error) {

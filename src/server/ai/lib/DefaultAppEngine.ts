@@ -61,4 +61,9 @@ export class DefaultAppEngine extends AbstractAppEngine {
     await Promise.resolve()
     throw new Error('Method not implemented.')
   }
+
+  async removeAsset() {
+    await Promise.resolve()
+    throw new Error('Method not implemented.')
+  }
 }

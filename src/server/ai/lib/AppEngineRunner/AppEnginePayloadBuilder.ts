@@ -1,5 +1,6 @@
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
+import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
@@ -19,21 +20,19 @@ export class AppEnginePayloadBuilder {
 
   async call(chatId: string): Promise<AppEngineParams<never>> {
     const [
+      chat,
       appConfigVersion,
       { rawMessages, preparedMessages },
       targetAssistantRawMessage,
     ] = await Promise.all([
+      await this.getChat(chatId),
       await this.getAppConfigVersionForChat(chatId),
       await this.buildMessages(chatId),
       await this.getTargetAssistantMessage(chatId),
     ])
 
     const model = getProviderAndModelFromFullSlug(appConfigVersion.model)
-    const providerKVs = await this.getProviderKVs(
-      this.context.workspaceId,
-      this.context.userId,
-      model.provider,
-    )
+    const providerKVs = await this.getProviderKVs(model.provider)
 
     if (appConfigVersion.systemMessage) {
       const systemMessage = appConfigVersion.messages.find(
@@ -52,6 +51,7 @@ export class AppEnginePayloadBuilder {
     }
 
     return {
+      appId: chat.appId,
       chatId,
       targetAssistantRawMessage,
       rawMessages,
@@ -61,6 +61,10 @@ export class AppEnginePayloadBuilder {
       providerSlug: model.provider,
       providerKVs,
     }
+  }
+
+  private async getChat(chatId: string) {
+    return await getChatByIdService(this.prisma, this.context, { chatId })
   }
 
   private async buildMessages(chatId: string) {
@@ -109,15 +113,10 @@ export class AppEnginePayloadBuilder {
     return message
   }
 
-  private async getProviderKVs(
-    workspaceId: string,
-    userId: string,
-    providerSlug: string,
-  ) {
+  private async getProviderKVs(providerSlug: string) {
     return await getAiProviderKVsService(
       this.prisma,
-      workspaceId,
-      userId,
+      this.context,
       providerSlug,
     )
   }
