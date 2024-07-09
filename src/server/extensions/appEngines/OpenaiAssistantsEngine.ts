@@ -89,7 +89,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       if (event.event === 'thread.message.delta') {
         for (const item of event.data.delta.content ?? []) {
           if (item.type === 'text' && item.text?.value) {
-            await pushText(item.text.value)
+            await pushText(this.clearAnnotationsFromTextDelta(item.text))
           }
         }
       }
@@ -264,6 +264,25 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       }, ''),
       messages: result.messages as AiRegistryMessageWithoutSystemRole[],
     }
+  }
+
+  private clearAnnotationsFromTextDelta(
+    textDelta: OpenAI.Beta.Threads.Messages.TextDelta,
+  ) {
+    let value = textDelta.value ?? ''
+
+    const annotations = textDelta.annotations
+
+    if (!annotations) {
+      return value
+    }
+
+    for (const annotation of annotations) {
+      if (annotation.type === 'file_citation' && annotation.text) {
+        value = value.replace(annotation.text, '')
+      }
+    }
+    return value
   }
 }
 
