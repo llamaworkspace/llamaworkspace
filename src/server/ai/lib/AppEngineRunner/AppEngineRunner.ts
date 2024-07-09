@@ -93,6 +93,7 @@ export class AppEngineRunner {
       where: {
         assetId,
         appId: appId,
+        markAsDeletedAt: null,
       },
     })
 
@@ -127,6 +128,7 @@ export class AppEngineRunner {
       where: {
         assetId,
         appId,
+        markAsDeletedAt: null,
       },
     })
     const externalId = assetOnApp.externalId
