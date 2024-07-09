@@ -14,6 +14,7 @@ import createHttpError from 'http-errors'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type {
   AbstractAppEngine,
+  AllowedKVS,
   AppEngineRunParams,
 } from '../AbstractAppEngine'
 import { AppEngineResponseStream } from '../AppEngineResponseStream'
@@ -28,7 +29,7 @@ export class AppEngineRunner {
   ) {}
 
   async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
-    let hoistedCtx: AppEngineRunParams<never> | undefined = undefined
+    let hoistedCtx: AppEngineRunParams<AllowedKVS> | undefined = undefined
     try {
       await this.validateUserHasPermissionsOrThrow(chatId)
       await this.maybeAttachAppConfigVersionToChat(chatId)

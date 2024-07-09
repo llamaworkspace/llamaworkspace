@@ -1,4 +1,3 @@
-import { ensureError } from '@/lib/utils'
 import {
   AbstractAppEngine,
   AppEngineConfigParams,
@@ -16,16 +15,19 @@ type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
   role: Exclude<AiRegistryMessage['role'], 'system'>
 }
 
-const payloadSchema = z.object({
-  assistantId: z.string(),
-})
-
 const providerKeyValuesSchema = z.object({
   apiKey: z.string(),
   baseUrl: z.string().optional(),
 })
 
-type OpeniAssistantsEnginePayload = z.infer<typeof payloadSchema>
+const appKVsSchema = z
+  .object({
+    vectorStoreId: z.string(),
+  })
+  .partial()
+
+type ProviderKeyValues = z.infer<typeof providerKeyValuesSchema>
+type AppKeyValues = z.infer<typeof appKVsSchema>
 
 export class OpenaiAssistantsEngine extends AbstractAppEngine {
   getName() {
@@ -37,11 +39,11 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   }
 
   getPayloadSchema() {
-    return payloadSchema
+    return appKVsSchema
   }
 
   async run(
-    ctx: AppEngineRunParams<OpeniAssistantsEnginePayload>,
+    ctx: AppEngineRunParams<AppKeyValues>,
     callbacks: AppEngineCallbacks,
   ) {
     const {
@@ -51,12 +53,12 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       providerKVs,
       targetAssistantRawMessage,
       chatId,
+      appKeyValuesStore,
     } = ctx
 
     const { pushText } = callbacks
 
-    const { kvs } = { kvs: {} }
-    const vsid = 'vs_CI3ISs9z5nmoaYWJw2PTe5KB'
+    const appKvs = await appKeyValuesStore.getAll()
 
     const typedProviderKVs = this.getTypedProviderKVsOrThrow(providerKVs)
 
@@ -67,11 +69,12 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     const { systemMessage, messages: messagesWithoutSystem } =
       this.filterSystemMessage(messages)
+
     const assistant = await this.createAssistant(
       openai,
       chatId,
       systemMessage,
-      vsid,
+      appKvs.vectorStoreId,
     )
 
     const response = await openai.beta.threads.createAndRun({
@@ -106,12 +109,14 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   }
 
   async attachAsset(
-    ctx: AppEngineConfigParams,
+    ctx: AppEngineConfigParams<AppKeyValues>,
     uploadable: Uploadable,
     saveExternalAssetId: (externalId: string) => Promise<void>,
   ) {
-    const { appId, aiProviders } = ctx
+    const { appId, aiProviders, appKeyValuesStore } = ctx
     const openaiProvider = aiProviders.openai
+
+    const appKvs = await appKeyValuesStore.getAll()
 
     if (!openaiProvider) {
       throw createHttpError(500, `Provider OpenAI not found`)
@@ -124,9 +129,15 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       typedProviderKVs.baseUrl,
     )
 
-    const vsid = ''
+    const vectorStore = await this.createOrGetVectorStore(
+      openai,
+      appId,
+      appKvs.vectorStoreId,
+    )
 
-    const vectorStore = await this.createOrGetVectorStore(openai, appId, vsid)
+    if (!appKvs.vectorStoreId || appKvs.vectorStoreId !== vectorStore.id) {
+      await appKeyValuesStore.set('vectorStoreId', vectorStore.id)
+    }
 
     const { file } = await this.uploadAssetToVectorStore(
       openai,
@@ -137,8 +148,11 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     await saveExternalAssetId(file.id)
   }
 
-  async removeAsset(ctx: AppEngineConfigParams, externalId: string) {
-    const { appId, aiProviders } = ctx
+  async removeAsset(
+    ctx: AppEngineConfigParams<AppKeyValues>,
+    externalId: string,
+  ) {
+    const { aiProviders } = ctx
     const openaiProvider = aiProviders.openai
 
     if (!openaiProvider) {
@@ -190,22 +204,13 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   private async createOrGetVectorStore(
     openai: OpenAI,
     appId: string,
-    vectorStoreId: string,
+    vectorStoreId?: string,
   ) {
-    let vectorStore: OpenAI.Beta.VectorStores.VectorStore
-
     if (!vectorStoreId) {
       return await this.createVectorStore(openai, appId)
-    } else {
-      try {
-        return await openai.beta.vectorStores.retrieve(vectorStoreId)
-        return vectorStore
-      } catch (_error) {
-        const error = ensureError(_error)
-        return await this.createVectorStore(openai, appId)
-        // HANDLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      }
     }
+
+    return await openai.beta.vectorStores.retrieve(vectorStoreId)
   }
 
   private async createVectorStore(openai: OpenAI, appId: string) {

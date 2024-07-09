@@ -1,9 +1,14 @@
+import { getAppKeyValuesService } from '@/server/apps/services/getAppKeyValues.service'
+import { upsertAppKeyValuesService } from '@/server/apps/services/upsertAppKeyValues.service'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { Author } from '@/shared/aiTypesAndMappers'
-import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import type {
+  PrismaClientOrTrxClient,
+  SimplePrimitive,
+} from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
 import { Promise } from 'bluebird'
 import createHttpError from 'http-errors'
@@ -39,6 +44,8 @@ export class AppEnginePayloadBuilder {
     ])
 
     const model = getProviderAndModelFromFullSlug(appConfigVersion.model)
+    const appKeyValuesStore = this.getKeyValuesStore(chat.appId)
+
     const providerKVs = await this.getProviderKVs(model.provider)
 
     if (appConfigVersion.systemMessage) {
@@ -67,26 +74,21 @@ export class AppEnginePayloadBuilder {
       modelSlug: model.model,
       providerSlug: model.provider,
       providerKVs,
+      appKeyValuesStore,
     }
   }
 
-  async buildForApp(appId: string): Promise<AppEngineConfigParams> {
+  async buildForApp(appId: string): Promise<AppEngineConfigParams<AllowedKVS>> {
     const aiProviders = await getAllAiProvidersKVsService(
       this.prisma,
       this.context,
     )
+    const appKeyValuesStore = this.getKeyValuesStore(appId)
 
     return {
-      aiProviders,
       appId,
-      // chatId,
-      // targetAssistantRawMessage,
-      // rawMessages,
-      // messages: preparedMessages,
-      // fullSlug: appConfigVersion.model,
-      // modelSlug: model.model,
-      // providerSlug: model.provider,
-      // providerKVs,
+      aiProviders,
+      appKeyValuesStore,
     }
   }
 
@@ -179,5 +181,27 @@ export class AppEnginePayloadBuilder {
         content: message.message,
       }
     })
+  }
+
+  private getKeyValuesStore(appId: string) {
+    return {
+      getAll: async () => {
+        const res = await getAppKeyValuesService(this.prisma, this.context, {
+          appId,
+        })
+
+        return res.data
+      },
+
+      set: async (key: string, value: SimplePrimitive) => {
+        const keyValuePairs = {
+          [key]: value,
+        }
+        return await upsertAppKeyValuesService(this.prisma, this.context, {
+          appId,
+          keyValuePairs,
+        })
+      },
+    }
   }
 }
