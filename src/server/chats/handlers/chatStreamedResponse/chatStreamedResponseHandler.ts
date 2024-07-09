@@ -74,6 +74,7 @@ export async function chatStreamedResponseHandler(req: NextRequest) {
     // the stream is returned.
     const error = ensureError(_error)
     errorLogger(error)
+
     const errorMessage = maskServerErrorString(
       generateAiSdkCompatibleErrorString(error),
     )
