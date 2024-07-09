@@ -3,6 +3,7 @@ import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import {
   KeyValueType,
+  SimplePrimitive,
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
@@ -12,7 +13,7 @@ import { Promise } from 'bluebird'
 import { isBoolean, isNull, isNumber } from 'underscore'
 import { scopeAppByWorkspace } from '../appUtils'
 
-type KeyValuePairs = Record<string, KeyValueAllowedTypes | null>
+type KeyValuePairs = Record<string, SimplePrimitive | null>
 
 interface GetAppKeyValuesPayload {
   appId: string
