@@ -1,3 +1,4 @@
+import { SimplePrimitive } from '@/shared/globalTypes'
 import type { ParameterValues } from '../_routes/routes'
 import {
   buildPath,
@@ -11,7 +12,7 @@ describe('routes', () => {
       const build = <T extends string>(
         path: T,
         parameters?: ParameterValues<T, DefaultConfiguration>,
-        query?: Record<string, string | number | boolean>,
+        query?: Record<string, SimplePrimitive>,
       ) =>
         buildPath<T, DefaultConfiguration>(
           path,
@@ -45,7 +46,7 @@ describe('routes', () => {
       const build = <T extends string>(
         path: T,
         parameters?: ParameterValues<T, Configuration>,
-        query?: Record<string, string | number | boolean>,
+        query?: Record<string, SimplePrimitive>,
       ) =>
         buildPath<T, Configuration>(
           path,

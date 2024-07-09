@@ -34,6 +34,8 @@ export enum KeyValueType {
   Boolean = 'boolean',
 }
 
+export type SimplePrimitive = string | number | boolean
+
 export type PrismaTrxClient = Omit<
   PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
   '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'

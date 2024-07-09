@@ -12,7 +12,6 @@ import { Promise } from 'bluebird'
 import { isBoolean, isNull, isNumber } from 'underscore'
 import { scopeAppByWorkspace } from '../appUtils'
 
-type KeyValueAllowedTypes = string | number | boolean
 type KeyValuePairs = Record<string, KeyValueAllowedTypes | null>
 
 interface GetAppKeyValuesPayload {

@@ -1,3 +1,4 @@
+import { SimplePrimitive } from '@/shared/globalTypes'
 import type { Configuration } from './configuration'
 
 type RouteParams<
@@ -15,47 +16,46 @@ type RouteParams<
 export type ParameterValues<
   Paths extends string,
   Config extends Configuration,
-> = RouteParams<Paths, Config> extends [string, ...string[]]
-  ? Record<RouteParams<Paths, Config>[number], string | number>
-  : { [K in string]: never }
+> =
+  RouteParams<Paths, Config> extends [string, ...string[]]
+    ? Record<RouteParams<Paths, Config>[number], string | number>
+    : { [K in string]: never }
 
-export type Query = Record<string, string | number | boolean>
+export type Query = Record<string, SimplePrimitive>
 
-export type Route<
-  Paths extends string,
-  Config extends Configuration,
-> = RouteParams<Paths, Config> extends [string, ...string[]]
-  ? {
-      buildPath: <Path extends Paths>(
-        path: Path,
-        parameters: ParameterValues<Path, Config>,
-        query?: Query,
-      ) => string
-      push: <Path extends Paths>(
-        path: Path,
-        parameters: ParameterValues<Path, Config>,
-        query?: Query,
-      ) => Promise<void>
-      replace: <Path extends Paths>(
-        path: Path,
-        parameters: ParameterValues<Path, Config>,
-        query?: Query,
-      ) => Promise<void>
-    }
-  : {
-      buildPath: <Path extends Paths>(
-        path: Path,
-        parameters?: ParameterValues<Path, Config>,
-        query?: Query,
-      ) => string
-      push: <Path extends Paths>(
-        path: Path,
-        parameters?: ParameterValues<Path, Config>,
-        query?: Query,
-      ) => Promise<void>
-      replace: <Path extends Paths>(
-        path: Path,
-        parameters?: ParameterValues<Path, Config>,
-        query?: Query,
-      ) => Promise<void>
-    }
+export type Route<Paths extends string, Config extends Configuration> =
+  RouteParams<Paths, Config> extends [string, ...string[]]
+    ? {
+        buildPath: <Path extends Paths>(
+          path: Path,
+          parameters: ParameterValues<Path, Config>,
+          query?: Query,
+        ) => string
+        push: <Path extends Paths>(
+          path: Path,
+          parameters: ParameterValues<Path, Config>,
+          query?: Query,
+        ) => Promise<void>
+        replace: <Path extends Paths>(
+          path: Path,
+          parameters: ParameterValues<Path, Config>,
+          query?: Query,
+        ) => Promise<void>
+      }
+    : {
+        buildPath: <Path extends Paths>(
+          path: Path,
+          parameters?: ParameterValues<Path, Config>,
+          query?: Query,
+        ) => string
+        push: <Path extends Paths>(
+          path: Path,
+          parameters?: ParameterValues<Path, Config>,
+          query?: Query,
+        ) => Promise<void>
+        replace: <Path extends Paths>(
+          path: Path,
+          parameters?: ParameterValues<Path, Config>,
+          query?: Query,
+        ) => Promise<void>
+      }
