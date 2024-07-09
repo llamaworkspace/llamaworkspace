@@ -1,9 +1,10 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
-import { SimplePrimitive } from '@/shared/globalTypes'
+import type { SimplePrimitive } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
 import type { ReadStream } from 'fs'
+import type { z } from 'zod'
 
-export type AllowedKVS = Record<string, SimplePrimitive>
+export type EngineAppKeyValues = Record<string, SimplePrimitive>
 
 interface AppKeyValuesStoreParams<AllowedKVS> {
   getAll: () => Promise<AllowedKVS>
@@ -13,10 +14,13 @@ interface AppKeyValuesStoreParams<AllowedKVS> {
   ) => Promise<void>
 }
 
-export interface AppEngineRunParams<T extends AllowedKVS> {
+export interface AppEngineRunParams<
+  T extends EngineAppKeyValues,
+  ProviderKeyValues,
+> {
   readonly appId: string
   readonly chatId: string
-  readonly providerKVs: Record<string, string>
+  readonly providerKVs: ProviderKeyValues
   readonly appKeyValuesStore: AppKeyValuesStoreParams<T>
   readonly rawMessages: Message[]
   readonly messages: AiRegistryMessage[]
@@ -39,18 +43,21 @@ export interface AppEngineCallbacks {
 
 export abstract class AbstractAppEngine {
   abstract getName(): string
+  abstract getProviderKeyValuesSchema(): z.ZodSchema
+  abstract getPayloadSchema(): z.ZodSchema
+
   abstract run(
-    ctx: AppEngineRunParams<AllowedKVS>,
+    ctx: AppEngineRunParams<EngineAppKeyValues, Record<string, string>>,
     callbacks: AppEngineCallbacks,
   ): Promise<void>
 
   abstract attachAsset(
-    ctx: AppEngineConfigParams,
+    ctx: AppEngineConfigParams<EngineAppKeyValues>,
     fileStream: ReadStream,
     saveExternalAssetId: (externalId: string) => Promise<void>,
   ): Promise<void>
   abstract removeAsset(
-    ctx: AppEngineConfigParams,
+    ctx: AppEngineConfigParams<EngineAppKeyValues>,
     externalAssetId: string,
   ): Promise<void>
 }

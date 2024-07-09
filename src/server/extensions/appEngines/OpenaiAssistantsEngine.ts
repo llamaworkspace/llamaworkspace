@@ -1,7 +1,7 @@
 import {
   AbstractAppEngine,
-  AppEngineConfigParams,
   type AppEngineCallbacks,
+  type AppEngineConfigParams,
   type AppEngineRunParams,
 } from '@/server/ai/lib/AbstractAppEngine'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
@@ -43,7 +43,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   }
 
   async run(
-    ctx: AppEngineRunParams<AppKeyValues>,
+    ctx: AppEngineRunParams<AppKeyValues, ProviderKeyValues>,
     callbacks: AppEngineCallbacks,
   ) {
     const {

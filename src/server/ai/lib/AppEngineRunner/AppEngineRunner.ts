@@ -14,8 +14,8 @@ import createHttpError from 'http-errors'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type {
   AbstractAppEngine,
-  AllowedKVS,
   AppEngineRunParams,
+  EngineAppKeyValues,
 } from '../AbstractAppEngine'
 import { AppEngineResponseStream } from '../AppEngineResponseStream'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
@@ -29,7 +29,9 @@ export class AppEngineRunner {
   ) {}
 
   async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
-    let hoistedCtx: AppEngineRunParams<AllowedKVS> | undefined = undefined
+    let hoistedCtx:
+      | AppEngineRunParams<EngineAppKeyValues, Record<string, string>>
+      | undefined = undefined
     try {
       await this.validateUserHasPermissionsOrThrow(chatId)
       await this.maybeAttachAppConfigVersionToChat(chatId)
@@ -37,6 +39,8 @@ export class AppEngineRunner {
       const chat = await this.getChat(chatId)
       const ctx = await this.generateChatScopedEngineContext(chatId)
       hoistedCtx = ctx
+
+      await this.validateModelIsEnabledOrThrow(ctx.providerSlug, ctx.modelSlug)
 
       const rawMessageIds = ctx.rawMessages.map((message) => message.id)
       const chatRun = await this.createChatRun(chatId, rawMessageIds)
@@ -56,6 +60,8 @@ export class AppEngineRunner {
       void this.handleTitleCreate(chatId)
 
       const engine = await this.getEngine(chat.appId)
+
+      await this.validateCtxPayloads(engine, ctx)
 
       return AppEngineResponseStream(
         {
@@ -292,10 +298,7 @@ export class AppEngineRunner {
       this.prisma,
       this.context,
     )
-    const ctx = await appEnginePayloadBuilder.buildForChat(chatId)
-
-    await this.validateModelIsEnabledOrThrow(ctx.providerSlug, ctx.modelSlug)
-    return ctx
+    return await appEnginePayloadBuilder.buildForChat(chatId)
   }
 
   private async createChatRun(chatId: string, messageIds: string[]) {
@@ -368,6 +371,14 @@ export class AppEngineRunner {
         externalId,
       },
     })
+  }
+
+  private async validateCtxPayloads(
+    engine: AbstractAppEngine,
+    ctx: AppEngineRunParams<EngineAppKeyValues, Record<string, string>>,
+  ) {
+    await engine.getProviderKeyValuesSchema().parseAsync(ctx.providerKVs)
+    await engine.getPayloadSchema().parse(ctx.appKeyValuesStore)
   }
 
   private getCallbacks(targetAssistantMessageId: string) {

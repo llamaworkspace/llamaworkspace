@@ -19,9 +19,9 @@ import {
   getAllAiProvidersKVsService,
 } from '../../services/getProvidersForWorkspace.service'
 import type {
-  AllowedKVS,
   AppEngineConfigParams,
   AppEngineRunParams,
+  EngineAppKeyValues,
 } from '../AbstractAppEngine'
 
 export class AppEnginePayloadBuilder {
@@ -30,7 +30,9 @@ export class AppEnginePayloadBuilder {
     private readonly context: UserOnWorkspaceContext,
   ) {}
 
-  async buildForChat(chatId: string): Promise<AppEngineRunParams<AllowedKVS>> {
+  async buildForChat(
+    chatId: string,
+  ): Promise<AppEngineRunParams<EngineAppKeyValues, Record<string, string>>> {
     const [
       chat,
       appConfigVersion,
@@ -78,7 +80,9 @@ export class AppEnginePayloadBuilder {
     }
   }
 
-  async buildForApp(appId: string): Promise<AppEngineConfigParams<AllowedKVS>> {
+  async buildForApp(
+    appId: string,
+  ): Promise<AppEngineConfigParams<EngineAppKeyValues>> {
     const aiProviders = await getAllAiProvidersKVsService(
       this.prisma,
       this.context,
