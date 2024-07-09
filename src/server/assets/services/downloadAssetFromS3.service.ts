@@ -109,6 +109,9 @@ const checkUserHasPermissionOrThrow = async (
         include: {
           app: true,
         },
+        where: {
+          markAsDeletedAt: null,
+        },
       },
     },
   })
