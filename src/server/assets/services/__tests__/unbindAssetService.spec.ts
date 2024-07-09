@@ -75,7 +75,8 @@ describe('unbindAssetService', () => {
         appId: app.id,
       },
     })
-    expect(dbAfter).toHaveLength(0)
+    expect(dbAfter).toHaveLength(1)
+    expect(dbAfter[0]!.markAsDeletedAt).toBeDefined()
   })
 
   it('calls PermissionsVerifier', async () => {
