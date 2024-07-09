@@ -1,24 +1,46 @@
 <p align="center">
+<<<<<<< Updated upstream
 <a href="https://joia.so">
+=======
+<a href="https://llamaworkspace.ai">
+>>>>>>> Stashed changes
   <img width="90" src="https://assets.joia.so/joia_logo_red.svg" alt="Joia Logo">
   
 </a>
 </p>
 
-<h3 align="center"><strong>A lightweight ChatGPT alternative designed for team collaboration</strong></h3>
+<h3 align="center"><strong>Host a ChatGPT Teams/Enterprise alternative on your infra</strong></h3>
 
+<<<<<<< Updated upstream
 [Joia](https://joia.so/) is an open source alternative to _[ChatGPT for Teams](https://openai.com/chatgpt/team)_, designed from the ground up for collaboration.
 
 The easiest way to get started with Joia is by creating a [Joia Cloud account](https://joia.so/). If you prefer to self-host Joia, please refer to our documentation below.
+=======
+## The product
+
+Llama Workspace is an open source ChatGPT Teams/Enterprise alternative.
+
+Our goal is to create a single user interface to access all the company's AI. That's why we have created a product heavily inspired in the category-defining ChatGPT, but we have made it easy to connect with other AI products and tools.
+
+It shines by being:
+
+- **Teams first**: It comes with user management and granular permissions built-in.
+- **Extensible**: Easily build AI chatbots and agents, and use Llama Workspace as the UI. That'll help you centralize all your AI products in a single place.
+- **Straightforward to self-host**: Get up and running with a fewest possible number of commands.
+>>>>>>> Stashed changes
 
 ## Main features & benefits
 
-- Efortlessly grant **people access** to a user-friendly AI Chat.
-- Use any LLM, including the **latest open source LLMs** like Llama 2, Mixtral and others (more coming soon).
-- Create **collaborative chatbots** for specific use cases, and share them across your teams.
+- **Efortlessly manage team access** to collaborative AI workspace.
+- Ask any question to an AI Chat **powered by the model of your choice** (GPT-x, Claude, Llama 3, etc).
+- Create **collaborative apps** for repeatable use cases and share them across your teams.
+- Ask questions to **your documents and company data**.
+- Integrate with major **LLM providers**, your own tools, or embed gradio-compatible UIs.
+- **Avoid data leakages and stay compliant** by hosting Llama Workspace on your infrastructure.
+
+## Cost savings vs ChatGPT Teams/Enterprise
+
 - **Save between of 50% and 75%** (depends on usage) compared to _ChatGPT for Teams_ and _ChatGPT Enterprise_.
-- **Get responses 40% faster** than ChatGPT Plus. The OpenAI API is generally faster.
-- **Prevent your prompts from being used for training purposes**. When using ChatGPT Plus, your data might then be used for training purposes. However, when connecting to OpenAI via API keys, you're guaranteed that any inputs provided won't be used.
 
 ## Getting started
 
