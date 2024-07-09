@@ -36,8 +36,8 @@ export const _llamaQHandler = async (req: NextRequest) => {
 
   const { queue, action, payload } = safeJson.data
 
-  const res = await queuesManager.call(queue, action, payload)
-  return NextResponse.json(res)
+  await queuesManager.call(queue, action, payload)
+  return NextResponse.json({ success: true })
 }
 
 const isAuthenticated = (req: NextRequest) => {

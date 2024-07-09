@@ -4,18 +4,16 @@ import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { KeyValueType } from '@/shared/globalTypes'
+import { KeyValueType, type SimplePrimitive } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, KeyValue, User, Workspace } from '@prisma/client'
 import { upsertAppKeyValuesService } from '../upsertAppKeyValues.service'
-
-type KeyValueAllowedTypes = string | number | boolean
 
 const subject = async (
   userId: string,
   workspaceId: string,
   appId: string,
-  keyValuePairs: Record<string, KeyValueAllowedTypes | null>,
+  keyValuePairs: Record<string, SimplePrimitive | null>,
 ) => {
   const context = await createUserOnWorkspaceContext(
     prisma,

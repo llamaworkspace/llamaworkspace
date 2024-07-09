@@ -53,12 +53,7 @@ export abstract class AbstractQueueManager<T extends ZodType> {
   async call(action: string, payload: PayloadType<T>) {
     this.parsePayloadOrThrow(payload)
 
-    try {
-      await this.handle(action, payload)
-    } catch (err) {
-      // Red flag
-      console.error('Failed to handle event', err)
-    }
+    await this.handle(action, payload)
   }
 
   private parsePayloadOrThrow(payload: PayloadType<T>) {

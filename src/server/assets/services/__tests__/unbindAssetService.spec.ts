@@ -8,14 +8,19 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, User, Workspace } from '@prisma/client'
+import { unbindAssetQueue } from '../../queues/unbindAssetQueue'
 import { unbindAssetService } from '../unbindAsset.service'
+
+jest.mock('@/server/assets/queues/unbindAssetQueue.ts', () => {
+  return { unbindAssetQueue: { enqueue: jest.fn() } }
+})
 
 const subject = async (
   workspaceId: string,
   userId: string,
-  assetId: string,
   payload: {
     appId: string
+    assetId: string
   },
 ) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -24,13 +29,10 @@ const subject = async (
     userId,
   )
 
-  return await unbindAssetService(prisma, uowContext, {
-    assetId,
-    ...payload,
-  })
+  return await unbindAssetService(prisma, uowContext, payload)
 }
 
-describe('bindAssetService', () => {
+describe('unbindAssetService', () => {
   let workspace: Workspace
   let user: User
   let asset: Asset
@@ -58,38 +60,47 @@ describe('bindAssetService', () => {
     })
   })
 
-  describe('when the unbinding is with an app', () => {
-    it('performs the unbinding', async () => {
-      const dbBefore = await prisma.assetsOnApps.findMany({
-        where: {
-          assetId: asset.id,
-          appId: app.id,
-        },
-      })
-      expect(dbBefore).toHaveLength(1)
-      await subject(workspace.id, user.id, asset.id, { appId: app.id })
-      const dbAfter = await prisma.assetsOnApps.findMany({
-        where: {
-          assetId: asset.id,
-          appId: app.id,
-        },
-      })
-      expect(dbAfter).toHaveLength(0)
+  it('performs the unbinding', async () => {
+    const dbBefore = await prisma.assetsOnApps.findMany({
+      where: {
+        assetId: asset.id,
+        appId: app.id,
+      },
     })
+    expect(dbBefore).toHaveLength(1)
+    await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
+    const dbAfter = await prisma.assetsOnApps.findMany({
+      where: {
+        assetId: asset.id,
+        appId: app.id,
+      },
+    })
+    expect(dbAfter).toHaveLength(1)
+    expect(dbAfter[0]!.markAsDeletedAt).toBeDefined()
+  })
 
-    it('calls PermissionsVerifier', async () => {
-      const spy = jest.spyOn(
-        PermissionsVerifier.prototype,
-        'passOrThrowTrpcError',
-      )
+  it('calls PermissionsVerifier', async () => {
+    const spy = jest.spyOn(
+      PermissionsVerifier.prototype,
+      'passOrThrowTrpcError',
+    )
 
-      await subject(workspace.id, user.id, asset.id, { appId: app.id })
+    await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
 
-      expect(spy).toHaveBeenCalledWith(
-        PermissionAction.Update,
-        expect.anything(),
-        expect.anything(),
-      )
+    expect(spy).toHaveBeenCalledWith(
+      PermissionAction.Update,
+      expect.anything(),
+      expect.anything(),
+    )
+  })
+
+  it('enqueues the asset binding', async () => {
+    await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
+    /* eslint-disable-next-line @typescript-eslint/unbound-method*/
+    expect(unbindAssetQueue.enqueue).toHaveBeenCalledWith('unbindAsset', {
+      userId: user.id,
+      appId: app.id,
+      assetId: asset.id,
     })
   })
 })

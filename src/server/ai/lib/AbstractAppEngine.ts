@@ -1,21 +1,39 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
+import type { SimplePrimitive } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
 import type { ReadStream } from 'fs'
+import type { z } from 'zod'
 
-type AllowedKVS = Record<string, string | number | boolean>
+export type EngineAppKeyValues = Record<string, SimplePrimitive>
 
-export interface AppEngineParams<T extends AllowedKVS> {
+interface AppKeyValuesStoreParams<AllowedKVS> {
+  getAll: () => Promise<AllowedKVS>
+  set: (
+    key: keyof AllowedKVS,
+    value: AllowedKVS[keyof AllowedKVS],
+  ) => Promise<void>
+}
+
+export interface AppEngineRunParams<
+  T extends EngineAppKeyValues,
+  ProviderKeyValues,
+> {
   readonly appId: string
   readonly chatId: string
-  readonly providerKVs: Record<string, string>
-
-  // readonly kvs: T
+  readonly providerKVs: ProviderKeyValues
+  readonly appKeyValuesStore: AppKeyValuesStoreParams<T>
   readonly rawMessages: Message[]
   readonly messages: AiRegistryMessage[]
   readonly targetAssistantRawMessage: Message
   readonly fullSlug: string
   readonly providerSlug: string
   readonly modelSlug: string
+}
+
+export interface AppEngineConfigParams<T> {
+  readonly appId: string
+  readonly aiProviders: Record<string, Record<string, string>>
+  readonly appKeyValuesStore: AppKeyValuesStoreParams<T>
 }
 
 export interface AppEngineCallbacks {
@@ -25,18 +43,21 @@ export interface AppEngineCallbacks {
 
 export abstract class AbstractAppEngine {
   abstract getName(): string
+  abstract getProviderKeyValuesSchema(): z.ZodSchema
+  abstract getPayloadSchema(): z.ZodSchema
+
   abstract run(
-    ctx: AppEngineParams<AllowedKVS>,
+    ctx: AppEngineRunParams<EngineAppKeyValues, Record<string, string>>,
     callbacks: AppEngineCallbacks,
   ): Promise<void>
 
   abstract attachAsset(
-    ctx: AppEngineParams<AllowedKVS>,
+    ctx: AppEngineConfigParams<EngineAppKeyValues>,
     fileStream: ReadStream,
     saveExternalAssetId: (externalId: string) => Promise<void>,
   ): Promise<void>
   abstract removeAsset(
-    ctx: AppEngineParams<AllowedKVS>,
+    ctx: AppEngineConfigParams<EngineAppKeyValues>,
     externalAssetId: string,
   ): Promise<void>
 }
