@@ -40,7 +40,7 @@ class UnbindAssetQueue extends AbstractQueueManager<typeof zPayload> {
 
       const appEngineRunner = new AppEngineRunner(prisma, context, engines)
 
-      await appEngineRunner.removeAsset(payload.appId, payload.assetId)
+      await appEngineRunner.onAssetRemoved(payload.appId, payload.assetId)
       await prismaAsTrx.assetsOnApps.deleteMany({
         where: {
           appId: payload.appId,

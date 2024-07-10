@@ -88,7 +88,21 @@ export class AppEngineRunner {
     }
   }
 
-  async attachAsset(appId: string, assetId: string) {
+  async onAppCreated(appId: string) {
+    const engine = await this.getEngine(appId)
+    const ctx = await this.generateAppScopedEngineContext(appId)
+
+    await engine.onAppCreated(ctx)
+  }
+
+  async onAppDeleted(appId: string) {
+    const engine = await this.getEngine(appId)
+    const ctx = await this.generateAppScopedEngineContext(appId)
+
+    await engine.onAppDeleted(ctx)
+  }
+
+  async onAssetAdded(appId: string, assetId: string) {
     const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
       where: {
         assetId,
@@ -123,7 +137,7 @@ export class AppEngineRunner {
     }
   }
 
-  async removeAsset(appId: string, assetId: string) {
+  async onAssetRemoved(appId: string, assetId: string) {
     const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
       where: {
         assetId,

@@ -37,7 +37,7 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
     )
 
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
-    await appEngineRunner.attachAsset(payload.appId, payload.assetId)
+    await appEngineRunner.onAssetAdded(payload.appId, payload.assetId)
   }
 }
 

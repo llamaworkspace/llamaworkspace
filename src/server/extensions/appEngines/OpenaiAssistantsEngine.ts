@@ -104,8 +104,30 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     return await Promise.resolve()
   }
 
-  async onAppDeleted() {
-    return await Promise.resolve()
+  async onAppDeleted(ctx: AppEngineConfigParams<AppKeyValues>) {
+    const { aiProviders, appKeyValuesStore } = ctx
+    const openaiProvider = aiProviders.openai
+
+    const appKvs = await appKeyValuesStore.getAll()
+
+    if (!openaiProvider) {
+      throw createHttpError(500, `Provider OpenAI not found`)
+    }
+
+    const typedProviderKVs = this.getTypedProviderKVsOrThrow(openaiProvider)
+
+    const openai = this.getOpenaiInstance(
+      typedProviderKVs.apiKey,
+      typedProviderKVs.baseUrl,
+    )
+
+    const vectorStoreId = appKvs.vectorStoreId
+
+    if (!vectorStoreId) {
+      throw createHttpError(500, `Vector store id not found`)
+    }
+
+    await this.deleteVectorStore(openai, vectorStoreId)
   }
 
   async onAssetAdded(
@@ -217,6 +239,10 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     return await openai.beta.vectorStores.create({
       name: vectorStoreCopys.getName(appId),
     })
+  }
+
+  private async deleteVectorStore(openai: OpenAI, openAiVectorStoreId: string) {
+    return await openai.beta.vectorStores.del(openAiVectorStoreId)
   }
 
   private async uploadAssetToVectorStore(
