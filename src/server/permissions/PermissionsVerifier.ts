@@ -19,6 +19,7 @@ export class PermissionsVerifier {
     const app = await this.prisma.app.findFirstOrThrow({
       where: {
         id: appId,
+        markAsDeletedAt: null,
       },
     })
 
@@ -118,6 +119,7 @@ export class PermissionsVerifier {
     const app = await this.prisma.app.findFirstOrThrow({
       where: {
         id: appId,
+        markAsDeletedAt: null,
       },
     })
     return app.userId === userId

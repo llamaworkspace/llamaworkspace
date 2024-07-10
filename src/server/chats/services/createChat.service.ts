@@ -31,6 +31,7 @@ export const createChatService = async function (
     const app = await prisma.app.findUniqueOrThrow({
       where: {
         id: appId,
+        markAsDeletedAt: null,
       },
     })
 

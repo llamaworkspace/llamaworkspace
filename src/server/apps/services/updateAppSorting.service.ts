@@ -18,6 +18,7 @@ export const updateAppSortingService = async (
       where: scopeAppByWorkspace(
         {
           id: appIdToPushToPosition1,
+          markAsDeletedAt: null,
         },
         workspaceId,
       ),
