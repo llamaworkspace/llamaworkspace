@@ -6,7 +6,12 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
+import { deleteAppQueue } from '../../queues/deleteAppQueue'
 import { appDeleteService } from '../appDelete.service'
+
+jest.mock('@/server/apps/queues/deleteAppQueue.ts', () => {
+  return { deleteAppQueue: { enqueue: jest.fn() } }
+})
 
 const subject = async (workspaceId: string, userId: string, appId: string) => {
   const uowContext = await createUserOnWorkspaceContext(
@@ -24,6 +29,7 @@ describe('appDeleteService', () => {
   let app: App
 
   beforeEach(async () => {
+    jest.clearAllMocks()
     workspace = await WorkspaceFactory.create(prisma)
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
@@ -31,6 +37,15 @@ describe('appDeleteService', () => {
     app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
+    })
+  })
+
+  it('enqueues the app for deletion', async () => {
+    await subject(workspace.id, user.id, app.id)
+    /* eslint-disable-next-line @typescript-eslint/unbound-method*/
+    expect(deleteAppQueue.enqueue).toHaveBeenCalledWith('deleteApp', {
+      userId: user.id,
+      appId: app.id,
     })
   })
 
@@ -50,7 +65,7 @@ describe('appDeleteService', () => {
       },
     })
 
-    expect(appInDb).toBeNull()
+    expect(appInDb!.markAsDeletedAt).toBeInstanceOf(Date)
   })
 
   it('calls PermissionsVerifier', async () => {

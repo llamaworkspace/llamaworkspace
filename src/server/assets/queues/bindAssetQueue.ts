@@ -27,6 +27,7 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
     const app = await prisma.app.findFirstOrThrow({
       where: {
         id: payload.appId,
+        markAsDeletedAt: null,
       },
     })
 

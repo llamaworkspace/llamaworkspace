@@ -17,6 +17,7 @@ export const getDefaultAppService = async (
       {
         userId,
         isDefault: true,
+        markAsDeletedAt: null,
       },
       workspaceId,
     ),

@@ -38,6 +38,7 @@ export const appUpdateService = async (
         {
           id: appId,
           isDefault: false,
+          markAsDeletedAt: null,
         },
         workspaceId,
       ),

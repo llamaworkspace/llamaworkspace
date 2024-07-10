@@ -71,6 +71,7 @@ const handleCaseNoChatRuns = async (
     where: scopeAppByWorkspace(
       {
         isDemo: true,
+        markAsDeletedAt: null,
       },
       workspaceId,
     ),
