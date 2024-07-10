@@ -56,6 +56,15 @@ describe('deleteAppQueue', () => {
     expect(appInDb).toBeNull()
   })
 
+  it('invokes appEngineRunner.onAppDeleted', async () => {
+    await subject({ userId: user.id, appId: app.id })
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const onAppDeletedSpy = AppEngineRunner.prototype.onAppDeleted as jest.Mock
+
+    expect(onAppDeletedSpy).toHaveBeenCalledWith(app.id)
+  })
+
   describe('when the app has assets', () => {
     let asset1: Asset
     let asset2: Asset
@@ -92,16 +101,6 @@ describe('deleteAppQueue', () => {
       expect(onAssetRemovedSpy).toHaveBeenCalledTimes(2)
       expect(onAssetRemovedSpy).toHaveBeenNthCalledWith(1, app.id, asset1.id)
       expect(onAssetRemovedSpy).toHaveBeenNthCalledWith(2, app.id, asset2.id)
-    })
-
-    it('invokes appEngineRunner.onAppDeleted', async () => {
-      await subject({ userId: user.id, appId: app.id })
-
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      const onAppDeletedSpy = AppEngineRunner.prototype
-        .onAppDeleted as jest.Mock
-
-      expect(onAppDeletedSpy).toHaveBeenCalledWith(app.id)
     })
   })
 })
