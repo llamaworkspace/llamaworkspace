@@ -111,7 +111,7 @@ export class AppEngineRunner {
       hasSaveExternalAssetIdCallbackBeenCalled = true
       await this.saveExternalAssetId(assetOnApp.id, externalId)
     }
-    await engine.attachAsset(ctx, readStream, saveExternalAssetId)
+    await engine.onAssetAdded(ctx, readStream, saveExternalAssetId)
 
     await deleteLocalFileCopy()
 
@@ -142,7 +142,7 @@ export class AppEngineRunner {
     const ctx = await this.generateAppScopedEngineContext(appId)
 
     const engine = await this.getEngine(appId)
-    await engine.removeAsset(ctx, externalId)
+    await engine.onAssetRemoved(ctx, externalId)
   }
 
   private async getChat(chatId: string) {

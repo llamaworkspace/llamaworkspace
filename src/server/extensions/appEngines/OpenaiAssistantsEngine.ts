@@ -46,15 +46,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     ctx: AppEngineRunParams<AppKeyValues, ProviderKeyValues>,
     callbacks: AppEngineCallbacks,
   ) {
-    const {
-      messages,
-      providerSlug,
-      modelSlug,
-      providerKVs,
-      targetAssistantRawMessage,
-      chatId,
-      appKeyValuesStore,
-    } = ctx
+    const { messages, providerKVs, chatId, appKeyValuesStore } = ctx
 
     const { pushText } = callbacks
 
@@ -108,7 +100,15 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     await this.deleteAssistant(openai, assistant.id)
   }
 
-  async attachAsset(
+  async onAppCreated() {
+    return await Promise.resolve()
+  }
+
+  async onAppDeleted() {
+    return await Promise.resolve()
+  }
+
+  async onAssetAdded(
     ctx: AppEngineConfigParams<AppKeyValues>,
     uploadable: Uploadable,
     saveExternalAssetId: (externalId: string) => Promise<void>,
@@ -148,7 +148,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     await saveExternalAssetId(file.id)
   }
 
-  async removeAsset(
+  async onAssetRemoved(
     ctx: AppEngineConfigParams<AppKeyValues>,
     externalId: string,
   ) {
