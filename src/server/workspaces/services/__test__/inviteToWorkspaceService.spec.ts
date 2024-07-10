@@ -66,7 +66,7 @@ describe('inviteToWorkspaceService', () => {
       to: email,
       subject: `Your invitation to the workspace "${workspace.name}"`,
       text: expect.stringContaining(
-        `${invitingUser.name} has invited you to the following workspace at Llama Workspace: ${workspace.name}`,
+        `${invitingUser.name} has invited you to join the Llama Workspace "${workspace.name}"`,
       ) as string,
     })
   })
