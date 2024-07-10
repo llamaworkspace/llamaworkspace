@@ -27,7 +27,7 @@ const MagicLinkEmail = ({ targetUrl }: MagicLinkEmailProps) => (
     <Body style={main}>
       <Container style={{ ...container, marginTop: '48px' }}>
         <Img
-          src={`${frontendUrl}/images/llama-workspace-logo-300.png`}
+          src={`${frontendUrl}/images/llama-workspace-logo-black-square.png`}
           width="96"
           height="96"
           alt="Llama Workspace Logo"
