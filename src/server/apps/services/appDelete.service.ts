@@ -7,6 +7,7 @@ import {
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopeAppByWorkspace } from '../appUtils'
+import { deleteAppQueue } from '../queues/deleteAppQueue'
 
 interface AppDeleteServiceInputProps {
   appId: string
@@ -37,10 +38,20 @@ export const appDeleteService = async (
       ),
     })
 
-    return await prisma.app.delete({
+    const result = await prisma.app.update({
       where: {
         id: appId,
       },
+      data: {
+        markAsDeletedAt: new Date(),
+      },
     })
+
+    await deleteAppQueue.enqueue('deleteApp', {
+      userId,
+      appId,
+    })
+
+    return result
   })
 }
