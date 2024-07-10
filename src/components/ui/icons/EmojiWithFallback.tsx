@@ -1,5 +1,5 @@
 import { Emoji } from 'emoji-picker-react'
-import { JoiaIcon24 } from './JoiaIcon'
+import { LegacyJoiaIcon24 } from './JoiaIcon'
 
 type EmojiProps = Parameters<typeof Emoji>[0]
 
@@ -16,6 +16,6 @@ export const EmojiWithFallback = ({
   return unified ? (
     <Emoji unified={unified} {...props} />
   ) : (
-    <JoiaIcon24 className={fallbackClassName} />
+    <LegacyJoiaIcon24 className={fallbackClassName} />
   )
 }

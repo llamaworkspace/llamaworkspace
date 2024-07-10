@@ -172,7 +172,9 @@ interface SendEmailToInvitedUserParams {
 const sendEmailToInvitedUser = async (params: SendEmailToInvitedUserParams) => {
   const { invitingUserName, invitedUserEmail, workspaceName, token } = params
 
-  const fromName = invitingUserName ? `${invitingUserName} - via Joia` : 'Joia'
+  const fromName = invitingUserName
+    ? `${invitingUserName} - via Llama Workspace`
+    : 'Llama Workspace'
 
   const subject = `Your invitation to the workspace "${workspaceName}"`
 
@@ -199,7 +201,7 @@ const getEmailBody = (
 ) => {
   return `Hello,
 
-${inviteeName} has invited you to the following workspace at Joia: ${workspaceName}.
+${inviteeName} has invited you to join the Llama Workspace "${workspaceName}".
 
 To enter the workspace, please click on the following link:
 ${workspaceUrl}
@@ -209,5 +211,5 @@ If you do not have an account, you will be prompted to create one. You must use 
 If you have any doubts or trouble signing up, please do not hesitate to reach out to us by replying to this email.
 
 All the best,
-The Joia team`
+The Llama Workspace team`
 }

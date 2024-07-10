@@ -182,8 +182,9 @@ const DefaultOpenAiKeyAlert = () => {
     <Alert variant="fuchsia">
       <AlertTitle>Default OpenAI keys being used</AlertTitle>
       <AlertDescription>
-        Since you haven&apos;t set up the OpenAI API credentials here, Joia will
-        use the OpenAI API keys defined in the environment variables.
+        Since you haven&apos;t set up the OpenAI API credentials here, Llama
+        Workspace will use the OpenAI API keys defined in the environment
+        variables.
       </AlertDescription>
     </Alert>
   )

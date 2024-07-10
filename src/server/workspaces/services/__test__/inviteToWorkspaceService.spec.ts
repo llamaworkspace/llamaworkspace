@@ -62,11 +62,11 @@ describe('inviteToWorkspaceService', () => {
     const email = faker.internet.email()
     await subject(workspace.id, invitingUser.id, email)
     expect(sendEmail).toHaveBeenCalledWith({
-      fromName: `${invitingUser.name} - via Joia`,
+      fromName: `${invitingUser.name} - via Llama Workspace`,
       to: email,
       subject: `Your invitation to the workspace "${workspace.name}"`,
       text: expect.stringContaining(
-        `${invitingUser.name} has invited you to the following workspace at Joia: ${workspace.name}`,
+        `${invitingUser.name} has invited you to the following workspace at Llama Workspace: ${workspace.name}`,
       ) as string,
     })
   })

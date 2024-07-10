@@ -1,6 +1,6 @@
 import { InputField } from '@/components/ui/forms/InputField'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
-import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
+import { LegacyJoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
 import {
   Popover,
   PopoverContent,
@@ -51,7 +51,7 @@ export const AppConfigForGPTNameAndDescription = ({
               {currentValue ? (
                 <Emoji unified={currentValue} size={54} />
               ) : (
-                <JoiaIcon24 className="h-12 w-12 text-zinc-300" />
+                <LegacyJoiaIcon24 className="h-12 w-12 text-zinc-300" />
               )}
             </div>
           )

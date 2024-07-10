@@ -32,7 +32,7 @@ describe('workspaceOnboardingCreationService', () => {
     })
 
     expect(app).toMatchObject({
-      title: "Joia's fun facts teller",
+      title: 'Fun facts teller',
     })
     expect(app.shares[0]!.scope).toBe(ShareScope.Everybody.toString())
   })
