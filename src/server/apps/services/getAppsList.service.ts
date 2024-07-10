@@ -95,6 +95,7 @@ const genericAppFetch = async (
   const where = scopeAppByWorkspace(
     {
       isDefault: false,
+      markAsDeletedAt: null,
       ...whereClause,
     },
     workspaceId,

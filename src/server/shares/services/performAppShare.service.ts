@@ -240,6 +240,7 @@ const sendShareNotificationEmail = async (
   const app = await prisma.app.findUniqueOrThrow({
     where: {
       id: appId,
+      markAsDeletedAt: null,
     },
     select: {
       title: true,

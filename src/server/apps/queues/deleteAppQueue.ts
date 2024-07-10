@@ -31,6 +31,12 @@ class DeleteAppQueue extends AbstractQueueManager<typeof zPayload> {
         },
       })
 
+      await prismaAsTrx.app.delete({
+        where: {
+          id: payload.appId,
+        },
+      })
+
       const context = await createUserOnWorkspaceContext(
         prismaAsTrx,
         app.workspaceId,

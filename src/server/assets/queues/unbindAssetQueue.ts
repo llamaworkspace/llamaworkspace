@@ -29,6 +29,7 @@ class UnbindAssetQueue extends AbstractQueueManager<typeof zPayload> {
       const app = await prismaAsTrx.app.findFirstOrThrow({
         where: {
           id: payload.appId,
+          markAsDeletedAt: null,
         },
       })
 
