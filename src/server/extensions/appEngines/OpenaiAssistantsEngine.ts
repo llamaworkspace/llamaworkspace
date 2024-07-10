@@ -46,15 +46,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     ctx: AppEngineRunParams<AppKeyValues, ProviderKeyValues>,
     callbacks: AppEngineCallbacks,
   ) {
-    const {
-      messages,
-      providerSlug,
-      modelSlug,
-      providerKVs,
-      targetAssistantRawMessage,
-      chatId,
-      appKeyValuesStore,
-    } = ctx
+    const { messages, providerKVs, chatId, appKeyValuesStore } = ctx
 
     const { pushText } = callbacks
 
@@ -108,7 +100,37 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     await this.deleteAssistant(openai, assistant.id)
   }
 
-  async attachAsset(
+  async onAppCreated() {
+    return await Promise.resolve()
+  }
+
+  async onAppDeleted(ctx: AppEngineConfigParams<AppKeyValues>) {
+    const { aiProviders, appKeyValuesStore } = ctx
+    const openaiProvider = aiProviders.openai
+
+    const appKvs = await appKeyValuesStore.getAll()
+
+    if (!openaiProvider) {
+      throw createHttpError(500, `Provider OpenAI not found`)
+    }
+
+    const typedProviderKVs = this.getTypedProviderKVsOrThrow(openaiProvider)
+
+    const openai = this.getOpenaiInstance(
+      typedProviderKVs.apiKey,
+      typedProviderKVs.baseUrl,
+    )
+
+    const vectorStoreId = appKvs.vectorStoreId
+
+    if (!vectorStoreId) {
+      throw createHttpError(500, `Vector store id not found`)
+    }
+
+    await this.deleteVectorStore(openai, vectorStoreId)
+  }
+
+  async onAssetAdded(
     ctx: AppEngineConfigParams<AppKeyValues>,
     uploadable: Uploadable,
     saveExternalAssetId: (externalId: string) => Promise<void>,
@@ -148,7 +170,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     await saveExternalAssetId(file.id)
   }
 
-  async removeAsset(
+  async onAssetRemoved(
     ctx: AppEngineConfigParams<AppKeyValues>,
     externalId: string,
   ) {
@@ -217,6 +239,10 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     return await openai.beta.vectorStores.create({
       name: vectorStoreCopys.getName(appId),
     })
+  }
+
+  private async deleteVectorStore(openai: OpenAI, openAiVectorStoreId: string) {
+    return await openai.beta.vectorStores.del(openAiVectorStoreId)
   }
 
   private async uploadAssetToVectorStore(

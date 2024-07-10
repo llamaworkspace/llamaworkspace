@@ -1,4 +1,8 @@
+import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
+import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
+import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import { AbstractQueueManager } from '@/server/lib/AbstractQueueManager/AbstractQueueManager'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { z } from 'zod'
@@ -18,23 +22,37 @@ class DeleteAppQueue extends AbstractQueueManager<typeof zPayload> {
   }
 
   protected async handle(action: string, payload: Payload) {
+    const engines = [new DefaultAppEngine(), ...enginesRegistry]
+
     return prismaAsTrx(prisma, async (prismaAsTrx) => {
+      const app = await prismaAsTrx.app.findFirstOrThrow({
+        where: {
+          id: payload.appId,
+        },
+        include: {
+          assetsOnApps: true,
+        },
+      })
+
       await prismaAsTrx.app.delete({
         where: {
           id: payload.appId,
         },
       })
 
-      // const context = await createUserOnWorkspaceContext(
-      //   prismaAsTrx,
-      //   app.workspaceId,
-      //   payload.userId,
-      // )
+      const context = await createUserOnWorkspaceContext(
+        prismaAsTrx,
+        app.workspaceId,
+        payload.userId,
+      )
 
-      // const engines = [new DefaultAppEngine(), ...enginesRegistry]
+      const appEngineRunner = new AppEngineRunner(prisma, context, engines)
 
-      // const appEngineRunner = new AppEngineRunner(prisma, context, engines)
-      // await appEngineRunner.onAppDeleted(payload.appId)
+      for (const assetOnApp of app.assetsOnApps) {
+        await appEngineRunner.onAssetRemoved(payload.appId, assetOnApp.assetId)
+      }
+
+      await appEngineRunner.onAppDeleted(payload.appId)
     })
   }
 }

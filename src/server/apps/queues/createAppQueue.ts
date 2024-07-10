@@ -4,18 +4,18 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import { AbstractQueueManager } from '@/server/lib/AbstractQueueManager/AbstractQueueManager'
+import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { z } from 'zod'
 
 const zPayload = z.object({
   userId: z.string(),
   appId: z.string(),
-  assetId: z.string(),
 })
 
 type Payload = z.infer<typeof zPayload>
 
-class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
-  readonly queueName = 'bindAsset'
+class CreateAppQueue extends AbstractQueueManager<typeof zPayload> {
+  readonly queueName = 'createApp'
 
   constructor(enqueueUrl?: string) {
     super(zPayload, { enqueueUrl })
@@ -24,22 +24,26 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
   protected async handle(action: string, payload: Payload) {
     const engines = [new DefaultAppEngine(), ...enginesRegistry]
 
-    const app = await prisma.app.findFirstOrThrow({
-      where: {
-        id: payload.appId,
-        markAsDeletedAt: null,
-      },
+    return prismaAsTrx(prisma, async (prismaAsTrx) => {
+      const app = await prismaAsTrx.app.findFirstOrThrow({
+        where: {
+          id: payload.appId,
+        },
+        include: {
+          assetsOnApps: true,
+        },
+      })
+
+      const context = await createUserOnWorkspaceContext(
+        prismaAsTrx,
+        app.workspaceId,
+        payload.userId,
+      )
+
+      const appEngineRunner = new AppEngineRunner(prisma, context, engines)
+      await appEngineRunner.onAppCreated(payload.appId)
     })
-
-    const context = await createUserOnWorkspaceContext(
-      prisma,
-      app.workspaceId,
-      payload.userId,
-    )
-
-    const appEngineRunner = new AppEngineRunner(prisma, context, engines)
-    await appEngineRunner.onAssetAdded(payload.appId, payload.assetId)
   }
 }
 
-export const bindAssetQueue = new BindAssetQueue()
+export const createAppQueue = new CreateAppQueue()

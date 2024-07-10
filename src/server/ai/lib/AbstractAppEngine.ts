@@ -51,12 +51,21 @@ export abstract class AbstractAppEngine {
     callbacks: AppEngineCallbacks,
   ): Promise<void>
 
-  abstract attachAsset(
+  abstract onAppCreated(
+    ctx: AppEngineConfigParams<EngineAppKeyValues>,
+  ): Promise<void>
+
+  abstract onAppDeleted(
+    ctx: AppEngineConfigParams<EngineAppKeyValues>,
+  ): Promise<void>
+
+  abstract onAssetAdded(
     ctx: AppEngineConfigParams<EngineAppKeyValues>,
     fileStream: ReadStream,
     saveExternalAssetId: (externalId: string) => Promise<void>,
   ): Promise<void>
-  abstract removeAsset(
+
+  abstract onAssetRemoved(
     ctx: AppEngineConfigParams<EngineAppKeyValues>,
     externalAssetId: string,
   ): Promise<void>
