@@ -54,4 +54,15 @@ describe('getAppByIdService', () => {
       expect.anything(),
     )
   })
+
+  describe('when the app is marked as deleted', () => {
+    it('throws an error', async () => {
+      await prisma.app.update({
+        where: { id: app.id },
+        data: { markAsDeletedAt: new Date() },
+      })
+
+      await expect(subject(workspace.id, user.id, app.id)).rejects.toThrow()
+    })
+  })
 })
