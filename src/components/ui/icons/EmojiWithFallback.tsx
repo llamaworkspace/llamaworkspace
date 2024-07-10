@@ -1,5 +1,5 @@
 import { Emoji } from 'emoji-picker-react'
-import { LegacyJoiaIcon24 } from './JoiaIcon'
+import { LegacyJoiaIcon24 } from './LegacyJoiaIcon'
 
 type EmojiProps = Parameters<typeof Emoji>[0]
 

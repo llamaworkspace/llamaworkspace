@@ -58,7 +58,7 @@ We are happy to hear your valuable feedback. For this purpose, we have created a
 
 ## Roadmap
 
-We welcome feedback from our community. To stay up to date with all the latest news and product updates or to reach us, [follow us on X (formerly Twitter)](https://twitter.com/joiahq).
+We welcome feedback from our community. To stay up to date with all the latest news and product updates or to reach us, [follow us on X (formerly Twitter)](https://twitter.com/llamaworkspace).
 
 ## License & Trademarks
 
