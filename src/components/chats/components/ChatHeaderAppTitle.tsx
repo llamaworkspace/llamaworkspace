@@ -1,6 +1,6 @@
 import { EMPTY_APP_NAME } from '@/components/apps/appsConstants'
 import { useAppById } from '@/components/apps/appsHooks'
-import { LegacyJoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
+import { LegacyJoiaIcon24 } from '@/components/ui/icons/LegacyJoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'
 

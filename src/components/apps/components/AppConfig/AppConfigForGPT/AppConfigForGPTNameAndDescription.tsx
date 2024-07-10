@@ -1,6 +1,6 @@
 import { InputField } from '@/components/ui/forms/InputField'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
-import { LegacyJoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
+import { LegacyJoiaIcon24 } from '@/components/ui/icons/LegacyJoiaIcon'
 import {
   Popover,
   PopoverContent,
