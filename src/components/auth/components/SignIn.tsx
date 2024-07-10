@@ -44,7 +44,7 @@ export const SignIn = () => {
               <p className="text-muted-foreground px-8 text-center text-sm">
                 By clicking continue, you agree to our{' '}
                 <Link
-                  href="https://joia.so/blog/privacy-policy"
+                  href="https://llamaworkspace.ai/blog/privacy-policy"
                   className="hover:text-primary underline underline-offset-4"
                 >
                   Privacy Policy
