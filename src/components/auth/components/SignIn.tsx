@@ -26,7 +26,7 @@ export const SignIn = () => {
           <div className="flex flex-col space-y-4 text-center">
             <Image
               alt="Llama Workspace logo"
-              src="/images/llama-workspace-logo.svg"
+              src="/images/llama-workspace-logo-black-square.svg"
               width="72"
               height="72"
               className="self-center"
