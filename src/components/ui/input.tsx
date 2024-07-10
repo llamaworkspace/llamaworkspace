@@ -13,7 +13,7 @@ const inputVariants = cva('', {
       default:
         'border-zinc-200 text-zinc-900 dark:text-zinc-50 focus-visible:ring-zinc-950 dark:border-zinc-800  dark:focus-visible:ring-zinc-300',
       danger:
-        'border-red-600 text-zinc-900 dark:text-red-50 focus-visible:ring-red-950 dark:border-red-800 dark:focus-visible:ring-red-300',
+        'border-red-600 text-zinc-900 dark:text-red-50 focus-visible:ring-red-600 dark:border-red-800 dark:focus-visible:ring-red-300',
     },
   },
   defaultVariants: {
