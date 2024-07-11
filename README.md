@@ -6,6 +6,9 @@
 
 <h3 align="center"><strong>An extensible ChatGPT Teams/Enterprise alternative</strong></h3>
 
+> [!WARNING]
+> Both the repo and this README is still a work in progress. Some of the benefits stated are not yet implemented and the product is not yet ready for production.
+
 ## What is it
 
 An open source & extensible ChatGPT Teams/Enterprise alternative, designed for organizations to provide generative AI access to their teams, while still retaining full control of their data.
@@ -19,9 +22,7 @@ An open source & extensible ChatGPT Teams/Enterprise alternative, designed for o
 - **Extend with other AI tools**: Bring all your company's AI toolkit to a single place. Integrate with Flowise, Gradio, Hugging Face, Langchain and more.
 - **Straightforward self-hosting**: Get up and running with a fewest possible number of commands.
 
-## How Llama work
-
-There are other great AI chat apps out there
+<!-- There are other great AI chat apps out there
 
 The project's goal is to create a single entrypoint for an organization's generative AI: From single-shot questions to an LLM, to integrations
 
@@ -37,8 +38,6 @@ It shines by being:
 
 The easiest way to get started with Llama Workspace is by creating a [Llama Workspace Cloud account](https://llamaworkspace.ai/). If you prefer to self-host Llama Workspace, please refer to our documentation below.
 
-> > > > > > > main
-
 ## Main features & benefits
 
 - **Efortlessly manage team access** to collaborative AI workspace.
@@ -50,17 +49,9 @@ The easiest way to get started with Llama Workspace is by creating a [Llama Work
 
 ## Cost savings vs ChatGPT Teams/Enterprise
 
-- **Save between of 50% and 75%** (depends on usage) compared to _ChatGPT for Teams_ and _ChatGPT Enterprise_.
+- **Save between of 50% and 75%** (depends on usage) compared to _ChatGPT for Teams_ and _ChatGPT Enterprise_. -->
 
 ## Getting started
-
-#### Cloud
-
-The easiest way to get started with Llama Workspace is with [our official managed service in the cloud](https://llamaworkspace.ai/). At the moment it is completely free to use without limits, although we have plans to introduce a pricing model in the future.
-
-In the cloud version you can either use your own API keys for LLM provider, or purchase credits with us.
-
-Our cloud version can save a substantial amount of developer time and resources. We think it's the de-facto solution for most customers and the one which provides most value for mone. Plus, any future revenues will go towards the funding and maintenance of Llama Workspace. You’ll be supporting open source software and getting a great service!
 
 #### Vercel
 
