@@ -1,34 +1,57 @@
 <p align="center">
 <a href="https://llamaworkspace.ai">
-  <img width="90" src="https://assets.llamaworkspace.ai/joia_logo_red.svg" alt="Llama Workspace Logo">
-  
+  <img width="90" src="https://assets.llamaworkspace.ai/llama-workspace-logo-black-square.png" alt="Llama Workspace Logo">
 </a>
 </p>
 
-<h3 align="center"><strong>Host a ChatGPT Teams/Enterprise alternative on your infra</strong></h3>
+<h3 align="center"><strong>An extensible ChatGPT Teams/Enterprise alternative</strong></h3>
 
-[Llama Workspace](https://llamaworkspace.ai/) is an open source alternative to ChatGPT for Teams, designed from the ground up for collaboration.
+> [!WARNING]
+> Both the repo and this README is still a work in progress. Some of the benefits stated are not yet implemented and the product is not yet ready for production.
+
+## What is it
+
+An open source & extensible ChatGPT Teams/Enterprise alternative, designed for organizations to provide generative AI access to their teams, while still retaining full control of their data.
+
+## Main features
+
+- **User management**: Manage people access. Decide who has access to what with a granular permissions system.
+- **All LLM vendors in one place**: Ask questions to GPT-4, Claude, Mistral or any other major LLM from a single place. Ollama and LLamaCpp are also supported.
+- **Apps / GPTs**: Create apps for repeatable use cases and share them across your teams.
+- **Talk to your documents and data**: Upload your documents and ask questions to them.
+- **Extend with other AI tools**: Bring all your company's AI toolkit to a single place. Integrate with Flowise, Gradio, Hugging Face, Langchain and more.
+- **Straightforward self-hosting**: Get up and running with a fewest possible number of commands.
+
+<!-- There are other great AI chat apps out there
+
+The project's goal is to create a single entrypoint for an organization's generative AI: From single-shot questions to an LLM, to integrations
+
+to access all the company's generative AI. The UI is heavily inspired in the category-defining ChatGPT, so that the product feels familiar to the largest number of people.
+
+as we believe this but we have made it easy to connect with other AI products and tools.
+
+It shines by being:
+
+- **Teams first**: It comes with user management and granular permissions built-in.
+- **Extensible**: Easily build AI chatbots and agents, and use Llama Workspace as the UI. That'll help you centralize all your AI products in a single place.
+- **Straightforward to self-host**: Get up and running with a fewest possible number of commands.
 
 The easiest way to get started with Llama Workspace is by creating a [Llama Workspace Cloud account](https://llamaworkspace.ai/). If you prefer to self-host Llama Workspace, please refer to our documentation below.
 
 ## Main features & benefits
 
-- Efortlessly grant **people access** to a user-friendly AI Chat.
-- Use any LLM, including the **latest open source LLMs** like Llama 2, Mixtral and others (more coming soon).
-- Create **collaborative chatbots** for specific use cases, and share them across your teams.
-- **Save between of 50% and 75%** (depends on usage) compared to _ChatGPT for Teams_ and _ChatGPT Enterprise_.
-- **Get responses 40% faster** than ChatGPT Plus. The OpenAI API is generally faster.
-- **Prevent your prompts from being used for training purposes**. When using ChatGPT Plus, your data might then be used for training purposes. However, when connecting to OpenAI via API keys, you're guaranteed that any inputs provided won't be used.
+- **Efortlessly manage team access** to collaborative AI workspace.
+- Ask any question to an AI Chat **powered by the model of your choice** (GPT-x, Claude, Llama 3, etc).
+- Create **collaborative apps** for repeatable use cases and share them across your teams.
+- Ask questions to **your documents and company data**.
+- Integrate with major **LLM providers**, your own tools, or embed gradio-compatible UIs.
+- **Avoid data leakages and stay compliant** by hosting Llama Workspace on your infrastructure.
+
+## Cost savings vs ChatGPT Teams/Enterprise
+
+- **Save between of 50% and 75%** (depends on usage) compared to _ChatGPT for Teams_ and _ChatGPT Enterprise_. -->
 
 ## Getting started
-
-#### Cloud
-
-The easiest way to get started with Llama Workspace is with [our official managed service in the cloud](https://llamaworkspace.ai/). At the moment it is completely free to use without limits, although we have plans to introduce a pricing model in the future.
-
-In the cloud version you can either use your own API keys for LLM provider, or purchase credits with us.
-
-Our cloud version can save a substantial amount of developer time and resources. We think it's the de-facto solution for most customers and the one which provides most value for mone. Plus, any future revenues will go towards the funding and maintenance of Llama Workspace. You’ll be supporting open source software and getting a great service!
 
 #### Vercel
 
