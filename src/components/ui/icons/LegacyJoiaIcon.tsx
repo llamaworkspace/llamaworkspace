@@ -1,8 +1,8 @@
-interface JoiaIcon24Props {
+interface LegacyJoiaIcon24Props {
   className?: string
 }
 
-export const JoiaIcon24 = ({ className }: JoiaIcon24Props) => {
+export const LegacyJoiaIcon24 = ({ className }: LegacyJoiaIcon24Props) => {
   return (
     <svg
       width="24"

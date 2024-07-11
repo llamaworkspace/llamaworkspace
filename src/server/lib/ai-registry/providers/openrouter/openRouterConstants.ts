@@ -1,3 +1,3 @@
-export const OPENROUTER_REFERRER_URL = 'joia.so'
+export const OPENROUTER_REFERRER_URL = 'llamaworkspace.ai'
 export const OPENROUTER_REFERRER_TITLE =
-  'Joia.so - The open source "ChatGPT Team" alternative'
+  'llamaworkspace.ai - Host a ChatGPT Teams/Enterprise alternative on your infra'

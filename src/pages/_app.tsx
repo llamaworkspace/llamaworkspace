@@ -10,7 +10,7 @@ import { type AppType } from 'next/app'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
-const JoiaApp: AppType<{ session: Session | null }> = ({
+const MainApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
@@ -33,4 +33,4 @@ const JoiaApp: AppType<{ session: Session | null }> = ({
   )
 }
 
-export default api.withTRPC(JoiaApp)
+export default api.withTRPC(MainApp)

@@ -1,15 +1,15 @@
 <p align="center">
-<a href="https://joia.so">
-  <img width="90" src="https://assets.joia.so/joia_logo_red.svg" alt="Joia Logo">
+<a href="https://llamaworkspace.ai">
+  <img width="90" src="https://assets.llamaworkspace.ai/joia_logo_red.svg" alt="Llama Workspace Logo">
   
 </a>
 </p>
 
-<h3 align="center"><strong>A lightweight ChatGPT alternative designed for team collaboration</strong></h3>
+<h3 align="center"><strong>Host a ChatGPT Teams/Enterprise alternative on your infra</strong></h3>
 
-[Joia](https://joia.so/) is an open source alternative to _[ChatGPT for Teams](https://openai.com/chatgpt/team)_, designed from the ground up for collaboration.
+[Llama Workspace](https://llamaworkspace.ai/) is an open source alternative to ChatGPT for Teams, designed from the ground up for collaboration.
 
-The easiest way to get started with Joia is by creating a [Joia Cloud account](https://joia.so/). If you prefer to self-host Joia, please refer to our documentation below.
+The easiest way to get started with Llama Workspace is by creating a [Llama Workspace Cloud account](https://llamaworkspace.ai/). If you prefer to self-host Llama Workspace, please refer to our documentation below.
 
 ## Main features & benefits
 
@@ -24,11 +24,11 @@ The easiest way to get started with Joia is by creating a [Joia Cloud account](h
 
 #### Cloud
 
-The easiest way to get started with Joia is with [our official managed service in the cloud](https://joia.so/). At the moment it is completely free to use without limits, although we have plans to introduce a pricing model in the future.
+The easiest way to get started with Llama Workspace is with [our official managed service in the cloud](https://llamaworkspace.ai/). At the moment it is completely free to use without limits, although we have plans to introduce a pricing model in the future.
 
 In the cloud version you can either use your own API keys for LLM provider, or purchase credits with us.
 
-Our cloud version can save a substantial amount of developer time and resources. We think it's the de-facto solution for most customers and the one which provides most value for mone. Plus, any future revenues will go towards the funding and maintenance of Joia. You’ll be supporting open source software and getting a great service!
+Our cloud version can save a substantial amount of developer time and resources. We think it's the de-facto solution for most customers and the one which provides most value for mone. Plus, any future revenues will go towards the funding and maintenance of Llama Workspace. You’ll be supporting open source software and getting a great service!
 
 #### Vercel
 
@@ -42,7 +42,7 @@ To deploy on Vercel, follow these steps:
 
 #### Fully self-hosted
 
-To self host a Joia app you'll need to follow the next steps:
+To self host a Llama Workspace app you'll need to follow the next steps:
 
 1. Provision a Postgres database. The details may vary based on your stup.
 2. Clone or copy this repository.
@@ -58,8 +58,8 @@ We are happy to hear your valuable feedback. For this purpose, we have created a
 
 ## Roadmap
 
-We welcome feedback from our community. To stay up to date with all the latest news and product updates or to reach us, [follow us on X (formerly Twitter)](https://twitter.com/joiahq).
+We welcome feedback from our community. To stay up to date with all the latest news and product updates or to reach us, [follow us on X (formerly Twitter)](https://twitter.com/llamaworkspace).
 
 ## License & Trademarks
 
-Joia is open source under the GNU Affero General Public License Version 3 (AGPLv3) or any later version.
+Llama Workspace is open source under the GNU Affero General Public License Version 3 (AGPLv3) or any later version.

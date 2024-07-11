@@ -11,7 +11,7 @@ export const workspaceOnboardingCreationService = async (
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
     const demoApp = await appCreateService(prisma, uowContext, {
-      title: `Joia's fun facts teller`,
+      title: `Fun facts teller`,
       emoji: '1f920', // Cowboy emoji 🤠
       isDemo: true,
       engineType: AppEngineType.Assistant,

@@ -93,7 +93,7 @@ You'll be given the following inputs:
 
 If some of the inputs are not sent, then ignore them.
 
-If the Main title already gives some context, avoid giving it again. For example: "Joia's fun facts teller"; avoid a title like this "Fun Facts about the City of Lights" and return something this instead: "City of lights". Essentially, try to avoid repeating words from the title.
+If the Main title already gives some context, avoid giving it again. For example: "Llama Workspace's fun facts teller"; avoid a title like this "Fun Facts about the City of Lights" and return something this instead: "City of lights". Essentially, try to avoid repeating words from the title.
 
 Try to make the title less than 35 letters. Respond with just one title. Do not provide anything else different than the title.`
 
