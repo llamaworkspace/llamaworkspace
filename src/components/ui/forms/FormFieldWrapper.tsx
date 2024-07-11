@@ -71,7 +71,7 @@ const FormHelperText = ({ isError, children }: FormHelperTextProps) => {
   return (
     <p
       className={cn(
-        'text-sm',
+        'text-left text-sm',
         !isError && 'text-zinc-500',
         isError && 'text-red-600',
       )}

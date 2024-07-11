@@ -1,6 +1,6 @@
 import { EMPTY_APP_NAME } from '@/components/apps/appsConstants'
 import { useAppById } from '@/components/apps/appsHooks'
-import { JoiaIcon24 } from '@/components/ui/icons/JoiaIcon'
+import { LegacyJoiaIcon24 } from '@/components/ui/icons/LegacyJoiaIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Emoji } from 'emoji-picker-react'
 
@@ -21,7 +21,7 @@ export const ChatHeaderAppTitle = ({ appId }: { appId?: string }) => {
             </div>
           ) : (
             <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center text-[1.1rem] text-zinc-300">
-              <JoiaIcon24 />
+              <LegacyJoiaIcon24 />
             </div>
           )}
         </div>

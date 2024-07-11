@@ -93,7 +93,19 @@ describe('getAssetsService', () => {
         assetId: file2ForApp1.id,
         appId: app.id,
       })
+      const otherAsset = await AssetFactory.create(prisma, {
+        workspaceId: workspace.id,
+        originalName: 'file.txt',
+        uploadStatus: AssetUploadStatus.Success,
+      })
+      await AssetsOnAppsFactory.create(prisma, {
+        assetId: otherAsset.id,
+        appId: app.id,
+        markAsDeletedAt: new Date(),
+      })
+
       const result = await subject(workspace.id, user.id, app.id)
+
       expect(result).toHaveLength(1)
       expect(result[0]!.id).toEqual(file2ForApp1.id)
     })

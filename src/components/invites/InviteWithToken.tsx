@@ -20,11 +20,11 @@ export default function InviteWithToken({
     <div className="flex min-h-full flex-1 flex-col bg-zinc-100 py-12 sm:px-6 lg:px-8">
       <div className="mt-16 space-y-2 text-center sm:mx-auto sm:w-full sm:max-w-md">
         <Image
-          className="mx-auto mb-8 h-10 w-auto"
-          src="/images/joia_logo_red.svg"
-          alt="Joia"
-          width="47"
-          height="40"
+          className="mx-auto mb-8 h-20 w-auto"
+          src="/images/llama-workspace-logo-black-square.svg"
+          alt="Llama Workspace Logo"
+          width="90"
+          height="90"
         />
 
         <div className="mt-10 space-y-8 rounded bg-white px-8 py-8 shadow-md sm:mx-auto sm:w-full sm:max-w-4xl">

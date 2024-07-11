@@ -240,6 +240,7 @@ const sendShareNotificationEmail = async (
   const app = await prisma.app.findUniqueOrThrow({
     where: {
       id: appId,
+      markAsDeletedAt: null,
     },
     select: {
       title: true,
@@ -247,19 +248,19 @@ const sendShareNotificationEmail = async (
   })
 
   const invitingUserNameOrEmail = invitingUserName ?? invitingUserEmail
-  const subject = `${invitingUserNameOrEmail} has shared you access to a GPT`
+  const subject = `${invitingUserNameOrEmail} has shared you access to an app at Llama Workspace`
   const appUrl = userExistsInDb && `${env.NEXT_PUBLIC_FRONTEND_URL}/p/${appId}`
   const workspaceInviteUrl =
     !userExistsInDb && `${env.NEXT_PUBLIC_FRONTEND_URL}/invite/${token}`
 
   await sendEmail({
-    fromName: 'Joia',
+    fromName: 'Llama Workspace',
     to: invitedUserEmail,
     subject,
     text: getEmailBody(
       invitingUserName ?? 'A colleague',
       invitingUserEmail,
-      app.title ?? 'Untitled GPT',
+      app.title ?? 'Untitled app',
       appUrl || undefined,
       workspaceInviteUrl || undefined,
     ),
@@ -279,11 +280,11 @@ const getEmailBody = (
 
   let str = `Hello,
 
-${invitingUserName} has invited you to use the following GPT at Joia: ${appName}.
+${invitingUserName} has invited you to use the following app at Llama Workspace: ${appName}.
 
 `
   if (appUrl) {
-    str += `To access the GPT, please follow this link:
+    str += `To access the app, please follow this link:
 ${appUrl}
 
 `
@@ -300,7 +301,7 @@ You must use the email "${email}" to create your account; otherwise the invitati
   str += `If you have any doubts or trouble signing up, please do not hesitate to reach out to us by replying to this email.
 
 All the best,
-The Joia team`
+The Llama Workspace team`
 
   return str
 }

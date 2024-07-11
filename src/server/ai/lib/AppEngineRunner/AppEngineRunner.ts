@@ -88,11 +88,26 @@ export class AppEngineRunner {
     }
   }
 
-  async attachAsset(appId: string, assetId: string) {
+  async onAppCreated(appId: string) {
+    const engine = await this.getEngine(appId)
+    const ctx = await this.generateAppScopedEngineContext(appId)
+
+    await engine.onAppCreated(ctx)
+  }
+
+  async onAppDeleted(appId: string) {
+    const engine = await this.getEngine(appId)
+    const ctx = await this.generateAppScopedEngineContext(appId)
+
+    await engine.onAppDeleted(ctx)
+  }
+
+  async onAssetAdded(appId: string, assetId: string) {
     const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
       where: {
         assetId,
         appId: appId,
+        markAsDeletedAt: null,
       },
     })
 
@@ -110,7 +125,7 @@ export class AppEngineRunner {
       hasSaveExternalAssetIdCallbackBeenCalled = true
       await this.saveExternalAssetId(assetOnApp.id, externalId)
     }
-    await engine.attachAsset(ctx, readStream, saveExternalAssetId)
+    await engine.onAssetAdded(ctx, readStream, saveExternalAssetId)
 
     await deleteLocalFileCopy()
 
@@ -122,11 +137,14 @@ export class AppEngineRunner {
     }
   }
 
-  async removeAsset(appId: string, assetId: string) {
+  async onAssetRemoved(appId: string, assetId: string) {
     const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
       where: {
         assetId,
         appId,
+        markAsDeletedAt: {
+          not: null,
+        },
       },
     })
     const externalId = assetOnApp.externalId
@@ -138,7 +156,7 @@ export class AppEngineRunner {
     const ctx = await this.generateAppScopedEngineContext(appId)
 
     const engine = await this.getEngine(appId)
-    await engine.removeAsset(ctx, externalId)
+    await engine.onAssetRemoved(ctx, externalId)
   }
 
   private async getChat(chatId: string) {

@@ -1,6 +1,6 @@
 {
-  "name": "joia",
-  "version": "0.1.0",
+  "name": "llama-workspace",
+  "version": "0.0.1",
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbo",
@@ -24,7 +24,8 @@
     "datamigrate:up": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts up",
     "datamigrate:down": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts down",
     "dev:deleteAllOpenaiVectorStores": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiVectorStores.ts",
-    "dev:deleteAllOpenaiFiles": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts"
+    "dev:deleteAllOpenaiFiles": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts",
+    "dev:clearOpenai": "npm run dev:deleteAllOpenaiVectorStores && npm run dev:deleteAllOpenaiFiles"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.24",

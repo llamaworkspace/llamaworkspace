@@ -26,7 +26,7 @@ export const SignIn = () => {
           <div className="flex flex-col space-y-4 text-center">
             <Image
               alt="Llama Workspace logo"
-              src="/images/llama-workspace-logo.svg"
+              src="/images/llama-workspace-logo-black-square.svg"
               width="72"
               height="72"
               className="self-center"
@@ -44,7 +44,7 @@ export const SignIn = () => {
               <p className="text-muted-foreground px-8 text-center text-sm">
                 By clicking continue, you agree to our{' '}
                 <Link
-                  href="https://joia.so/blog/privacy-policy"
+                  href="https://llamaworkspace.ai/blog/privacy-policy"
                   className="hover:text-primary underline underline-offset-4"
                 >
                   Privacy Policy

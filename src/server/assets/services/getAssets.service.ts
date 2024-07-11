@@ -34,6 +34,7 @@ export async function getAssetsService(
     baseWhere.assetsOnApps = {
       some: {
         appId,
+        markAsDeletedAt: null,
       },
     }
   }

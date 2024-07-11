@@ -29,7 +29,7 @@ export function MainLayout({
   const { isDesktopSidebarOpen } = state
 
   const appTitle = app && (app.title ?? EMPTY_APP_NAME)
-  const head = app ? `${appTitle} | Joia` : 'Joia'
+  const head = app ? `${appTitle} | Llama Workspace` : 'Llama Workspace'
 
   // IMPORTANT: Keep this key prop, it forces re-renders that otherwise
   // would not happen when navigating between apps.

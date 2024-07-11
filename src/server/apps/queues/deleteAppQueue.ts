@@ -10,13 +10,12 @@ import { z } from 'zod'
 const zPayload = z.object({
   userId: z.string(),
   appId: z.string(),
-  assetId: z.string(),
 })
 
 type Payload = z.infer<typeof zPayload>
 
-class UnbindAssetQueue extends AbstractQueueManager<typeof zPayload> {
-  readonly queueName = 'unbindAsset'
+class DeleteAppQueue extends AbstractQueueManager<typeof zPayload> {
+  readonly queueName = 'deleteApp'
 
   constructor(enqueueUrl?: string) {
     super(zPayload, { enqueueUrl })
@@ -29,7 +28,15 @@ class UnbindAssetQueue extends AbstractQueueManager<typeof zPayload> {
       const app = await prismaAsTrx.app.findFirstOrThrow({
         where: {
           id: payload.appId,
-          markAsDeletedAt: null,
+        },
+        include: {
+          assetsOnApps: true,
+        },
+      })
+
+      await prismaAsTrx.app.delete({
+        where: {
+          id: payload.appId,
         },
       })
 
@@ -41,15 +48,13 @@ class UnbindAssetQueue extends AbstractQueueManager<typeof zPayload> {
 
       const appEngineRunner = new AppEngineRunner(prisma, context, engines)
 
-      await appEngineRunner.onAssetRemoved(payload.appId, payload.assetId)
-      await prismaAsTrx.assetsOnApps.deleteMany({
-        where: {
-          appId: payload.appId,
-          assetId: payload.assetId,
-        },
-      })
+      for (const assetOnApp of app.assetsOnApps) {
+        await appEngineRunner.onAssetRemoved(payload.appId, assetOnApp.assetId)
+      }
+
+      await appEngineRunner.onAppDeleted(payload.appId)
     })
   }
 }
 
-export const unbindAssetQueue = new UnbindAssetQueue()
+export const deleteAppQueue = new DeleteAppQueue()

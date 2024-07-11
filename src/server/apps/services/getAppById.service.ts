@@ -23,7 +23,10 @@ export const getAppByIdService = async (
   )
 
   return await prisma.app.findFirstOrThrow({
-    where: scopeAppByWorkspace({ id: appId }, workspaceId),
+    where: scopeAppByWorkspace(
+      { id: appId, markAsDeletedAt: null },
+      workspaceId,
+    ),
     include: {
       chats: {
         select: { id: true, createdAt: true },
