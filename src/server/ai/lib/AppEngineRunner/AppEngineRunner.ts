@@ -177,12 +177,9 @@ export class AppEngineRunner {
       return this.getDefaultEngine()
     }
 
-    const engine = this.getEngineByName('OpenaiAssistantsEngine')
+    const engine = this.getEngineByName(engineType)
     if (!engine) {
-      throw createHttpError(
-        500,
-        'OpenaiAssistantsEngine has been accidentally deleted.',
-      )
+      throw createHttpError(500, `${engineType} does not exist`)
     }
 
     return engine
