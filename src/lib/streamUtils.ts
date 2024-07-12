@@ -70,3 +70,22 @@ export const experimental_safeReadableStreamPipe = <T>(
     { highWaterMark: 2 }, // 1 or 2 is fine to keep the buffer minimal
   )
 }
+
+export async function* getStreamAsAsyncIterable<T>(
+  reader: ReadableStreamDefaultReader<T>,
+) {
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) {
+        break
+      }
+      console.log(3, 'yielding...')
+      yield value
+    }
+  } catch (error) {
+    throw error
+  } finally {
+    reader.releaseLock()
+  }
+}
