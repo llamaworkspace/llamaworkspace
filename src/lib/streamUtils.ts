@@ -80,7 +80,6 @@ export async function* getStreamAsAsyncIterable<T>(
       if (done) {
         break
       }
-      console.log(3, 'yielding...')
       yield value
     }
   } catch (error) {
