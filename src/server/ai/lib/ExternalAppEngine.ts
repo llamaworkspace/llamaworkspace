@@ -61,6 +61,12 @@ export class ExternalAppEngine extends AbstractAppEngine {
     callbacks: AppEngineCallbacks,
   ) {
     const { accessKey, targetUrl } = await ctx.appKeyValuesStore.getAll()
+    if (!accessKey) {
+      throw createHttpError(500, 'No access key found')
+    }
+    if (!targetUrl) {
+      throw createHttpError(500, 'No target url found')
+    }
 
     const stream = await this.doFetch(this.buildPayload(accessKey), {
       targetUrl,
@@ -73,9 +79,6 @@ export class ExternalAppEngine extends AbstractAppEngine {
       const text = decoder.decode(item)
       await callbacks.pushText(text)
     }
-
-    // Este forzado de "usage" es un poco rarito
-    await callbacks.usage(0, 0)
   }
 
   async onAppCreated() {

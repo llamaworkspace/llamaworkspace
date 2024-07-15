@@ -47,12 +47,10 @@ export class AppEngineRunner {
 
       const callbacks = this.getCallbacks(ctx.targetAssistantRawMessage.id)
 
-      let hasProcessUsageBeenCalled = false
       const processUsage = async (
         requestTokens: number,
         responseTokens: number,
       ) => {
-        hasProcessUsageBeenCalled = true
         await this.processUsage(chatRun.id, requestTokens, responseTokens)
       }
 
@@ -72,13 +70,6 @@ export class AppEngineRunner {
         callbacks,
         async ({ pushText }) => {
           await engine.run(ctx, { pushText, usage: processUsage })
-
-          if (!hasProcessUsageBeenCalled) {
-            throw createHttpError(
-              500,
-              `usage callback was not called on engine when finishing a chat run. Engine: ${engine.getName()}`,
-            )
-          }
         },
       )
     } catch (error) {
