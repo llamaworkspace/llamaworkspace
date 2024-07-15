@@ -1,4 +1,5 @@
 import { useCreateApp } from '@/components/apps/appsHooks'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 
@@ -8,7 +9,7 @@ export const ChatEmptyState = () => {
 
   const handleCreateApp = () => {
     if (!workspace?.id) return
-    createApp({ workspaceId: workspace.id })
+    createApp({ workspaceId: workspace.id, engineType: AppEngineType.Default })
   }
 
   return (
