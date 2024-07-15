@@ -1,4 +1,6 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
+import { useAppById } from '@/components/apps/appsHooks'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
@@ -25,6 +27,7 @@ export const AppConfigForGPTSettings = ({
 }: AppConfigForGPTSettingsProps) => {
   const navigation = useNavigation()
   const { data: workspace } = useCurrentWorkspace()
+  const { data: app } = useAppById(appId)
   const ref = useRef<HTMLTextAreaElement>(null)
   const focusQueryStringEl = navigation.query?.focus
   useEffect(() => {
@@ -32,6 +35,9 @@ export const AppConfigForGPTSettings = ({
       ref.current.focus()
     }
   }, [focusQueryStringEl, disabled])
+
+  const isAssistantEngineType = app?.engineType === AppEngineType.Assistant
+
   const profileUrl = `/w/${workspace?.id}/profile`
 
   const modelHelperText = (
@@ -63,26 +69,30 @@ export const AppConfigForGPTSettings = ({
         }}
       />
 
-      <div className="grid md:grid-cols-2">
-        <Field
-          name="model"
-          validate={stringRequired}
-          render={({ input }) => {
-            return (
-              <SelectAiModelsFormField
-                {...input}
-                placeholder="Select a model"
-                label="AI model"
-                helperText={modelHelperText}
-                disabled={disabled}
-              />
-            )
-          }}
-        />
-      </div>
-      <div>
-        <AppConfigForGPTFileUpload appId={appId} />
-      </div>
+      {app && !isAssistantEngineType && (
+        <div className="grid md:grid-cols-2">
+          <Field
+            name="model"
+            validate={stringRequired}
+            render={({ input }) => {
+              return (
+                <SelectAiModelsFormField
+                  {...input}
+                  placeholder="Select a model"
+                  label="AI model"
+                  helperText={modelHelperText}
+                  disabled={disabled}
+                />
+              )
+            }}
+          />
+        </div>
+      )}
+      {app && isAssistantEngineType && (
+        <div>
+          <AppConfigForGPTFileUpload appId={appId} />
+        </div>
+      )}
     </>
   )
 }

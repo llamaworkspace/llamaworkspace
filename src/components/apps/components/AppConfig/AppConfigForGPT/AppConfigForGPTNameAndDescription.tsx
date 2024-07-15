@@ -1,3 +1,4 @@
+import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
 import { InputField } from '@/components/ui/forms/InputField'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { LegacyJoiaIcon24 } from '@/components/ui/icons/LegacyJoiaIcon'
@@ -42,17 +43,20 @@ export const AppConfigForGPTNameAndDescription = ({
           }
 
           const emojiElement = (
-            <div
-              className={cn(
-                'w-14 max-w-14',
-                disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-              )}
-            >
-              {currentValue ? (
-                <Emoji unified={currentValue} size={54} />
-              ) : (
-                <LegacyJoiaIcon24 className="h-12 w-12 text-zinc-300" />
-              )}
+            <div>
+              <FormLabel>Icon</FormLabel>
+              <div
+                className={cn(
+                  'mt-2 w-14 max-w-14',
+                  disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+                )}
+              >
+                {currentValue ? (
+                  <Emoji unified={currentValue} size={54} />
+                ) : (
+                  <LegacyJoiaIcon24 className="h-12 w-12 text-zinc-300" />
+                )}
+              </div>
             </div>
           )
 
