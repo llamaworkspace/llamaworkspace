@@ -87,7 +87,7 @@ describe('appUpdateService', () => {
         userId: user.id,
         workspaceId: workspace.id,
         isDefault: true,
-        engineType: AppEngineType.Default,
+        engineType: AppEngineType.Assistant,
       })
     })
 

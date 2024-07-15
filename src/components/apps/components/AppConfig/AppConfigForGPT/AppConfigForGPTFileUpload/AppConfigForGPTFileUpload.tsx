@@ -7,7 +7,13 @@ import { useState, type ChangeEvent } from 'react'
 import { AppConfigForGPTUploadedFile } from './AppConfigForGPTUploadedFile'
 import { useUploadFile } from './appConfigForGPTFileUploadHooks'
 
-export const AppConfigForGPTFileUpload = ({ appId }: { appId?: string }) => {
+interface AppConfigForGPTFileUploadProps {
+  appId?: string
+}
+
+export const AppConfigForGPTFileUpload = ({
+  appId,
+}: AppConfigForGPTFileUploadProps) => {
   const [uploadableFiles, setUploadeableFiles] = useState<
     Record<string, Asset>
   >({})
@@ -33,11 +39,21 @@ export const AppConfigForGPTFileUpload = ({ appId }: { appId?: string }) => {
 
   return (
     <div className="space-y-2">
-      <UploadedAndUploadingFiles
-        appId={appId}
-        uploadedFiles={appFiles}
-        uploadableFiles={uploadableFiles}
-      />
+      <div className="space-y-4">
+        <div className="space-y-1">
+          <FormLabel>Knowledge</FormLabel>
+          <div className="text-sm text-zinc-500">
+            By uploading files here, you will be able to ask questions related
+            to those files. Please note that the conversations with the AI may
+            include extracts from the file.
+          </div>
+        </div>
+        <UploadedAndUploadingFiles
+          appId={appId}
+          uploadedFiles={appFiles}
+          uploadableFiles={uploadableFiles}
+        />
+      </div>
       <FileUploadInput
         buttonText="Upload files"
         onChange={handleChange}
@@ -61,40 +77,30 @@ const UploadedAndUploadingFiles = ({
   uploadableFiles,
 }: UploadableFilesProps) => {
   return (
-    <div className="space-y-4">
-      <div className="space-y-1">
-        <FormLabel>Knowledge</FormLabel>
-        <div className="text-sm text-zinc-500">
-          By uploading files here, you will be able to ask questions related to
-          those files. Please note that the conversations with the AI may
-          include extracts from the file.
+    <div>
+      {uploadedFiles && (
+        <div className="grid gap-2 md:grid-cols-3">
+          {Object.values(uploadedFiles).map((asset) => (
+            <AppConfigForGPTUploadedFile
+              key={asset.id}
+              assetId={asset.id}
+              appId={appId}
+              name={asset.originalName}
+            />
+          ))}
+          {uploadableFiles && (
+            <>
+              {Object.values(uploadableFiles).map((appFile) => (
+                <AppConfigForGPTUploadedFile
+                  key={appFile.id}
+                  name={appFile.originalName}
+                  uploading
+                />
+              ))}
+            </>
+          )}
         </div>
-      </div>
-      <div>
-        {uploadedFiles && (
-          <div className="grid gap-2 md:grid-cols-3">
-            {Object.values(uploadedFiles).map((asset) => (
-              <AppConfigForGPTUploadedFile
-                key={asset.id}
-                assetId={asset.id}
-                appId={appId}
-                name={asset.originalName}
-              />
-            ))}
-            {uploadableFiles && (
-              <>
-                {Object.values(uploadableFiles).map((appFile) => (
-                  <AppConfigForGPTUploadedFile
-                    key={appFile.id}
-                    name={appFile.originalName}
-                    uploading
-                  />
-                ))}
-              </>
-            )}
-          </div>
-        )}
-      </div>
+      )}
     </div>
   )
 }

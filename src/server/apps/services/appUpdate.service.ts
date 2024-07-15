@@ -1,4 +1,3 @@
-import { AppEngineType } from '@/components/apps/appsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -44,7 +43,7 @@ export const appUpdateService = async (
       ),
     })
 
-    if (app.engineType === AppEngineType.Default.toString()) {
+    if (app.isDefault) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'The default app cannot be updated',

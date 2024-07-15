@@ -1,63 +1,74 @@
 import { useCreateApp } from '@/components/apps/appsHooks'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { Button } from '@/components/ui/button'
+import { BoxedRadioGroupField } from '@/components/ui/forms/BoxedRadioGroupField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
-import { cn } from '@/lib/utils'
+import { stringRequired } from '@/lib/frontend/finalFormValidations'
+import { getEnumByValue } from '@/lib/utils'
+import { getAppEngineFriendlyName } from '@/server/apps/appUtils'
+import { Field, Form as FinalForm } from 'react-final-form'
 
 const options = [
   {
-    title: 'Simple assistant',
+    value: AppEngineType.Default,
+    title: getAppEngineFriendlyName(AppEngineType.Default),
     description:
       'An instructions-based assistant for repeatable use cases. Compatible with any Large Language model.',
   },
   {
-    title: 'Document-enhanced assistant',
+    value: AppEngineType.Assistant,
+    title: getAppEngineFriendlyName(AppEngineType.Assistant),
     description:
       'A document-augmented assistant that queries provided documents to deliver contextually relevant responses. Currently it is only compatible with OpenAI.',
   },
-  {
-    title: 'Your own external assistant',
-    description:
-      'Build your own assistant with custom logic and integrate it here for easy access.',
-  },
+  // {
+  //   value: AppEngineType.External,
+  //   title: getAppEngineFriendlyName(AppEngineType.External),
+  //   description:
+  //     'Build your own assistant with custom logic and integrate it here for easy access.',
+  // },
 ]
+
+interface FormValues {
+  appType: string
+}
 
 export const AppCreateBody = () => {
   const { data: workspace } = useCurrentWorkspace()
   const { mutateAsync: createApp } = useCreateApp()
 
-  const handleCreateApp = async () => {
+  const handleCreateApp = async ({ appType }: FormValues) => {
     if (!workspace?.id) return
-    await createApp({ workspaceId: workspace.id })
+    const appTypeAsEnum = getEnumByValue(AppEngineType, appType)
+    await createApp({ workspaceId: workspace.id, engineType: appTypeAsEnum })
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <div>
-          {options.map((option, index) => {
-            const isFirst = index === 0
-            const isLast = index === options.length - 1
-            const isSelected = index === 0
-            return (
-              <div
-                key={option.title}
-                className={cn(
-                  'border-b border-l border-r p-4',
-                  isFirst && 'rounded-t-md border-t',
-                  isLast && 'rounded-b-md',
-                  isSelected && 'border-2 border-zinc-600 bg-zinc-100',
-                )}
-              >
-                <div className="font-semibold">{option.title}</div>
-                <div className="text-sm text-zinc-600">
-                  {option.description}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-      <Button onClick={() => void handleCreateApp()}>Create new app</Button>
-    </div>
+    <FinalForm<FormValues>
+      onSubmit={(values) => {
+        void handleCreateApp(values)
+      }}
+      render={({ handleSubmit }) => {
+        return (
+          <div className="space-y-8">
+            <Field
+              name="appType"
+              validate={stringRequired}
+              render={({ input, meta }) => {
+                return (
+                  <BoxedRadioGroupField
+                    meta={meta}
+                    options={options}
+                    {...input}
+                  />
+                )
+              }}
+            />
+
+            <Button onClick={() => void handleSubmit()}>Create app</Button>
+          </div>
+        )
+      }}
+    />
   )
 }
