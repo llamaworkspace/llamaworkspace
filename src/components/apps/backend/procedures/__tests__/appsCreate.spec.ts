@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { appCreateService } from '@/server/apps/services/appCreate.service'
 import { prisma } from '@/server/db'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
@@ -10,7 +11,7 @@ type MockedAppCreateService = jest.MockedFunction<typeof appCreateService>
 jest.mock('@/server/apps/services/appCreate.service')
 
 const subject = async (workspaceId: string, userId: string, title: string) => {
-  const payload = { workspaceId, title }
+  const payload = { workspaceId, title, engineType: AppEngineType.Default }
 
   const { caller } = trpcContextSetupHelper(prisma, userId)
   await caller.apps.create(payload)

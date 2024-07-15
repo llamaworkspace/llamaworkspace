@@ -8,12 +8,12 @@ import { getEnumByValue } from '@/lib/utils'
 import { Field, Form as FinalForm } from 'react-final-form'
 
 const options = [
-  {
-    value: 'default',
-    title: 'Simple assistant',
-    description:
-      'An instructions-based assistant for repeatable use cases. Compatible with any Large Language model.',
-  },
+  // {
+  //   value: 'default',
+  //   title: 'Simple assistant',
+  //   description:
+  //     'An instructions-based assistant for repeatable use cases. Compatible with any Large Language model.',
+  // },
   {
     value: 'assistant',
     title: 'Document-enhanced assistant',
