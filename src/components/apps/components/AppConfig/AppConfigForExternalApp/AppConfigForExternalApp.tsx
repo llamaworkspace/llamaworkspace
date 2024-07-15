@@ -5,18 +5,19 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { getEnumByValue } from '@/lib/utils'
 import { getAppEngineFriendlyName } from '@/server/apps/appUtils'
-import type { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { Form as FinalForm } from 'react-final-form'
 import {
   useAppById,
   useAppConfigUpdate,
+  useKeyValues,
   useLatestAppConfigVersionForApp,
   useUpdateApp,
+  useUpdateKeyValues,
 } from '../../../appsHooks'
+import { AppConfigForGPTNameAndDescription } from '../AppConfigForGPT/AppConfigForGPTNameAndDescription'
 import { AppConfigSubmitButtonGroup } from '../AppConfigSubmitButtonGroup'
-import { AppConfigForGPTNameAndDescription } from './AppConfigForGPTNameAndDescription'
-import { AppConfigForGPTSettings } from './AppConfigForGPTSettings'
+import { AppConfigForExternalAppSettings } from './AppConfigForExternalAppSettings'
 
 interface AppConfigProps {
   appId?: string
@@ -25,17 +26,20 @@ interface AppConfigProps {
 interface SubmitProps {
   emoji: string
   title: string
-  systemMessage?: string
   description?: string
-  model: OpenAiModelEnum
-  redirect?: boolean
+  targetUrl: string
+  accessKey: string
 }
 
-export function AppConfigForGPT({ appId }: AppConfigProps) {
+export function AppConfigForExternalApp({ appId }: AppConfigProps) {
   const { data: app } = useAppById(appId)
   const { data: appConfig } = useLatestAppConfigVersionForApp(appId)
+  const { data: appKVsResponse } = useKeyValues(appId)
+
+  const appKVs = appKVsResponse?.data
 
   const { mutateAsync: updateAppConfigVersion } = useAppConfigUpdate()
+  const { mutateAsync: updateKeyValues } = useUpdateKeyValues()
   const { mutateAsync: updateApp } = useUpdateApp()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
@@ -51,20 +55,25 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
       return
     }
 
-    const { emoji, title, systemMessage, description, model } = values
+    const { emoji, title, description, accessKey, targetUrl } = values
 
     try {
       await Promise.all([
         updateApp({
-          id: app?.id,
+          id: app.id,
           emoji: emoji ?? null,
           title: title ?? null,
         }),
         updateAppConfigVersion({
-          id: appConfig?.id,
-          systemMessage,
+          id: appConfig.id,
           description: description ?? null,
-          model,
+        }),
+        updateKeyValues({
+          id: app.id,
+          keyValuePairs: {
+            accessKey,
+            targetUrl,
+          },
         }),
       ])
     } catch (error) {
@@ -91,9 +100,9 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
         initialValues={{
           title: app?.title,
           emoji: app?.emoji,
-          systemMessage: appConfig?.systemMessage,
           description: appConfig?.description,
-          model: appConfig?.model,
+          targetUrl: appKVs?.targetUrl,
+          accessKey: appKVs?.accessKey,
         }}
         render={({
           handleSubmit,
@@ -110,7 +119,11 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
           return (
             <div className="space-y-8">
               <AppConfigForGPTNameAndDescription disabled={!canEdit} />
-              <AppConfigForGPTSettings appId={appId} disabled={!canEdit} />
+              <AppConfigForExternalAppSettings
+                appId={appId}
+                disabled={!canEdit}
+              />
+
               <AppConfigSubmitButtonGroup
                 appId={appId}
                 pristine={pristine}

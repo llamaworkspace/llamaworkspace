@@ -10,13 +10,13 @@ import {
 
 const payloadSchema = z.object({})
 
-type DefaultAppEginePayload = z.infer<typeof payloadSchema>
+type DefaultAppEnginePayload = z.infer<typeof payloadSchema>
 
 export class DefaultAppEngine extends AbstractAppEngine {
   getProviderKeyValuesSchema() {
     return z.any()
   }
-  getPayloadSchema() {
+  getAppKeyValuesSchema() {
     return z.any()
   }
 
@@ -25,7 +25,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
   }
 
   async run(
-    ctx: AppEngineRunParams<DefaultAppEginePayload, DefaultAppEginePayload>,
+    ctx: AppEngineRunParams<DefaultAppEnginePayload, DefaultAppEnginePayload>,
     callbacks: AppEngineCallbacks,
   ) {
     const { messages, providerSlug, modelSlug, providerKVs } = ctx

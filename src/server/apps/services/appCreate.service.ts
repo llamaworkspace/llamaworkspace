@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { generateToken } from '@/lib/utils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { Author } from '@/shared/aiTypesAndMappers'
@@ -10,6 +11,7 @@ import {
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { updateAppSortingService } from './updateAppSorting.service'
+import { upsertAppKeyValuesService } from './upsertAppKeyValues.service'
 
 interface AppCreateServiceInputProps {
   engineType: AppEngineType
@@ -42,6 +44,10 @@ export const appCreateService = async (
       await updateAppSortingService(prisma, uowContext, app.id)
     }
 
+    if (app.engineType === AppEngineType.External.toString()) {
+      await createAccessKey(prisma, uowContext, app.id)
+    }
+
     return app
   })
 }
@@ -72,6 +78,19 @@ const createApp = async (
           },
         ],
       },
+    },
+  })
+}
+
+const createAccessKey = async (
+  prisma: PrismaTrxClient,
+  context: UserOnWorkspaceContext,
+  appId: string,
+) => {
+  return await upsertAppKeyValuesService(prisma, context, {
+    appId,
+    keyValuePairs: {
+      accessKey: generateToken(32),
     },
   })
 }
