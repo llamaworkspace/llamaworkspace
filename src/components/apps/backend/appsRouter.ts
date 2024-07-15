@@ -7,6 +7,7 @@ import { appsGetById } from './procedures/appsGetById'
 import { appsGetDefault } from './procedures/appsGetDefault'
 import { appsGetList } from './procedures/appsGetList'
 import { appsGetShare } from './procedures/appsGetShare'
+import { appsKeyValuesUpdate } from './procedures/appsKeyValuesUpdate'
 import { appsShareUpdate } from './procedures/appsShareUpdate'
 import { appsShareUpdateAccessLevel } from './procedures/appsShareUpdateAccessLevel'
 import { appsUpdate } from './procedures/appsUpdate'
@@ -25,6 +26,7 @@ export const appsRouter = createTRPCRouter({
   updateShare: appsShareUpdate,
   updateShareAccessLevel: appsShareUpdateAccessLevel,
   updateConfig: appsConfigUpdate,
+  updateKeyValues: appsKeyValuesUpdate,
   getLatestConfig: appsConfigGetLatestForAppId,
   getAppAssets,
 })

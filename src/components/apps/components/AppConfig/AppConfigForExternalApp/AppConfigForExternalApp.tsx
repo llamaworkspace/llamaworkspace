@@ -5,7 +5,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { getEnumByValue } from '@/lib/utils'
 import { getAppEngineFriendlyName } from '@/server/apps/appUtils'
-import type { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { Form as FinalForm } from 'react-final-form'
 import {
@@ -13,6 +12,7 @@ import {
   useAppConfigUpdate,
   useLatestAppConfigVersionForApp,
   useUpdateApp,
+  useUpdateKeyValues,
 } from '../../../appsHooks'
 import { AppConfigForGPTNameAndDescription } from '../AppConfigForGPT/AppConfigForGPTNameAndDescription'
 import { AppConfigSubmitButtonGroup } from '../AppConfigSubmitButtonGroup'
@@ -25,10 +25,9 @@ interface AppConfigProps {
 interface SubmitProps {
   emoji: string
   title: string
-  systemMessage?: string
   description?: string
-  model: OpenAiModelEnum
-  redirect?: boolean
+  targetUrl: string
+  accessKey: string
 }
 
 export function AppConfigForExternalApp({ appId }: AppConfigProps) {
@@ -36,6 +35,7 @@ export function AppConfigForExternalApp({ appId }: AppConfigProps) {
   const { data: appConfig } = useLatestAppConfigVersionForApp(appId)
 
   const { mutateAsync: updateAppConfigVersion } = useAppConfigUpdate()
+  const { mutateAsync: updateKeyValues } = useUpdateKeyValues()
   const { mutateAsync: updateApp } = useUpdateApp()
   const toast = useSuccessToast()
   const errorHandler = useErrorHandler()
@@ -51,20 +51,25 @@ export function AppConfigForExternalApp({ appId }: AppConfigProps) {
       return
     }
 
-    const { emoji, title, systemMessage, description, model } = values
+    const { emoji, title, description, accessKey, targetUrl } = values
 
     try {
       await Promise.all([
         updateApp({
-          id: app?.id,
+          id: app.id,
           emoji: emoji ?? null,
           title: title ?? null,
         }),
         updateAppConfigVersion({
-          id: appConfig?.id,
-          systemMessage,
+          id: appConfig.id,
           description: description ?? null,
-          model,
+        }),
+        updateKeyValues({
+          id: app.id,
+          keyValuePairs: {
+            accessKey,
+            targetUrl,
+          },
         }),
       ])
     } catch (error) {
@@ -91,9 +96,7 @@ export function AppConfigForExternalApp({ appId }: AppConfigProps) {
         initialValues={{
           title: app?.title,
           emoji: app?.emoji,
-          systemMessage: appConfig?.systemMessage,
           description: appConfig?.description,
-          model: appConfig?.model,
         }}
         render={({
           handleSubmit,

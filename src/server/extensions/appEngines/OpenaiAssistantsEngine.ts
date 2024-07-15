@@ -38,7 +38,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     return providerKeyValuesSchema
   }
 
-  getPayloadSchema() {
+  getAppKeyValuesSchema() {
     return appKVsSchema
   }
 

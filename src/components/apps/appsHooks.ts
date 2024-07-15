@@ -265,3 +265,14 @@ export const useAppAssets = (appId?: string) => {
     },
   )
 }
+
+export const useUpdateKeyValues = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+  return api.apps.updateKeyValues.useMutation({
+    onError: errorHandler(),
+    onSuccess: () => {
+      void utils.apps.getShare.invalidate()
+    },
+  })
+}

@@ -393,7 +393,7 @@ export class AppEngineRunner {
     ctx: AppEngineRunParams<EngineAppKeyValues, Record<string, string>>,
   ) {
     await engine.getProviderKeyValuesSchema().parseAsync(ctx.providerKVs)
-    await engine.getPayloadSchema().parse(ctx.appKeyValuesStore)
+    await engine.getAppKeyValuesSchema().parseAsync(ctx.appKeyValuesStore)
   }
 
   private getCallbacks(targetAssistantMessageId: string) {

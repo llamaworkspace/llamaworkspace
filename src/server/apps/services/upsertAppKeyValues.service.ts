@@ -3,9 +3,9 @@ import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import {
   KeyValueType,
-  SimplePrimitive,
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
+  type SimplePrimitive,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { KeyValue, Prisma } from '@prisma/client'

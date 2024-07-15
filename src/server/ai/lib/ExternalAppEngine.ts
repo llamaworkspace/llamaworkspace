@@ -27,22 +27,28 @@ export type LlamaWsIncomingRequestPayload = z.infer<
   typeof zodIncomingRequestPayload
 >
 
-const providerKeyValuesSchema = z.object({
-  targetUrl: z.string(),
-  accessKey: z.string(),
-})
+interface FetchParams {
+  targetUrl: string
+}
+
+const providerKeyValuesSchema = z.object({})
 
 type ProviderKeyValues = z.infer<typeof providerKeyValuesSchema>
 
-const payloadSchema = z.object({})
+const appKeyValuesSchema = z
+  .object({
+    targetUrl: z.string(),
+    accessKey: z.string(),
+  })
+  .partial()
 
-type EmptyPayload = z.infer<typeof payloadSchema>
+type AppKeyValues = z.infer<typeof appKeyValuesSchema>
 
 export class ExternalAppEngine extends AbstractAppEngine {
   getProviderKeyValuesSchema() {
     return z.any()
   }
-  getPayloadSchema() {
+  getAppKeyValuesSchema() {
     return z.any()
   }
 
@@ -51,12 +57,14 @@ export class ExternalAppEngine extends AbstractAppEngine {
   }
 
   async run(
-    ctx: AppEngineRunParams<ProviderKeyValues, EmptyPayload>,
+    ctx: AppEngineRunParams<AppKeyValues, ProviderKeyValues>,
     callbacks: AppEngineCallbacks,
   ) {
-    // Is it still providerKVs? Or is it appConfigFields? it is the latter!
-    // const { targetUrl, accessKey } = ctx.appKeyValuesStore
-    const stream = await this.doFetch(this.buildBody())
+    const { accessKey, targetUrl } = await ctx.appKeyValuesStore.getAll()
+
+    const stream = await this.doFetch(this.buildPayload(accessKey), {
+      targetUrl,
+    })
 
     const asyncIterable = getStreamAsAsyncIterable(stream.getReader())
 
@@ -88,17 +96,17 @@ export class ExternalAppEngine extends AbstractAppEngine {
     throw new Error('Method not implemented.')
   }
 
-  private async doFetch(body: LlamaWsIncomingRequestPayload) {
-    const EXTERNAL_URL = 'http://localhost:4444'
-
-    const response = await fetch(EXTERNAL_URL, {
+  private async doFetch(
+    payload: LlamaWsIncomingRequestPayload,
+    params: FetchParams,
+  ) {
+    const response = await fetch(params.targetUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(payload),
     })
-    console.log('response', response)
 
     if (!response.body) {
       throw createHttpError(500, 'No response body')
@@ -115,9 +123,9 @@ export class ExternalAppEngine extends AbstractAppEngine {
     return response.body
   }
 
-  private buildBody() {
+  private buildPayload(accessKey: string) {
     const body = {
-      token: 'valid-token',
+      token: accessKey,
       data: {
         appId: 'thing',
         chatId: 'thong',

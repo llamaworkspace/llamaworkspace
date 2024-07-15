@@ -16,7 +16,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
   getProviderKeyValuesSchema() {
     return z.any()
   }
-  getPayloadSchema() {
+  getAppKeyValuesSchema() {
     return z.any()
   }
 

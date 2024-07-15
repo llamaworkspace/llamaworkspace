@@ -44,7 +44,7 @@ export interface AppEngineCallbacks {
 export abstract class AbstractAppEngine {
   abstract getName(): string
   abstract getProviderKeyValuesSchema(): z.ZodSchema
-  abstract getPayloadSchema(): z.ZodSchema
+  abstract getAppKeyValuesSchema(): z.ZodSchema
 
   abstract run(
     ctx: AppEngineRunParams<EngineAppKeyValues, Record<string, string>>,
