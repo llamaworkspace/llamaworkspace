@@ -37,15 +37,15 @@ export const AppCreateBody = () => {
 
   return (
     <FinalForm
-      onSubmit={(thing) => {
-        console.log(thing)
+      onSubmit={({ appType }) => {
+        console.log('AppType to create:', appType)
         // void handleCreateApp()
       }}
-      render={(lorem) => {
+      render={({ handleSubmit }) => {
         return (
           <div className="space-y-8">
             <Field
-              name="title"
+              name="appType"
               validate={stringRequired}
               render={({ input, meta }) => {
                 return (
@@ -58,7 +58,7 @@ export const AppCreateBody = () => {
               }}
             />
 
-            <Button onClick={() => void handleCreateApp()}>Create app</Button>
+            <Button onClick={() => void handleSubmit()}>Create app</Button>
           </div>
         )
       }}

@@ -1,27 +1,29 @@
-import { forwardRef } from 'react'
-import { BoxedRadioGroup } from '../boxed-radio-group'
+import {
+  BoxedRadioGroup,
+  type BoxedRadioGroupOption,
+} from '../boxed-radio-group'
 import { FormFieldWrapper } from './FormFieldWrapper'
-import type {
-  DefaultFormInputProps,
-  OtherDefaultFormInputProps,
-} from './formTypes'
+import type { DefaultFormInputProps } from './formTypes'
 
-type BoxedRadioGroupFieldProps = DefaultFormInputProps
+export interface BoxedRadioGroupFieldProps extends DefaultFormInputProps {
+  options: BoxedRadioGroupOption[]
+  onChange: (value: string) => void
+}
 
-export const BoxedRadioGroupField = forwardRef<
-  HTMLInputElement,
-  OtherDefaultFormInputProps
->(function BoxedRadioGroupFieldFunc(
-  { label, helperText, onValueChange, required, meta, ...input },
-  externalRef,
-) {
+export const BoxedRadioGroupField = ({
+  label,
+  helperText,
+  onValueChange,
+  required,
+  meta,
+  options,
+  ...input
+}: BoxedRadioGroupFieldProps) => {
   const error = meta && meta.submitFailed ? (meta.error as string) : undefined
 
   const handleChange = (value: string) => {
-    if (onValueChange) {
-      onValueChange(value)
-    }
     input.onChange?.(value)
+    onValueChange?.(value)
   }
 
   return (
@@ -31,32 +33,7 @@ export const BoxedRadioGroupField = forwardRef<
       required={required}
       error={error}
     >
-      <BoxedRadioGroup
-        ref={externalRef}
-        options={DELETEME}
-        onValueChange={handleChange}
-      />
+      <BoxedRadioGroup options={options} onValueChange={handleChange} />
     </FormFieldWrapper>
   )
-})
-
-const DELETEME = [
-  {
-    value: 'simple',
-    title: 'Simple assistant',
-    description:
-      'An instructions-based assistant for repeatable use cases. Compatible with any Large Language model.',
-  },
-  {
-    value: 'openai-assistant',
-    title: 'Document-enhanced assistant',
-    description:
-      'A document-augmented assistant that queries provided documents to deliver contextually relevant responses. Currently it is only compatible with OpenAI.',
-  },
-  // {
-  //   value: 'external',
-  //   title: 'Your own external assistant',
-  //   description:
-  //     'Build your own assistant with custom logic and integrate it here for easy access.',
-  // },
-]
+}
