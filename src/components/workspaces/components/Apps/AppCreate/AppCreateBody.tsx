@@ -13,20 +13,20 @@ const options = [
     value: AppEngineType.Default,
     title: getAppEngineFriendlyName(AppEngineType.Default),
     description:
-      'An instructions-based assistant for repeatable use cases. Compatible with any Large Language model.',
+      'A simple assistant that acts based on a set of predefined instructions. Compatible with any Large Language model.',
   },
   {
     value: AppEngineType.Assistant,
     title: getAppEngineFriendlyName(AppEngineType.Assistant),
     description:
-      'A document-augmented assistant that queries provided documents to deliver contextually relevant responses. Currently it is only compatible with OpenAI.',
+      'A GPT-4o based assistant that accepts document uploads which will be used to deliver contextually relevant responses.',
   },
-  // {
-  //   value: AppEngineType.External,
-  //   title: getAppEngineFriendlyName(AppEngineType.External),
-  //   description:
-  //     'Build your own assistant with custom logic and integrate it here for easy access.',
-  // },
+  {
+    value: AppEngineType.External,
+    title: getAppEngineFriendlyName(AppEngineType.External),
+    description:
+      'Build your own assistant with custom logic and integrate it here for easy access.',
+  },
 ]
 
 interface FormValues {

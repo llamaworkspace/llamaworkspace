@@ -55,7 +55,7 @@ export class ExternalAppEngine extends AbstractAppEngine {
     callbacks: AppEngineCallbacks,
   ) {
     // Is it still providerKVs? Or is it appConfigFields? it is the latter!
-    const { targetUrl, accessKey } = ctx.appKeyValuesStore
+    // const { targetUrl, accessKey } = ctx.appKeyValuesStore
     const stream = await this.doFetch(this.buildBody())
 
     const asyncIterable = getStreamAsAsyncIterable(stream.getReader())
@@ -98,10 +98,20 @@ export class ExternalAppEngine extends AbstractAppEngine {
       },
       body: JSON.stringify(body),
     })
+    console.log('response', response)
 
     if (!response.body) {
       throw createHttpError(500, 'No response body')
     }
+
+    if (!response.ok) {
+      const text = await response.text()
+      throw createHttpError(
+        response.status,
+        `Invalid response from external app. Received: ${text}`,
+      )
+    }
+
     return response.body
   }
 
