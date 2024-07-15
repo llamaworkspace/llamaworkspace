@@ -6,9 +6,37 @@ import {
   type AppEngineCallbacks,
   type AppEngineRunParams,
 } from './AbstractAppEngine'
+
+// Import from llws library!
+export const zodIncomingRequestPayload = z.object({
+  token: z.string(),
+  data: z.object({
+    appId: z.string(),
+    chatId: z.string(),
+    chatRunId: z.string(),
+    messages: z.array(
+      z.object({
+        role: z.enum(['user', 'ai', 'system']),
+        content: z.string(),
+      }),
+    ),
+  }),
+})
+
+export type LlamaWsIncomingRequestPayload = z.infer<
+  typeof zodIncomingRequestPayload
+>
+
+const providerKeyValuesSchema = z.object({
+  targetUrl: z.string(),
+  accessKey: z.string(),
+})
+
+type ProviderKeyValues = z.infer<typeof providerKeyValuesSchema>
+
 const payloadSchema = z.object({})
 
-type DefaultAppEginePayload = z.infer<typeof payloadSchema>
+type EmptyPayload = z.infer<typeof payloadSchema>
 
 export class ExternalAppEngine extends AbstractAppEngine {
   getProviderKeyValuesSchema() {
@@ -23,46 +51,22 @@ export class ExternalAppEngine extends AbstractAppEngine {
   }
 
   async run(
-    ctx: AppEngineRunParams<DefaultAppEginePayload, DefaultAppEginePayload>,
+    ctx: AppEngineRunParams<ProviderKeyValues, EmptyPayload>,
     callbacks: AppEngineCallbacks,
   ) {
-    const EXTERNAL_URL = 'http://localhost:4444'
+    // Is it still providerKVs? Or is it appConfigFields? it is the latter!
+    const { targetUrl, accessKey } = ctx.appKeyValuesStore
+    const stream = await this.doFetch(this.buildBody())
 
-    const body = {
-      token: 'valid-token',
-      data: {
-        appId: 'thing',
-        chatId: 'thong',
-        chatRunId: 'lorem',
-        messages: [
-          {
-            role: 'user',
-            content: 'Say cat in turkish',
-          },
-        ],
-      },
-    }
-    console.log(2, 'fetching...')
-    const response = await fetch(EXTERNAL_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
-
-    if (!response.body) {
-      throw createHttpError(500, 'No response body')
-    }
-    const reader = response.body.getReader()
-    const asyncIterable = getStreamAsAsyncIterable(reader)
+    const asyncIterable = getStreamAsAsyncIterable(stream.getReader())
 
     const decoder = new TextDecoder()
     for await (const item of asyncIterable) {
       const text = decoder.decode(item)
-      console.log(4, 'text:', text)
       await callbacks.pushText(text)
     }
+
+    // Este forzado de "usage" es un poco rarito
     await callbacks.usage(0, 0)
   }
 
@@ -82,5 +86,40 @@ export class ExternalAppEngine extends AbstractAppEngine {
   async onAssetRemoved() {
     await Promise.resolve()
     throw new Error('Method not implemented.')
+  }
+
+  private async doFetch(body: LlamaWsIncomingRequestPayload) {
+    const EXTERNAL_URL = 'http://localhost:4444'
+
+    const response = await fetch(EXTERNAL_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+
+    if (!response.body) {
+      throw createHttpError(500, 'No response body')
+    }
+    return response.body
+  }
+
+  private buildBody() {
+    const body = {
+      token: 'valid-token',
+      data: {
+        appId: 'thing',
+        chatId: 'thong',
+        chatRunId: 'lorem',
+        messages: [
+          {
+            role: 'user' as const,
+            content: 'Say cat in turkish',
+          },
+        ],
+      },
+    }
+    return body
   }
 }
