@@ -10,9 +10,10 @@ export interface BoxedRadioGroupOption {
   description?: string
 }
 
-export interface BoxedRadioGroupProps
-  extends React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root> {
+export interface BoxedRadioGroupProps {
   options: BoxedRadioGroupOption[]
+  onValueChange?: (value: string) => void
+  className?: string
 }
 
 const BoxedRadioGroup = React.forwardRef<
@@ -21,12 +22,16 @@ const BoxedRadioGroup = React.forwardRef<
 >(({ className, options, ...props }, ref) => {
   const [value, setValue] = React.useState<string>()
 
+  const handleChange = (value: string) => {
+    setValue(value)
+    props.onValueChange?.(value)
+  }
+
   return (
     <RadioGroupPrimitive.Root
       className={cn('grid gap-2', className)}
-      {...props}
       value={value}
-      onValueChange={setValue}
+      onValueChange={handleChange}
       ref={ref}
     >
       <div>

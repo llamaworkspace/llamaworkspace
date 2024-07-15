@@ -1,7 +1,9 @@
 import { useCreateApp } from '@/components/apps/appsHooks'
-import { BoxedRadioGroup } from '@/components/ui/boxed-radio-group'
 import { Button } from '@/components/ui/button'
+import { BoxedRadioGroupField } from '@/components/ui/forms/BoxedRadioGroupField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
+import { stringRequired } from '@/lib/frontend/finalFormValidations'
+import { Field, Form as FinalForm } from 'react-final-form'
 
 const options = [
   {
@@ -34,12 +36,32 @@ export const AppCreateBody = () => {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <BoxedRadioGroup options={options} />
-      </div>
+    <FinalForm
+      onSubmit={(thing) => {
+        console.log(thing)
+        // void handleCreateApp()
+      }}
+      render={(lorem) => {
+        return (
+          <div className="space-y-8">
+            <Field
+              name="title"
+              validate={stringRequired}
+              render={({ input, meta }) => {
+                return (
+                  <BoxedRadioGroupField
+                    meta={meta}
+                    options={options}
+                    {...input}
+                  />
+                )
+              }}
+            />
 
-      <Button onClick={() => void handleCreateApp()}>Create app</Button>
-    </div>
+            <Button onClick={() => void handleCreateApp()}>Create app</Button>
+          </div>
+        )
+      }}
+    />
   )
 }
