@@ -1,19 +1,21 @@
 import { useCreateApp } from '@/components/apps/appsHooks'
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { Button } from '@/components/ui/button'
 import { BoxedRadioGroupField } from '@/components/ui/forms/BoxedRadioGroupField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
+import { getEnumByValue } from '@/lib/utils'
 import { Field, Form as FinalForm } from 'react-final-form'
 
 const options = [
   {
-    value: 'simple',
+    value: 'default',
     title: 'Simple assistant',
     description:
       'An instructions-based assistant for repeatable use cases. Compatible with any Large Language model.',
   },
   {
-    value: 'openai-assistant',
+    value: 'assistant',
     title: 'Document-enhanced assistant',
     description:
       'A document-augmented assistant that queries provided documents to deliver contextually relevant responses. Currently it is only compatible with OpenAI.',
@@ -26,20 +28,24 @@ const options = [
   // },
 ]
 
+interface FormValues {
+  appType: string
+}
+
 export const AppCreateBody = () => {
   const { data: workspace } = useCurrentWorkspace()
   const { mutateAsync: createApp } = useCreateApp()
 
-  const handleCreateApp = async () => {
+  const handleCreateApp = async ({ appType }: FormValues) => {
     if (!workspace?.id) return
-    await createApp({ workspaceId: workspace.id })
+    const appTypeAsEnum = getEnumByValue(AppEngineType, appType)
+    await createApp({ workspaceId: workspace.id, engineType: appTypeAsEnum })
   }
 
   return (
-    <FinalForm
-      onSubmit={({ appType }) => {
-        console.log('AppType to create:', appType)
-        // void handleCreateApp()
+    <FinalForm<FormValues>
+      onSubmit={(values) => {
+        void handleCreateApp(values)
       }}
       render={({ handleSubmit }) => {
         return (

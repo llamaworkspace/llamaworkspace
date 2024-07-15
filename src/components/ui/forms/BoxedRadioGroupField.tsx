@@ -33,7 +33,11 @@ export const BoxedRadioGroupField = ({
       required={required}
       error={error}
     >
-      <BoxedRadioGroup options={options} onValueChange={handleChange} />
+      <BoxedRadioGroup
+        options={options}
+        onValueChange={handleChange}
+        colorScheme={error ? 'danger' : 'default'}
+      />
     </FormFieldWrapper>
   )
 }

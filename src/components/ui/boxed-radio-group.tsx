@@ -14,13 +14,16 @@ export interface BoxedRadioGroupProps {
   options: BoxedRadioGroupOption[]
   onValueChange?: (value: string) => void
   className?: string
+  colorScheme?: 'default' | 'danger'
 }
 
 const BoxedRadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
   BoxedRadioGroupProps
->(({ className, options, ...props }, ref) => {
+>(({ className, options, colorScheme, ...props }, ref) => {
   const [value, setValue] = React.useState<string>()
+
+  colorScheme = colorScheme ?? 'default'
 
   const handleChange = (value: string) => {
     setValue(value)
@@ -48,10 +51,17 @@ const BoxedRadioGroup = React.forwardRef<
               key={option.title}
               className={cn(
                 'w-full cursor-pointer border-x p-4',
+                colorScheme === 'danger' && 'border-x-red-600',
                 !isNextSelected && 'border-b',
                 isFirst && 'rounded-t-md border-t',
                 isLast && 'rounded-b-md',
-                isSelected && 'border-t border-zinc-600 bg-zinc-100',
+                isFirst && colorScheme === 'danger' && 'border-t-red-600',
+                isLast && colorScheme === 'danger' && 'border-b-red-600',
+                isSelected && 'border-t',
+                isSelected && colorScheme === 'danger' && 'bg-red-50',
+                isSelected && colorScheme !== 'danger' && 'bg-zinc-100',
+                isSelected && colorScheme === 'danger' && 'border-red-600',
+                isSelected && colorScheme !== 'danger' && 'border-zinc-600',
               )}
             >
               <div>
@@ -82,7 +92,7 @@ const BoxedRadioGroupItem = React.forwardRef<
       >
         <div className="flex gap-x-2">
           <div className="min-w-5 pt-1">
-            <div className="border-primary text-primary focus-visible:ring-ring aspect-square h-4 w-4 rounded-full border shadow focus:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50">
+            <div className="text-primary focus-visible:ring-ring aspect-square h-4 w-4 rounded-full border border-zinc-200 shadow focus:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50">
               <RadioGroupPrimitive.Indicator>
                 <CheckIcon className="fill-primary h-3.5 w-3.5" />
               </RadioGroupPrimitive.Indicator>

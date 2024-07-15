@@ -7,6 +7,7 @@ import { AppEngineType } from '../../appsTypes'
 const zCreateInput = z.object({
   workspaceId: z.string(),
   title: z.optional(z.nullable(z.string())),
+  engineType: z.nativeEnum(AppEngineType),
 })
 
 export const appsCreate = protectedProcedure
@@ -21,7 +22,7 @@ export const appsCreate = protectedProcedure
     )
 
     return await appCreateService(ctx.prisma, context, {
-      engineType: AppEngineType.Assistant,
+      engineType: input.engineType,
       title: input.title ?? undefined,
     })
   })
