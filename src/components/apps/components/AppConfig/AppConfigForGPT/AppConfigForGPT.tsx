@@ -1,21 +1,12 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { useErrorHandler } from '@/components/global/errorHandlingHooks'
 import { useCanPerformActionForApp } from '@/components/permissions/permissionsHooks'
-import {
-  Section,
-  SectionBody,
-  SectionsHeader,
-  SectionsShell,
-} from '@/components/ui/Section'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { getEnumByValue } from '@/lib/utils'
 import { getAppEngineFriendlyName } from '@/server/apps/appUtils'
 import type { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { Form as FinalForm } from 'react-final-form'
 import {
   useAppById,
@@ -41,8 +32,6 @@ interface SubmitProps {
 }
 
 export function AppConfigForGPT({ appId }: AppConfigProps) {
-  const router = useRouter()
-  const returnToChatRoute = router.asPath.replace(`/configuration`, '')
   const { data: app } = useAppById(appId)
   const { data: appConfig } = useLatestAppConfigVersionForApp(appId)
 
@@ -55,7 +44,6 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
     appId,
   )
 
-  const hideBackButton = router.query?.backButton === 'false'
   const appEngine = app && getEnumByValue(AppEngineType, app.engineType)
 
   const handleSubmit = async (values: SubmitProps) => {
@@ -87,66 +75,53 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
   }
 
   return (
-    <SectionsShell>
-      {!hideBackButton && (
-        <div className="mb-8">
-          <Link href={returnToChatRoute}>
-            <Button variant="outline">&larr; Back to chat</Button>
-          </Link>
-        </div>
-      )}
-      <SectionsHeader className="mb-2">App configuration</SectionsHeader>
-      <Section>
-        <SectionBody>
-          <div className="mb-12 flex justify-end text-sm text-zinc-400">
-            {appEngine ? (
-              <span>
-                <span className="font-semibold ">App type: </span>
-                <span className="">{getAppEngineFriendlyName(appEngine)}</span>
-              </span>
-            ) : (
-              <Skeleton className="mt-1 h-3 w-28" />
-            )}
-          </div>
-          <FinalForm
-            onSubmit={handleSubmit}
-            initialValues={{
-              title: app?.title,
-              emoji: app?.emoji,
-              systemMessage: appConfig?.systemMessage,
-              description: appConfig?.description,
-              model: appConfig?.model,
-            }}
-            render={({
-              handleSubmit,
-              pristine,
-              submitting,
-              submitFailed,
-              hasValidationErrors,
-            }) => {
-              const shouldDisplayGlobalError =
-                submitFailed && hasValidationErrors
+    <div>
+      <div className="mb-12 flex justify-end text-sm text-zinc-400">
+        {appEngine ? (
+          <span>
+            <span className="font-semibold ">App type: </span>
+            <span className="">{getAppEngineFriendlyName(appEngine)}</span>
+          </span>
+        ) : (
+          <Skeleton className="mt-1 h-3 w-28" />
+        )}
+      </div>
+      <FinalForm
+        onSubmit={handleSubmit}
+        initialValues={{
+          title: app?.title,
+          emoji: app?.emoji,
+          systemMessage: appConfig?.systemMessage,
+          description: appConfig?.description,
+          model: appConfig?.model,
+        }}
+        render={({
+          handleSubmit,
+          pristine,
+          submitting,
+          submitFailed,
+          hasValidationErrors,
+        }) => {
+          const shouldDisplayGlobalError = submitFailed && hasValidationErrors
 
-              const handleSave = async () => {
-                await handleSubmit()
-              }
-              return (
-                <div className="space-y-8">
-                  <AppConfigForGPTNameAndDescription disabled={!canEdit} />
-                  <AppConfigForGPTSettings appId={appId} disabled={!canEdit} />
-                  <AppConfigSubmitButtonGroup
-                    appId={appId}
-                    pristine={pristine}
-                    submitting={submitting}
-                    onSave={handleSave}
-                    showSubmitError={shouldDisplayGlobalError}
-                  />
-                </div>
-              )
-            }}
-          />
-        </SectionBody>
-      </Section>
-    </SectionsShell>
+          const handleSave = async () => {
+            await handleSubmit()
+          }
+          return (
+            <div className="space-y-8">
+              <AppConfigForGPTNameAndDescription disabled={!canEdit} />
+              <AppConfigForGPTSettings appId={appId} disabled={!canEdit} />
+              <AppConfigSubmitButtonGroup
+                appId={appId}
+                pristine={pristine}
+                submitting={submitting}
+                onSave={handleSave}
+                showSubmitError={shouldDisplayGlobalError}
+              />
+            </div>
+          )
+        }}
+      />
+    </div>
   )
 }
