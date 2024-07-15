@@ -1,4 +1,8 @@
 import { useCreateApp } from '@/components/apps/appsHooks'
+import {
+  BoxedRadioGroup,
+  BoxedRadioGroupItem,
+} from '@/components/ui/boxed-radio-group'
 import { Button } from '@/components/ui/button'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { cn } from '@/lib/utils'
@@ -14,11 +18,11 @@ const options = [
     description:
       'A document-augmented assistant that queries provided documents to deliver contextually relevant responses. Currently it is only compatible with OpenAI.',
   },
-  {
-    title: 'Your own external assistant',
-    description:
-      'Build your own assistant with custom logic and integrate it here for easy access.',
-  },
+  // {
+  //   title: 'Your own external assistant',
+  //   description:
+  //     'Build your own assistant with custom logic and integrate it here for easy access.',
+  // },
 ]
 
 export const AppCreateBody = () => {
@@ -33,30 +37,37 @@ export const AppCreateBody = () => {
   return (
     <div className="space-y-8">
       <div>
-        <div>
-          {options.map((option, index) => {
-            const isFirst = index === 0
-            const isLast = index === options.length - 1
-            const isSelected = index === 0
-            return (
-              <div
-                key={option.title}
-                className={cn(
-                  'border-b border-l border-r p-4',
-                  isFirst && 'rounded-t-md border-t',
-                  isLast && 'rounded-b-md',
-                  isSelected && 'border-2 border-zinc-600 bg-zinc-100',
-                )}
-              >
-                <div className="font-semibold">{option.title}</div>
-                <div className="text-sm text-zinc-600">
-                  {option.description}
+        <BoxedRadioGroup>
+          <div>
+            {options.map((option, index) => {
+              const isFirst = index === 0
+              const isLast = index === options.length - 1
+              const isSelected = index === 0
+              return (
+                <div
+                  key={option.title}
+                  className={cn(
+                    'border-b border-l border-r p-4',
+                    isFirst && 'rounded-t-md border-t',
+                    isLast && 'rounded-b-md',
+                    isSelected && 'border-2 border-zinc-600 bg-zinc-100',
+                  )}
+                >
+                  <div>
+                    <BoxedRadioGroupItem value={option.title}>
+                      <div className="font-semibold">{option.title}</div>
+                      <div className="text-sm text-zinc-600">
+                        {option.description}
+                      </div>
+                    </BoxedRadioGroupItem>
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        </BoxedRadioGroup>
       </div>
+
       <Button onClick={() => void handleCreateApp()}>Create new app</Button>
     </div>
   )
