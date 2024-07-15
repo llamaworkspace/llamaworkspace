@@ -5,21 +5,35 @@ import { prisma } from '@/server/db'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { ShareScope, UserAccessLevel } from '@/shared/globalTypes'
+import type { User, Workspace } from '@prisma/client'
 
-const subject = async (workspaceId: string, userId: string) => {
+const subject = async (
+  workspaceId: string,
+  userId: string,
+  payload?: { engineType?: AppEngineType },
+) => {
   const uowContext = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
-  const input = { title: 'Test App', engineType: AppEngineType.Assistant }
+  const input = {
+    title: 'Test App',
+    engineType: AppEngineType.Assistant,
+    ...payload,
+  }
   return await appCreateService(prisma, uowContext, input)
 }
 
 describe('appCreateService', () => {
+  let workspace: Workspace
+  let user: User
+  beforeEach(async () => {
+    workspace = await WorkspaceFactory.create(prisma)
+    user = await UserFactory.create(prisma, { workspaceId: workspace.id })
+  })
+
   it('creates a new app', async () => {
-    const workspace = await WorkspaceFactory.create(prisma)
-    const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     await subject(workspace.id, user.id)
 
     const app = await prisma.app.findFirstOrThrow({
@@ -34,8 +48,6 @@ describe('appCreateService', () => {
   })
 
   it('creates an Private-scope-based share for the app', async () => {
-    const workspace = await WorkspaceFactory.create(prisma)
-    const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
     const app = await subject(workspace.id, user.id)
 
     const share = await prisma.share.findMany({
@@ -54,7 +66,7 @@ describe('appCreateService', () => {
 
   it('creates a first appConfigVersion', async () => {
     const weirdModel = 'a_weird_model'
-    const workspace = await WorkspaceFactory.create(prisma)
+
     const user = await UserFactory.create(prisma, {
       defaultModel: weirdModel,
       workspaceId: workspace.id,
@@ -74,11 +86,6 @@ describe('appCreateService', () => {
   })
 
   it('creates the default share', async () => {
-    const workspace = await WorkspaceFactory.create(prisma)
-    const user = await UserFactory.create(prisma, {
-      workspaceId: workspace.id,
-    })
-
     const app = await subject(workspace.id, user.id)
 
     const share = await prisma.share.findFirstOrThrow({
@@ -100,6 +107,26 @@ describe('appCreateService', () => {
           accessLevel: UserAccessLevel.Owner,
         }),
       ],
+    })
+  })
+
+  describe('when engineType is External', () => {
+    it('creates an appKv named accessKey', async () => {
+      const app = await subject(workspace.id, user.id, {
+        engineType: AppEngineType.External,
+      })
+
+      const appKv = await prisma.keyValue.findMany({
+        where: {
+          appId: app.id,
+        },
+      })
+      expect(appKv.length).toBe(1)
+      expect(appKv[0]).toMatchObject({
+        key: 'accessKey',
+        /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+        value: expect.any(String),
+      })
     })
   })
 })

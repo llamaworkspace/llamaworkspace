@@ -10,6 +10,7 @@ import { Form as FinalForm } from 'react-final-form'
 import {
   useAppById,
   useAppConfigUpdate,
+  useKeyValues,
   useLatestAppConfigVersionForApp,
   useUpdateApp,
   useUpdateKeyValues,
@@ -33,6 +34,9 @@ interface SubmitProps {
 export function AppConfigForExternalApp({ appId }: AppConfigProps) {
   const { data: app } = useAppById(appId)
   const { data: appConfig } = useLatestAppConfigVersionForApp(appId)
+  const { data: appKVsResponse } = useKeyValues(appId)
+
+  const appKVs = appKVsResponse?.data
 
   const { mutateAsync: updateAppConfigVersion } = useAppConfigUpdate()
   const { mutateAsync: updateKeyValues } = useUpdateKeyValues()
@@ -97,6 +101,8 @@ export function AppConfigForExternalApp({ appId }: AppConfigProps) {
           title: app?.title,
           emoji: app?.emoji,
           description: appConfig?.description,
+          targetUrl: appKVs?.targetUrl,
+          accessKey: appKVs?.accessKey,
         }}
         render={({
           handleSubmit,
