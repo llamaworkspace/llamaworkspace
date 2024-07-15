@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { useErrorHandler } from '@/components/global/errorHandlingHooks'
 import { useCanPerformActionForApp } from '@/components/permissions/permissionsHooks'
 import {
@@ -7,7 +8,10 @@ import {
   SectionsShell,
 } from '@/components/ui/Section'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useSuccessToast } from '@/components/ui/toastHooks'
+import { getEnumByValue } from '@/lib/utils'
+import { getAppEngineFriendlyName } from '@/server/apps/appUtils'
 import type { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import Link from 'next/link'
@@ -52,6 +56,7 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
   )
 
   const hideBackButton = router.query?.backButton === 'false'
+  const appEngine = app && getEnumByValue(AppEngineType, app.engineType)
 
   const handleSubmit = async (values: SubmitProps) => {
     if (!appConfig || !app) {
@@ -90,9 +95,19 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
           </Link>
         </div>
       )}
-      <SectionsHeader>App configuration</SectionsHeader>
+      <SectionsHeader className="mb-2">App configuration</SectionsHeader>
       <Section>
         <SectionBody>
+          <div className="mb-12 flex justify-end text-sm text-zinc-400">
+            {appEngine ? (
+              <span>
+                <span className="font-semibold ">App type: </span>
+                <span className="">{getAppEngineFriendlyName(appEngine)}</span>
+              </span>
+            ) : (
+              <Skeleton className="mt-1 h-3 w-28" />
+            )}
+          </div>
           <FinalForm
             onSubmit={handleSubmit}
             initialValues={{

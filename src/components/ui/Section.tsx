@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import type { PropsWithChildren } from 'react'
 import { Separator } from './separator'
 
@@ -11,9 +12,17 @@ export const SectionsShell = ({ children }: PropsWithChildren) => {
   )
 }
 
-export const SectionsHeader = ({ children }: PropsWithChildren) => {
+export const SectionsHeader = ({
+  children,
+  className,
+}: PropsWithChildren & { className?: string }) => {
   return (
-    <div className="mb-12 border-b pb-4 text-3xl font-bold tracking-tight">
+    <div
+      className={cn(
+        'mb-12 border-b pb-4 text-3xl font-bold tracking-tight',
+        className,
+      )}
+    >
       {children}
     </div>
   )

@@ -5,24 +5,25 @@ import { BoxedRadioGroupField } from '@/components/ui/forms/BoxedRadioGroupField
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { getEnumByValue } from '@/lib/utils'
+import { getAppEngineFriendlyName } from '@/server/apps/appUtils'
 import { Field, Form as FinalForm } from 'react-final-form'
 
 const options = [
   {
-    value: 'default',
-    title: 'Simple assistant',
+    value: AppEngineType.Default,
+    title: getAppEngineFriendlyName(AppEngineType.Default),
     description:
       'An instructions-based assistant for repeatable use cases. Compatible with any Large Language model.',
   },
   {
-    value: 'assistant',
-    title: 'Document-enhanced assistant',
+    value: AppEngineType.Assistant,
+    title: getAppEngineFriendlyName(AppEngineType.Assistant),
     description:
       'A document-augmented assistant that queries provided documents to deliver contextually relevant responses. Currently it is only compatible with OpenAI.',
   },
   // {
-  //   value: 'external',
-  //   title: 'Your own external assistant',
+  //   value: AppEngineType.External,
+  //   title: getAppEngineFriendlyName(AppEngineType.External),
   //   description:
   //     'Build your own assistant with custom logic and integrate it here for easy access.',
   // },
