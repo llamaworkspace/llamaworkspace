@@ -12,9 +12,9 @@ import { AppCreateBody } from './AppCreateBody'
 export const AppCreate = () => {
   return (
     <div className="flex w-full justify-end ">
-      <Dialog open={true}>
+      <Dialog>
         <DialogTrigger asChild>
-          <Button>Create new appxxx</Button>
+          <Button>Create new app</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[800px]">
           <DialogHeader>
