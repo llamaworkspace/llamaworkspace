@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  llamaworkspace:
+    container_name: llamaws_workspace
+    image: llamaworkspace/llamaworkspace:0.0.2-alpha
+    ports:
+      - 3000:3000
+    env_file:
+      - .env.docker
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - postgres
+
+    networks:
+      - llamaws_net
+      - shared_net
+
+  postgres:
+    container_name: llamaws_postgres
+    image: postgres:15
+
+    volumes:
+      - demo_llamaws_db:/var/lib/postgresql/data
+
+    restart: always
+
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: llamaws
+    networks:
+      - llamaws_net
+
+
+  llamaq:
+    container_name: llamaq
+    image: llamaworkspace/llamaq:latest
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+
+  redis:
+    container_name: llamaq_redis
+    image: redis
+    restart: always
+    volumes:
+      - demo_llamaq_redis_data:/data
+
+
+volumes:
+  demo_llamaws_db:
+  demo_llamaq_redis_data:
+
+networks:
+  llamaws_net:
+    driver: bridge
+  llamaq_net:
+    driver: bridge
+  shared_net:
+    driver: bridge
