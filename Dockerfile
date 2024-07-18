@@ -5,7 +5,7 @@ RUN npm ci --frozen-lockfile --ignore-scripts && npm cache clean --force
 COPY . .
 
   # Override .env.example with .env.build
-RUN cat .env.example ./infra/.env.build > .env \
+RUN cat .env.example ./infra/.env.demo > .env \
   # Generate a one-off encryption key to avoid having one hard-coded
   # and risk someone to re-use it
   && ENCRYPTION_KEY=$(npm run cloak:generate | tail -n 1) \
