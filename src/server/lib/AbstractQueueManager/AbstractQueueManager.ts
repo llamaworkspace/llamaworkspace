@@ -1,4 +1,6 @@
 import { env } from '@/env.mjs'
+import { ensureError } from '@/lib/utils'
+import { FetchError } from '@/shared/globalTypes'
 import type { z, ZodType } from 'zod'
 
 type PayloadType<T extends ZodType> = z.infer<T>
@@ -34,19 +36,32 @@ export abstract class AbstractQueueManager<T extends ZodType> {
       payload,
     }
 
-    const res = await fetch(this.enqueueUrl, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.accessToken}`,
-      },
-    })
+    try {
+      const res = await fetch(this.enqueueUrl, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      })
 
-    if (!res.ok) {
-      throw new Error(
-        `Failed to enqueue event. Remote response: ${res.status} ${res.statusText}`,
-      )
+      if (!res.ok) {
+        throw new Error(
+          `Failed to enqueue event. Remote response: ${res.status} ${res.statusText}`,
+        )
+      }
+    } catch (_error) {
+      const error = ensureError(_error) as FetchError
+
+      if (error.cause && error.cause.code === 'ECONNREFUSED') {
+        throw new Error('Connection to LlamaQ service has been refused')
+      } else if (error.cause && error.cause.code === 'ENOTFOUND') {
+        throw new Error(
+          'The LlamaQ service url has not been found. url: ' + this.enqueueUrl,
+        )
+      }
+      throw error
     }
   }
 
