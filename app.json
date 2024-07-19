@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dokku": {
+      "predeploy": "bash ./.dokku/predeploy.sh"
+    }
+  }
+}
