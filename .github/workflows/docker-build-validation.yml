@@ -1,0 +1,90 @@
+# This workflow is made to validate that Dockerfile builds and runs correctly. A single Dockerfile is useful for Dockerfile-based deployments like AWS ECS or Fargate
+
+name: WIP Validate Dockerfile Build & Run
+
+# on:
+#   pull_request:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Copy .env.example to .env
+        run: |
+          cp .env.example .env
+          ENCRYPTION_KEY=$(npm run cloak:generate | tail -n 1)
+          printf "\nENCRYPTION_KEY=$ENCRYPTION_KEY" >> .env
+
+      - name: Build services with Docker Compose
+        run: docker-compose -f ./infra/docker-compose.ci-build.yml build
+
+      - name: Run services with Docker Compose
+        run: docker-compose -f ./infra/docker-compose.ci-build.yml up -d
+
+      - name: Wait for the services to be healthy
+        run: |
+          for i in {1..30}; do
+            container_id=$(docker-compose -f ./infra/docker-compose.ci-build.yml ps -q app)
+            if [ -n "$container_id" ]; then
+              health_status=$(docker inspect --format='{{json .State.Health.Status}}' "$container_id")
+              if [ "$health_status" == "\"healthy\"" ]; then
+                echo "Application is healthy"
+                exit 0
+              fi
+            else
+              echo "Application container is not running"
+              docker-compose -f ./infra/docker-compose.ci-build.yml logs
+              exit 1
+            fi
+            echo "Waiting for the application to be healthy..."
+            sleep 5
+          done
+          echo "Application did not become healthy in time"
+          docker-compose logs
+          exit 1
+
+      - name: Wait for the application to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/api/status | grep -q "ok"; then
+              echo "Application is ready"
+              exit 0
+            fi
+            echo "Waiting for the application to be ready..."
+            sleep 5
+          done
+          echo "Application did not become ready in time"
+          exit 1
+
+      - name: Check application status
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/status)
+          body=$(curl -s http://localhost:3000/api/status)
+          if [ "$response" -eq 200 ] && [ "$body" == "ok"; then
+            echo "Application status is OK"
+          else
+            echo "Application status check failed"
+            exit 1
+          fi
+
+      - name: Clean up
+        run: docker-compose -f ./infra/docker-compose.ci-build.yml down
