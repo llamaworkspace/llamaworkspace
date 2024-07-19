@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { getStreamAsAsyncIterable } from '@/lib/streamUtils'
 import createHttpError from 'http-errors'
 import { z } from 'zod'
@@ -53,7 +54,7 @@ export class ExternalAppEngine extends AbstractAppEngine {
   }
 
   getName() {
-    return 'external'
+    return AppEngineType.External.toString()
   }
 
   async run(
