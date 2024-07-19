@@ -47,4 +47,31 @@ jobs:
         run: cp .env.example .env
 
       - name: Verify Docker image build
-        run: docker run --rm --env-file .env my-app:latest
+        run: docker run --rm --env-file -p 5432:5432 .env my-app:latest
+
+      - name: Wait for the application to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/api/status | grep -q "ok"; then
+              echo "Application is ready"
+              exit 0
+            fi
+            echo "Waiting for the application to be ready..."
+            sleep 5
+          done
+          echo "Application did not become ready in time"
+          exit 1
+
+      - name: Check application status
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/status)
+          body=$(curl -s http://localhost:3000/api/status)
+          if [ "$response" -eq 200 ] && [ "$body" == "ok" ]; then
+            echo "Application status is OK"
+          else
+            echo "Application status check failed"
+            exit 1
+          fi
+
+      - name: Clean up
+        run: docker stop my-app-container && docker rm my-app-container
