@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import { streamText } from 'ai'
 import createHttpError from 'http-errors'
@@ -21,7 +22,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
   }
 
   getName() {
-    return 'default'
+    return AppEngineType.Default.toString()
   }
 
   async run(

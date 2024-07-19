@@ -179,7 +179,7 @@ export class AppEngineRunner {
   private getEngineByName(name: string) {
     const engine = this.engines.find((engine) => engine.getName() === name)
     if (!engine) {
-      throw new Error(`Engine ${name} not found`)
+      throw new Error(`Engine "${name}" not found`)
     }
     return engine
   }
