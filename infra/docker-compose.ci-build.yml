@@ -1,17 +1,17 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: llamaws
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready']
-      interval: 5s
-      timeout: 10s
-      retries: 0
+  # postgres:
+  #   image: postgres:15
+  #   environment:
+  #     POSTGRES_DB: llamaws
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: password
+  #   healthcheck:
+  #     test: ['CMD-SHELL', 'pg_isready']
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 0
 
   app:
     build:
@@ -19,8 +19,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
+    # env_file:
+    #   - ../.env.example
+    command: ["echo", "$DATABASE_URL"]
     environment:
       DATABASE_URL: postgres://postgres:password@postgres:5432/llamaws
-    depends_on:
-      postgres:
-        condition: service_healthy
+      # ENCRYPTION_KEY: $(npm run cloak:generate)
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy

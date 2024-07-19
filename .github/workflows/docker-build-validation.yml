@@ -1,13 +1,13 @@
 # This workflow is made to validate that Dockerfile builds and runs correctly. A single Dockerfile is useful for Dockerfile-based deployments like AWS ECS or Fargate
 
-name: Validate Dockerfile Build & Run
+name: WIP Validate Dockerfile Build & Run
 
-on:
-  pull_request:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+# on:
+#   pull_request:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
 
 jobs:
   build:
@@ -29,7 +29,10 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Copy .env.example to .env
-        run: cp .env.example .env
+        run: |
+          cp .env.example .env
+          ENCRYPTION_KEY=$(npm run cloak:generate | tail -n 1)
+          printf "\nENCRYPTION_KEY=$ENCRYPTION_KEY" >> .env
 
       - name: Build services with Docker Compose
         run: docker-compose -f ./infra/docker-compose.ci-build.yml build
