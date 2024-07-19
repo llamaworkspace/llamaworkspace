@@ -1,4 +1,4 @@
-name: Validate Dockerfile Build & Run
+name: WIP Validate Dockerfile Build & Run
 
 on:
   pull_request:
@@ -33,4 +33,4 @@ jobs:
         run: cp .env.example .env
 
       - name: Verify Docker image build
-        run: docker run --rm my-app:latest
+        run: docker run --rm --env-file .env my-app:latest
