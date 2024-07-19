@@ -8,9 +8,11 @@ services:
       - 3000:3000
     env_file:
       - ./.env.demo
-    command: ['npm', 'run', 'start']
     environment:
       - NODE_ENV=production
+      - LLAMAQ_ENQUEUE_URL=http://llamaq:4000/llamaq/enqueue
+      - LLAMAQ_ACCESS_KEY=llamaq-access-key
+      - LLAMAQ_INCOMING_API_ROUTE_ACCESS_KEY=incoming-api-route-access-key
     depends_on:
       - postgres
 
@@ -39,9 +41,11 @@ services:
     environment:
       - NODE_ENV=production
       - REDIS_URL=redis://llamaq_redis:6379
-      - LLAMAQ_ACCESS_KEY=ABC1234
+      - LLAMAQ_ACCESS_KEY=llamaq-access-key
       - NEXTJS_PROCESSOR_URL=http://llamaworkspace:3000
-      - NEXTJS_API_ACCESS_KEY=ABC123
+      - NEXTJS_API_ACCESS_KEY=incoming-api-route-access-key
+    ports:
+      - 4000:4000
     depends_on:
       - redis
 
