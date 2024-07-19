@@ -40,15 +40,23 @@ jobs:
       - name: Wait for the services to be healthy
         run: |
           for i in {1..30}; do
-            if [ "$(docker inspect --format='{{json .State.Health.Status}}' $(docker-compose -f ./infra/docker-compose.ci-build.yml ps -q app))" == "\"healthy\"" ]; then
-              echo "Application is healthy"
-              exit 0
+            container_id=$(docker-compose -f ./infra/docker-compose.ci-build.yml ps -q app)
+            if [ -n "$container_id" ]; then
+              health_status=$(docker inspect --format='{{json .State.Health.Status}}' "$container_id")
+              if [ "$health_status" == "\"healthy\"" ]; then
+                echo "Application is healthy"
+                exit 0
+              fi
+            else
+              echo "Application container is not running"
+              docker-compose -f ./infra/docker-compose.ci-build.yml logs
+              exit 1
             fi
             echo "Waiting for the application to be healthy..."
             sleep 5
           done
           echo "Application did not become healthy in time"
-          docker-compose -f ./infra/docker-compose.ci-build.yml logs
+          docker-compose logs
           exit 1
 
       - name: Wait for the application to be ready
