@@ -42,3 +42,9 @@ export type PrismaTrxClient = Omit<
 >
 
 export type PrismaClientOrTrxClient = PrismaClient | PrismaTrxClient
+
+export type FetchError = Error & {
+  cause?: {
+    code?: string
+  }
+}
