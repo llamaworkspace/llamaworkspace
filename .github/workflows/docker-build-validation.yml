@@ -1,4 +1,4 @@
-name: WIP Validate Dockerfile Build & Run
+name: Validate Dockerfile Build & Run
 
 on:
   pull_request:
