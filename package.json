@@ -4,7 +4,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbo",
-    "run-demo": "docker-compose -f ./infra/docker-compose.prod.yml up",
+    "start-demo": "docker-compose -f ./infra/docker-compose.demo.yml up",
     "preinstall": "npx only-allow npm",
     "postinstall": "prisma generate",
     "lint": "next lint",
