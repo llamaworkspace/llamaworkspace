@@ -1,0 +1,92 @@
+name: Publish Docker Image & Tag on Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Get version from package.json
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Fetch all tags
+        run: git fetch --tags
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          TAGS=$(git tag)
+          if [ -z "$TAGS" ]; then
+            echo "No tags found."
+            echo "LATEST_TAG=" >> $GITHUB_ENV
+          else
+            LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+            echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          fi
+
+      - name: Compare versions
+        id: compare_versions
+        run: |
+          if [ -z "${{ env.LATEST_TAG }}" ]; then
+            echo "No tags found. Proceeding with build."
+            echo "VERSION_HIGHER=true" >> $GITHUB_ENV
+          else
+            LATEST_VERSION=${{ env.LATEST_TAG }}
+            # Remove the 'v' prefix if it exists
+            if [[ "$LATEST_VERSION" == v* ]]; then
+              LATEST_VERSION=${LATEST_VERSION:1}
+            fi
+            if [ "$(printf '%s\n' "${{ env.VERSION }}" "$LATEST_VERSION" | sort -V | head -n1)" != "${{ env.VERSION }}" ]; then
+              echo "Current version ${{ env.VERSION }} is higher than latest tag $LATEST_VERSION. Proceeding with build."
+              echo "VERSION_HIGHER=true" >> $GITHUB_ENV
+            else
+              echo "Current version ${{ env.VERSION }} is not higher than latest tag $LATEST_VERSION. Skipping build."
+              echo "VERSION_HIGHER=false" >> $GITHUB_ENV
+            fi
+          fi
+
+      - name: Stop if version is not higher
+        if: env.VERSION_HIGHER == 'false'
+        run: exit 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/llamaq:${{ env.VERSION }}
+            ${{ secrets.DOCKER_USERNAME }}/llamaq:latest
+          platforms: linux/amd64,linux/arm64
+
+      - name: Create GitHub tag
+        id: create_tag
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
+          git push origin "v${{ env.VERSION }}"
