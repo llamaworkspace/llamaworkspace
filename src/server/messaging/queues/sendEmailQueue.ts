@@ -5,7 +5,11 @@ import { AbstractQueueManager } from '../../lib/AbstractQueueManager/AbstractQue
 
 const { SMTP_EMAIL_SERVER } = env
 
-const mailer = nodemailer.createTransport(SMTP_EMAIL_SERVER)
+let mailer: ReturnType<typeof nodemailer.createTransport> | null = null
+
+if (SMTP_EMAIL_SERVER) {
+  mailer = nodemailer.createTransport(SMTP_EMAIL_SERVER)
+}
 
 const zPayload = z.object({
   from: z.string(),
@@ -25,7 +29,17 @@ class SendEmailQueue extends AbstractQueueManager<typeof zPayload> {
   }
 
   protected async handle(action: string, payload: SendEmailEventPayload) {
+    if (!mailer) {
+      return this.logEmailToConsole(payload)
+    }
     return await mailer.sendMail(payload)
+  }
+
+  private logEmailToConsole(payload: SendEmailEventPayload) {
+    console.log(
+      `EMAIL SENDING IS DISABLED: An email would have been sent to ${payload.to}, with payload:`,
+      payload,
+    )
   }
 }
 
