@@ -1,22 +1,14 @@
 import { AssetUploadStatus } from '@/components/assets/assetTypes'
-import { env } from '@/env.mjs'
+import { getS3Client } from '@/lib/backend/s3Utils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type {
   PrismaClientOrTrxClient,
   PrismaTrxClient,
 } from '@/shared/globalTypes'
-import { S3Client } from '@aws-sdk/client-s3'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 
-const { S3_BUCKET_NAME, S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY } =
-  env
-
-const credentials = {
-  accessKeyId: S3_ACCESS_KEY_ID,
-  secretAccessKey: S3_SECRET_ACCESS_KEY,
-}
-const s3Client = new S3Client({ region: S3_REGION, credentials })
+const { s3Client, s3BucketName } = getS3Client()
 
 interface CreateAssetUploadPresignedUrlInputProps {
   assetName: string
@@ -38,7 +30,7 @@ export const createAssetUploadPresignedUrlService = async (
 
     const { path } = asset
     const presignedUrl = await generatePresignedUrl(path)
-
+    console.log('11111 presignedUrl', presignedUrl)
     return { presignedUrl, asset }
   })
 }
@@ -75,7 +67,7 @@ const createAssetReference = async (
 }
 
 const generatePresignedUrl = async (path: string) => {
-  const bucketName = S3_BUCKET_NAME
+  const bucketName = s3BucketName
 
   const params = {
     Bucket: bucketName,
