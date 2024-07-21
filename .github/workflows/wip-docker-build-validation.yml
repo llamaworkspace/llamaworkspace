@@ -1,11 +1,11 @@
 name: WIP Validate Dockerfile Build & Run
 
-on:
-  pull_request:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+# on:
+#   pull_request:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
 
 jobs:
   build:

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   llamaworkspace:
     container_name: llamaworkspace
-    image: llamaworkspace/llamaworkspace:0.0.3-alpha
+    image: llamaworkspace/llamaworkspace:latest
     ports:
       - 3000:3000
     env_file:
