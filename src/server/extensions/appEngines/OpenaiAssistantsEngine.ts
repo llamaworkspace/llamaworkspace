@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import {
   AbstractAppEngine,
   type AppEngineCallbacks,
@@ -31,7 +32,7 @@ type AppKeyValues = z.infer<typeof appKVsSchema>
 
 export class OpenaiAssistantsEngine extends AbstractAppEngine {
   getName() {
-    return 'OpenaiAssistantsEngine'
+    return AppEngineType.Assistant.toString()
   }
 
   getProviderKeyValuesSchema() {
