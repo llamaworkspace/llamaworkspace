@@ -30,7 +30,7 @@ export const createAssetUploadPresignedUrlService = async (
 
     const { path } = asset
     const presignedUrl = await generatePresignedUrl(path)
-    console.log('11111 presignedUrl', presignedUrl)
+
     return { presignedUrl, asset }
   })
 }
