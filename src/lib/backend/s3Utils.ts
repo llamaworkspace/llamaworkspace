@@ -14,6 +14,10 @@ const baseS3Config: S3ClientConfig = {
     accessKeyId: S3_ACCESS_KEY_ID,
     secretAccessKey: S3_SECRET_ACCESS_KEY,
   },
+}
+
+const remoteS3Config: S3ClientConfig = {
+  ...baseS3Config,
   region: S3_REGION,
 }
 
@@ -25,7 +29,7 @@ const endpointBasedS3Config: S3ClientConfig = {
 
 const finalS3Config: S3ClientConfig = S3_ENDPOINT
   ? endpointBasedS3Config
-  : baseS3Config
+  : remoteS3Config
 
 const s3Client = new S3Client(finalS3Config)
 
