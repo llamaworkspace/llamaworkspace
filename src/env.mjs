@@ -36,7 +36,6 @@ const server = z.object({
   LLAMAQ_ENQUEUE_URL: z.string(),
   LLAMAQ_ACCESS_KEY: z.string(),
   LLAMAQ_INCOMING_API_ROUTE_ACCESS_KEY: z.string(),
-  DEMO_MODE: z.string().optional(),
 })
 
 /**
@@ -46,7 +45,8 @@ const server = z.object({
 const client = z.object({
   NEXT_PUBLIC_ENV: z.enum(['development', 'test', 'production']),
   NEXT_PUBLIC_FRONTEND_URL: z.string().url(),
-  NEXT_PUBLIC_TRPC_DEBUG: z.optional(z.string()),
+  NEXT_PUBLIC_TRPC_DEBUG: z.string().optional(),
+  NEXT_PUBLIC_DEMO_MODE: z.string().optional(),
 })
 
 /**
@@ -76,10 +76,10 @@ const processEnv = {
   OPTIONAL_OPENAI_BASE_URL: process.env.OPTIONAL_OPENAI_BASE_URL,
   SMTP_EMAIL_SERVER: process.env.SMTP_EMAIL_SERVER,
   SMTP_EMAIL_FROM: process.env.SMTP_EMAIL_FROM,
-  DEMO_MODE: process.env.DEMO_MODE,
   NEXT_PUBLIC_ENV: process.env.NODE_ENV,
   NEXT_PUBLIC_FRONTEND_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
   NEXT_PUBLIC_TRPC_DEBUG: process.env.NEXT_PUBLIC_TRPC_DEBUG,
+  NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE,
 }
 
 // Don't touch the part below

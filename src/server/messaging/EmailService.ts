@@ -2,7 +2,7 @@ import { renderAsync } from '@react-email/components'
 import createHttpError from 'http-errors'
 import { createElement } from 'react'
 import _ from 'underscore'
-import { ZodRawShape, z } from 'zod'
+import type { ZodRawShape, z } from 'zod'
 import { emailsCatalog } from './emailsCatalog'
 import { sendEmail } from './mailer'
 
