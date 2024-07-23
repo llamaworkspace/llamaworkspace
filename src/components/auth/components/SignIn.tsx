@@ -86,7 +86,7 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
     setIsLoading(true)
     if (isDemo) {
       alert(
-        'To log in go to your terminal and copy/paste the magic link we have provided. (Email sending is disabled in demo mode.)',
+        'Email sending is disabled in demo mode. To log in, go to your terminal and copy/paste the magic link we have provided.',
       )
     }
     await signIn('email', {
@@ -318,16 +318,19 @@ export const Icons = {
 
 function getSanitizedCallbackUrl(
   rawCallbackUrl: string | undefined,
-  path: string,
+  defaultUrl: string,
 ) {
-  const isServer = typeof window === 'undefined'
-  if (isServer) {
-    return '/'
-  }
-
   if (!rawCallbackUrl) {
-    return window.location.origin + path
+    return defaultUrl
   }
 
-  return window.location.origin + path
+  if (rawCallbackUrl.startsWith('/')) {
+    return rawCallbackUrl
+  }
+
+  if (new URL(rawCallbackUrl).origin === window?.location.origin) {
+    return rawCallbackUrl
+  }
+
+  return defaultUrl
 }
