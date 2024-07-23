@@ -16,8 +16,14 @@ export const migrator = new Umzug({
   },
 })
 
-void migrator.runAsCLI().finally(() => {
-  process.exit()
-})
+void migrator
+  .runAsCLI()
+  .catch((err) => {
+    console.error(err)
+    process.exit(1)
+  })
+  .finally(() => {
+    process.exit(0)
+  })
 
 export type DataMigration = typeof migrator._types.migration

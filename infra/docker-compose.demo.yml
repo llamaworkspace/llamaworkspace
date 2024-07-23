@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   llamaworkspace:
     container_name: llamaws_demo
@@ -11,7 +9,8 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   postgres:
     container_name: llamaws_postgres_demo
@@ -26,9 +25,15 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: llamaws
 
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   llamaq:
     container_name: llamaq_demo
-    image: llamaq:local
+    image: llamaworkspace/llamaq:latest
     environment:
       - NODE_ENV=production
       - REDIS_URL=redis://llamaq_redis_demo:6379
