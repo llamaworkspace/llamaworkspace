@@ -28,7 +28,7 @@ services:
 
   llamaq:
     container_name: llamaq_demo
-    image: llamaq:local
+    image: llamaworkspace/llamaworkspace:latest
     environment:
       - NODE_ENV=production
       - REDIS_URL=redis://llamaq_redis_demo:6379
