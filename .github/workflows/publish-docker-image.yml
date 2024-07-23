@@ -1,7 +1,10 @@
-name: Publish Docker Image & Tag on Release
+name: Verify Docker Image integrity. Tag and Push to hub on Release
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -73,17 +76,31 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: false
+          file: ./infra/Dockerfile.demo
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/llamaworkspace:${{ env.VERSION }}
+            ${{ secrets.DOCKER_USERNAME }}/llamaworkspace:latest
+          platforms: linux/amd64,linux/arm64
+
+      - name: Push Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
+          file: ./infra/Dockerfile.demo
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/llamaq:${{ env.VERSION }}
-            ${{ secrets.DOCKER_USERNAME }}/llamaq:latest
+            ${{ secrets.DOCKER_USERNAME }}/llamaworkspace:${{ env.VERSION }}
+            ${{ secrets.DOCKER_USERNAME }}/llamaworkspace:latest
           platforms: linux/amd64,linux/arm64
 
       - name: Create GitHub tag
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: create_tag
         run: |
           git config --global user.name "github-actions[bot]"

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   llamaworkspace:
-    container_name: llamaworkspace
+    container_name: llamaws_demo
     image: llamaworkspace/llamaworkspace:latest
     ports:
       - 3000:3000
@@ -10,63 +10,45 @@ services:
       - ./.env.demo
     environment:
       - NODE_ENV=production
-      - LLAMAQ_ENQUEUE_URL=http://llamaq:4000/llamaq/enqueue
-      - LLAMAQ_ACCESS_KEY=llamaq-access-key
-      - LLAMAQ_INCOMING_API_ROUTE_ACCESS_KEY=incoming-api-route-access-key
     depends_on:
       - postgres
-    networks:
-      - llamaws_net
-      - shared_net
 
   postgres:
-    container_name: llamaws_postgres
+    container_name: llamaws_postgres_demo
     image: postgres:15
-
     volumes:
-      - prod_llamaws_db:/var/lib/postgresql/data
+      - demo_llamaws_db:/var/lib/postgresql/data
 
     restart: always
 
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: llamaws
-    networks:
-      - llamaws_net
 
   llamaq:
-    container_name: llamaq
-    image: llamaworkspace/llamaq:latest
+    container_name: llamaq_demo
+    image: llamaq:local
     environment:
       - NODE_ENV=production
-      - REDIS_URL=redis://llamaq_redis:6379
+      - REDIS_URL=redis://llamaq_redis_demo:6379
       - LLAMAQ_ACCESS_KEY=llamaq-access-key
-      - NEXTJS_PROCESSOR_URL=http://llamaworkspace:3000
+      - NEXTJS_PROCESSOR_URL=http://llamaws_demo:3000
       - NEXTJS_API_ACCESS_KEY=incoming-api-route-access-key
     ports:
       - 4000:4000
     depends_on:
       - redis
-    networks:
-      - llamaq_net
-      - shared_net
 
   redis:
-    container_name: llamaq_redis
+    container_name: llamaq_redis_demo
     image: redis
     restart: always
     volumes:
-      - prod_llamaq_redis_data:/data
-    networks:
-      - llamaq_net
+      - demo_llamaq_redis_data:/data
 
 volumes:
-  prod_llamaws_db:
-  prod_llamaq_redis_data:
-networks:
-  llamaws_net:
-    driver: bridge
-  llamaq_net:
-    driver: bridge
-  shared_net:
-    driver: bridge
+  demo_llamaws_db:
+    name: demo_llamaws_db
+  demo_llamaq_redis_data:
+    name: demo_llamaq_redis_data
