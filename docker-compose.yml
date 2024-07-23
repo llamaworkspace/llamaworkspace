@@ -15,6 +15,21 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: llamaws
 
+  minio:
+    image: bitnami/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: miniouser
+      MINIO_ROOT_PASSWORD: miniopassword
+      MINIO_DEFAULT_BUCKETS: llamaws
+      MINIO_API_PORT_NUMBER: 9000
+      MINIO_CONSOLE_PORT_NUMBER: 9001
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - llamaws_minio_data:/data
+
   adminer:
     container_name: llamaws_adminer
     image: adminer
@@ -24,3 +39,4 @@ services:
 
 volumes:
   llamaws_db:
+  llamaws_minio_data:
