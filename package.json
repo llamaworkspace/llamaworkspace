@@ -108,6 +108,7 @@
     "zod": "^3.22.3"
   },
   "devDependencies": {
+    "@47ng/cloak": "^1.1.0",
     "@faker-js/faker": "^8.0.2",
     "@testing-library/jest-dom": "^6.1.3",
     "@testing-library/react": "^14.0.0",
