@@ -1,6 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { InputField } from '@/components/ui/forms/InputField'
+import { env } from '@/env.mjs'
 import {
   composeValidators,
   email,
@@ -14,6 +15,10 @@ import Link from 'next/link'
 import * as React from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { SignInButtons } from './SignInButtons'
+
+const { NEXT_PUBLIC_DEMO_MODE } = env
+
+const isDemo = NEXT_PUBLIC_DEMO_MODE === 'true'
 
 export const SignIn = () => {
   return (
@@ -77,8 +82,13 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
   const queryCallbackUrl =
     callbackUrl ?? (navigation.query?.callbackUrl as string | undefined)
 
-  const handleFormSubmit = async (values: UserAuthFormValues) => {
+  const handleEmailFormSubmit = async (values: UserAuthFormValues) => {
     setIsLoading(true)
+    if (isDemo) {
+      alert(
+        'Email sending is disabled in demo mode. To log in, go to your terminal and copy/paste the magic link we have provided.',
+      )
+    }
     await signIn('email', {
       email: values.email,
       callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
@@ -113,7 +123,7 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
         </div>
       </div>
       <FinalForm<UserAuthFormValues>
-        onSubmit={handleFormSubmit}
+        onSubmit={handleEmailFormSubmit}
         render={({ handleSubmit }) => {
           return (
             <form
