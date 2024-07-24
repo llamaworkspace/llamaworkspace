@@ -10,6 +10,14 @@ export const openRouterAiModels: AiRegistryModel[] = [
     },
   },
   {
+    slug: 'meta-llama/llama-3.1-405b-instruct' as const,
+    publicName: 'Llama 3.1 405B' as const,
+    costPerMille: {
+      request: 0.045,
+      response: 0.0135,
+    },
+  },
+  {
     slug: 'meta-llama/llama-2-70b-chat' as const,
     publicName: 'Llama v2 70B Chat' as const,
     costPerMille: {
