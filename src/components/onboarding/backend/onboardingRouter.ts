@@ -1,6 +1,6 @@
 import { createTRPCRouter } from '@/server/trpc/trpc'
-import { createOnboarding } from './procedures/createOnboarding'
+import { setupInitialModel } from './procedures/setUpInitialModel'
 
 export const onboardingRouter = createTRPCRouter({
-  createOnboarding,
+  setupInitialModel,
 })

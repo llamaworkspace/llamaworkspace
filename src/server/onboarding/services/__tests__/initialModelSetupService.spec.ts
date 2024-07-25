@@ -3,10 +3,10 @@ import { prisma } from '@/server/db'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { ShareScope } from '@/shared/globalTypes'
+import { initialModelSetupService } from '../initialModelSetup.service'
 import { onboardingTexts } from '../onboardingTexts'
-import { workspaceOnboardingCreationService } from '../workspaceOnboardingCreation.service'
 
-describe('workspaceOnboardingCreationService', () => {
+describe('initialModelSetupService', () => {
   const subject = async () => {
     const workspace = await WorkspaceFactory.create(prisma)
     const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
@@ -15,7 +15,7 @@ describe('workspaceOnboardingCreationService', () => {
       workspace.id,
       user.id,
     )
-    await workspaceOnboardingCreationService(prisma, uowContext)
+    return await initialModelSetupService(prisma, uowContext)
     return user
   }
 
