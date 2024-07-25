@@ -1,9 +1,10 @@
+import { upsertAiProviderService } from '@/server/ai/services/upsertProviderKVs.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import type {
+import {
   InitialModel,
-  PrismaClientOrTrxClient,
-  PrismaTrxClient,
+  type PrismaClientOrTrxClient,
+  type PrismaTrxClient,
 } from '@/shared/globalTypes'
 
 interface InitialModelSetupPayload {
@@ -12,6 +13,9 @@ interface InitialModelSetupPayload {
   openaiApiKey?: string
 }
 
+const OPENAI_MODEL = 'gpt-4o'
+const LLAMA_MODEL = 'meta-llama/llama-3.1-405b-instruct'
+
 export const initialModelSetupService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
@@ -19,20 +23,90 @@ export const initialModelSetupService = async (
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
     // If the onboarding is completed: return
-    // We need a DB field for that. We'll need it to conditionally display the onboarding modal
-    // in a trx,
+
     // if openai:
-    // - setup openai api key (update ai provider)
-    // - setup default model for the workspace: gpt-4o
-    // - setup default model for the user: gpt-4o
-    // - setup default model for the fun facts teller: gpt-4o
+    // - OK setup openai api key (update ai provider)
+    // - OK setup default model for the workspace: OPENAI_MODEL
+    // - setup default model for the user: OPENAI_MODEL
+    // - setup default model for the fun facts teller: OPENAI_MODEL
     // if llama:
-    // - setup openrouter.ai api key (update ai provider)
+    // - OK setup openrouter.ai api key (update ai provider)
     // - idem openai
+
+    const { workspaceId } = uowContext
+    const { model, apiKey, openaiApiKey } = payload
     return await prismaAsTrx(prisma, async (prisma) => {
-      await markOnboardingAsCompleted(prisma, uowContext.workspaceId)
+      await addAiProviders(prisma, workspaceId, payload)
+      const defaultModel =
+        model === InitialModel.Openai ? OPENAI_MODEL : LLAMA_MODEL
+      await setDefaultWorkspaceModel(prisma, workspaceId, defaultModel)
+      await markOnboardingAsCompleted(prisma, workspaceId)
     })
   })
+}
+
+const addAiProviders = async (
+  prisma: PrismaTrxClient,
+  workspaceId: string,
+  payload: InitialModelSetupPayload,
+) => {
+  const { model, apiKey, openaiApiKey } = payload
+  if (model === InitialModel.Openai) {
+    await addAiProvider(prisma, workspaceId, 'openai', apiKey, OPENAI_MODEL)
+  } else if (model === InitialModel.Llama) {
+    if (!openaiApiKey) {
+      throw new Error('openaiApiKey is required for Llama-based models')
+    }
+
+    await addAiProvider(
+      prisma,
+      workspaceId,
+      'openai',
+      openaiApiKey,
+      OPENAI_MODEL,
+    )
+
+    await addAiProvider(
+      prisma,
+      workspaceId,
+      'openrouter',
+      openaiApiKey,
+      LLAMA_MODEL,
+    )
+  } else {
+    throw new Error(`Unknown model`)
+  }
+}
+
+const setDefaultWorkspaceModel = async (
+  prisma: PrismaTrxClient,
+  workspaceId: string,
+  defaultModel: string,
+) => {
+  return await prisma.workspace.update({
+    where: {
+      id: workspaceId,
+    },
+    data: {
+      defaultModel,
+    },
+  })
+}
+
+const addAiProvider = async (
+  prisma: PrismaTrxClient,
+  workspaceId: string,
+  providerSlug: string,
+  apiKey: string,
+  model: string,
+) => {
+  return await upsertAiProviderService(
+    prisma,
+    workspaceId,
+    providerSlug,
+    { apiKey },
+    [{ slug: model, enabled: true }],
+  )
 }
 
 const markOnboardingAsCompleted = async (
