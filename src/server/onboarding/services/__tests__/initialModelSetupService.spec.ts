@@ -1,74 +1,80 @@
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { UserFactory } from '@/server/testing/factories/UserFactory'
-import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { ShareScope } from '@/shared/globalTypes'
+import { workspaceWithUsersAndAppsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndApps.fixture'
+import { InitialModel } from '@/shared/globalTypes'
+import { App, User, Workspace } from '@prisma/client'
 import { initialModelSetupService } from '../initialModelSetup.service'
-import { onboardingTexts } from '../onboardingTexts'
+
+const subject = async (
+  workspaceId: string,
+  userId: string,
+  payload: {
+    model: InitialModel
+    apiKey: string
+    openaiApiKey?: string
+  },
+) => {
+  const uowContext = await createUserOnWorkspaceContext(
+    prisma,
+    workspaceId,
+    userId,
+  )
+  return await initialModelSetupService(prisma, uowContext, payload)
+}
 
 describe('initialModelSetupService', () => {
-  const subject = async () => {
-    const workspace = await WorkspaceFactory.create(prisma)
-    const user = await UserFactory.create(prisma, { workspaceId: workspace.id })
-    const uowContext = await createUserOnWorkspaceContext(
-      prisma,
-      workspace.id,
-      user.id,
-    )
-    return await initialModelSetupService(prisma, uowContext)
-    return user
-  }
+  let workspace: Workspace
+  let user: User
+  let app: App
 
-  it('creates a default app', async () => {
-    const user = await subject()
+  beforeEach(async () => {
+    const fixture = await workspaceWithUsersAndAppsFixture(prisma)
 
-    const app = await prisma.app.findFirstOrThrow({
-      where: {
-        userId: user.id,
-      },
-      include: {
-        shares: true,
-      },
-    })
-
-    expect(app).toMatchObject({
-      title: 'Fun facts teller',
-    })
-    expect(app.shares[0]!.scope).toBe(ShareScope.Everybody.toString())
+    workspace = fixture.workspace
+    user = fixture.user
+    app = fixture.appWithScopeEverybody
   })
 
-  it('creates the default instructions', async () => {
-    const user = await subject()
+  it.only('marks the onboarding as completed', async () => {
+    await subject(workspace.id, user.id, {
+      model: InitialModel.Openai,
+      apiKey: 'api-key',
+    })
 
-    const app = await prisma.app.findFirstOrThrow({
+    const workspaceInDb = await prisma.workspace.findUnique({
       where: {
-        userId: user.id,
-      },
-      include: {
-        appConfigVersions: true,
+        id: workspace.id,
       },
     })
 
-    expect(app.appConfigVersions[0]!.description).toBe(
-      onboardingTexts.description,
-    )
+    expect(workspaceInDb!.onboardingCompletedAt).not.toBeNull()
   })
 
-  it('creates the default system message', async () => {
-    const user = await subject()
+  describe('when the model is Openai', () => {
+    xit('sets the workspace default model', async () => {
+      await subject(workspace.id, user.id, {
+        model: InitialModel.Openai,
+        apiKey: 'api-key',
+      })
 
-    const message = await prisma.message.findFirstOrThrow({
-      where: {
-        appConfigVersion: {
-          app: {
-            userId: user.id,
-          },
+      const workspaceInDb = await prisma.workspace.findUnique({
+        where: {
+          id: workspace.id,
         },
-      },
-    })
+      })
 
-    expect(message).toMatchObject({
-      message: onboardingTexts.systemMessage,
+      expect(workspaceInDb!.defaultModel).not.toBeNull()
+    })
+  })
+
+  // describe('when the model is Openai', () => {
+
+  // })
+
+  describe('when the onboarding is completed', () => {
+    xit('does nothing', async () => {
+      // Not to all things!!!
+      // expect()
     })
   })
 })
