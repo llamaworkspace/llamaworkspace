@@ -15,5 +15,6 @@ export interface ComponentWithAppId {
 export enum AppEngineType {
   Default = 'default',
   Assistant = 'assistant',
+  InternalAssistant = 'internal_assistant',
   External = 'external',
 }

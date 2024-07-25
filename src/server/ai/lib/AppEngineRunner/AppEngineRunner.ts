@@ -40,7 +40,8 @@ export class AppEngineRunner {
       const ctx = await this.generateChatScopedEngineContext(chatId)
       hoistedCtx = ctx
 
-      await this.validateModelIsEnabledOrThrow(ctx.providerSlug, ctx.modelSlug)
+      // Wait! This cannot only be applied for the Default engine
+      // await this.validateModelIsEnabledOrThrow(ctx.providerSlug, ctx.modelSlug)
 
       const rawMessageIds = ctx.rawMessages.map((message) => message.id)
       const chatRun = await this.createChatRun(chatId, rawMessageIds)
@@ -58,9 +59,9 @@ export class AppEngineRunner {
       void this.handleTitleCreate(chatId)
 
       const engine = await this.getEngine(chat.appId)
-
-      await this.validateCtxPayloads(engine, ctx)
-
+      console.log(11, engine.getName())
+      // await this.validateCtxPayloads(engine, ctx)
+      console.log(1222)
       return AppEngineResponseStream(
         {
           threadId: chatId,
@@ -108,7 +109,7 @@ export class AppEngineRunner {
     const { filePath, deleteFile: deleteLocalFileCopy } =
       await this.pullAssetFromRemote(assetId)
 
-    const readStream = createReadStreamSafe(filePath)
+    const readStream = await createReadStreamSafe(filePath)
 
     let hasSaveExternalAssetIdCallbackBeenCalled = false
 
@@ -230,6 +231,7 @@ export class AppEngineRunner {
     }
   }
 
+  // Wait! This cannot only be applied for the Default engine
   private async validateModelIsEnabledOrThrow(
     providerName: string,
     modelName: string,
