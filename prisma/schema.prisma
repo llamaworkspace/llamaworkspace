@@ -69,15 +69,17 @@ model User {
 }
 
 model Workspace {
-    id               String              @id @default(cuid())
-    name             String
-    createdAt        DateTime            @default(now())
-    updatedAt        DateTime            @updatedAt
-    users            UsersOnWorkspaces[]
-    apps             App[]
-    workspaceInvites WorkspaceInvite[]
-    aiProvider       AiProvider[]
-    assets           Asset[]
+    id                    String              @id @default(cuid())
+    name                  String
+    onboardingCompletedAt DateTime?
+    defaultModel          String?
+    createdAt             DateTime            @default(now())
+    updatedAt             DateTime            @updatedAt
+    users                 UsersOnWorkspaces[]
+    apps                  App[]
+    workspaceInvites      WorkspaceInvite[]
+    aiProvider            AiProvider[]
+    assets                Asset[]
 }
 
 model UsersOnWorkspaces {

@@ -34,6 +34,11 @@ export enum KeyValueType {
   Boolean = 'boolean',
 }
 
+export enum InitialModel {
+  Openai = 'openai',
+  Llama = 'llama',
+}
+
 export type SimplePrimitive = string | number | boolean
 
 export type PrismaTrxClient = Omit<

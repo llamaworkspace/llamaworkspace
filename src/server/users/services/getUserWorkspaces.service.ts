@@ -5,7 +5,7 @@ interface GetUserWorkspacesPayload {
   select?: Prisma.WorkspaceSelect
 }
 
-export const getUserWorkspaces = async (
+export const getUserWorkspacesService = async (
   prisma: PrismaClientOrTrxClient,
   userId: string,
   payload?: GetUserWorkspacesPayload,

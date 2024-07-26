@@ -1,12 +1,12 @@
 import { prisma } from '@/server/db'
-import { workspaceOnboardingCreationService } from '@/server/onboarding/services/workspaceOnboardingCreation.service'
+import { demoAppCreationService } from '@/server/onboarding/services/demoAppCreation.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import type { User } from '@prisma/client'
 import { createWorkspaceForUserService } from '../createWorkspaceForUser.service'
 
 jest.mock('@/server/workspaces/services/setDefaultsForWorkspace.service')
-jest.mock('@/server/onboarding/services/workspaceOnboardingCreation.service')
+jest.mock('@/server/onboarding/services/demoAppCreation.service')
 
 const subject = async (userId: string) => {
   return await createWorkspaceForUserService(prisma, userId)
@@ -40,6 +40,6 @@ describe('createWorkspaceForUserService', () => {
 
   it('executes workspaceOnboardingCreation service', async () => {
     await subject(user.id)
-    expect(workspaceOnboardingCreationService).toHaveBeenCalled()
+    expect(demoAppCreationService).toHaveBeenCalled()
   })
 })

@@ -4,6 +4,7 @@ import { type PropsWithChildren } from 'react'
 import { EMPTY_APP_NAME } from '../apps/appsConstants'
 import { useAppById } from '../apps/appsHooks'
 import { useGlobalState } from '../global/globalState'
+import { OnboardingModal } from '../onboarding/components/OnboardingModal'
 import { Sidebar } from '../sidebar/components/Sidebar/Sidebar'
 import {
   MainLayoutHeader,
@@ -38,6 +39,7 @@ export function MainLayout({
       <Head>
         <title>{head}</title>
       </Head>
+      <OnboardingModal />
       <Sidebar />
       <div
         className={cn(

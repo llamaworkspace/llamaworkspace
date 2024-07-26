@@ -2,6 +2,7 @@ import { aiRouter } from '@/components/ai/backend/aiRouter'
 import { appsRouter } from '@/components/apps/backend/appsRouter'
 import { assetsRouter } from '@/components/assets/backend/assetsRouter'
 import { chatsRouter } from '@/components/chats/backend/chatsRouter'
+import { onboardingRouter } from '@/components/onboarding/backend/onboardingRouter'
 import { permissionsRouter } from '@/components/permissions/backend/permissionsRouter'
 import { sidebarRouter } from '@/components/sidebar/backend/sidebarRouter'
 import { usersRouter } from '@/components/users/backend/usersRouter'
@@ -23,6 +24,7 @@ export const rootRouter = createTRPCRouter({
   ai: aiRouter,
   permissions: permissionsRouter,
   assets: assetsRouter,
+  onboarding: onboardingRouter,
 })
 
 // export type definition of API
