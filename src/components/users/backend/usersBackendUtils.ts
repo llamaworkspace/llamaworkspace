@@ -9,6 +9,7 @@ export const zodUserOutput = z.object({
     .object({
       id: z.string(),
       name: z.string(),
+      onboardingCompletedAt: z.date().nullable(),
     })
     .optional(),
 })

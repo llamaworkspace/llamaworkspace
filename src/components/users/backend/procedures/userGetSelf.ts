@@ -1,6 +1,6 @@
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { getUserService } from '@/server/users/services/getUser.service'
-import { getUserWorkspaces } from '@/server/users/services/getUserWorkspaces.service'
+import { getUserWorkspacesService } from '@/server/users/services/getUserWorkspaces.service'
 import { TRPCError } from '@trpc/server'
 import { zodUserOutput } from '../usersBackendUtils'
 
@@ -18,8 +18,8 @@ export const userGetSelf = protectedProcedure
 
     const [user, workspaces] = await Promise.all([
       await getUserService(ctx.prisma, userId, { select }),
-      await getUserWorkspaces(ctx.prisma, userId, {
-        select: { id: true, name: true },
+      await getUserWorkspacesService(ctx.prisma, userId, {
+        select: { id: true, name: true, onboardingCompletedAt: true },
       }),
     ])
 
@@ -36,6 +36,7 @@ export const userGetSelf = protectedProcedure
       workspace: {
         id: workspaces[0]!.id,
         name: workspaces[0]!.name,
+        onboardingCompletedAt: workspaces[0]!.onboardingCompletedAt,
       },
     }
   })

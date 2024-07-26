@@ -6,6 +6,9 @@ export const useSelf = () => {
 
   return api.users.getSelf.useQuery(undefined, {
     onError: errorHandler(),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
   })
 }
 

@@ -15,7 +15,7 @@ export const performInitialModelSetup = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
-    console.log(222222)
+
     const { workspaceId } = input
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,

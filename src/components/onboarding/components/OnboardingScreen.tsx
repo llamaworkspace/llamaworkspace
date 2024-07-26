@@ -1,3 +1,4 @@
+import { StyledLink } from '@/components/ui/StyledLink'
 import { Button } from '@/components/ui/button'
 import { BoxedRadioGroupField } from '@/components/ui/forms/BoxedRadioGroupField'
 import { InputField } from '@/components/ui/forms/InputField'
@@ -16,7 +17,14 @@ const options = [
     description:
       'Llama 3.1 405B will be used as default. This option requires an Openrouter API key.',
     apiKeyLabel: 'Openrouter.ai API key',
-    apiKeyHelperText: 'You can obtain an API key here... LINK',
+    apiKeyHelperText: (
+      <span>
+        You can obtain an openrouter API key at{' '}
+        <StyledLink href="https://openrouter.ai" target="_blank">
+          openrouter.ai
+        </StyledLink>
+      </span>
+    ),
     providerSlug: 'openrouter',
     modelSlug: 'meta-llama/llama-3.1-405b-instruct',
   },
@@ -26,7 +34,14 @@ const options = [
     description:
       'GPT-4o will be used as default. This option requires an OpenAI API key.',
     apiKeyLabel: 'OpenAI API key',
-    apiKeyHelperText: 'You can obtain an API key here... LINK',
+    apiKeyHelperText: (
+      <span>
+        You can obtain an OpenAI API key at{' '}
+        <StyledLink href="https://platform.openai.com/api-keys" target="_blank">
+          platform.openai.com/api-keys
+        </StyledLink>
+      </span>
+    ),
     providerSlug: 'openai',
     modelSlug: 'gpt-4o',
   },
@@ -75,9 +90,9 @@ export const OnboardingScreen = ({
   return (
     <div className="space-y-4">
       <div className={textClasses}>
-        Llama Workspace needs at least one model to work. Select the initial
-        Large Language Model you want to use. You will be able to add more
-        models later.
+        You must set up at least one model provider for the product to work.
+        Select the initial Large Language Model you want to use. You will be
+        able to add more models later.
       </div>
       <FinalForm<FormValues>
         onSubmit={handleSubmit}
@@ -85,8 +100,11 @@ export const OnboardingScreen = ({
           const { model: modelValue } = values
 
           const option = options.find((o) => o.value.toString() === modelValue)
+          const openaiOption = options.find(
+            (o) => o.value === InitialModel.Openai,
+          )
           return (
-            <div className="space-y-4">
+            <div className="space-y-8">
               <Field
                 name="model"
                 validate={stringRequired}
@@ -119,7 +137,7 @@ export const OnboardingScreen = ({
               )}
 
               {option && option.value === InitialModel.Llama && (
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <div>
                     <Field
                       name="openAiApiKey"
@@ -127,8 +145,8 @@ export const OnboardingScreen = ({
                       render={({ input, meta }) => {
                         return (
                           <InputField
-                            label="OpenAI API key"
-                            helperText="Do things with OpenAI"
+                            label={openaiOption?.apiKeyLabel}
+                            helperText={openaiOption?.apiKeyHelperText}
                             meta={meta}
                             {...input}
                           />
@@ -137,18 +155,16 @@ export const OnboardingScreen = ({
                     />
                   </div>
                   <div className={textClasses}>
-                    <strong>Why an OpenAI API key is needed?</strong> The
-                    project is in active development to become fully independent
-                    of closed-sourced models, but we still need an OpenAI key
-                    for certain use cases like generating embeddings. We expect
+                    <strong>Why is an OpenAI API key needed?</strong> We are
+                    actively working on making the project fully independent of
+                    closed-source models. However, we still need an OpenAI key
+                    for specific use cases like generating embeddings. We expect
                     to remove this dependency in an upcoming update.
                   </div>
                 </div>
               )}
 
-              <Button onClick={() => void handleSubmit()}>
-                Start using Llama Workspace
-              </Button>
+              <Button onClick={() => void handleSubmit()}>Continue</Button>
             </div>
           )
         }}
