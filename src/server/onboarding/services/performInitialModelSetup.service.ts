@@ -22,7 +22,7 @@ export const performInitialModelSetupService = async (
   uowContext: UserOnWorkspaceContext,
   payload: InitialModelSetupPayload,
 ) => {
-  const { workspaceId } = uowContext
+  const { workspaceId, userId } = uowContext
   const { model } = payload
 
   return await prismaAsTrx(prisma, async (prisma) => {
@@ -43,6 +43,7 @@ export const performInitialModelSetupService = async (
     const defaultModel =
       model === InitialModel.Openai ? OPENAI_MODEL : LLAMA_MODEL
     await setDefaultWorkspaceModel(prisma, workspaceId, defaultModel)
+    await updateDefaultModelForUser(prisma, userId, defaultModel)
     await markOnboardingAsCompleted(prisma, workspaceId)
   })
 }
@@ -88,6 +89,21 @@ const setDefaultWorkspaceModel = async (
   return await prisma.workspace.update({
     where: {
       id: workspaceId,
+    },
+    data: {
+      defaultModel,
+    },
+  })
+}
+
+const updateDefaultModelForUser = async (
+  prisma: PrismaTrxClient,
+  userId: string,
+  defaultModel: string,
+) => {
+  return await prisma.user.update({
+    where: {
+      id: userId,
     },
     data: {
       defaultModel,

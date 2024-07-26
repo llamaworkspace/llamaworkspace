@@ -50,6 +50,30 @@ describe('performInitialModelSetupService', () => {
     expect(workspaceInDb!.onboardingCompletedAt).not.toBeNull()
   })
 
+  it('sets the default model for the user', async () => {
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        defaultModel: 'random-model',
+      },
+    })
+
+    await subject(workspace.id, user.id, {
+      model: InitialModel.Openai,
+      apiKey: 'my-api-key',
+    })
+
+    const userInDb = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    })
+
+    expect(userInDb!.defaultModel).toBe('gpt-4o')
+  })
+
   describe('when the model is Openai', () => {
     it('sets an aiProvider for openai ', async () => {
       await subject(workspace.id, user.id, {
@@ -226,7 +250,7 @@ describe('performInitialModelSetupService', () => {
   })
 
   describe('when the onboarding is completed', () => {
-    it.only('throws', async () => {
+    it('throws', async () => {
       await subject(workspace.id, user.id, {
         model: InitialModel.Openai,
         apiKey: 'my-api-key',
