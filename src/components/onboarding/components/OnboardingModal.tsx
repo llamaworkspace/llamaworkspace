@@ -6,20 +6,21 @@ import {
 } from '@/components/ui/dialog'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { api } from '@/lib/api'
-import { useState } from 'react'
 import { OnboardingScreen } from './OnboardingScreen'
 
 export const OnboardingModal = () => {
-  const [xmodalIsOpen, setModalIsOpen] = useState(false)
   const { data: workspace } = useCurrentWorkspace()
   const utils = api.useContext()
 
   const handleSuccess = () => {
-    // setModalIsOpen(false)
     void utils.users.getSelf.invalidate()
   }
 
   const modalIsOpen = !workspace?.onboardingCompletedAt
+
+  if (!modalIsOpen) {
+    return null
+  }
 
   return (
     <Dialog open={modalIsOpen}>

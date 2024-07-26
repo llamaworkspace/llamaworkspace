@@ -5,7 +5,6 @@ import Image from 'next/image'
 export default function Onboarding() {
   const navigation = useNavigation()
   const handleSuccess = () => {
-    console.log('Onboarding success. Redirect me.')
     void navigation.push('/p')
   }
 

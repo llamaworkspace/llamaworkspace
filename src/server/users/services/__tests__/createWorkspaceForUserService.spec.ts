@@ -4,7 +4,6 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
 import type { User } from '@prisma/client'
 import { createWorkspaceForUserService } from '../createWorkspaceForUser.service'
-demoAppCreationService
 
 jest.mock('@/server/workspaces/services/setDefaultsForWorkspace.service')
 jest.mock('@/server/onboarding/services/demoAppCreation.service')

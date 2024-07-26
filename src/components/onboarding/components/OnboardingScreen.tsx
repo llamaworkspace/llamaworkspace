@@ -4,7 +4,6 @@ import { BoxedRadioGroupField } from '@/components/ui/forms/BoxedRadioGroupField
 import { InputField } from '@/components/ui/forms/InputField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { getEnumByValue } from '@/lib/utils'
 import { InitialModel } from '@/shared/globalTypes'
 import { Field, Form as FinalForm } from 'react-final-form'
@@ -56,17 +55,12 @@ interface FormValues {
 const textClasses = 'text-sm text-zinc-700'
 
 interface OnboardingScreenProps {
-  redirectOnSuccess?: boolean
   onSuccess?: () => void
 }
 
-export const OnboardingScreen = ({
-  redirectOnSuccess = false,
-  onSuccess,
-}: OnboardingScreenProps) => {
+export const OnboardingScreen = ({ onSuccess }: OnboardingScreenProps) => {
   const { data: workspace } = useCurrentWorkspace()
   const { mutateAsync: performInitialModelSetup } = usePeformInitialModelSetup()
-  const router = useNavigation()
 
   const handleSubmit = async (values: FormValues) => {
     if (!workspace) return
@@ -81,10 +75,6 @@ export const OnboardingScreen = ({
     })
 
     onSuccess?.()
-
-    if (redirectOnSuccess) {
-      await router.push(`/p`)
-    }
   }
 
   return (
