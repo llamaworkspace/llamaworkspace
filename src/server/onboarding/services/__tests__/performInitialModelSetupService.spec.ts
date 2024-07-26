@@ -2,8 +2,8 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { workspaceWithUsersAndAppsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndApps.fixture'
 import { InitialModel } from '@/shared/globalTypes'
-import { App, User, Workspace } from '@prisma/client'
-import { initialModelSetupService } from '../initialModelSetup.service'
+import type { App, User, Workspace } from '@prisma/client'
+import { performInitialModelSetupService } from '../performInitialModelSetup.service'
 
 const subject = async (
   workspaceId: string,
@@ -19,10 +19,10 @@ const subject = async (
     workspaceId,
     userId,
   )
-  return await initialModelSetupService(prisma, uowContext, payload)
+  return await performInitialModelSetupService(prisma, uowContext, payload)
 }
 
-describe('initialModelSetupService', () => {
+describe('performInitialModelSetupService', () => {
   let workspace: Workspace
   let user: User
   let app: App

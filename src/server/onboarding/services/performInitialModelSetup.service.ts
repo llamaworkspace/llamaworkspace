@@ -16,7 +16,7 @@ interface InitialModelSetupPayload {
 const OPENAI_MODEL = 'gpt-4o'
 const LLAMA_MODEL = 'meta-llama/llama-3.1-405b-instruct'
 
-export const initialModelSetupService = async (
+export const performInitialModelSetupService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
   payload: InitialModelSetupPayload,
