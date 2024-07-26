@@ -6,6 +6,7 @@ import {
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
+import { TRPCError } from '@trpc/server'
 
 interface InitialModelSetupPayload {
   model: InitialModel
@@ -21,27 +22,28 @@ export const performInitialModelSetupService = async (
   uowContext: UserOnWorkspaceContext,
   payload: InitialModelSetupPayload,
 ) => {
+  const { workspaceId } = uowContext
+  const { model } = payload
+
   return await prismaAsTrx(prisma, async (prisma) => {
-    // If the onboarding is completed: return
-
-    // if openai:
-    // - OK setup openai api key (update ai provider)
-    // - OK setup default model for the workspace: OPENAI_MODEL
-    // - setup default model for the user: OPENAI_MODEL
-    // - setup default model for the fun facts teller: OPENAI_MODEL
-    // if llama:
-    // - OK setup openrouter.ai api key (update ai provider)
-    // - idem openai
-
-    const { workspaceId } = uowContext
-    const { model, apiKey, openaiApiKey } = payload
-    return await prismaAsTrx(prisma, async (prisma) => {
-      await addAiProviders(prisma, workspaceId, payload)
-      const defaultModel =
-        model === InitialModel.Openai ? OPENAI_MODEL : LLAMA_MODEL
-      await setDefaultWorkspaceModel(prisma, workspaceId, defaultModel)
-      await markOnboardingAsCompleted(prisma, workspaceId)
+    const workspace = await prisma.workspace.findFirstOrThrow({
+      where: {
+        id: workspaceId,
+      },
     })
+
+    if (workspace.onboardingCompletedAt) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Onboarding for this workspace was already completed',
+      })
+    }
+
+    await addAiProviders(prisma, workspaceId, payload)
+    const defaultModel =
+      model === InitialModel.Openai ? OPENAI_MODEL : LLAMA_MODEL
+    await setDefaultWorkspaceModel(prisma, workspaceId, defaultModel)
+    await markOnboardingAsCompleted(prisma, workspaceId)
   })
 }
 

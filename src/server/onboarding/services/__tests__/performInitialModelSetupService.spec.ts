@@ -226,8 +226,18 @@ describe('performInitialModelSetupService', () => {
   })
 
   describe('when the onboarding is completed', () => {
-    xit('does nothing', async () => {
-      // Not to all things!!!
+    it.only('throws', async () => {
+      await subject(workspace.id, user.id, {
+        model: InitialModel.Openai,
+        apiKey: 'my-api-key',
+      })
+
+      await expect(
+        subject(workspace.id, user.id, {
+          model: InitialModel.Openai,
+          apiKey: 'my-api-key',
+        }),
+      ).rejects.toThrow()
       // expect()
     })
   })
