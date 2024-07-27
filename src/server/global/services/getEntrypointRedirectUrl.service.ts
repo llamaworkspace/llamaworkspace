@@ -9,6 +9,11 @@ export const getEntrypointRedirectUrlService = async (
   userId: string,
 ) => {
   const workspace = await getLatestWorkspaceForUserService(prisma, userId)
+
+  if (!workspace.onboardingCompletedAt) {
+    return { url: `/w/${workspace.id}/onboarding` }
+  }
+
   const chatRuns = await prisma.chatRun.count({
     where: {
       chat: {
