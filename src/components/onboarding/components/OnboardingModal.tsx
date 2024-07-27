@@ -16,7 +16,7 @@ export const OnboardingModal = () => {
     void utils.users.getSelf.invalidate()
   }
 
-  const modalIsOpen = !workspace?.onboardingCompletedAt
+  const modalIsOpen = workspace && !workspace?.onboardingCompletedAt
 
   if (!modalIsOpen) {
     return null

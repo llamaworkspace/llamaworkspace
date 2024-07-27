@@ -1,10 +1,7 @@
-name: Verify Docker Image integrity. Tag and Push to hub on Release
+name: Tag and Push to hub on Release
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 

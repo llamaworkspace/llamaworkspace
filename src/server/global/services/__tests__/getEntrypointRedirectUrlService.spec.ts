@@ -17,7 +17,9 @@ describe('getEntrypointRedirectUrl', () => {
   let demoChatbot: App
 
   beforeEach(async () => {
-    workspace = await WorkspaceFactory.create(prisma)
+    workspace = await WorkspaceFactory.create(prisma, {
+      onboardingCompletedAt: new Date(),
+    })
     user = await UserFactory.create(prisma, {
       workspaceId: workspace.id,
     })
@@ -151,6 +153,24 @@ describe('getEntrypointRedirectUrl', () => {
         const { url } = await subject(user.id)
         expect(url).toEqual(`/c/new?workspaceId=${workspace.id}`)
       })
+    })
+  })
+
+  describe('when the onboarding is not completed', () => {
+    beforeEach(async () => {
+      await prisma.workspace.update({
+        where: {
+          id: workspace.id,
+        },
+        data: {
+          onboardingCompletedAt: null,
+        },
+      })
+    })
+
+    it('it returns the url of the onboarding page', async () => {
+      const { url } = await subject(user.id)
+      expect(url).toEqual(`/w/${workspace.id}/onboarding`)
     })
   })
 })
