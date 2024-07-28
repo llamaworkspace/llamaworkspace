@@ -85,11 +85,12 @@ model Workspace {
 model UsersOnWorkspaces {
     id          String    @id @default(cuid())
     userId      String
-    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
     workspaceId String
-    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    role        String
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
     @@unique([userId, workspaceId])
 }

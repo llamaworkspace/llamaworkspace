@@ -2,6 +2,7 @@ import { prisma } from '@/server/db'
 import { demoAppCreationService } from '@/server/onboarding/services/demoAppCreation.service'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
+import { UserRole } from '@/shared/globalTypes'
 import type { User } from '@prisma/client'
 import { createWorkspaceForUserService } from '../createWorkspaceForUser.service'
 
@@ -23,14 +24,29 @@ describe('createWorkspaceForUserService', () => {
   it('creates a new workspace linked to the user', async () => {
     const workspace = await subject(user.id)
 
-    const workspaceInDb = await prisma.usersOnWorkspaces.findMany({
+    const workspacesInDb = await prisma.usersOnWorkspaces.findMany({
       where: {
         workspaceId: workspace.id,
         userId: user.id,
       },
     })
 
-    expect(workspaceInDb).toHaveLength(1)
+    expect(workspacesInDb).toHaveLength(1)
+  })
+
+  it('sets the user role as Admin', async () => {
+    const workspace = await subject(user.id)
+
+    const workspaceInDb = await prisma.usersOnWorkspaces.findFirstOrThrow({
+      where: {
+        workspaceId: workspace.id,
+        userId: user.id,
+      },
+    })
+
+    expect(workspaceInDb).toMatchObject({
+      role: UserRole.Admin,
+    })
   })
 
   it('executes setDefaultsForWorkspace service', async () => {

@@ -2,7 +2,7 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { demoAppCreationService } from '@/server/onboarding/services/demoAppCreation.service'
 import { setDefaultsForWorkspaceService } from '@/server/workspaces/services/setDefaultsForWorkspace.service'
-import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import { UserRole, type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
 const buildName = (name?: string | null) => {
   return name ? name.split(' ')[0] + "'s Workspace" : 'My Workspace'
@@ -26,6 +26,7 @@ export const createWorkspaceForUserService = async (
           create: [
             {
               userId,
+              role: UserRole.Admin,
             },
           ],
         },

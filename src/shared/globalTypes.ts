@@ -1,6 +1,11 @@
 import type { Prisma, PrismaClient } from '@prisma/client'
 import type { DefaultArgs } from '@prisma/client/runtime/library'
 
+export enum UserRole {
+  Admin = 'admin',
+  Member = 'member',
+}
+
 export enum UserAccessLevel {
   Owner = 'owner',
   Edit = 'edit',

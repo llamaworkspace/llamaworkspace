@@ -1,4 +1,5 @@
 import { OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
+import { UserRole } from '@/shared/globalTypes'
 import { faker } from '@faker-js/faker'
 import type { PrismaClient, User } from '@prisma/client'
 import { generateBaseForDefaults } from './utils/testingFactoryUtils'
@@ -39,6 +40,7 @@ export const UserFactory = {
         workspaces: {
           create: {
             workspaceId,
+            role: UserRole.Admin,
           },
         },
       },
