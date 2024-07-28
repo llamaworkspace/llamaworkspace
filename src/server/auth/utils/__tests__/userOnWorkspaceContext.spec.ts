@@ -2,6 +2,7 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { UsersOnWorkspacesFactory } from '@/server/testing/factories/UsersOnWorkspacesFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import mockDb from '@/server/testing/mockDb'
+import type * as globalTypesWrapper from '@/shared/globalTypes'
 import type { User, UsersOnWorkspaces, Workspace } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import {
@@ -10,13 +11,19 @@ import {
 } from '../../userOnWorkspaceContext'
 
 const mockFindFirst = jest.fn()
-jest.mock('@/shared/globalTypes', () => ({
-  PrismaClientOrTrxClient: jest.fn().mockImplementation(() => ({
-    usersOnWorkspaces: {
-      findFirst: mockFindFirst,
-    },
-  })),
-}))
+jest.mock('@/shared/globalTypes', () => {
+  const original = jest.requireActual(
+    '@/shared/globalTypes',
+  ) as unknown as typeof globalTypesWrapper
+  return {
+    ...original,
+    PrismaClientOrTrxClient: jest.fn().mockImplementation(() => ({
+      usersOnWorkspaces: {
+        findFirst: mockFindFirst,
+      },
+    })),
+  }
+})
 
 const subject = async (workspaceId: string, userId: string) => {
   return await createUserOnWorkspaceContext(mockDb, workspaceId, userId)
