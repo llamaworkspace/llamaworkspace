@@ -2,6 +2,7 @@ import { createDefaultAppService } from '@/server/apps/services/createDefaultApp
 import { prisma } from '@/server/db'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { UserRole } from '@/shared/globalTypes'
 import type { User, Workspace } from '@prisma/client'
 import { addUserToWorkspaceService } from '../addUserToWorkspace.service'
 
@@ -32,14 +33,29 @@ describe('addUserToWorkspaceService', () => {
   it('creates a new workspace linked to the user', async () => {
     await subject(workspace.id, invitedUser.id)
 
-    const workspaceInDb = await prisma.usersOnWorkspaces.findMany({
+    const workspacesInDb = await prisma.usersOnWorkspaces.findMany({
       where: {
         workspaceId: workspace.id,
-        userId: invitingUser.id,
+        userId: invitedUser.id,
       },
     })
 
-    expect(workspaceInDb).toHaveLength(1)
+    expect(workspacesInDb).toHaveLength(1)
+  })
+
+  it('sets role as Member', async () => {
+    await subject(workspace.id, invitedUser.id)
+
+    const workspaceInDb = await prisma.usersOnWorkspaces.findFirstOrThrow({
+      where: {
+        workspaceId: workspace.id,
+        userId: invitedUser.id,
+      },
+    })
+
+    expect(workspaceInDb).toMatchObject({
+      role: UserRole.Member,
+    })
   })
 
   it('executes createDefaultAppService service', async () => {

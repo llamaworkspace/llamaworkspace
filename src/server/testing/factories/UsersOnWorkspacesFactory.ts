@@ -1,3 +1,4 @@
+import { UserRole } from '@/shared/globalTypes'
 import type { PrismaClient, UsersOnWorkspaces } from '@prisma/client'
 import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
@@ -7,7 +8,10 @@ type UsersOnWorkspacesFactoryFields = {
 } & Partial<UsersOnWorkspaces>
 
 const generateDefaults = () => {
-  return generateBaseForDefaults()
+  return {
+    ...generateBaseForDefaults(),
+    role: UserRole.Admin,
+  }
 }
 
 export const UsersOnWorkspacesFactory = {

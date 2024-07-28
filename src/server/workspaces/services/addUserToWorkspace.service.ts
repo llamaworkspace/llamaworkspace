@@ -1,7 +1,7 @@
 import { createDefaultAppService } from '@/server/apps/services/createDefaultApp.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
-import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import { UserRole, type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 
 interface AddUserToWorkspacePayload {
   workspaceId: string
@@ -31,6 +31,7 @@ export const addUserToWorkspaceService = async (
       data: {
         userId: userId,
         workspaceId,
+        role: UserRole.Member,
       },
     })
 
