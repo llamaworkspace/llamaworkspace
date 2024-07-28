@@ -12,15 +12,20 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useSelf } from '@/components/users/usersHooks'
+import { UserRole } from '@/shared/globalTypes'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useCallback, useMemo } from 'react'
 import { type z } from 'zod'
-import {
-  WorkspaceMemberRole,
-  type zodWorkspaceMemberOutput,
-} from '../../backend/workspacesBackendUtils'
+import { type zodWorkspaceMemberOutput } from '../../backend/workspacesBackendUtils'
 import {
   useCancelWorkspaceInvite,
   useRevokeWorkspaceMemberAccess,
@@ -84,7 +89,7 @@ export const SettingsMembersTable = () => {
                 </>
               )}
 
-              {row.original.role === WorkspaceMemberRole.Owner && (
+              {row.original.isOwner && (
                 <span className=" text-zinc-400">(Owner)</span>
               )}
             </div>
@@ -104,10 +109,24 @@ export const SettingsMembersTable = () => {
         },
       },
       {
+        header: 'Role',
+        accessorKey: 'role',
+        size: 2,
+        cell: ({ row }) => {
+          console.log(11, row)
+
+          return (
+            <div className="flex items-center gap-x-2">
+              <RoleSelector original={row.original.role} />
+            </div>
+          )
+        },
+      },
+      {
         id: 'remove',
         size: 1,
         cell: ({ row }) => {
-          if (row.original.role === WorkspaceMemberRole.Owner) {
+          if (row.original.isOwner) {
             return <></>
           }
 
@@ -197,4 +216,25 @@ export const SettingsMembersTable = () => {
   )
 
   return <DataTable columns={columns} data={workspaceMembers} />
+}
+
+const RoleSelector = ({ original }: { original: string }) => {
+  return (
+    <Select
+      // open={isOpen}
+      // onOpenChange={() => setIsOpen(!isOpen)}
+      value={original}
+      // onValueChange={handleValueChange}
+      // disabled={disabled}
+    >
+      {original}
+      <SelectTrigger className="w-[130px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value={UserRole.Admin}>Admin</SelectItem>
+        <SelectItem value={UserRole.Member}>Member</SelectItem>
+      </SelectContent>
+    </Select>
+  )
 }

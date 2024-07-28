@@ -1,3 +1,4 @@
+import { UserRole } from '@/shared/globalTypes'
 import { z } from 'zod'
 
 export const zodWorkspaceOutput = z.object({
@@ -5,17 +6,13 @@ export const zodWorkspaceOutput = z.object({
   name: z.string().nullable(),
 })
 
-export enum WorkspaceMemberRole {
-  Owner = 'owner',
-  Admin = 'admin',
-}
-
 export const zodWorkspaceMemberOutput = z.object({
   id: z.string().optional(),
   inviteId: z.string().optional(),
   name: z.string().nullable(),
   email: z.string().email().nullable(),
-  role: z.nativeEnum(WorkspaceMemberRole),
+  role: z.nativeEnum(UserRole),
+  isOwner: z.boolean(),
 })
 
 /**

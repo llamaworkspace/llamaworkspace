@@ -1,7 +1,8 @@
+import { getEnumByValue } from '@/lib/utils'
 import { protectedProcedure } from '@/server/trpc/trpc'
+import { UserRole } from '@/shared/globalTypes'
 import { z } from 'zod'
 import {
-  WorkspaceMemberRole,
   workspaceVisibilityFilter,
   zodWorkspaceMemberOutput,
 } from '../workspacesBackendUtils'
@@ -22,6 +23,7 @@ export const workspacesGetWorkspaceMembers = protectedProcedure
         id: true,
         users: {
           select: {
+            role: true,
             user: {
               select: {
                 id: true,
@@ -64,17 +66,16 @@ export const workspacesGetWorkspaceMembers = protectedProcedure
       id: userOfWorkspace.user.id,
       name: userOfWorkspace.user.name,
       email: userOfWorkspace.user.email,
-      role:
-        userOfWorkspace.user.id === workspaceOwner.userId
-          ? WorkspaceMemberRole.Owner
-          : WorkspaceMemberRole.Admin,
+      role: getEnumByValue(UserRole, userOfWorkspace.role),
+      isOwner: userOfWorkspace.user.id === workspaceOwner.userId,
     }))
 
     const invitedMembers = invites.map((invite) => ({
       inviteId: invite.id,
       name: null,
       email: invite.email,
-      role: WorkspaceMemberRole.Admin,
+      role: UserRole.Member,
+      isOwner: false,
     }))
 
     return [...members, ...invitedMembers]
