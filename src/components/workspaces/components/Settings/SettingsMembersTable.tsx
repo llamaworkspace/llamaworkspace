@@ -37,7 +37,7 @@ type WorkspaceMember = z.infer<typeof zodWorkspaceMemberOutput>
 
 export const SettingsMembersTable = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const { workspaceMembers } = useWorkspaceMembers(workspace?.id)
+  const { data: workspaceMembers } = useWorkspaceMembers(workspace?.id)
   const { data: self } = useSelf()
   const { mutate: revokeAccess } = useRevokeWorkspaceMemberAccess()
   const { mutate: cancelInvite } = useCancelWorkspaceInvite()
@@ -113,11 +113,9 @@ export const SettingsMembersTable = () => {
         accessorKey: 'role',
         size: 2,
         cell: ({ row }) => {
-          console.log(11, row)
-
           return (
             <div className="flex items-center gap-x-2">
-              <RoleSelector original={row.original.role} />
+              <RoleSelector value={row.original.role} />
             </div>
           )
         },
@@ -218,16 +216,18 @@ export const SettingsMembersTable = () => {
   return <DataTable columns={columns} data={workspaceMembers} />
 }
 
-const RoleSelector = ({ original }: { original: string }) => {
+interface RoleSelectorProps {
+  value: string
+}
+
+const RoleSelector = ({ value }: RoleSelectorProps) => {
+  const isDisabled = value !== UserRole.Admin.toString()
   return (
     <Select
-      // open={isOpen}
-      // onOpenChange={() => setIsOpen(!isOpen)}
-      value={original}
+      value={value}
       // onValueChange={handleValueChange}
-      // disabled={disabled}
+      disabled={isDisabled}
     >
-      {original}
       <SelectTrigger className="w-[130px]">
         <SelectValue />
       </SelectTrigger>
