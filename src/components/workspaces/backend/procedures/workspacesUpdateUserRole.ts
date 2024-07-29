@@ -7,6 +7,7 @@ import { workspaceEditionFilter } from '../workspacesBackendUtils'
 
 const zInput = z.object({
   workspaceId: z.string(),
+  userId: z.string(),
   role: z.nativeEnum(UserRole),
 })
 
@@ -31,5 +32,6 @@ export const workspacesUpdateUserRole = protectedProcedure
 
     return await updateUserRoleForWorkspaceService(ctx.prisma, context, {
       role: payload.role,
+      userId: payload.userId,
     })
   })

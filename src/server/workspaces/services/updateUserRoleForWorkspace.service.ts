@@ -5,6 +5,7 @@ import { TRPCError } from '@trpc/server'
 import { getWorkspaceOwnerService } from './getWorkspaceOwner.service'
 
 interface UpdateUserRoleForWorkspacePayload {
+  userId: string
   role: UserRole
 }
 
@@ -14,11 +15,12 @@ export const updateUserRoleForWorkspaceService = async (
   payload: UpdateUserRoleForWorkspacePayload,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
-    const { workspaceId, userId } = uowContext
+    const { workspaceId } = uowContext
+    const { userId: userToBeUpdatedId, role } = payload
 
     const workspaceOwner = await getWorkspaceOwnerService(prisma, uowContext)
 
-    if (workspaceOwner.id === userId) {
+    if (workspaceOwner.id === payload.userId) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'The workspace owner role cannot be updated',
@@ -28,7 +30,7 @@ export const updateUserRoleForWorkspaceService = async (
     const userOnWorkspace = await prisma.usersOnWorkspaces.findUniqueOrThrow({
       where: {
         userId_workspaceId: {
-          userId,
+          userId: userToBeUpdatedId,
           workspaceId,
         },
       },
@@ -38,7 +40,9 @@ export const updateUserRoleForWorkspaceService = async (
       where: {
         id: userOnWorkspace.id,
       },
-      data: payload,
+      data: {
+        role,
+      },
     })
   })
 }

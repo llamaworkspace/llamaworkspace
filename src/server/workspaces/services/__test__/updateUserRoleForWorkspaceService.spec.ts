@@ -6,16 +6,23 @@ import { UserRole } from '@/shared/globalTypes'
 import type { User, Workspace } from '@prisma/client'
 import { updateUserRoleForWorkspaceService } from '../updateUserRoleForWorkspace.service'
 
-const subject = async (workspaceId: string, userId: string, role: UserRole) => {
+interface UpdateUserRoleForWorkspacePayload {
+  userId: string
+  role: UserRole
+}
+
+const subject = async (
+  workspaceId: string,
+  userId: string,
+  payload: UpdateUserRoleForWorkspacePayload,
+) => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
     userId,
   )
 
-  return await updateUserRoleForWorkspaceService(prisma, context, {
-    role,
-  })
+  return await updateUserRoleForWorkspaceService(prisma, context, payload)
 }
 
 describe('updateUserRoleForWorkspaceService', () => {
@@ -45,7 +52,10 @@ describe('updateUserRoleForWorkspaceService', () => {
       role: UserRole.Admin,
     })
 
-    await subject(workspace.id, userToUpdate.id, UserRole.Member)
+    await subject(workspace.id, userWorkspaceOwner.id, {
+      role: UserRole.Member,
+      userId: userToUpdate.id,
+    })
 
     const dbAfter = await prisma.usersOnWorkspaces.findFirstOrThrow({
       where: {
@@ -62,7 +72,10 @@ describe('updateUserRoleForWorkspaceService', () => {
   describe('when the user is the owner', () => {
     it('throws an error', async () => {
       await expect(
-        subject(workspace.id, userWorkspaceOwner.id, UserRole.Member),
+        subject(workspace.id, userWorkspaceOwner.id, {
+          role: UserRole.Member,
+          userId: userWorkspaceOwner.id,
+        }),
       ).rejects.toThrow()
     })
   })
