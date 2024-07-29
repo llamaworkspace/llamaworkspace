@@ -58,9 +58,9 @@ services:
       - llamaq_redis_data:/data
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
-      interval: 10s
+      interval: 1s
       timeout: 5s
-      retries: 5
+      retries: 10
 
 volumes:
   llamaws_db:
