@@ -44,9 +44,10 @@ export const workspacesGetWorkspaceMembers = protectedProcedure
 
     const context = await createUserOnWorkspaceContext(
       ctx.prisma,
-      userId,
       input.workspaceId,
+      userId,
     )
+
     const workspaceOwner = await getWorkspaceOwnerService(ctx.prisma, context)
 
     const invites = await ctx.prisma.workspaceInvite.findMany({
