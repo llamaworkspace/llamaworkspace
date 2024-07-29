@@ -10,11 +10,13 @@ import {
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu'
 import { DropdownMenuItemLink } from '@/components/ui/extensions/dropdown-menu'
+import { useGetUserOnWorkspace } from '@/components/users/usersHooks'
 import {
   useCurrentWorkspace,
   useWorkspaces,
 } from '@/components/workspaces/workspacesHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
+import { UserRole } from '@/shared/globalTypes'
 import { CheckIcon } from '@heroicons/react/20/solid'
 
 function SidebarDesktopHeaderWorkspacesDropdownSub() {
@@ -61,6 +63,7 @@ function SidebarDesktopHeaderWorkspacesDropdownSub() {
 export function SidebarFooterUserSettingsMenu() {
   const navigation = useNavigation()
   const signOut = useSignOut()
+  const { data: userOnWorkspace } = useGetUserOnWorkspace()
   const { data: workspaces } = useWorkspaces()
   const numberOfWorkspaces = workspaces?.length ?? 0
 
@@ -89,34 +92,41 @@ export function SidebarFooterUserSettingsMenu() {
       })
     : '#'
 
+  const displayWorkspaceSection = userOnWorkspace?.role === UserRole.Admin
+
   return (
     <DropdownMenuContent align="start" className="w-64">
-      <DropdownMenuGroup>
-        <DropdownMenuLabel>Workspace</DropdownMenuLabel>
+      {displayWorkspaceSection && (
+        <>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Workspace</DropdownMenuLabel>
 
-        {numberOfWorkspaces && <SidebarDesktopHeaderWorkspacesDropdownSub />}
-        <DropdownMenuItemLink
-          href={workspaceSettingsLink}
-          disabled={!workspace?.id}
-        >
-          General settings
-        </DropdownMenuItemLink>
-        <DropdownMenuItemLink
-          href={workspaceMembersLink}
-          disabled={!workspace?.id}
-        >
-          Members
-        </DropdownMenuItemLink>
-        <DropdownMenuItemLink
-          href={workspaceModelsLink}
-          disabled={!workspace?.id}
-        >
-          AI models
-        </DropdownMenuItemLink>
-      </DropdownMenuGroup>
+            {numberOfWorkspaces && (
+              <SidebarDesktopHeaderWorkspacesDropdownSub />
+            )}
+            <DropdownMenuItemLink
+              href={workspaceSettingsLink}
+              disabled={!workspace?.id}
+            >
+              General settings
+            </DropdownMenuItemLink>
+            <DropdownMenuItemLink
+              href={workspaceMembersLink}
+              disabled={!workspace?.id}
+            >
+              Members
+            </DropdownMenuItemLink>
+            <DropdownMenuItemLink
+              href={workspaceModelsLink}
+              disabled={!workspace?.id}
+            >
+              AI models
+            </DropdownMenuItemLink>
+          </DropdownMenuGroup>
 
-      <DropdownMenuSeparator />
-
+          <DropdownMenuSeparator />
+        </>
+      )}
       <DropdownMenuGroup>
         <DropdownMenuLabel>You</DropdownMenuLabel>
         <DropdownMenuItemLink href={profileLink} disabled={!workspace?.id}>
