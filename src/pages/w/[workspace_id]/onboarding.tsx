@@ -51,8 +51,8 @@ export const getServerSideProps: GetServerSideProps = async (
 
 export default function Onboarding() {
   const navigation = useNavigation()
-  const handleSuccess = () => {
-    void navigation.push('/p')
+  const handleSuccess = async () => {
+    await navigation.push('/p')
   }
 
   return (
