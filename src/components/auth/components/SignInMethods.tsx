@@ -11,7 +11,7 @@ import { useNavigation } from '@/lib/frontend/useNavigation'
 import { signIn } from 'next-auth/react'
 import * as React from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
-import { SignInButtons } from './SignInButtons'
+import { SignInGoogle } from './SignInGoogle'
 
 const { NEXT_PUBLIC_DEMO_MODE } = env
 
@@ -28,7 +28,7 @@ const errorMessages = {
     'There was a system error signing you in. Please try again or contact the administrator.',
 }
 
-export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
+export function SignInMethods({ callbackUrl }: { callbackUrl?: string }) {
   const [isLoading, setIsLoading] = React.useState(false)
   const navigation = useNavigation()
   const { query } = navigation
@@ -63,7 +63,7 @@ export function UserAuthForm({ callbackUrl }: { callbackUrl?: string }) {
           </AlertDescription>
         </Alert>
       )}
-      <SignInButtons callbackUrl={callbackUrl} />
+      <SignInGoogle callbackUrl={callbackUrl} />
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">

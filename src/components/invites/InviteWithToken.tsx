@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { UserAuthForm } from '../auth/components/UserAuthForm'
+import { SignInMethods } from '../auth/components/SignInMethods'
 
 interface InviteWithTokenProps {
   token: string
@@ -42,7 +42,7 @@ export default function InviteWithToken({
             <div className="space-y-2">
               <h3>To accept the invitation, proceed by signing up.</h3>
 
-              <UserAuthForm callbackUrl={callbackUrl} />
+              <SignInMethods callbackUrl={callbackUrl} />
             </div>
           </div>
         </div>

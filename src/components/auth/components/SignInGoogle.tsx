@@ -13,11 +13,11 @@ const { NEXT_PUBLIC_DEMO_MODE } = env
 
 const isDemo = NEXT_PUBLIC_DEMO_MODE === 'true'
 
-interface SignInButtonsProps {
+interface SignInGoogleProps {
   callbackUrl?: string
 }
 
-export const SignInButtons = ({ callbackUrl }: SignInButtonsProps) => {
+export const SignInGoogle = ({ callbackUrl }: SignInGoogleProps) => {
   const navigation = useNavigation()
   const queryCallbackUrl =
     callbackUrl ?? (navigation.query?.callbackUrl as string | undefined)

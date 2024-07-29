@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { UserAuthForm } from './UserAuthForm'
+import { SignInMethods } from './SignInMethods'
 
 export const SignIn = () => {
   return (
@@ -28,7 +28,7 @@ export const SignIn = () => {
                 you up if you&apos;re new.
               </p>
 
-              <UserAuthForm />
+              <SignInMethods />
               <p className="text-muted-foreground px-8 text-center text-sm">
                 By clicking continue, you agree to our{' '}
                 <Link
