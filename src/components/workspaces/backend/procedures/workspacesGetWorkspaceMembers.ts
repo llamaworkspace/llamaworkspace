@@ -1,5 +1,7 @@
 import { getEnumByValue } from '@/lib/utils'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
+import { getWorkspaceOwnerService } from '@/server/workspaces/services/getWorkspaceOwner.service'
 import { UserRole } from '@/shared/globalTypes'
 import { z } from 'zod'
 import {
@@ -40,17 +42,12 @@ export const workspacesGetWorkspaceMembers = protectedProcedure
       },
     })
 
-    const workspaceOwner = await ctx.prisma.usersOnWorkspaces.findFirstOrThrow({
-      select: {
-        userId: true,
-      },
-      where: {
-        workspaceId: workspaceWithMembers.id,
-      },
-      orderBy: {
-        createdAt: 'asc',
-      },
-    })
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      userId,
+      input.workspaceId,
+    )
+    const workspaceOwner = await getWorkspaceOwnerService(ctx.prisma, context)
 
     const invites = await ctx.prisma.workspaceInvite.findMany({
       select: {
@@ -67,7 +64,7 @@ export const workspacesGetWorkspaceMembers = protectedProcedure
       name: userOfWorkspace.user.name,
       email: userOfWorkspace.user.email,
       role: getEnumByValue(UserRole, userOfWorkspace.role),
-      isOwner: userOfWorkspace.user.id === workspaceOwner.userId,
+      isOwner: userOfWorkspace.user.id === workspaceOwner.id,
     }))
 
     const invitedMembers = invites.map((invite) => ({
