@@ -31,3 +31,11 @@ export const useUpdateWorkspace = () => {
     },
   })
 }
+
+export const useUpdateUserRoleForWorkspace = () => {
+  const errorHandler = useErrorHandler()
+
+  return api.workspaces.updateUserRoleForWorkspace.useMutation({
+    onError: errorHandler(),
+  })
+}

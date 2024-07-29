@@ -12,16 +12,8 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { useSelf } from '@/components/users/usersHooks'
-import { UserRole } from '@/shared/globalTypes'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useCallback, useMemo } from 'react'
 import { type z } from 'zod'
@@ -32,6 +24,7 @@ import {
   useWorkspaceMembers,
 } from '../../workspaceMembersHooks'
 import { useCurrentWorkspace } from '../../workspacesHooks'
+import { SettingsMembersTableRoleSelector } from './SettingsMembersTableRoleSelector'
 
 type WorkspaceMember = z.infer<typeof zodWorkspaceMemberOutput>
 
@@ -115,7 +108,11 @@ export const SettingsMembersTable = () => {
         cell: ({ row }) => {
           return (
             <div className="flex items-center gap-x-2">
-              <RoleSelector value={row.original.role} />
+              <SettingsMembersTableRoleSelector
+                userId={row.original.id}
+                isOwner={row.original.isOwner}
+                value={row.original.role}
+              />
             </div>
           )
         },
@@ -214,27 +211,4 @@ export const SettingsMembersTable = () => {
   )
 
   return <DataTable columns={columns} data={workspaceMembers} />
-}
-
-interface RoleSelectorProps {
-  value: string
-}
-
-const RoleSelector = ({ value }: RoleSelectorProps) => {
-  const isDisabled = value !== UserRole.Admin.toString()
-  return (
-    <Select
-      value={value}
-      // onValueChange={handleValueChange}
-      disabled={isDisabled}
-    >
-      <SelectTrigger className="w-[130px]">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value={UserRole.Admin}>Admin</SelectItem>
-        <SelectItem value={UserRole.Member}>Member</SelectItem>
-      </SelectContent>
-    </Select>
-  )
 }
