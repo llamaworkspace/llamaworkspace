@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { BoxedRadioGroupField } from '@/components/ui/forms/BoxedRadioGroupField'
 import { InputField } from '@/components/ui/forms/InputField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
+import { api } from '@/lib/api'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { getEnumByValue } from '@/lib/utils'
 import { InitialModel } from '@/shared/globalTypes'
@@ -55,12 +56,13 @@ interface FormValues {
 const textClasses = 'text-sm text-zinc-700'
 
 interface OnboardingScreenProps {
-  onSuccess?: () => void
+  onSuccess?: () => Promise<void>
 }
 
 export const OnboardingScreen = ({ onSuccess }: OnboardingScreenProps) => {
   const { data: workspace } = useCurrentWorkspace()
   const { mutateAsync: performInitialModelSetup } = usePeformInitialModelSetup()
+  const utils = api.useContext()
 
   const handleSubmit = async (values: FormValues) => {
     if (!workspace) return
@@ -74,7 +76,9 @@ export const OnboardingScreen = ({ onSuccess }: OnboardingScreenProps) => {
       openaiApiKey: values.openAiApiKey,
     })
 
-    onSuccess?.()
+    await utils.users.getSelf.invalidate()
+
+    await onSuccess?.()
   }
 
   return (

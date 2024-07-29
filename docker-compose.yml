@@ -42,12 +42,13 @@ services:
       - NODE_ENV=production
       - REDIS_URL=redis://llamaq_redis:6379
       - LLAMAQ_ACCESS_KEY=llamaq-access-key
-      - NEXTJS_PROCESSOR_URL=http://host.docker.internal:3000
+      - NEXTJS_PROCESSOR_URL=http://host.docker.internal:3000/api/llamaq
       - NEXTJS_API_ACCESS_KEY=incoming-api-route-access-key
     ports:
       - 4000:4000
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
   redis:
     container_name: llamaq_redis
@@ -55,7 +56,11 @@ services:
     restart: always
     volumes:
       - llamaq_redis_data:/data
-
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 1s
+      timeout: 5s
+      retries: 10
 
 volumes:
   llamaws_db:

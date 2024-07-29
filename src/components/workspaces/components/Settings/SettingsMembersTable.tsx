@@ -17,22 +17,20 @@ import { useSelf } from '@/components/users/usersHooks'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useCallback, useMemo } from 'react'
 import { type z } from 'zod'
-import {
-  WorkspaceMemberRole,
-  type zodWorkspaceMemberOutput,
-} from '../../backend/workspacesBackendUtils'
+import { type zodWorkspaceMemberOutput } from '../../backend/workspacesBackendUtils'
 import {
   useCancelWorkspaceInvite,
   useRevokeWorkspaceMemberAccess,
   useWorkspaceMembers,
 } from '../../workspaceMembersHooks'
 import { useCurrentWorkspace } from '../../workspacesHooks'
+import { SettingsMembersTableRoleSelector } from './SettingsMembersTableRoleSelector'
 
 type WorkspaceMember = z.infer<typeof zodWorkspaceMemberOutput>
 
 export const SettingsMembersTable = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const { workspaceMembers } = useWorkspaceMembers(workspace?.id)
+  const { data: workspaceMembers } = useWorkspaceMembers(workspace?.id)
   const { data: self } = useSelf()
   const { mutate: revokeAccess } = useRevokeWorkspaceMemberAccess()
   const { mutate: cancelInvite } = useCancelWorkspaceInvite()
@@ -84,7 +82,7 @@ export const SettingsMembersTable = () => {
                 </>
               )}
 
-              {row.original.role === WorkspaceMemberRole.Owner && (
+              {row.original.isOwner && (
                 <span className=" text-zinc-400">(Owner)</span>
               )}
             </div>
@@ -104,10 +102,26 @@ export const SettingsMembersTable = () => {
         },
       },
       {
+        header: 'Role',
+        accessorKey: 'role',
+        size: 2,
+        cell: ({ row }) => {
+          return (
+            <div className="flex items-center gap-x-2">
+              <SettingsMembersTableRoleSelector
+                userId={row.original.id}
+                isOwner={row.original.isOwner}
+                value={row.original.role}
+              />
+            </div>
+          )
+        },
+      },
+      {
         id: 'remove',
         size: 1,
         cell: ({ row }) => {
-          if (row.original.role === WorkspaceMemberRole.Owner) {
+          if (row.original.isOwner) {
             return <></>
           }
 

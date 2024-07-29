@@ -27,9 +27,9 @@ services:
 
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
-      interval: 10s
+      interval: 1s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   llamaq:
     container_name: llamaq_demo

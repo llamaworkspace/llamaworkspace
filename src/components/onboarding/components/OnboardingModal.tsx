@@ -5,16 +5,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
-import { api } from '@/lib/api'
 import { OnboardingScreen } from './OnboardingScreen'
 
 export const OnboardingModal = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const utils = api.useContext()
-
-  const handleSuccess = () => {
-    void utils.users.getSelf.invalidate()
-  }
 
   const modalIsOpen = workspace && !workspace?.onboardingCompletedAt
 
@@ -31,7 +25,7 @@ export const OnboardingModal = () => {
         <DialogHeader>
           <DialogTitle>Welcome to Llama Workspace</DialogTitle>
         </DialogHeader>
-        <OnboardingScreen onSuccess={handleSuccess} />
+        <OnboardingScreen />
       </DialogContent>
     </Dialog>
   )

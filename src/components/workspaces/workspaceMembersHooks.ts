@@ -6,16 +6,13 @@ import { useSelf } from '../users/usersHooks'
 export const useWorkspaceMembers = (workspaceId: string | undefined) => {
   const errorHandler = useErrorHandler()
 
-  const { data: workspaceMembers, isLoading } =
-    api.workspaces.getWorkspaceMembers.useQuery(
-      { workspaceId: workspaceId! },
-      {
-        onError: errorHandler(),
-        enabled: !!workspaceId,
-      },
-    )
-
-  return { workspaceMembers, isLoading }
+  return api.workspaces.getWorkspaceMembers.useQuery(
+    { workspaceId: workspaceId! },
+    {
+      onError: errorHandler(),
+      enabled: !!workspaceId,
+    },
+  )
 }
 
 export const useInviteUserToWorkspace = () => {
