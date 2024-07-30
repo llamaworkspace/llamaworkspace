@@ -1,3 +1,4 @@
+import { UserRole } from '@/shared/globalTypes'
 import { z } from 'zod'
 
 export const zodUserOutput = z.object({
@@ -10,6 +11,7 @@ export const zodUserOutput = z.object({
       id: z.string(),
       name: z.string(),
       onboardingCompletedAt: z.date().nullable(),
+      role: z.nativeEnum(UserRole),
     })
     .optional(),
 })

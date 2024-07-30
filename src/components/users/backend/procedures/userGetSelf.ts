@@ -1,6 +1,10 @@
+import { getEnumByValue } from '@/lib/utils'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { getUserService } from '@/server/users/services/getUser.service'
 import { getUserWorkspacesService } from '@/server/users/services/getUserWorkspaces.service'
+import { getUserOnWorkspaceForUserService } from '@/server/workspaces/services/getUserOnWorkspaceForUser.service'
+import { UserRole } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
 import { zodUserOutput } from '../usersBackendUtils'
 
@@ -18,9 +22,7 @@ export const userGetSelf = protectedProcedure
 
     const [user, workspaces] = await Promise.all([
       await getUserService(ctx.prisma, userId, { select }),
-      await getUserWorkspacesService(ctx.prisma, userId, {
-        select: { id: true, name: true, onboardingCompletedAt: true },
-      }),
+      await getUserWorkspacesService(ctx.prisma, userId),
     ])
 
     if (!workspaces.length) {
@@ -30,13 +32,26 @@ export const userGetSelf = protectedProcedure
       })
     }
 
+    const firstWorkspace = workspaces[0]!
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      firstWorkspace.id,
+      userId,
+    )
+    const userOnWorkspace = await getUserOnWorkspaceForUserService(
+      ctx.prisma,
+      context,
+      { userId },
+    )
+
     return {
       ...user,
       defaultModel: user.defaultModel!,
       workspace: {
-        id: workspaces[0]!.id,
-        name: workspaces[0]!.name,
-        onboardingCompletedAt: workspaces[0]!.onboardingCompletedAt,
+        id: firstWorkspace.id,
+        name: firstWorkspace.name,
+        onboardingCompletedAt: firstWorkspace.onboardingCompletedAt,
+        role: getEnumByValue(UserRole, userOnWorkspace.role),
       },
     }
   })
