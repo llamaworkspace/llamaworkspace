@@ -1,5 +1,6 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
 import { upsertAiProviderService } from '@/server/ai/services/upsertProviderKVs.service'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -25,6 +26,14 @@ export const updateAiProvider = protectedProcedure
         ...workspaceVisibilityFilter(userId),
       },
     })
+
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      workspaceId,
+      userId,
+    )
+
+    await context.isAdminOrThrow()
 
     return await upsertAiProviderService(
       ctx.prisma,
