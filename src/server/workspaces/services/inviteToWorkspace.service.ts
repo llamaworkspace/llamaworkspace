@@ -16,7 +16,10 @@ export const inviteToWorkspaceService = async (
   source: WorkspaceInviteSources = WorkspaceInviteSources.Direct,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
+    await uowContext.isAdminOrThrow()
+
     const { workspaceId, userId: invitingUserId } = uowContext
+
     const workspace = await prisma.workspace.findUniqueOrThrow({
       select: {
         id: true,

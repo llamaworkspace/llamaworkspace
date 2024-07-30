@@ -1,3 +1,4 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
@@ -12,6 +13,14 @@ export const workspacesRevokeWorkspaceMemberAccess = protectedProcedure
   .input(zInput)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.session.user.id
+
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      input.workspaceId,
+      userId,
+    )
+
+    await context.isAdminOrThrow()
 
     const workspaceOwner = await ctx.prisma.usersOnWorkspaces.findFirstOrThrow({
       select: {
