@@ -1,4 +1,4 @@
-import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import { UserRole, type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { TRPCError } from '@trpc/server'
 
 // Use this class as a guarantee that the user is a member of the workspace.
@@ -34,9 +34,22 @@ export class UserOnWorkspaceContext {
     return this.constructor.name
   }
 
-  // async isAdmin() {
-  //   return Promise.resolve(true)
-  // }
+  async isAdmin() {
+    const userOnWorkspace = await this._prisma.usersOnWorkspaces.findFirst({
+      where: {
+        userId: this._userId,
+        workspaceId: this._workspaceId,
+      },
+    })
+    if (!userOnWorkspace) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `There is no user on workspace for this workspace: ${this._workspaceId} and user: ${this._userId}`,
+      })
+    }
+    console.log(11, userOnWorkspace)
+    return userOnWorkspace.role === UserRole.Admin.toString()
+  }
 }
 
 export async function createUserOnWorkspaceContext(

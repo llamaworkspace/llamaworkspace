@@ -2,7 +2,7 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { UsersOnWorkspacesFactory } from '@/server/testing/factories/UsersOnWorkspacesFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import mockDb from '@/server/testing/mockDb'
-import type * as globalTypesWrapper from '@/shared/globalTypes'
+import * as globalTypesWrapper from '@/shared/globalTypes'
 import type { User, UsersOnWorkspaces, Workspace } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import {
@@ -86,5 +86,39 @@ describe('UserOnWorkspaceContext class', () => {
 
     expect(context.isContext(context)).toBeTruthy()
     expect(context.isContext(notContext)).toBeFalsy()
+  })
+
+  describe('isAdmin method', () => {
+    let context: UserOnWorkspaceContext
+
+    beforeEach(() => {
+      context = UserOnWorkspaceContext.create(mockDb, workspaceId, userId)
+    })
+
+    it('should return true when user is an admin', async () => {
+      const userOnWorkspace = UsersOnWorkspacesFactory.build({
+        userId,
+        workspaceId,
+        role: globalTypesWrapper.UserRole.Admin,
+      })
+      mockDb.usersOnWorkspaces.findFirst.mockResolvedValueOnce(userOnWorkspace)
+
+      const result = await context.isAdmin()
+
+      expect(result).toBeTruthy()
+    })
+
+    it('should return false when user is not an admin', async () => {
+      const userOnWorkspace = UsersOnWorkspacesFactory.build({
+        userId,
+        workspaceId,
+        role: globalTypesWrapper.UserRole.Member,
+      })
+      mockDb.usersOnWorkspaces.findFirst.mockResolvedValueOnce(userOnWorkspace)
+
+      const result = await context.isAdmin()
+
+      expect(result).toBeFalsy()
+    })
   })
 })
