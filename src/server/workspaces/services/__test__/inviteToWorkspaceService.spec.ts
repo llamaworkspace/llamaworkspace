@@ -3,6 +3,7 @@ import { prisma } from '@/server/db'
 import { sendEmail } from '@/server/messaging/mailer'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { UserRole } from '@/shared/globalTypes'
 import { faker } from '@faker-js/faker'
 import type { User, Workspace } from '@prisma/client'
 import { inviteToWorkspaceService } from '../inviteToWorkspace.service'
@@ -69,6 +70,25 @@ describe('inviteToWorkspaceService', () => {
         `${invitingUser.name} has invited you to join the Llama Workspace "${workspace.name}"`,
       ) as string,
     })
+  })
+
+  it('throws when the user is not an admin', async () => {
+    const email = faker.internet.email()
+    await prisma.usersOnWorkspaces.update({
+      where: {
+        userId_workspaceId: {
+          userId: invitingUser.id,
+          workspaceId: workspace.id,
+        },
+      },
+      data: {
+        role: UserRole.Member,
+      },
+    })
+
+    await expect(
+      subject(workspace.id, invitingUser.id, email),
+    ).rejects.toThrow()
   })
 
   describe('when the invitedUserEmail has already been invited to the workspace', () => {
