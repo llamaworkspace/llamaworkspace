@@ -121,4 +121,44 @@ describe('UserOnWorkspaceContext class', () => {
       expect(result).toBeFalsy()
     })
   })
+
+  describe('isAdminOrThrow method', () => {
+    let context: UserOnWorkspaceContext
+
+    beforeEach(() => {
+      context = UserOnWorkspaceContext.create(mockDb, workspaceId, userId)
+    })
+
+    it('should return true when user is an admin', async () => {
+      const userOnWorkspace = UsersOnWorkspacesFactory.build({
+        userId,
+        workspaceId,
+        role: globalTypesWrapper.UserRole.Admin,
+      })
+      mockDb.usersOnWorkspaces.findFirst.mockResolvedValueOnce(userOnWorkspace)
+
+      const result = await context.isAdminOrThrow()
+
+      expect(result).toBeTruthy()
+    })
+
+    it('should throw a TRPCError with code "UNAUTHORIZED" when user is not an admin', async () => {
+      const userOnWorkspace = UsersOnWorkspacesFactory.build({
+        userId,
+        workspaceId,
+        role: globalTypesWrapper.UserRole.Member,
+      })
+      mockDb.usersOnWorkspaces.findFirst.mockResolvedValueOnce(userOnWorkspace)
+
+      const promise = context.isAdminOrThrow()
+
+      await expect(promise).rejects.toThrow(TRPCError)
+      await expect(promise).rejects.toHaveProperty('code', 'UNAUTHORIZED')
+      await expect(promise).rejects.toEqual(
+        expect.objectContaining({
+          message: 'Only admins can perform this action',
+        }),
+      )
+    })
+  })
 })

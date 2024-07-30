@@ -47,8 +47,18 @@ export class UserOnWorkspaceContext {
         message: `There is no user on workspace for this workspace: ${this._workspaceId} and user: ${this._userId}`,
       })
     }
-    console.log(11, userOnWorkspace)
+
     return userOnWorkspace.role === UserRole.Admin.toString()
+  }
+
+  async isAdminOrThrow() {
+    if (!(await this.isAdmin())) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Only admins can perform this action',
+      })
+    }
+    return true
   }
 }
 
