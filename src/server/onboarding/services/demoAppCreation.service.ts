@@ -15,7 +15,7 @@ export const demoAppCreationService = async (
       title: `Fun facts teller`,
       emoji: '1f920', // Cowboy emoji 🤠
       isDemo: true,
-      engineType: AppEngineType.Assistant,
+      engineType: AppEngineType.Default,
     })
 
     // Make it available to everyone in the workspa

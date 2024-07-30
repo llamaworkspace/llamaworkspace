@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
@@ -33,6 +34,7 @@ describe('demoAppCreationService', () => {
 
     expect(app).toMatchObject({
       title: 'Fun facts teller',
+      engineType: AppEngineType.Default,
     })
     expect(app.shares[0]!.scope).toBe(ShareScope.Everybody.toString())
   })
