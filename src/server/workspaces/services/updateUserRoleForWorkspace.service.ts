@@ -15,6 +15,8 @@ export const updateUserRoleForWorkspaceService = async (
   payload: UpdateUserRoleForWorkspacePayload,
 ) => {
   return await prismaAsTrx(prisma, async (prisma) => {
+    await uowContext.isAdminOrThrow()
+
     const { workspaceId } = uowContext
     const { userId: userToBeUpdatedId, role } = payload
 

@@ -48,6 +48,8 @@ export const workspacesGetWorkspaceMembers = protectedProcedure
       userId,
     )
 
+    await context.isAdminOrThrow()
+
     const workspaceOwner = await getWorkspaceOwnerService(ctx.prisma, context)
 
     const invites = await ctx.prisma.workspaceInvite.findMany({

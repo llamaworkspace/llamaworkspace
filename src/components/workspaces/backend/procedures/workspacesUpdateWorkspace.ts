@@ -1,3 +1,4 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 import {
@@ -23,6 +24,14 @@ export const workspacesUpdateWorkspace = protectedProcedure
         ...workspaceEditionFilter(userId),
       },
     })
+
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      workspaceId,
+      userId,
+    )
+
+    await context.isAdminOrThrow()
 
     const workspace = await ctx.prisma.workspace.update({
       where: {

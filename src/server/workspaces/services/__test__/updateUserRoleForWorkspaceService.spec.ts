@@ -69,6 +69,27 @@ describe('updateUserRoleForWorkspaceService', () => {
     })
   })
 
+  it('throws when the user is not an admin', async () => {
+    await prisma.usersOnWorkspaces.update({
+      where: {
+        userId_workspaceId: {
+          userId: userWorkspaceOwner.id,
+          workspaceId: workspace.id,
+        },
+      },
+      data: {
+        role: UserRole.Member,
+      },
+    })
+
+    await expect(
+      subject(workspace.id, userWorkspaceOwner.id, {
+        role: UserRole.Member,
+        userId: userToUpdate.id,
+      }),
+    ).rejects.toThrow()
+  })
+
   describe('when the user is the owner', () => {
     it('throws an error', async () => {
       await expect(

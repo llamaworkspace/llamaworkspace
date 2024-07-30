@@ -1,3 +1,4 @@
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
 
@@ -18,6 +19,14 @@ export const workspacesCancelInvite = protectedProcedure
         id: input.inviteId,
       },
     })
+
+    const context = await createUserOnWorkspaceContext(
+      ctx.prisma,
+      invite.workspaceId,
+      userId,
+    )
+
+    await context.isAdminOrThrow()
 
     // Check that the user has access to the WS
     await ctx.prisma.usersOnWorkspaces.findFirstOrThrow({
