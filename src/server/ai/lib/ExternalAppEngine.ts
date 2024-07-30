@@ -1,6 +1,6 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { getStreamAsAsyncIterable } from '@/lib/streamUtils'
-import { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
+import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
@@ -15,10 +15,9 @@ export const zodIncomingRequestPayload = z.object({
   data: z.object({
     appId: z.string(),
     chatId: z.string(),
-    chatRunId: z.string(),
     messages: z.array(
       z.object({
-        role: z.enum(['user', 'ai', 'system']),
+        role: z.enum(['user', 'assistant', 'system']),
         content: z.string(),
       }),
     ),
