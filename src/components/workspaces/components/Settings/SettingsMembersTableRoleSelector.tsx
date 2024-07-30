@@ -8,14 +8,10 @@ import {
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { UserRole } from '@/shared/globalTypes'
 import { useState } from 'react'
-import { type z } from 'zod'
-import { type zodWorkspaceMemberOutput } from '../../backend/workspacesBackendUtils'
 import {
   useCurrentWorkspace,
   useUpdateUserRoleForWorkspace,
 } from '../../workspacesHooks'
-
-type WorkspaceMember = z.infer<typeof zodWorkspaceMemberOutput>
 
 interface RoleSelectorProps {
   isOwner: boolean

@@ -5,11 +5,16 @@ import { TRPCError } from '@trpc/server'
 export class UserOnWorkspaceContext {
   private _tag = 'UserOnWorkspaceContext' as const
 
-  static create(workspaceId: string, userId: string): UserOnWorkspaceContext {
-    return new UserOnWorkspaceContext(workspaceId, userId)
+  static create(
+    prisma: PrismaClientOrTrxClient,
+    workspaceId: string,
+    userId: string,
+  ): UserOnWorkspaceContext {
+    return new UserOnWorkspaceContext(prisma, workspaceId, userId)
   }
 
   private constructor(
+    private readonly _prisma: PrismaClientOrTrxClient,
     private readonly _workspaceId: string,
     private readonly _userId: string,
   ) {}
@@ -28,6 +33,10 @@ export class UserOnWorkspaceContext {
   get _type() {
     return this.constructor.name
   }
+
+  // async isAdmin() {
+  //   return Promise.resolve(true)
+  // }
 }
 
 export async function createUserOnWorkspaceContext(
@@ -43,7 +52,7 @@ export async function createUserOnWorkspaceContext(
       message: 'You do not have the permissions to perform this action',
     })
   }
-  return UserOnWorkspaceContext.create(workspaceId, userId)
+  return UserOnWorkspaceContext.create(prisma, workspaceId, userId)
 }
 
 const hasUserAccessToWorkspace = async (

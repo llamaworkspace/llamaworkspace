@@ -8,7 +8,7 @@ import { TRPCError } from '@trpc/server'
 import {
   UserOnWorkspaceContext,
   createUserOnWorkspaceContext,
-} from '../../userOnWorkspaceContext'
+} from '../userOnWorkspaceContext'
 
 const mockFindFirst = jest.fn()
 jest.mock('@/shared/globalTypes', () => {
@@ -73,7 +73,7 @@ describe('UserOnWorkspaceContext class', () => {
   const userId = 'user-class-test-id'
 
   it('create method should return an instance of UserOnWorkspaceContext', () => {
-    const context = UserOnWorkspaceContext.create(workspaceId, userId)
+    const context = UserOnWorkspaceContext.create(mockDb, workspaceId, userId)
 
     expect(context).toBeInstanceOf(UserOnWorkspaceContext)
     expect(context.workspaceId).toBe(workspaceId)
@@ -81,7 +81,7 @@ describe('UserOnWorkspaceContext class', () => {
   })
 
   it('isContext method should validate instances correctly', () => {
-    const context = UserOnWorkspaceContext.create(workspaceId, userId)
+    const context = UserOnWorkspaceContext.create(mockDb, workspaceId, userId)
     const notContext = { workspaceId, userId }
 
     expect(context.isContext(context)).toBeTruthy()
