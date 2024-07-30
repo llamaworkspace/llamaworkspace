@@ -76,7 +76,7 @@ export const passwordChars: FinalFormValidator<string> = (value: string) => {
 
 export const url: FinalFormValidator<string> = (value: string) => {
   return value &&
-    !/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,99}(:[0-9]{1,5})?(\/.*)?$/i.test(
+    !/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?(localhost|[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,99})(:[0-9]{1,5})?(\/.*)?$/i.test(
       value,
     )
     ? 'Invalid URL'

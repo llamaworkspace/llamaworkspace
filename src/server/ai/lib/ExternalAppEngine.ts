@@ -1,5 +1,6 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { getStreamAsAsyncIterable } from '@/lib/streamUtils'
+import { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
@@ -45,6 +46,12 @@ const appKeyValuesSchema = z
 
 type AppKeyValues = z.infer<typeof appKeyValuesSchema>
 
+interface BuildPayloadParams {
+  appId: string
+  chatId: string
+  messages: AiRegistryMessage[]
+}
+
 export class ExternalAppEngine extends AbstractAppEngine {
   getProviderKeyValuesSchema() {
     return z.any()
@@ -61,6 +68,8 @@ export class ExternalAppEngine extends AbstractAppEngine {
     ctx: AppEngineRunParams<AppKeyValues, ProviderKeyValues>,
     callbacks: AppEngineCallbacks,
   ) {
+    const { messages, chatId, appId } = ctx
+
     const { accessKey, targetUrl } = await ctx.appKeyValuesStore.getAll()
     if (!accessKey) {
       throw createHttpError(500, 'No access key found')
@@ -69,13 +78,20 @@ export class ExternalAppEngine extends AbstractAppEngine {
       throw createHttpError(500, 'No target url found')
     }
 
-    const stream = await this.doFetch(this.buildPayload(accessKey), {
+    const payload = this.buildPayload(accessKey, {
+      appId,
+      chatId,
+      messages,
+    })
+
+    const stream = await this.doFetch(payload, {
       targetUrl,
     })
 
     const asyncIterable = getStreamAsAsyncIterable(stream.getReader())
 
     const decoder = new TextDecoder()
+
     for await (const item of asyncIterable) {
       const text = decoder.decode(item)
       await callbacks.pushText(text)
@@ -119,7 +135,7 @@ export class ExternalAppEngine extends AbstractAppEngine {
     if (!response.ok) {
       const text = await response.text()
       throw createHttpError(
-        response.status,
+        403,
         `Invalid response from external app. Received: ${text}`,
       )
     }
@@ -127,21 +143,17 @@ export class ExternalAppEngine extends AbstractAppEngine {
     return response.body
   }
 
-  private buildPayload(accessKey: string) {
+  private buildPayload(accessKey: string, params: BuildPayloadParams) {
+    const { messages, chatId, appId } = params
     const body = {
       token: accessKey,
       data: {
-        appId: 'thing',
-        chatId: 'thong',
-        chatRunId: 'lorem',
-        messages: [
-          {
-            role: 'user' as const,
-            content: 'Say cat in turkish',
-          },
-        ],
+        appId,
+        chatId,
+        messages,
       },
     }
+
     return body
   }
 }
