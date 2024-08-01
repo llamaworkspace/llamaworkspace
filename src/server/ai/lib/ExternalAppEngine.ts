@@ -30,6 +30,7 @@ type AppKeyValues = z.infer<typeof appKeyValuesSchema>
 interface BuildPayloadParams {
   appId: string
   chatId: string
+  chatRunId: string
   messages: AiRegistryMessage[]
 }
 
@@ -49,7 +50,7 @@ export class ExternalAppEngine extends AbstractAppEngine {
     ctx: AppEngineRunParams<AppKeyValues, ProviderKeyValues>,
     callbacks: AppEngineCallbacks,
   ) {
-    const { messages, chatId, appId } = ctx
+    const { messages, chatId, appId, chatRunId } = ctx
 
     const { accessKey, targetUrl } = await ctx.appKeyValuesStore.getAll()
     if (!accessKey) {
@@ -62,6 +63,7 @@ export class ExternalAppEngine extends AbstractAppEngine {
     const payload = this.buildPayload(accessKey, {
       appId,
       chatId,
+      chatRunId,
       messages,
     })
 
@@ -128,12 +130,13 @@ export class ExternalAppEngine extends AbstractAppEngine {
     accessKey: string,
     params: BuildPayloadParams,
   ): LlamaWsIncomingRequestPayload {
-    const { messages, chatId, appId } = params
+    const { messages, chatId, chatRunId, appId } = params
     const body = {
       accessKey,
       data: {
         appId,
         chatId,
+        chatRunId,
         messages,
       },
     }

@@ -38,12 +38,18 @@ export class AppEngineRunner {
 
       const chat = await this.getChat(chatId)
       const ctx = await this.generateChatScopedEngineContext(chatId)
-      hoistedCtx = ctx
 
       await this.validateModelIsEnabledOrThrow(ctx.providerSlug, ctx.modelSlug)
 
       const rawMessageIds = ctx.rawMessages.map((message) => message.id)
       const chatRun = await this.createChatRun(chatId, rawMessageIds)
+
+      const finalCtx = {
+        ...ctx,
+        chatRunId: chatRun.id,
+      }
+
+      hoistedCtx = finalCtx
 
       const callbacks = this.getCallbacks(ctx.targetAssistantRawMessage.id)
 
@@ -59,7 +65,7 @@ export class AppEngineRunner {
 
       const engine = await this.getEngine(chat.appId)
 
-      await this.validateCtxPayloads(engine, ctx)
+      await this.validateCtxPayloads(engine, finalCtx)
 
       return AppEngineResponseStream(
         {
@@ -69,7 +75,7 @@ export class AppEngineRunner {
         },
         callbacks,
         async ({ pushText }) => {
-          await engine.run(ctx, { pushText, usage: processUsage })
+          await engine.run(finalCtx, { pushText, usage: processUsage })
         },
       )
     } catch (error) {
