@@ -1,5 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
-import { getStreamAsAsyncIterable } from '@/lib/streamUtils'
+import { transformStreamToAsyncIterable } from '@/lib/streamUtils'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import createHttpError from 'http-errors'
 import { type LlamaWsIncomingRequestPayload } from 'llamaworkspace'
@@ -69,7 +69,7 @@ export class ExternalAppEngine extends AbstractAppEngine {
       targetUrl,
     })
 
-    const asyncIterable = getStreamAsAsyncIterable(stream.getReader())
+    const asyncIterable = transformStreamToAsyncIterable(stream.getReader())
 
     const decoder = new TextDecoder()
 

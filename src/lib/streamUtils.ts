@@ -71,7 +71,7 @@ export const experimental_safeReadableStreamPipe = <T>(
   )
 }
 
-export async function* getStreamAsAsyncIterable<T>(
+export async function* transformStreamToAsyncIterable<T>(
   reader: ReadableStreamDefaultReader<T>,
 ) {
   try {
