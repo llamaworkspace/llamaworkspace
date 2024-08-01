@@ -24,6 +24,11 @@ import type {
   EngineAppKeyValues,
 } from '../AbstractAppEngine'
 
+type AppEngineRunParamsWithoutChatRun = Omit<
+  AppEngineRunParams<EngineAppKeyValues, Record<string, string>>,
+  'chatRunId'
+>
+
 export class AppEnginePayloadBuilder {
   constructor(
     private readonly prisma: PrismaClientOrTrxClient,
@@ -32,7 +37,7 @@ export class AppEnginePayloadBuilder {
 
   async buildForChat(
     chatId: string,
-  ): Promise<AppEngineRunParams<EngineAppKeyValues, Record<string, string>>> {
+  ): Promise<AppEngineRunParamsWithoutChatRun> {
     const [
       chat,
       appConfigVersion,

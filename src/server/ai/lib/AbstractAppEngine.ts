@@ -20,6 +20,7 @@ export interface AppEngineRunParams<
 > {
   readonly appId: string
   readonly chatId: string
+  readonly chatRunId: string
   readonly providerKVs: ProviderKeyValues
   readonly appKeyValuesStore: AppKeyValuesStoreParams<T>
   readonly rawMessages: Message[]

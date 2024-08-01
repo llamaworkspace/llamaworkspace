@@ -1,32 +1,14 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
-import { getStreamAsAsyncIterable } from '@/lib/streamUtils'
+import { transformStreamToAsyncIterable } from '@/lib/streamUtils'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import createHttpError from 'http-errors'
+import { type LlamaWsIncomingRequestPayload } from 'llamaworkspace'
 import { z } from 'zod'
 import {
   AbstractAppEngine,
   type AppEngineCallbacks,
   type AppEngineRunParams,
 } from './AbstractAppEngine'
-
-// Import from llws library!
-export const zodIncomingRequestPayload = z.object({
-  token: z.string(),
-  data: z.object({
-    appId: z.string(),
-    chatId: z.string(),
-    messages: z.array(
-      z.object({
-        role: z.enum(['user', 'assistant', 'system']),
-        content: z.string(),
-      }),
-    ),
-  }),
-})
-
-export type LlamaWsIncomingRequestPayload = z.infer<
-  typeof zodIncomingRequestPayload
->
 
 interface FetchParams {
   targetUrl: string
@@ -48,6 +30,7 @@ type AppKeyValues = z.infer<typeof appKeyValuesSchema>
 interface BuildPayloadParams {
   appId: string
   chatId: string
+  chatRunId: string
   messages: AiRegistryMessage[]
 }
 
@@ -67,7 +50,7 @@ export class ExternalAppEngine extends AbstractAppEngine {
     ctx: AppEngineRunParams<AppKeyValues, ProviderKeyValues>,
     callbacks: AppEngineCallbacks,
   ) {
-    const { messages, chatId, appId } = ctx
+    const { messages, chatId, appId, chatRunId } = ctx
 
     const { accessKey, targetUrl } = await ctx.appKeyValuesStore.getAll()
     if (!accessKey) {
@@ -80,6 +63,7 @@ export class ExternalAppEngine extends AbstractAppEngine {
     const payload = this.buildPayload(accessKey, {
       appId,
       chatId,
+      chatRunId,
       messages,
     })
 
@@ -87,7 +71,7 @@ export class ExternalAppEngine extends AbstractAppEngine {
       targetUrl,
     })
 
-    const asyncIterable = getStreamAsAsyncIterable(stream.getReader())
+    const asyncIterable = transformStreamToAsyncIterable(stream.getReader())
 
     const decoder = new TextDecoder()
 
@@ -142,13 +126,17 @@ export class ExternalAppEngine extends AbstractAppEngine {
     return response.body
   }
 
-  private buildPayload(accessKey: string, params: BuildPayloadParams) {
-    const { messages, chatId, appId } = params
+  private buildPayload(
+    accessKey: string,
+    params: BuildPayloadParams,
+  ): LlamaWsIncomingRequestPayload {
+    const { messages, chatId, chatRunId, appId } = params
     const body = {
-      token: accessKey,
+      accessKey,
       data: {
         appId,
         chatId,
+        chatRunId,
         messages,
       },
     }
