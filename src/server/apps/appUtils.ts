@@ -14,7 +14,7 @@ export const scopeAppByWorkspace = (
 export const getAppEngineFriendlyName = (engineType: AppEngineType) => {
   switch (engineType) {
     case AppEngineType.Default:
-      return 'Simple assistant'
+      return 'Universal assistant'
     case AppEngineType.Assistant:
       return 'Document-enhanced assistant'
     case AppEngineType.External:
