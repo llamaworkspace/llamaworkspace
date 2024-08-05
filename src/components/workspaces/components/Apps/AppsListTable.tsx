@@ -26,7 +26,7 @@ export const AppsListTable = () => {
         { id: deleteModalTargetAppId },
         {
           onSuccess: () => {
-            successToast(undefined, 'GPT successfully deleted')
+            successToast(undefined, 'App successfully deleted')
           },
         },
       )
@@ -39,7 +39,7 @@ export const AppsListTable = () => {
     return (
       <>
         <div className="pt-16 text-center text-zinc-600">
-          You currently don&apos;t have any GPTs. Go ahead and create your first
+          You currently don&apos;t have any apps. Go ahead and create your first
           one.
         </div>
       </>
@@ -58,8 +58,8 @@ export const AppsListTable = () => {
         )
       })}
       <DeleteConfirmationDialog
-        title="Delete GPT"
-        description="Are you sure you want to delete this GPT? This action cannot be
+        title="Delete app"
+        description="Are you sure you want to delete this app? This action cannot be
               undone."
         isOpen={!!deleteModalTargetAppId}
         onCancel={() => setDeleteModalTargetAppId(null)}

@@ -103,8 +103,8 @@ export const AppConfigForGPTNameAndDescription = ({
               <TextAreaField
                 label="Description"
                 rows={4}
-                placeholder="Describe what this GPT does and help users understand how to interact with it."
-                helperText="This text will not be used to guide the behaviour of the GPT."
+                placeholder="Describe what this app does and help users understand how to interact with it."
+                helperText="This text will not be used to guide the behaviour of the app."
                 disabled={disabled}
                 {...input}
               />
