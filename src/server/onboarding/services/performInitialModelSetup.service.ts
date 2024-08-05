@@ -14,7 +14,7 @@ interface InitialModelSetupPayload {
   openaiApiKey?: string
 }
 
-const OPENAI_MODEL = 'gpt-4o'
+const OPENAI_MODEL = 'openai/gpt-4o'
 const LLAMA_MODEL = 'meta-llama/llama-3.1-405b-instruct'
 
 export const performInitialModelSetupService = async (
