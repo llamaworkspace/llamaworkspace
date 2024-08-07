@@ -43,7 +43,7 @@ const options = [
       </span>
     ),
     providerSlug: 'openai',
-    modelSlug: 'gpt-4o',
+    modelSlug: 'openai/gpt-4o',
   },
 ]
 

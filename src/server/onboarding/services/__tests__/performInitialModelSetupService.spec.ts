@@ -71,7 +71,7 @@ describe('performInitialModelSetupService', () => {
       },
     })
 
-    expect(userInDb!.defaultModel).toBe('gpt-4o')
+    expect(userInDb!.defaultModel).toBe('openai/gpt-4o')
   })
 
   describe('when the model is Openai', () => {
@@ -103,7 +103,7 @@ describe('performInitialModelSetupService', () => {
       expect(aiModels).toHaveLength(1)
       const aiModel = aiModels[0]!
       expect(aiModel).toMatchObject({
-        slug: 'gpt-4o',
+        slug: 'openai/gpt-4o',
         isEnabled: true,
         aiProviderId: aiProvider.id,
       })
@@ -131,7 +131,7 @@ describe('performInitialModelSetupService', () => {
         },
       })
 
-      expect(workspaceInDb!.defaultModel).toBe('gpt-4o')
+      expect(workspaceInDb!.defaultModel).toBe('openai/gpt-4o')
     })
   })
 
@@ -167,7 +167,7 @@ describe('performInitialModelSetupService', () => {
       expect(aiModels).toHaveLength(1)
       const aiModel = aiModels[0]!
       expect(aiModel).toMatchObject({
-        slug: 'gpt-4o',
+        slug: 'openai/gpt-4o',
         isEnabled: true,
         aiProviderId: openaiProvider.id,
       })
