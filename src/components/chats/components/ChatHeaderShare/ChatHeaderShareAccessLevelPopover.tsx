@@ -33,7 +33,7 @@ const permissionLevelOptions = [
   {
     title: 'Use',
     value: UserAccessLevelActions.Use,
-    description: 'Use this GPT',
+    description: 'Use this app',
     disabled: false,
   },
   {

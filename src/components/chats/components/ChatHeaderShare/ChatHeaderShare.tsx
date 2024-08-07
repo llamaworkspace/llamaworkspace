@@ -38,7 +38,7 @@ export const ChatHeaderShare = ({ appId }: ComponentWithAppId) => {
       </TooltipTrigger>
       {/* mr-2 ensures that the tooltip does not stick to the right of the browser */}
       <TooltipContent className="mr-2">
-        <p>You do not have sharing permissions for this GPT.</p>
+        <p>You do not have sharing permissions for this app.</p>
       </TooltipContent>
     </Tooltip>
   )
@@ -48,9 +48,9 @@ export const ChatHeaderShare = ({ appId }: ComponentWithAppId) => {
       <DialogTrigger asChild>{canInvite ? button : tooltip}</DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Share GPT access</DialogTitle>
+          <DialogTitle>Share app access</DialogTitle>
           <DialogDescription>
-            Invite team members to use this GPT. Note that only usage access is
+            Invite team members to use this app. Note that only usage access is
             granted, and individual chats are never shared.
           </DialogDescription>
         </DialogHeader>

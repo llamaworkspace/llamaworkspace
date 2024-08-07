@@ -9,7 +9,7 @@ export const SidebarMainApps = () => {
 
   return (
     <div className="space-y-1">
-      <div className="px-2 text-xs font-bold text-zinc-400">GPTs</div>
+      <div className="px-2 text-xs font-bold text-zinc-400">Apps</div>
 
       <div className="space-y-0.5">
         {apps?.map((app) => {
