@@ -2,6 +2,11 @@ import { useUnbindAsset } from '@/components/assets/assetsHooks'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import {
+  ArrowPathIcon,
+  ArrowUpTrayIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/react/20/solid'
 import { XCircleIcon } from '@heroicons/react/24/outline'
 
 interface UploadedFileProps {
@@ -50,7 +55,7 @@ export const AppConfigForGPTUploadedFile = ({
           uploading && 'italic text-zinc-400',
         )}
       >
-        {name}
+        {name} and this iis a very long name that should be truncated
       </div>
       <div className="col-span-1 flex justify-end">
         {!uploading && (
@@ -59,6 +64,24 @@ export const AppConfigForGPTUploadedFile = ({
             onClick={() => void handleFileDelete()}
           />
         )}
+      </div>
+      <hr className="col-span-12 my-2 border-t border-zinc-200" />
+      {uploading && (
+        <div className="col-span-12 flex items-center gap-x-1 text-xs italic">
+          <ArrowUpTrayIcon className="h-4 w-4 text-blue-500" />{' '}
+          <span className="text-zinc-500">Uploading...</span>
+        </div>
+      )}
+      <div className="col-span-12 flex hidden items-center gap-x-1 text-xs">
+        <ArrowPathIcon className="h-4 w-4 text-orange-500" />{' '}
+        <span className="text-zinc-500">Processing...</span>
+      </div>
+      {/* <div className="col-span-12 flex items-center gap-x-1 text-xs">
+        <span className="text-zinc-500">Processed</span>
+      </div> */}
+      <div className="col-span-12 flex items-center gap-x-1 text-xs">
+        <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />{' '}
+        <span className="text-zinc-500">Processing failed</span>
       </div>
     </div>
   )
