@@ -80,15 +80,20 @@ const UploadedAndUploadingFiles = ({
     <div>
       {uploadedFiles && (
         <div className="grid gap-2 md:grid-cols-3">
-          {Object.values(uploadedFiles).map((asset) => (
-            <AppConfigForGPTUploadedFile
-              key={asset.id}
-              assetId={asset.id}
-              appId={appId}
-              name={asset.originalName}
-              fileType={asset.extension.replace('.', '')}
-            />
-          ))}
+          {Object.values(uploadedFiles).map((asset) => {
+            const assetOnApp = asset.assetsOnApps[0]!
+
+            return (
+              <AppConfigForGPTUploadedFile
+                key={asset.id}
+                assetId={asset.id}
+                appId={appId}
+                name={asset.originalName}
+                fileType={asset.extension.replace('.', '')}
+                failureMessage={assetOnApp.failureMessage}
+              />
+            )
+          })}
           {uploadableFiles && (
             <>
               {Object.values(uploadableFiles).map((appFile) => (

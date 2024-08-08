@@ -42,6 +42,11 @@ export interface AppEngineCallbacks {
   usage: (requestTokens: number, responseTokens: number) => void | Promise<void>
 }
 
+export interface OnAssetAddedCallbacks {
+  onSuccess: (externalId: string) => Promise<void>
+  onFailure: (failureMessage: string) => Promise<void>
+}
+
 export abstract class AbstractAppEngine {
   abstract getName(): string
   abstract getProviderKeyValuesSchema(): z.ZodSchema
@@ -63,7 +68,7 @@ export abstract class AbstractAppEngine {
   abstract onAssetAdded(
     ctx: AppEngineConfigParams<EngineAppKeyValues>,
     fileStream: ReadStream,
-    saveExternalAssetId: (externalId: string) => Promise<void>,
+    callbacks: OnAssetAddedCallbacks,
   ): Promise<void>
 
   abstract onAssetRemoved(

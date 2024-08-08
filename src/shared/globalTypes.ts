@@ -44,6 +44,12 @@ export enum InitialModel {
   Llama = 'llama',
 }
 
+export enum AssetOnAppStatus {
+  Processing = 'processing',
+  Success = 'success',
+  Failed = 'failed',
+}
+
 export type SimplePrimitive = string | number | boolean
 
 export type PrismaTrxClient = Omit<

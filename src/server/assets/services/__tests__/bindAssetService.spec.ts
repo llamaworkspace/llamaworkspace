@@ -6,6 +6,7 @@ import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { AssetFactory } from '@/server/testing/factories/AssetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { AssetOnAppStatus } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, User, Workspace } from '@prisma/client'
 import { bindAssetQueue } from '../../queues/bindAssetQueue'
@@ -72,6 +73,8 @@ describe('bindAssetService', () => {
         },
       })
       expect(dbAfter).toHaveLength(1)
+      const assetOnApp = dbAfter[0]!
+      expect(assetOnApp.status).toEqual(AssetOnAppStatus.Processing)
     })
 
     it('calls PermissionsVerifier', async () => {

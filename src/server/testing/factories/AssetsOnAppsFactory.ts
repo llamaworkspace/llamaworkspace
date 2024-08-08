@@ -1,3 +1,4 @@
+import { AssetOnAppStatus } from '@/shared/globalTypes'
 import type { AssetsOnApps, PrismaClient } from '@prisma/client'
 import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
@@ -7,7 +8,10 @@ type AssetsOnAppsFactoryFields = {
 } & Partial<AssetsOnApps>
 
 const generateDefaults = () => {
-  return generateBaseForDefaults()
+  return {
+    ...generateBaseForDefaults(),
+    status: AssetOnAppStatus.Success,
+  }
 }
 
 export const AssetsOnAppsFactory = {

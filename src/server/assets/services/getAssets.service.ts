@@ -41,5 +41,8 @@ export async function getAssetsService(
 
   return await prisma.asset.findMany({
     where: scopeAssetByWorkspace(baseWhere, workspaceId),
+    include: {
+      assetsOnApps: true,
+    },
   })
 }

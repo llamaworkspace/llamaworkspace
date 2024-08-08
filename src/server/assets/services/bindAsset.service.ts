@@ -2,7 +2,10 @@ import { AssetUploadStatus } from '@/components/assets/assetTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import {
+  AssetOnAppStatus,
+  type PrismaClientOrTrxClient,
+} from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { TRPCError } from '@trpc/server'
 import { scopeAssetByWorkspace } from '../assetUtils'
@@ -50,6 +53,7 @@ export const bindAssetService = async (
         data: {
           appId,
           assetId,
+          status: AssetOnAppStatus.Processing,
         },
       })
       await bindAssetQueue.enqueue('bindAsset', {
