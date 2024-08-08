@@ -1,6 +1,6 @@
 import { env } from '@/env.mjs'
 import { ensureError } from '@/lib/utils'
-import { FetchError } from '@/shared/globalTypes'
+import type { FetchError } from '@/shared/globalTypes'
 import type { z, ZodType } from 'zod'
 
 type PayloadType<T extends ZodType> = z.infer<T>
