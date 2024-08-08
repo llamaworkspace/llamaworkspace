@@ -60,9 +60,23 @@ jobs:
             fi
           fi
 
-      - name: Stop if version is not higher
-        if: env.VERSION_HIGHER == 'false'
+      - name: Check if Docker image exists
+        id: check_image
+        run: |
+          IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/llamaworkspace/tags/${{ env.VERSION }})
+          if [ "$IMAGE_EXISTS" -eq 200 ]; then
+            echo "IMAGE_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "IMAGE_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Stop if version is not higher or image already exists
+        if: env.VERSION_HIGHER == 'false' || env.IMAGE_EXISTS == 'true'
         run: exit 0
+
+      - name: Handle existing tag but missing image
+        if: env.VERSION_HIGHER == 'false' && env.IMAGE_EXISTS == 'false'
+        run: echo "Tag exists but image not pushed. Proceeding with build."
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
