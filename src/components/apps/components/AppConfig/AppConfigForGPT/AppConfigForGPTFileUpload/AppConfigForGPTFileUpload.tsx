@@ -2,7 +2,7 @@ import { useAppAssets } from '@/components/apps/appsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
 import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/apps/appConstants'
-import type { Asset } from '@prisma/client'
+import type { Asset, AssetsOnApps } from '@prisma/client'
 import { useState, type ChangeEvent } from 'react'
 import { AppConfigForGPTUploadedFile } from './AppConfigForGPTUploadedFile'
 import { useUploadFile } from './appConfigForGPTFileUploadHooks'
@@ -65,10 +65,12 @@ export const AppConfigForGPTFileUpload = ({
   )
 }
 
+type AssetWithAssetsOnApps = Asset & { assetsOnApps: AssetsOnApps[] }
+
 interface UploadableFilesProps {
   appId?: string
   uploadableFiles: Record<string, Asset>
-  uploadedFiles?: Asset[]
+  uploadedFiles?: AssetWithAssetsOnApps[]
 }
 
 const UploadedAndUploadingFiles = ({
@@ -90,6 +92,7 @@ const UploadedAndUploadingFiles = ({
                 appId={appId}
                 name={asset.originalName}
                 fileType={asset.extension.replace('.', '')}
+                processingStatus={assetOnApp.status}
                 failureMessage={assetOnApp.failureMessage}
               />
             )

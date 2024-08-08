@@ -1,5 +1,10 @@
 import { useUnbindAsset } from '@/components/assets/assetsHooks'
 import { useSuccessToast } from '@/components/ui/toastHooks'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { AssetOnAppStatus } from '@/shared/globalTypes'
@@ -14,7 +19,7 @@ interface UploadedFileProps {
   assetId?: string
   uploading?: boolean
   processingStatus?: string
-  failureMessage?: string
+  failureMessage?: string | null
 }
 
 enum State {
@@ -54,11 +59,11 @@ export const AppConfigForGPTUploadedFile = ({
         <div className="col-span-2">
           <span
             className={cn(
-              'rounded bg-fuchsia-200 px-1 py-0.5 text-xs font-bold uppercase text-fuchsia-700 ',
+              'rounded bg-fuchsia-200 px-1 py-0.5 text-[0.6rem] font-semibold uppercase text-fuchsia-700 ',
               uploading && 'opacity-50',
             )}
           >
-            {fileType}
+            {fileType.substring(0, 4)}
           </span>
         </div>
         <div
@@ -97,8 +102,15 @@ export const AppConfigForGPTUploadedFile = ({
             {state === State.Failed && (
               <>
                 <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />{' '}
-                <span className="text-zinc-500">Processing failed</span>
-                <span>{failureMessage}</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-help text-red-500">
+                      Processing failed
+                    </span>
+                  </TooltipTrigger>
+
+                  <TooltipContent>{failureMessage}</TooltipContent>
+                </Tooltip>
               </>
             )}
           </div>
@@ -110,8 +122,6 @@ export const AppConfigForGPTUploadedFile = ({
 
 const getDerivedState = (isUploading: boolean, processingStatus?: string) => {
   if (isUploading) return State.Uploading
-
-  return State.Failed
 
   if (processingStatus === AssetOnAppStatus.Processing.toString())
     return State.Processing
