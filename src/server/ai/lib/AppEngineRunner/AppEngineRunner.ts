@@ -162,7 +162,7 @@ export class AppEngineRunner {
     const externalId = assetOnApp.externalId
 
     if (!externalId) {
-      return
+      throw createHttpError(500, 'External id is missing')
     }
 
     const ctx = await this.generateAppScopedEngineContext(appId)
