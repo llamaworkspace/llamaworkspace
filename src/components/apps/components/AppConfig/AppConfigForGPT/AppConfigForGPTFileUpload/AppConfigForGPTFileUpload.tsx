@@ -86,6 +86,7 @@ const UploadedAndUploadingFiles = ({
               assetId={asset.id}
               appId={appId}
               name={asset.originalName}
+              fileType={asset.extension.replace('.', '')}
             />
           ))}
           {uploadableFiles && (
@@ -94,6 +95,7 @@ const UploadedAndUploadingFiles = ({
                 <AppConfigForGPTUploadedFile
                   key={appFile.id}
                   name={appFile.originalName}
+                  fileType={appFile.extension.replace('.', '')}
                   uploading
                 />
               ))}
