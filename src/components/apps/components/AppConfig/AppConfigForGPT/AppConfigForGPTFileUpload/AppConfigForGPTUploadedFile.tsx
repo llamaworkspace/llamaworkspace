@@ -75,7 +75,7 @@ export const AppConfigForGPTUploadedFile = ({
           {name}
         </div>
         <div className="col-span-1 flex justify-end">
-          {!uploading && (
+          {(state === State.Success || state === State.Failed) && (
             <XCircleIcon
               className="h-5 w-5 cursor-pointer rounded-full text-zinc-500 hover:text-red-500"
               onClick={() => void handleFileDelete()}
