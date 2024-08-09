@@ -1,6 +1,7 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import {
   AbstractAppEngine,
+  OnAssetAddedCallbacks,
   type AppEngineCallbacks,
   type AppEngineConfigParams,
   type AppEngineRunParams,
@@ -134,8 +135,9 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
   async onAssetAdded(
     ctx: AppEngineConfigParams<AppKeyValues>,
     uploadable: Uploadable,
-    saveExternalAssetId: (externalId: string) => Promise<void>,
+    callbacks: OnAssetAddedCallbacks,
   ) {
+    const { onSuccess, onFailure } = callbacks
     const { appId, aiProviders, appKeyValuesStore } = ctx
     const openaiProvider = aiProviders.openai
 
@@ -162,13 +164,18 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       await appKeyValuesStore.set('vectorStoreId', vectorStore.id)
     }
 
-    const { file } = await this.uploadAssetToVectorStore(
+    const { file, failureMessage } = await this.uploadAssetToVectorStore(
       openai,
       vectorStore.id,
       uploadable,
     )
 
-    await saveExternalAssetId(file.id)
+    if (!file) {
+      await onFailure(failureMessage ?? '')
+      return
+    }
+
+    await onSuccess(file.id)
   }
 
   async onAssetRemoved(
@@ -261,13 +268,28 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         file_id: file.id,
       })
 
-    if (vectorStoreUploadRes.status !== 'completed') {
-      throw createHttpError(500, 'Failed to upload asset to vector store')
+    if (vectorStoreUploadRes.status === 'completed') {
+      return {
+        file,
+        vectorStoreUpload: vectorStoreUploadRes,
+        failureMessage: null,
+      }
     }
-    return {
-      file,
-      vectorStoreUpload: vectorStoreUploadRes,
+
+    await openai.files.del(file.id)
+
+    if (vectorStoreUploadRes.status === 'failed') {
+      return {
+        file: null,
+        vectorStoreUpload: vectorStoreUploadRes,
+        failureMessage: vectorStoreUploadRes.last_error?.message,
+      }
     }
+
+    throw createHttpError(
+      500,
+      `Failed to upload asset to vector store. Status: ${vectorStoreUploadRes.status}`,
+    )
   }
 
   private getTypedProviderKVsOrThrow(providerKVs: Record<string, string>) {

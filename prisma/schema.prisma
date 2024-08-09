@@ -171,7 +171,9 @@ model AssetsOnApps {
     appId           String
     asset           Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
     app             App       @relation(fields: [appId], references: [id], onDelete: Cascade)
+    status          String
     externalId      String?
+    failureMessage  String?
     markAsDeletedAt DateTime?
     createdAt       DateTime  @default(now())
     updatedAt       DateTime  @updatedAt

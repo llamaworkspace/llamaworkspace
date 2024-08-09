@@ -3,9 +3,11 @@ import {
   useCreateFileUploadPresignedUrl,
   useNotifyAssetUploadSuccess,
 } from '@/components/assets/assetsHooks'
+import { useErrorHandler } from '@/components/global/errorHandlingHooks'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { api } from '@/lib/api'
 import type { Asset } from '@prisma/client'
+import ky from 'ky'
 import { useCallback } from 'react'
 
 export const useUploadFile = (
@@ -20,6 +22,7 @@ export const useUploadFile = (
   const { mutateAsync: bindAsset } = useBindAsset()
   const utils = api.useContext()
   const { data: workspace } = useCurrentWorkspace()
+  const errorHandler = useErrorHandler()
 
   return useCallback(
     async (file: File) => {
@@ -39,19 +42,19 @@ export const useUploadFile = (
       })
       formData.append('file', file)
 
-      const response = await fetch(presignedUrl.url, {
-        method: 'POST',
-        body: formData,
-      })
+      try {
+        await ky(presignedUrl.url, {
+          method: 'POST',
+          body: formData,
+        })
 
-      if (response.ok) {
         await notifyAssetUploadSuccess({ assetId: asset.id })
 
         onFileUploaded(file.name, asset)
         await bindAsset({ assetId: asset.id, appId })
         await utils.apps.getAppAssets.invalidate()
-      } else {
-        throw new Error('File upload filed')
+      } catch (error) {
+        errorHandler('Failed to upload file')(error)
       }
     },
     [
@@ -63,6 +66,7 @@ export const useUploadFile = (
       appId,
       bindAsset,
       utils.apps.getAppAssets,
+      errorHandler,
     ],
   )
 }

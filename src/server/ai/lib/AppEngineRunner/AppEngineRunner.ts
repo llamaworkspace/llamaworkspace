@@ -8,8 +8,9 @@ import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { saveTokenCountService } from '@/server/chats/services/saveTokenCount.service'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { errorLogger } from '@/shared/errors/errorLogger'
+import { AssetOnAppStatus } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { PrismaClient } from '@prisma/client'
+import type { Prisma, PrismaClient } from '@prisma/client'
 import createHttpError from 'http-errors'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
 import type {
@@ -116,20 +117,34 @@ export class AppEngineRunner {
 
     const readStream = createReadStreamSafe(filePath)
 
-    let hasSaveExternalAssetIdCallbackBeenCalled = false
+    let onSuccessHasBeenCalled = false
+    let onFailureHasBeenCalled = false
 
-    const saveExternalAssetId = async (externalId: string) => {
-      hasSaveExternalAssetIdCallbackBeenCalled = true
+    const onSuccess = async (externalId: string) => {
+      if (onFailureHasBeenCalled) return
+      onSuccessHasBeenCalled = true
       await this.saveExternalAssetId(assetOnApp.id, externalId)
+      await this.updateAssetOnApp(assetOnApp.id, {
+        status: AssetOnAppStatus.Success,
+      })
     }
-    await engine.onAssetAdded(ctx, readStream, saveExternalAssetId)
+    const onFailure = async (failureMessage: string) => {
+      if (onSuccessHasBeenCalled) return
+      onFailureHasBeenCalled = true
 
+      await this.updateAssetOnApp(assetOnApp.id, {
+        status: AssetOnAppStatus.Failed,
+        failureMessage,
+      })
+    }
+
+    await engine.onAssetAdded(ctx, readStream, { onSuccess, onFailure })
     await deleteLocalFileCopy()
 
-    if (!hasSaveExternalAssetIdCallbackBeenCalled) {
+    if (!onSuccessHasBeenCalled && !onFailureHasBeenCalled) {
       throw createHttpError(
         500,
-        `saveExternalAssetId callback was not called on engine when attaching an asset. Engine: ${engine.getName()}`,
+        `a success or failure callback should have been called on the engine when attaching an asset. Engine: ${engine.getName()}`,
       )
     }
   }
@@ -391,6 +406,18 @@ export class AppEngineRunner {
   ) {
     await engine.getProviderKeyValuesSchema().parseAsync(ctx.providerKVs)
     await engine.getAppKeyValuesSchema().parseAsync(ctx.appKeyValuesStore)
+  }
+
+  private async updateAssetOnApp(
+    assetOnAppId: string,
+    data: Prisma.AssetsOnAppsUpdateInput,
+  ) {
+    return await this.prisma.assetsOnApps.update({
+      where: {
+        id: assetOnAppId,
+      },
+      data,
+    })
   }
 
   private getCallbacks(targetAssistantMessageId: string) {
