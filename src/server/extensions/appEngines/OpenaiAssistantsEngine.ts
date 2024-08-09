@@ -1,10 +1,10 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import {
   AbstractAppEngine,
-  OnAssetAddedCallbacks,
   type AppEngineCallbacks,
   type AppEngineConfigParams,
   type AppEngineRunParams,
+  type OnAssetAddedCallbacks,
 } from '@/server/ai/lib/AbstractAppEngine'
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import createHttpError from 'http-errors'
@@ -267,7 +267,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       await openai.beta.vectorStores.files.createAndPoll(vectorStoreId, {
         file_id: file.id,
       })
-
+    console.log('vectorStoreUploadRes', vectorStoreUploadRes)
     if (vectorStoreUploadRes.status === 'completed') {
       return {
         file,
