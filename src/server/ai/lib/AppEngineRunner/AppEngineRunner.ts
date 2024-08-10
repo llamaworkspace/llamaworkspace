@@ -1,5 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
-import { createReadStreamSafe } from '@/lib/backend/nodeUtils'
+import { fsCreateReadStreamSafe } from '@/lib/backend/nodeUtils'
 import { getAppByIdService } from '@/server/apps/services/getAppById.service'
 import { downloadAssetFromS3Service } from '@/server/assets/services/downloadAssetFromS3.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
@@ -115,7 +115,7 @@ export class AppEngineRunner {
     const { filePath, deleteFile: deleteLocalFileCopy } =
       await this.pullAssetFromRemote(assetId)
 
-    const readStream = createReadStreamSafe(filePath)
+    const readStream = fsCreateReadStreamSafe(filePath)
 
     let onSuccessHasBeenCalled = false
     let onFailureHasBeenCalled = false
