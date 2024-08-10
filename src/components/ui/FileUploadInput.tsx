@@ -13,13 +13,17 @@ const FileUploadInput = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <span className="relative inline-block overflow-hidden">
-        <Button>{buttonText}</Button>
-        <input
-          className="absolute inset-0 cursor-pointer opacity-0"
-          ref={mergeRefs([internalRef, ref])}
-          {...props}
-          type="file"
-        />
+        <Button className="cursor-pointer" asChild>
+          <span>
+            <span className="cursor-pointer">{buttonText}</span>
+            <input
+              className="absolute inset-0 cursor-pointer opacity-0"
+              ref={mergeRefs([internalRef, ref])}
+              {...props}
+              type="file"
+            />
+          </span>
+        </Button>
       </span>
     )
   },
