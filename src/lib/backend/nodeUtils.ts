@@ -8,7 +8,7 @@ import path from 'path'
 // It also prevents TS error: lint TP1004 fs.createReadStream(???*0*) is very dynamic
 // which is caused by using the method too loosely, with a dynamic path.
 
-export const createReadStreamSafe = (filePath: string) => {
+export const fsCreateReadStreamSafe = (filePath: string) => {
   // Define a base directory to prevent path traversal
   const baseDir = path.resolve(process.cwd(), 'tmp')
 

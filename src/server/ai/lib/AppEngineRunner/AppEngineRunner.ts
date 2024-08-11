@@ -1,5 +1,6 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
-import { createReadStreamSafe } from '@/lib/backend/nodeUtils'
+import { fsCreateReadStreamSafe } from '@/lib/backend/nodeUtils'
+import { ensureError } from '@/lib/utils'
 import { getAppByIdService } from '@/server/apps/services/getAppById.service'
 import { downloadAssetFromS3Service } from '@/server/assets/services/downloadAssetFromS3.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
@@ -115,7 +116,7 @@ export class AppEngineRunner {
     const { filePath, deleteFile: deleteLocalFileCopy } =
       await this.pullAssetFromRemote(assetId)
 
-    const readStream = createReadStreamSafe(filePath)
+    const readStream = fsCreateReadStreamSafe(filePath)
 
     let onSuccessHasBeenCalled = false
     let onFailureHasBeenCalled = false
@@ -138,7 +139,16 @@ export class AppEngineRunner {
       })
     }
 
-    await engine.onAssetAdded(ctx, readStream, { onSuccess, onFailure })
+    try {
+      await engine.onAssetAdded(ctx, readStream, { onSuccess, onFailure })
+    } catch (_error) {
+      const error = ensureError(_error)
+      await this.updateAssetOnApp(assetOnApp.id, {
+        status: AssetOnAppStatus.Failed,
+        failureMessage: error.message,
+      })
+    }
+
     await deleteLocalFileCopy()
 
     if (!onSuccessHasBeenCalled && !onFailureHasBeenCalled) {
