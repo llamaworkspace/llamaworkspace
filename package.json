@@ -110,7 +110,10 @@
     "tsx": "^4.16.5",
     "underscore": "^1.13.6",
     "usehooks-ts": "^2.15.1",
-    "zod": "^3.22.3"
+    "zod": "^3.22.3",
+    "@trigger.dev/sdk": "^2.3.19",
+    "@trigger.dev/nextjs": "^2.3.19",
+    "@trigger.dev/react": "^2.3.19"
   },
   "devDependencies": {
     "@47ng/cloak": "^1.1.0",
@@ -160,5 +163,8 @@
     "*.{js,jsx,ts,tsx,mjs}": [
       "prettier --write"
     ]
+  },
+  "trigger.dev": {
+    "endpointId": "llama-workspace-HaV2"
   }
 }
