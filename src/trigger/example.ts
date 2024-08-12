@@ -5,7 +5,7 @@ export const helloWorldTask = task({
   run: async (payload: any, { ctx }) => {
     logger.log('Hello, world!', { payload, ctx })
 
-    await wait.for({ seconds: 5 })
+    await wait.for({ seconds: 1 })
 
     return {
       message: 'Hello, world!',
