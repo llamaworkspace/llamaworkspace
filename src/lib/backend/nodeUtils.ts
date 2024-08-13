@@ -1,4 +1,4 @@
-import fs from 'fs'
+import { createReadStream } from 'fs'
 import { access } from 'fs/promises'
 import path from 'path'
 
@@ -8,7 +8,7 @@ import path from 'path'
 // It also prevents TS error: lint TP1004 fs.createReadStream(???*0*) is very dynamic
 // which is caused by using the method too loosely, with a dynamic path.
 
-export const fsCreateReadStreamSafe = (filePath: string) => {
+export const createReadStreamSafe = async (filePath: string) => {
   // Define a base directory to prevent path traversal
   const baseDir = path.resolve(process.cwd(), 'tmp')
 
@@ -20,13 +20,15 @@ export const fsCreateReadStreamSafe = (filePath: string) => {
     throw new Error('Invalid file path')
   }
 
-  // Check if the file exists
-  if (!fs.existsSync(fullPath)) {
+  try {
+    // Check if the file exists
+    await access(fullPath)
+
+    // Create and return the read stream
+    return createReadStream(fullPath)
+  } catch (err) {
     throw new Error('File does not exist')
   }
-
-  // Create and return the read stream
-  return fs.createReadStream(fullPath)
 }
 
 export const fileOrFolderExists = async (filePath: string) => {
