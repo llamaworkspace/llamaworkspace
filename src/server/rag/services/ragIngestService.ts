@@ -1,4 +1,7 @@
 import { readFileSafeAsUtf8 } from '@/lib/backend/nodeUtils'
+import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
+import { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
 import { Promise } from 'bluebird'
 import { insertEmbeddingService } from './insertEmbeddingService'
@@ -8,13 +11,20 @@ interface RagIngestPayload {
   filePath: string
 }
 
-export const ragIngestService = async (payload: RagIngestPayload) => {
-  const { filePath, assetId } = payload
-  const text = await loadFile(filePath)
+export const ragIngestService = async (
+  prisma: PrismaClientOrTrxClient,
+  uowContext: UserOnWorkspaceContext,
+  payload: RagIngestPayload,
+) => {
+  return await prismaAsTrx(prisma, async (prisma) => {
+    const { userId, workspaceId } = uowContext
+    const { filePath, assetId } = payload
+    const text = await loadFile(filePath)
 
-  const splitted = await splitText(text)
-  await Promise.map(splitted, async (item) => {
-    await insertEmbeddingService(assetId, item.pageContent)
+    const splitted = await splitText(text)
+    await Promise.map(splitted, async (item) => {
+      await insertEmbeddingService(assetId, item.pageContent)
+    })
   })
 }
 
