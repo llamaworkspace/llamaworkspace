@@ -9,11 +9,11 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { AssetOnAppStatus } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, User, Workspace } from '@prisma/client'
-import { bindAssetQueue } from '../../queues/bindAssetQueue'
+import { bindAssetToAppQueue } from '../../queues/bindAssetToAppQueue'
 import { bindAssetToAppService } from '../bindAssetToApp.service'
 
-jest.mock('@/server/assets/queues/bindAssetQueue.ts', () => {
-  return { bindAssetQueue: { enqueue: jest.fn() } }
+jest.mock('@/server/assets/queues/bindAssetToAppQueue.ts', () => {
+  return { bindAssetToAppQueue: { enqueue: jest.fn() } }
 })
 
 const subject = async (
@@ -101,7 +101,7 @@ describe('bindAssetToAppService', () => {
       },
     })
     /* eslint-disable-next-line @typescript-eslint/unbound-method*/
-    expect(bindAssetQueue.enqueue).toHaveBeenCalledWith('bindAssetToApp', {
+    expect(bindAssetToAppQueue.enqueue).toHaveBeenCalledWith('bindAssetToApp', {
       userId: user.id,
       assetOnAppId: assetOnApp.id,
     })

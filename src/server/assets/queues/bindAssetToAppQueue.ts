@@ -13,7 +13,7 @@ const zPayload = z.object({
 
 type Payload = z.infer<typeof zPayload>
 
-class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
+class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
   readonly queueName = 'bindAssetToApp'
 
   constructor(enqueueUrl?: string) {
@@ -53,4 +53,4 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
   }
 }
 
-export const bindAssetQueue = new BindAssetQueue()
+export const bindAssetToAppQueue = new BindAssetToAppQueue()

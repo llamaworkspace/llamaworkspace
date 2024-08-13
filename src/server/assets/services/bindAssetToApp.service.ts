@@ -9,7 +9,7 @@ import {
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { TRPCError } from '@trpc/server'
 import { scopeAssetByWorkspace } from '../assetUtils'
-import { bindAssetQueue } from '../queues/bindAssetQueue'
+import { bindAssetToAppQueue } from '../queues/bindAssetToAppQueue'
 
 interface BindAssetToAppPayload {
   assetId: string
@@ -57,7 +57,7 @@ export const bindAssetToAppService = async (
           status: AssetOnAppStatus.Processing,
         },
       })
-      await bindAssetQueue.enqueue('bindAssetToApp', {
+      await bindAssetToAppQueue.enqueue('bindAssetToApp', {
         userId,
         assetOnAppId: assetOnApp.id,
       })

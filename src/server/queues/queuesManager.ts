@@ -1,12 +1,12 @@
 import { sendEmailQueue } from '@/server/messaging/queues/sendEmailQueue'
 import { createAppQueue } from '../apps/queues/createAppQueue'
 import { deleteAppQueue } from '../apps/queues/deleteAppQueue'
-import { bindAssetQueue } from '../assets/queues/bindAssetQueue'
+import { bindAssetToAppQueue } from '../assets/queues/bindAssetToAppQueue'
 import { unbindAssetQueue } from '../assets/queues/unbindAssetQueue'
 
 export const queues = [
   sendEmailQueue,
-  bindAssetQueue,
+  bindAssetToAppQueue,
   unbindAssetQueue,
   deleteAppQueue,
   createAppQueue,
