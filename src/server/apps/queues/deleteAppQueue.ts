@@ -49,7 +49,7 @@ class DeleteAppQueue extends AbstractQueueManager<typeof zPayload> {
       const appEngineRunner = new AppEngineRunner(prisma, context, engines)
 
       for (const assetOnApp of app.assetsOnApps) {
-        await appEngineRunner.onAssetRemoved(payload.appId, assetOnApp.assetId)
+        await appEngineRunner.onAssetRemoved(assetOnApp.id)
       }
 
       await appEngineRunner.onAppDeleted(payload.appId)
