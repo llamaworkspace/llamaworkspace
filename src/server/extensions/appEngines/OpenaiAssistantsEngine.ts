@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { createReadStreamSafe } from '@/lib/backend/nodeUtils'
 import {
   AbstractAppEngine,
   type AppEngineCallbacks,
@@ -134,7 +135,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
   async onAssetAdded(
     ctx: AppEngineConfigParams<AppKeyValues>,
-    uploadable: Uploadable,
+    filePath: string,
     callbacks: OnAssetAddedCallbacks,
   ) {
     const { onSuccess, onFailure } = callbacks
@@ -164,10 +165,12 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       await appKeyValuesStore.set('vectorStoreId', vectorStore.id)
     }
 
+    const readStream = await createReadStreamSafe(filePath)
+
     const { file, failureMessage } = await this.uploadAssetToVectorStore(
       openai,
       vectorStore.id,
-      uploadable,
+      readStream,
     )
 
     if (!file) {

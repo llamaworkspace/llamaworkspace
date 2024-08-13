@@ -1,7 +1,6 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { SimplePrimitive } from '@/shared/globalTypes'
 import type { Message } from '@prisma/client'
-import type { ReadStream } from 'fs'
 import type { z } from 'zod'
 
 export type EngineAppKeyValues = Record<string, SimplePrimitive>
@@ -67,7 +66,7 @@ export abstract class AbstractAppEngine {
 
   abstract onAssetAdded(
     ctx: AppEngineConfigParams<EngineAppKeyValues>,
-    fileStream: ReadStream,
+    filePath: string,
     callbacks: OnAssetAddedCallbacks,
   ): Promise<void>
 
