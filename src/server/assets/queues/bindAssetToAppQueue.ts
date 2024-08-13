@@ -31,7 +31,6 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
       },
       include: {
         app: true,
-        asset: true,
       },
     })
 

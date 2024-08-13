@@ -8,11 +8,11 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, User, Workspace } from '@prisma/client'
-import { unbindAssetQueue } from '../../queues/unbindAssetQueue'
+import { unbindAssetFromAppQueue } from '../../queues/unbindAssetFromAppQueue'
 import { unbindAssetService } from '../unbindAsset.service'
 
-jest.mock('@/server/assets/queues/unbindAssetQueue.ts', () => {
-  return { unbindAssetQueue: { enqueue: jest.fn() } }
+jest.mock('@/server/assets/queues/unbindAssetFromAppQueue.ts', () => {
+  return { unbindAssetFromAppQueue: { enqueue: jest.fn() } }
 })
 
 const subject = async (
@@ -96,11 +96,21 @@ describe('unbindAssetService', () => {
 
   it('enqueues the asset binding', async () => {
     await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
-    /* eslint-disable-next-line @typescript-eslint/unbound-method*/
-    expect(unbindAssetQueue.enqueue).toHaveBeenCalledWith('unbindAsset', {
-      userId: user.id,
-      appId: app.id,
-      assetId: asset.id,
+
+    const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
+      where: {
+        assetId: asset.id,
+        appId: app.id,
+      },
     })
+
+    /* eslint-disable-next-line @typescript-eslint/unbound-method*/
+    expect(unbindAssetFromAppQueue.enqueue).toHaveBeenCalledWith(
+      'unbindAssetFromApp',
+      {
+        userId: user.id,
+        assetOnAppId: assetOnApp.id,
+      },
+    )
   })
 })

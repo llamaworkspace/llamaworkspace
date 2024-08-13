@@ -148,16 +148,18 @@ export class AppEngineRunner {
     }
   }
 
-  async onAssetRemoved(appId: string, assetId: string) {
+  async onAssetRemoved(assetOnAppId: string) {
     const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
       where: {
-        assetId,
-        appId,
+        id: assetOnAppId,
         markAsDeletedAt: {
           not: null,
         },
       },
     })
+
+    const appId = assetOnApp.appId
+    const assetId = assetOnApp.assetId
     const externalId = assetOnApp.externalId
 
     if (!externalId) {
