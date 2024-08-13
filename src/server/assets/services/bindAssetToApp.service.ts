@@ -11,15 +11,15 @@ import { TRPCError } from '@trpc/server'
 import { scopeAssetByWorkspace } from '../assetUtils'
 import { bindAssetQueue } from '../queues/bindAssetQueue'
 
-interface BindAssetPayload {
+interface BindAssetToAppPayload {
   assetId: string
   appId: string
 }
 
-export const bindAssetService = async (
+export const bindAssetToAppService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  payload: BindAssetPayload,
+  payload: BindAssetToAppPayload,
 ) => {
   const { workspaceId, userId } = uowContext
   const { assetId, appId } = payload
@@ -57,7 +57,7 @@ export const bindAssetService = async (
           status: AssetOnAppStatus.Processing,
         },
       })
-      await bindAssetQueue.enqueue('bindAsset', {
+      await bindAssetQueue.enqueue('bindAssetToApp', {
         userId,
         assetOnAppId: assetOnApp.id,
       })

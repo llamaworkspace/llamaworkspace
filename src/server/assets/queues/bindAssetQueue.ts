@@ -14,7 +14,7 @@ const zPayload = z.object({
 type Payload = z.infer<typeof zPayload>
 
 class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
-  readonly queueName = 'bindAsset'
+  readonly queueName = 'bindAssetToApp'
 
   constructor(enqueueUrl?: string) {
     super(zPayload, { enqueueUrl })
