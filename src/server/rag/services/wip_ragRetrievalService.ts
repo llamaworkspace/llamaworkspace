@@ -2,17 +2,7 @@ import { prisma } from '@/server/db'
 import { embed } from 'ai'
 import { openaiClient } from './wip_openaiClient'
 
-interface RagIngestPayload {
-  filePath: string
-}
-
-export const ragRetrievalService = async (text: string) => {
-  const result = await four_retrieve(text)
-
-  return result
-}
-
-const four_retrieve = async (text: string) => {
+export const ragRetrievalService = async (assetId: string, text: string) => {
   const { embedding: targetEmbedding } = await embed({
     model: openaiClient.embedding('text-embedding-3-large', {
       dimensions: 1024,
@@ -22,8 +12,9 @@ const four_retrieve = async (text: string) => {
 
   const res = (await prisma.$queryRaw`
     SELECT id, contents
-    FROM "OtherEmbedding"
+    FROM "AssetEmbedding"
     WHERE 1 - (embedding <=> ${targetEmbedding}::real[]) >= 0.3
+    AND "assetId" = ${assetId}
     LIMIT 5;
   `) as { id: string; contents: string }[]
 

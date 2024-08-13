@@ -13,7 +13,7 @@ export const insertEmbeddingService = async (
     }),
     value,
   })
-  console.log(1111, assetId)
+
   const res = await prisma.$queryRaw`
     INSERT INTO "AssetEmbedding" ("id", "assetId", "contents", "embedding")
     VALUES (

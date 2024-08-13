@@ -1,7 +1,10 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
+import { prisma } from '@/server/db'
 import { ragIngestService } from '@/server/rag/services/ragIngestService'
+import { ragRetrievalService } from '@/server/rag/services/wip_ragRetrievalService'
 import { streamText } from 'ai'
+import { Promise } from 'bluebird'
 import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
@@ -38,6 +41,29 @@ export class DefaultAppEngine extends AbstractAppEngine {
 
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
+    // EXTRA HERE
+    const assetsOnApps = await prisma.assetsOnApps.findMany({
+      where: {
+        appId: ctx.appId,
+        markAsDeletedAt: null,
+      },
+    })
+
+    const assetIds = assetsOnApps.map((item) => item.assetId)
+
+    const lastMessage = messages[messages.length - 1]!
+
+    let ragItems = await Promise.reduce(
+      assetIds,
+      async (memo: string[], assetId: string) => {
+        return [
+          ...memo,
+          ...(await ragRetrievalService(assetId, lastMessage?.content)),
+        ]
+      },
+      [],
+    )
+
     if (!provider) {
       throw createHttpError(500, `Provider ${providerSlug} not found`)
     }
@@ -51,6 +77,13 @@ export class DefaultAppEngine extends AbstractAppEngine {
       isUsageCalled = true
       await callbacks.usage(promptTokens, completionTokens)
     }
+
+    messages.unshift({
+      role: 'system',
+      content: `You answer questions based on the context provided next. It is very important to Say "I dont know" if you are unsure, it cannot be answered with the context or if the context is empty. Also if the context explicitly reads "EMPTY". Use up to three sentences and keep the answer concise. Always respond in english.
+          Context: Context: ${ragItems.concat('\n')}
+          `,
+    })
 
     await provider.executeAsStream(
       {
