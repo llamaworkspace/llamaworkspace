@@ -9,14 +9,13 @@ import { z } from 'zod'
 
 const zPayload = z.object({
   userId: z.string(),
-  appId: z.string(),
-  assetId: z.string(),
+  assetOnAppId: z.string(),
 })
 
 type Payload = z.infer<typeof zPayload>
 
-class UnbindAssetQueue extends AbstractQueueManager<typeof zPayload> {
-  readonly queueName = 'unbindAsset'
+class UnbindAssetFromAppQueue extends AbstractQueueManager<typeof zPayload> {
+  readonly queueName = 'unbindAssetFromApp'
 
   constructor(enqueueUrl?: string) {
     super(zPayload, { enqueueUrl })
@@ -26,30 +25,41 @@ class UnbindAssetQueue extends AbstractQueueManager<typeof zPayload> {
     const engines = [new DefaultAppEngine(), ...enginesRegistry]
 
     return prismaAsTrx(prisma, async (prismaAsTrx) => {
-      const app = await prismaAsTrx.app.findFirstOrThrow({
+      const assetOnAppId = payload.assetOnAppId
+
+      const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
         where: {
-          id: payload.appId,
+          id: assetOnAppId,
+        },
+        include: {
+          app: true,
+        },
+      })
+
+      const app = await prisma.app.findFirstOrThrow({
+        where: {
+          id: assetOnApp.appId,
           markAsDeletedAt: null,
         },
       })
 
       const context = await createUserOnWorkspaceContext(
-        prismaAsTrx,
+        prisma,
         app.workspaceId,
         payload.userId,
       )
 
       const appEngineRunner = new AppEngineRunner(prisma, context, engines)
 
-      await appEngineRunner.onAssetRemoved(payload.appId, payload.assetId)
+      await appEngineRunner.onAssetRemoved(assetOnApp.id)
       await prismaAsTrx.assetsOnApps.deleteMany({
         where: {
-          appId: payload.appId,
-          assetId: payload.assetId,
+          appId: assetOnApp.appId,
+          assetId: assetOnApp.assetId,
         },
       })
     })
   }
 }
 
-export const unbindAssetQueue = new UnbindAssetQueue()
+export const unbindAssetFromAppQueue = new UnbindAssetFromAppQueue()

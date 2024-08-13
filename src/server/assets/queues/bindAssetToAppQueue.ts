@@ -8,14 +8,13 @@ import { z } from 'zod'
 
 const zPayload = z.object({
   userId: z.string(),
-  appId: z.string(),
-  assetId: z.string(),
+  assetOnAppId: z.string(),
 })
 
 type Payload = z.infer<typeof zPayload>
 
-class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
-  readonly queueName = 'bindAsset'
+class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
+  readonly queueName = 'bindAssetToApp'
 
   constructor(enqueueUrl?: string) {
     super(zPayload, { enqueueUrl })
@@ -24,9 +23,20 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
   protected async handle(action: string, payload: Payload) {
     const engines = [new DefaultAppEngine(), ...enginesRegistry]
 
+    const assetOnAppId = payload.assetOnAppId
+
+    const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
+      where: {
+        id: assetOnAppId,
+      },
+      include: {
+        app: true,
+      },
+    })
+
     const app = await prisma.app.findFirstOrThrow({
       where: {
-        id: payload.appId,
+        id: assetOnApp.appId,
         markAsDeletedAt: null,
       },
     })
@@ -38,8 +48,8 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
     )
 
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
-    await appEngineRunner.onAssetAdded(payload.appId, payload.assetId)
+    await appEngineRunner.onAssetAdded(assetOnAppId)
   }
 }
 
-export const bindAssetQueue = new BindAssetQueue()
+export const bindAssetToAppQueue = new BindAssetToAppQueue()

@@ -4,7 +4,7 @@ import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopeAssetByWorkspace } from '../assetUtils'
-import { unbindAssetQueue } from '../queues/unbindAssetQueue'
+import { unbindAssetFromAppQueue } from '../queues/unbindAssetFromAppQueue'
 
 interface BindAssetPayload {
   assetId: string
@@ -30,7 +30,7 @@ export const unbindAssetService = async (
       where: scopeAssetByWorkspace({ id: assetId }, workspaceId),
     })
 
-    await prisma.assetsOnApps.updateMany({
+    const assetsOnApps = await prisma.assetsOnApps.updateMany({
       where: {
         assetId,
         appId,
@@ -40,10 +40,16 @@ export const unbindAssetService = async (
       },
     })
 
-    await unbindAssetQueue.enqueue('unbindAsset', {
+    const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
+      where: {
+        assetId,
+        appId,
+      },
+    })
+
+    await unbindAssetFromAppQueue.enqueue('unbindAssetFromApp', {
       userId,
-      appId,
-      assetId,
+      assetOnAppId: assetOnApp.id,
     })
   })
 }

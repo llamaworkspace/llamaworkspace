@@ -99,14 +99,16 @@ export class AppEngineRunner {
     await engine.onAppDeleted(ctx)
   }
 
-  async onAssetAdded(appId: string, assetId: string) {
-    const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
+  async onAssetAdded(assetOnAppId: string) {
+    const assetOnApp = await this.prisma.assetsOnApps.findUniqueOrThrow({
       where: {
-        assetId,
-        appId: appId,
+        id: assetOnAppId,
         markAsDeletedAt: null,
       },
     })
+
+    const appId = assetOnApp.appId
+    const assetId = assetOnApp.assetId
 
     const engine = await this.getEngine(appId)
     const ctx = await this.generateAppScopedEngineContext(appId)
@@ -120,8 +122,8 @@ export class AppEngineRunner {
     const onSuccess = async (externalId: string) => {
       if (onFailureHasBeenCalled) return
       onSuccessHasBeenCalled = true
-      await this.saveExternalAssetId(assetOnApp.id, externalId)
-      await this.updateAssetOnApp(assetOnApp.id, {
+      await this.saveExternalAssetId(assetOnAppId, externalId)
+      await this.updateAssetOnApp(assetOnAppId, {
         status: AssetOnAppStatus.Success,
       })
     }
@@ -129,7 +131,7 @@ export class AppEngineRunner {
       if (onSuccessHasBeenCalled) return
       onFailureHasBeenCalled = true
 
-      await this.updateAssetOnApp(assetOnApp.id, {
+      await this.updateAssetOnApp(assetOnAppId, {
         status: AssetOnAppStatus.Failed,
         failureMessage,
       })
@@ -150,16 +152,18 @@ export class AppEngineRunner {
     }
   }
 
-  async onAssetRemoved(appId: string, assetId: string) {
+  async onAssetRemoved(assetOnAppId: string) {
     const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
       where: {
-        assetId,
-        appId,
+        id: assetOnAppId,
         markAsDeletedAt: {
           not: null,
         },
       },
     })
+
+    const appId = assetOnApp.appId
+    const assetId = assetOnApp.assetId
     const externalId = assetOnApp.externalId
 
     if (!externalId) {
