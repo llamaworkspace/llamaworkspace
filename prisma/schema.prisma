@@ -151,7 +151,7 @@ model AppsOnUsers {
 }
 
 model Asset {
-    id                String         @id @default(cuid())
+    id                String           @id @default(cuid())
     workspaceId       String
     uploadStatus      String
     originalName      String
@@ -159,10 +159,19 @@ model Asset {
     path              String
     markedAsDeletedAt DateTime?
     remoteDeletedAt   DateTime?
-    createdAt         DateTime       @default(now())
-    updatedAt         DateTime       @updatedAt
-    workspace         Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    workspace         Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     assetsOnApps      AssetsOnApps[]
+    embeddings        AssetEmbedding[]
+}
+
+model AssetEmbedding {
+    id        String                      @id @default(cuid())
+    assetId   String
+    contents  String
+    embedding Unsupported("vector(1024)")
+    asset     Asset                       @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
 
 model AssetsOnApps {

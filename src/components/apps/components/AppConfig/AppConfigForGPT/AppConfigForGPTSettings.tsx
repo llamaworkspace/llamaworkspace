@@ -36,7 +36,9 @@ export const AppConfigForGPTSettings = ({
     }
   }, [focusQueryStringEl, disabled])
 
-  const isAssistantEngineType = app?.engineType === AppEngineType.Assistant
+  const isAssistantEngineType =
+    app?.engineType === AppEngineType.Assistant ||
+    app?.engineType === AppEngineType.Default
 
   const profileUrl = `/w/${workspace?.id}/profile`
 

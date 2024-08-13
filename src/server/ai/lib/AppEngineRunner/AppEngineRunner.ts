@@ -135,7 +135,11 @@ export class AppEngineRunner {
       })
     }
 
-    await engine.onAssetAdded(ctx, filePath, { onSuccess, onFailure })
+    await engine.onAssetAdded(
+      ctx,
+      { filePath, assetId },
+      { onSuccess, onFailure },
+    )
     await deleteLocalFileCopy()
 
     if (!onSuccessHasBeenCalled && !onFailureHasBeenCalled) {

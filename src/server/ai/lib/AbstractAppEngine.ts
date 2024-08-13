@@ -36,6 +36,11 @@ export interface AppEngineConfigParams<T> {
   readonly appKeyValuesStore: AppKeyValuesStoreParams<T>
 }
 
+export interface AppEngineAssetParams {
+  readonly assetId: string
+  readonly filePath: string
+}
+
 export interface AppEngineCallbacks {
   pushText: (text: string) => Promise<void>
   usage: (requestTokens: number, responseTokens: number) => void | Promise<void>
@@ -66,7 +71,7 @@ export abstract class AbstractAppEngine {
 
   abstract onAssetAdded(
     ctx: AppEngineConfigParams<EngineAppKeyValues>,
-    filePath: string,
+    assetParams: AppEngineAssetParams,
     callbacks: OnAssetAddedCallbacks,
   ): Promise<void>
 

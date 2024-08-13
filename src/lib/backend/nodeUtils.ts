@@ -1,5 +1,5 @@
 import { createReadStream } from 'fs'
-import { access } from 'fs/promises'
+import { access, readFile } from 'fs/promises'
 import path from 'path'
 
 // A function to create a read stream from a file path
@@ -26,6 +26,29 @@ export const createReadStreamSafe = async (filePath: string) => {
 
     // Create and return the read stream
     return createReadStream(fullPath)
+  } catch (err) {
+    throw new Error('File does not exist')
+  }
+}
+
+export const readFileSafeAsUtf8 = async (filePath: string) => {
+  // Define a base directory to prevent path traversal
+  const baseDir = path.resolve(process.cwd(), 'tmp')
+
+  // Resolve the full path
+  const fullPath = path.resolve(baseDir, filePath)
+
+  // Ensure the resolved path is within the base directory
+  if (!fullPath.startsWith(baseDir)) {
+    throw new Error('Invalid file path')
+  }
+
+  try {
+    // Check if the file exists
+    await access(fullPath)
+
+    // Create and return the read stream
+    return readFile(fullPath, 'utf-8')
   } catch (err) {
     throw new Error('File does not exist')
   }

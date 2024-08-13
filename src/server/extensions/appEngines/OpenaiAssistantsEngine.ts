@@ -2,6 +2,7 @@ import { AppEngineType } from '@/components/apps/appsTypes'
 import { createReadStreamSafe } from '@/lib/backend/nodeUtils'
 import {
   AbstractAppEngine,
+  AppEngineAssetParams,
   type AppEngineCallbacks,
   type AppEngineConfigParams,
   type AppEngineRunParams,
@@ -135,7 +136,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
   async onAssetAdded(
     ctx: AppEngineConfigParams<AppKeyValues>,
-    filePath: string,
+    { filePath }: AppEngineAssetParams,
     callbacks: OnAssetAddedCallbacks,
   ) {
     const { onSuccess, onFailure } = callbacks

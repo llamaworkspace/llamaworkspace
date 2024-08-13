@@ -1,17 +1,22 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
+import { ragIngestService } from '@/server/rag/services/ragIngestService'
 import { streamText } from 'ai'
 import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
   AbstractAppEngine,
+  AppEngineConfigParams,
+  OnAssetAddedCallbacks,
   type AppEngineCallbacks,
   type AppEngineRunParams,
 } from './AbstractAppEngine'
 
 const payloadSchema = z.object({})
+const appKVsSchema = z.object({}).partial()
 
 type DefaultAppEnginePayload = z.infer<typeof payloadSchema>
+type DefaultEngineKeyValues = z.infer<typeof appKVsSchema>
 
 export class DefaultAppEngine extends AbstractAppEngine {
   getProviderKeyValuesSchema() {
@@ -71,9 +76,14 @@ export class DefaultAppEngine extends AbstractAppEngine {
     return await Promise.resolve()
   }
 
-  async onAssetAdded() {
-    await Promise.resolve()
-    throw new Error('Method not implemented.')
+  async onAssetAdded(
+    ctx: AppEngineConfigParams<DefaultEngineKeyValues>,
+    { filePath, assetId }: { filePath: string; assetId: string },
+    callbacks: OnAssetAddedCallbacks,
+  ) {
+    const { onSuccess } = callbacks
+    await ragIngestService({ filePath, assetId })
+    await onSuccess('ok')
   }
 
   async onAssetRemoved() {
