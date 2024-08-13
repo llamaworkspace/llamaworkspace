@@ -42,14 +42,15 @@ export const bindAssetService = async (
       })
     }
 
-    const relationExists = await prisma.assetsOnApps.count({
+    let assetOnApp = await prisma.assetsOnApps.findFirst({
       where: {
         appId,
         assetId,
       },
     })
-    if (!relationExists) {
-      await prisma.assetsOnApps.create({
+
+    if (!assetOnApp) {
+      assetOnApp = await prisma.assetsOnApps.create({
         data: {
           appId,
           assetId,
@@ -58,8 +59,7 @@ export const bindAssetService = async (
       })
       await bindAssetQueue.enqueue('bindAsset', {
         userId,
-        appId,
-        assetId,
+        assetOnAppId: assetOnApp.id,
       })
     }
   })

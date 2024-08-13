@@ -8,8 +8,7 @@ import { z } from 'zod'
 
 const zPayload = z.object({
   userId: z.string(),
-  appId: z.string(),
-  assetId: z.string(),
+  assetOnAppId: z.string(),
 })
 
 type Payload = z.infer<typeof zPayload>
@@ -24,9 +23,19 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
   protected async handle(action: string, payload: Payload) {
     const engines = [new DefaultAppEngine(), ...enginesRegistry]
 
+    const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
+      where: {
+        id: payload.assetOnAppId,
+      },
+      include: {
+        app: true,
+        asset: true,
+      },
+    })
+
     const app = await prisma.app.findFirstOrThrow({
       where: {
-        id: payload.appId,
+        id: assetOnApp.appId,
         markAsDeletedAt: null,
       },
     })
@@ -38,7 +47,7 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
     )
 
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
-    await appEngineRunner.onAssetAdded(payload.appId, payload.assetId)
+    await appEngineRunner.onAssetAdded(assetOnApp.appId, assetOnApp.assetId)
   }
 }
 
