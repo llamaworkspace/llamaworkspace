@@ -137,7 +137,7 @@ export class AppEngineRunner {
 
     await engine.onAssetAdded(
       ctx,
-      { filePath, assetId },
+      { filePath, assetOnAppId: assetOnApp.id, assetId },
       { onSuccess, onFailure },
     )
     await deleteLocalFileCopy()

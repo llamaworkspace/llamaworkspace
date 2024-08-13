@@ -1,14 +1,16 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
-import { prisma } from '@/server/db'
+import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { ragIngestService } from '@/server/rag/services/ragIngestService'
 import { ragRetrievalService } from '@/server/rag/services/ragRetrievalService'
+import { PrismaClient } from '@prisma/client'
 import { streamText } from 'ai'
 import { Promise } from 'bluebird'
 import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
   AbstractAppEngine,
+  AppEngineAssetParams,
   AppEngineConfigParams,
   OnAssetAddedCallbacks,
   type AppEngineCallbacks,
@@ -37,7 +39,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
     ctx: AppEngineRunParams<DefaultAppEnginePayload, DefaultAppEnginePayload>,
     callbacks: AppEngineCallbacks,
   ) {
-    const { messages, providerSlug, modelSlug, providerKVs } = ctx
+    const { prisma, messages, providerSlug, modelSlug, providerKVs } = ctx
 
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
 
@@ -111,15 +113,28 @@ export class DefaultAppEngine extends AbstractAppEngine {
 
   async onAssetAdded(
     ctx: AppEngineConfigParams<DefaultEngineKeyValues>,
-    { filePath, assetId }: { filePath: string; assetId: string },
+    { filePath, assetOnAppId }: AppEngineAssetParams,
     callbacks: OnAssetAddedCallbacks,
   ) {
     const { onSuccess } = callbacks
-    await ragIngestService({ filePath, assetId })
+    const context = await this.createContext(
+      ctx.prisma,
+      ctx.workspaceId,
+      ctx.userId,
+    )
+    await ragIngestService(ctx.prisma, context, { filePath, assetOnAppId })
     await onSuccess('ok')
   }
 
   async onAssetRemoved() {
     return await Promise.resolve()
+  }
+
+  private async createContext(
+    prisma: PrismaClient,
+    workspaceId: string,
+    userId: string,
+  ) {
+    return await createUserOnWorkspaceContext(prisma, workspaceId, userId)
   }
 }

@@ -1,6 +1,6 @@
 import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { SimplePrimitive } from '@/shared/globalTypes'
-import type { Message } from '@prisma/client'
+import type { Message, PrismaClient } from '@prisma/client'
 import type { z } from 'zod'
 
 export type EngineAppKeyValues = Record<string, SimplePrimitive>
@@ -17,6 +17,9 @@ export interface AppEngineRunParams<
   T extends EngineAppKeyValues,
   ProviderKeyValues,
 > {
+  readonly prisma: PrismaClient
+  readonly workspaceId: string
+  readonly userId: string
   readonly appId: string
   readonly chatId: string
   readonly chatRunId: string
@@ -31,6 +34,9 @@ export interface AppEngineRunParams<
 }
 
 export interface AppEngineConfigParams<T> {
+  readonly prisma: PrismaClient
+  readonly workspaceId: string
+  readonly userId: string
   readonly appId: string
   readonly aiProviders: Record<string, Record<string, string>>
   readonly appKeyValuesStore: AppKeyValuesStoreParams<T>
@@ -38,6 +44,7 @@ export interface AppEngineConfigParams<T> {
 
 export interface AppEngineAssetParams {
   readonly assetId: string
+  readonly assetOnAppId: string
   readonly filePath: string
 }
 

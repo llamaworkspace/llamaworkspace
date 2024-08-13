@@ -5,11 +5,8 @@ import { getApplicableAppConfigToChatService } from '@/server/chats/services/get
 import { getChatByIdService } from '@/server/chats/services/getChatById.service'
 import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesByChatId.service'
 import { Author } from '@/shared/aiTypesAndMappers'
-import type {
-  PrismaClientOrTrxClient,
-  SimplePrimitive,
-} from '@/shared/globalTypes'
-import type { Message } from '@prisma/client'
+import type { SimplePrimitive } from '@/shared/globalTypes'
+import type { Message, PrismaClient } from '@prisma/client'
 import { Promise } from 'bluebird'
 import createHttpError from 'http-errors'
 import { chain, isNumber } from 'underscore'
@@ -31,7 +28,7 @@ type AppEngineRunParamsWithoutChatRun = Omit<
 
 export class AppEnginePayloadBuilder {
   constructor(
-    private readonly prisma: PrismaClientOrTrxClient,
+    private readonly prisma: PrismaClient,
     private readonly context: UserOnWorkspaceContext,
   ) {}
 
@@ -72,6 +69,9 @@ export class AppEnginePayloadBuilder {
     }
 
     return {
+      prisma: this.prisma,
+      userId: this.context.userId,
+      workspaceId: this.context.workspaceId,
       appId: chat.appId,
       chatId,
       targetAssistantRawMessage,
@@ -95,6 +95,9 @@ export class AppEnginePayloadBuilder {
     const appKeyValuesStore = this.getKeyValuesStore(appId)
 
     return {
+      prisma: this.prisma,
+      userId: this.context.userId,
+      workspaceId: this.context.workspaceId,
       appId,
       aiProviders,
       appKeyValuesStore,
