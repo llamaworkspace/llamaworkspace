@@ -99,14 +99,16 @@ export class AppEngineRunner {
     await engine.onAppDeleted(ctx)
   }
 
-  async onAssetAdded(appId: string, assetId: string) {
-    const assetOnApp = await this.prisma.assetsOnApps.findFirstOrThrow({
+  async onAssetAdded(assetOnAppId: string) {
+    const assetOnApp = await this.prisma.assetsOnApps.findUniqueOrThrow({
       where: {
-        assetId,
-        appId: appId,
+        id: assetOnAppId,
         markAsDeletedAt: null,
       },
     })
+
+    const appId = assetOnApp.appId
+    const assetId = assetOnApp.assetId
 
     const engine = await this.getEngine(appId)
     const ctx = await this.generateAppScopedEngineContext(appId)

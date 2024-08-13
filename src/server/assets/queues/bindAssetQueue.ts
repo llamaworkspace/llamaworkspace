@@ -23,9 +23,11 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
   protected async handle(action: string, payload: Payload) {
     const engines = [new DefaultAppEngine(), ...enginesRegistry]
 
+    const assetOnAppId = payload.assetOnAppId
+
     const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
       where: {
-        id: payload.assetOnAppId,
+        id: assetOnAppId,
       },
       include: {
         app: true,
@@ -47,7 +49,7 @@ class BindAssetQueue extends AbstractQueueManager<typeof zPayload> {
     )
 
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
-    await appEngineRunner.onAssetAdded(assetOnApp.appId, assetOnApp.assetId)
+    await appEngineRunner.onAssetAdded(assetOnAppId)
   }
 }
 
