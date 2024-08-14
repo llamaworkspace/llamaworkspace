@@ -79,6 +79,8 @@ export class PermissionsVerifier {
       return null
     }
 
+    // This is enforced at the database level, but just in case
+    // db has a unique constraint on shareId and userId
     if (shareTargets.length > 1) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',

@@ -47,29 +47,6 @@ describe('PermissionsVerifier ', () => {
         expect(await subject(tempUser.id, app.id)).toBeNull()
       })
     })
-
-    describe('when there are multiple shareTargets for the same app', () => {
-      it('it throws', async () => {
-        const share = await prisma.share.findFirstOrThrow({
-          where: {
-            appId: app.id,
-          },
-        })
-
-        await prisma.shareTarget.create({
-          data: {
-            userId: user.id,
-            sharerId: user.id,
-            shareId: share.id,
-            accessLevel: UserAccessLevel.Use,
-          },
-        })
-
-        await expect(subject(user.id, app.id)).rejects.toThrow(
-          'Multiple share targets found for the same user and app',
-        )
-      })
-    })
   })
 
   describe('call', () => {
