@@ -2,6 +2,7 @@
 CREATE TABLE "AssetEmbedding" (
     "id" TEXT NOT NULL,
     "assetId" TEXT NOT NULL,
+    "model" TEXT NOT NULL,
     "contents" TEXT NOT NULL,
     "embedding" vector(1024) NOT NULL,
 
