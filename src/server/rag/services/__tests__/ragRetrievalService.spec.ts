@@ -5,9 +5,16 @@ import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { AssetFactory } from '@/server/testing/factories/AssetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { App, Asset, User, Workspace } from '@prisma/client'
+import type {
+  App,
+  Asset,
+  AssetEmbedding,
+  User,
+  Workspace,
+} from '@prisma/client'
+import cuid from 'cuid'
 import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
-import { insertEmbeddingService } from '../insertEmbeddingService'
+import { ragRetrievalService } from '../ragRetrievalService'
 
 jest.mock('ai', () => {
   return {
@@ -27,14 +34,15 @@ const subject = async (
     workspaceId,
     userId,
   )
-  return await insertEmbeddingService(prisma, context, payload)
+  return await ragRetrievalService(prisma, context, payload)
 }
 
-describe('insertEmbeddingService', () => {
+describe('ragRetrievalService', () => {
   let workspace: Workspace
   let user: User
   let app: App
   let asset: Asset
+  let assetEmbedding: AssetEmbedding & { embedding: number[] }
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -53,28 +61,27 @@ describe('insertEmbeddingService', () => {
       extension: 'txt',
       uploadStatus: AssetUploadStatus.Success,
     })
+    assetEmbedding = await prisma.$queryRaw`
+    INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
+    VALUES (
+      ${cuid()},
+      ${asset.id},
+      ${DEFAULT_EMBEDDING_MODEL},
+      'this is a text',
+      ${Array.from({ length: 1024 }).map(() => Math.random())}::real[]
+      )
+    `
   })
 
-  it('persists embeddings', async () => {
-    await subject(workspace.id, user.id, {
+  it('performs retrieval', async () => {
+    const response = await subject(workspace.id, user.id, {
       assetId: asset.id,
       text: 'pepe car',
     })
 
-    const embeddings = (await prisma.$queryRaw`
-      SELECT id, model, "assetId", contents, embedding::real[]
-      FROM "AssetEmbedding"
-      WHERE "assetId" = ${asset.id};
-    `) as { id: string; contents: string }[]
+    expect(response).toHaveLength(1)
+    const firstItem = response[0]!
 
-    expect(embeddings).toHaveLength(1)
-    const embedding = embeddings[0]!
-
-    expect(embedding).toMatchObject({
-      assetId: asset.id,
-      model: DEFAULT_EMBEDDING_MODEL,
-      contents: 'pepe car',
-      embedding: expect.any(Array),
-    })
+    expect(firstItem).toBe('this is a text')
   })
 })

@@ -1,9 +1,20 @@
-import { prisma } from '@/server/db'
+import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { embed } from 'ai'
 import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
 import { openaiClient } from './utils/openaiClient'
 
-export const ragRetrievalService = async (assetId: string, text: string) => {
+interface RagRetrievalPayload {
+  assetId: string
+  text: string
+}
+
+export const ragRetrievalService = async (
+  prisma: PrismaClientOrTrxClient,
+  uowContext: UserOnWorkspaceContext,
+  payload: RagRetrievalPayload,
+) => {
+  const { assetId, text } = payload
   const { embedding: targetEmbedding } = await embed({
     model: openaiClient.embedding(DEFAULT_EMBEDDING_MODEL, {
       dimensions: 1024,

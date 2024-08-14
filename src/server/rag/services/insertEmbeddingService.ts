@@ -7,7 +7,7 @@ import { openaiClient } from './utils/openaiClient'
 
 interface InsertEmbeddingPayload {
   assetId: string
-  value: string
+  text: string
 }
 
 export const insertEmbeddingService = async (
@@ -15,7 +15,7 @@ export const insertEmbeddingService = async (
   uowContext: UserOnWorkspaceContext,
   payload: InsertEmbeddingPayload,
 ) => {
-  const { assetId, value } = payload
+  const { assetId, text: value } = payload
 
   await prisma.asset.findFirstOrThrow({
     where: {
