@@ -6,7 +6,7 @@ import { AssetFactory } from '@/server/testing/factories/AssetFactory'
 import { AssetsOnAppsFactory } from '@/server/testing/factories/AssetsOnAppsFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type { App, Asset, User, Workspace } from '@prisma/client'
+import type { App, Asset, AssetsOnApps, User, Workspace } from '@prisma/client'
 import { deleteAppQueue } from '../deleteAppQueue'
 
 jest.mock('@/server/ai/lib/AppEngineRunner/AppEngineRunner', () => {
@@ -68,6 +68,8 @@ describe('deleteAppQueue', () => {
   describe('when the app has assets', () => {
     let asset1: Asset
     let asset2: Asset
+    let assetoOnApp1: AssetsOnApps
+    let assetoOnApp2: AssetsOnApps
 
     beforeEach(async () => {
       asset1 = await AssetFactory.create(prisma, {
@@ -81,11 +83,11 @@ describe('deleteAppQueue', () => {
         uploadStatus: AssetUploadStatus.Success,
       })
 
-      await AssetsOnAppsFactory.create(prisma, {
+      assetoOnApp1 = await AssetsOnAppsFactory.create(prisma, {
         assetId: asset1.id,
         appId: app.id,
       })
-      await AssetsOnAppsFactory.create(prisma, {
+      assetoOnApp2 = await AssetsOnAppsFactory.create(prisma, {
         assetId: asset2.id,
         appId: app.id,
       })
@@ -99,8 +101,8 @@ describe('deleteAppQueue', () => {
         .onAssetRemoved as jest.Mock
 
       expect(onAssetRemovedSpy).toHaveBeenCalledTimes(2)
-      expect(onAssetRemovedSpy).toHaveBeenNthCalledWith(1, app.id, asset1.id)
-      expect(onAssetRemovedSpy).toHaveBeenNthCalledWith(2, app.id, asset2.id)
+      expect(onAssetRemovedSpy).toHaveBeenNthCalledWith(1, assetoOnApp1.id)
+      expect(onAssetRemovedSpy).toHaveBeenNthCalledWith(2, assetoOnApp2.id)
     })
   })
 })
