@@ -1,5 +1,6 @@
 import { useAppAssets } from '@/components/apps/appsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
 import type { Asset, AssetsOnApps } from '@prisma/client'
 import { useState, type ChangeEvent } from 'react'
@@ -38,6 +39,8 @@ export const AppConfigForGPTFileUpload = ({
     Array.from(event.target.files).forEach((file) => void uploadFile(file))
   }
 
+  const maxFilesReached = appFiles && appFiles.length >= 10
+
   return (
     <div className="space-y-2">
       <div className="space-y-4">
@@ -55,13 +58,24 @@ export const AppConfigForGPTFileUpload = ({
           uploadableFiles={uploadableFiles}
         />
       </div>
-      <FileUploadInput
-        buttonText="Upload files"
-        onChange={handleChange}
-        type="file"
-        multiple
-        accept={supportedFileTypes}
-      />
+      {!maxFilesReached && (
+        <FileUploadInput
+          buttonText="Upload files"
+          onChange={handleChange}
+          type="file"
+          multiple
+          accept={supportedFileTypes}
+        />
+      )}
+      {maxFilesReached && (
+        <div className="pt-4">
+          <Alert variant="fuchsia" className="lg:max-w-[500px]">
+            <AlertDescription className="space-y-2">
+              You've reached the maximum of uploadable 10 files for this app.
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
     </div>
   )
 }

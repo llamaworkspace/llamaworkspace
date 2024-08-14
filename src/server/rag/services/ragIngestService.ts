@@ -23,6 +23,8 @@ export const ragIngestService = async (
     const { userId, workspaceId } = uowContext
     const { filePath, assetOnAppId } = payload
 
+    // TODO: Add max number of files to 10, and test!!!
+
     const assetOnApp = await getAssetOnApp(prisma, workspaceId, assetOnAppId)
     const asset = assetOnApp.asset
     const appId = assetOnApp.appId
