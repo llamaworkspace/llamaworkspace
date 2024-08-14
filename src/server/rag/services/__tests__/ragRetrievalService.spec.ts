@@ -13,6 +13,7 @@ import type {
   Workspace,
 } from '@prisma/client'
 import cuid from 'cuid'
+import pgvector from 'pgvector'
 import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
 import { ragRetrievalService } from '../ragRetrievalService'
 
@@ -61,6 +62,10 @@ describe('ragRetrievalService', () => {
       extension: 'txt',
       uploadStatus: AssetUploadStatus.Success,
     })
+    const embedding = pgvector.toSql(
+      Array.from({ length: 1024 }).map(() => Math.random()),
+    )
+
     assetEmbedding = await prisma.$queryRaw`
     INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
     VALUES (
@@ -68,7 +73,7 @@ describe('ragRetrievalService', () => {
       ${asset.id},
       ${DEFAULT_EMBEDDING_MODEL},
       'this is a text',
-      ${Array.from({ length: 1024 }).map(() => Math.random())}::real[]
+      ${embedding}::vector
       )
     `
   })

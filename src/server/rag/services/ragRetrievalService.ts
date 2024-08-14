@@ -36,7 +36,7 @@ export const ragRetrievalService = async (
   const res = await prisma.$queryRaw<{ id: string; contents: string }[]>`
     SELECT id, contents
     FROM "AssetEmbedding"
-    WHERE 1 - (embedding <=> ${targetEmbedding}::real[]) >= 0.3
+    WHERE 1 - (embedding <=> ${targetEmbedding}::vector) >= 0.3
     AND "assetId" = ${assetId}
     LIMIT 5;
   `
