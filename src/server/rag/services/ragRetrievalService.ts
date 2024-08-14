@@ -1,8 +1,6 @@
 import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import { embed } from 'ai'
-import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
-import { openaiClient } from './utils/openaiClient'
+import { OpenAIEmbeddingStrategy } from './strategies/embed/OpenAIEmbeddingStrategy'
 
 interface RagRetrievalPayload {
   assetId: string
@@ -23,15 +21,7 @@ export const ragRetrievalService = async (
     },
   })
 
-  const { embedding: targetEmbedding } = await embed({
-    model: openaiClient.embedding(
-      DEFAULT_EMBEDDING_MODEL.replace('openai/', ''),
-      {
-        dimensions: 1024,
-      },
-    ),
-    value: text,
-  })
+  const targetEmbedding = await new OpenAIEmbeddingStrategy().embed(text)
 
   const res = await prisma.$queryRaw<{ id: string; contents: string }[]>`
     SELECT id, contents

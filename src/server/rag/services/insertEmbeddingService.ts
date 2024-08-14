@@ -1,9 +1,8 @@
 import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { PrismaClientOrTrxClient } from '@/shared/globalTypes'
-import { embed } from 'ai'
 import cuid from 'cuid'
 import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
-import { openaiClient } from './utils/openaiClient'
+import { OpenAIEmbeddingStrategy } from './strategies/embed/OpenAIEmbeddingStrategy'
 
 interface InsertEmbeddingPayload {
   assetId: string
@@ -24,15 +23,7 @@ export const insertEmbeddingService = async (
     },
   })
 
-  const { embedding } = await embed({
-    model: openaiClient.embedding(
-      DEFAULT_EMBEDDING_MODEL.replace('openai/', ''),
-      {
-        dimensions: 1024,
-      },
-    ),
-    value,
-  })
+  const embedding = await new OpenAIEmbeddingStrategy().embed(value)
 
   const res = await prisma.$queryRaw`
     INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")

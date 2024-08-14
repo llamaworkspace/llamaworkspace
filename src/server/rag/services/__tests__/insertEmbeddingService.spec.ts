@@ -16,6 +16,20 @@ jest.mock('ai', () => {
     }),
   }
 })
+jest.mock(
+  '@/server/rag/services/strategies/embed/OpenAIEmbeddingStrategy.ts',
+  () => {
+    const OpenAIEmbeddingStrategy = jest.fn()
+    /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
+    OpenAIEmbeddingStrategy.prototype.embed = jest
+      .fn()
+      .mockResolvedValue(Array.from({ length: 1024 }).map(() => Math.random()))
+
+    return {
+      OpenAIEmbeddingStrategy,
+    }
+  },
+)
 
 const subject = async (
   workspaceId: string,
