@@ -1,3 +1,4 @@
+import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -22,7 +23,7 @@ export const ragIngestService = async (
     const { userId, workspaceId } = uowContext
     const { filePath, assetOnAppId } = payload
 
-    const assetOnApp = await getAssetOnApp(prisma, assetOnAppId)
+    const assetOnApp = await getAssetOnApp(prisma, workspaceId, assetOnAppId)
     const asset = assetOnApp.asset
     const appId = assetOnApp.appId
     const assetId = assetOnApp.assetId
@@ -34,10 +35,10 @@ export const ragIngestService = async (
     )
 
     // Checks that the asset is not already ingested
-    const hasEmbeddings = await hasEmbeddingsForAsset(prisma, assetId)
-    if (hasEmbeddings) {
-      return
-    }
+    // const hasEmbeddings = await hasEmbeddingsForAsset(prisma, assetId)
+    // if (hasEmbeddings) {
+    //   return
+    // }
 
     const text = await loadFile(asset.extension, filePath)
 
@@ -48,10 +49,15 @@ export const ragIngestService = async (
   })
 }
 
-const getAssetOnApp = (prisma: PrismaTrxClient, assetOnAppId: string) => {
+const getAssetOnApp = (
+  prisma: PrismaTrxClient,
+  workspaceId: string,
+  assetOnAppId: string,
+) => {
   return prisma.assetsOnApps.findUniqueOrThrow({
     where: {
       id: assetOnAppId,
+      app: scopeAppByWorkspace({}, workspaceId),
     },
     include: {
       app: true,
