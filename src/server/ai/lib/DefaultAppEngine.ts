@@ -1,6 +1,10 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
-import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import {
+  createUserOnWorkspaceContext,
+  UserOnWorkspaceContext,
+} from '@/server/auth/userOnWorkspaceContext'
+import { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { ragIngestService } from '@/server/rag/services/ragIngestService'
 import { ragRetrievalService } from '@/server/rag/services/ragRetrievalService'
 import { PrismaClient } from '@prisma/client'
@@ -48,31 +52,14 @@ export class DefaultAppEngine extends AbstractAppEngine {
       ctx.userId,
     )
 
-    // EXTRA HERE
-    const assetsOnApps = await prisma.assetsOnApps.findMany({
-      where: {
-        appId: ctx.appId,
-        markAsDeletedAt: null,
-      },
-    })
-
-    const assetIds = assetsOnApps.map((item) => item.assetId)
-
-    const lastMessage = messages[messages.length - 1]!
-
-    const ragItems = await Promise.reduce(
-      assetIds,
-      async (memo: string[], assetId: string) => {
-        return [
-          ...memo,
-          ...(await ragRetrievalService(prisma, context, {
-            assetId,
-            text: lastMessage.content,
-          })),
-        ]
-      },
-      [],
+    const contextMessage = await this.getContextualMessage(
+      prisma,
+      context,
+      ctx.appId,
+      messages,
     )
+
+    messages.unshift(contextMessage)
 
     if (!provider) {
       throw createHttpError(500, `Provider ${providerSlug} not found`)
@@ -87,14 +74,6 @@ export class DefaultAppEngine extends AbstractAppEngine {
       isUsageCalled = true
       await callbacks.usage(promptTokens, completionTokens)
     }
-
-    const content = `You answer questions based on the context provided next. It is very important to Say "I dont know" if you are unsure, it cannot be answered with the context or if the context is empty. Also if the context explicitly reads "EMPTY". Use up to three sentences and keep the answer concise. Always respond in english.
-    Context: ${ragItems.join('\n')}`
-
-    messages.unshift({
-      role: 'system',
-      content,
-    })
 
     await provider.executeAsStream(
       {
@@ -145,5 +124,47 @@ export class DefaultAppEngine extends AbstractAppEngine {
     userId: string,
   ) {
     return await createUserOnWorkspaceContext(prisma, workspaceId, userId)
+  }
+
+  private async getContextualMessage(
+    prisma: PrismaClient,
+    context: UserOnWorkspaceContext,
+    appId: string,
+    messages: AiRegistryMessage[],
+  ) {
+    const assetsOnApps = await prisma.assetsOnApps.findMany({
+      where: {
+        appId,
+        markAsDeletedAt: null,
+      },
+    })
+
+    const assetIds = assetsOnApps.map((item) => item.assetId)
+
+    const lastMessage = messages[messages.length - 1]!
+
+    const ragItems = await Promise.reduce(
+      assetIds,
+      async (memo: string[], assetId: string) => {
+        return [
+          ...memo,
+          ...(await ragRetrievalService(prisma, context, {
+            assetId,
+            text: lastMessage.content,
+          })),
+        ]
+      },
+      [],
+    )
+    const content = `You answer questions based on the context provided next. It is very important to ignore the context if it is not relevant to the question, or if context looks empty 
+    <CONTEXT START>
+    ${ragItems.join('\n')}
+    <CONTEXT END>
+    `
+
+    return {
+      role: 'system' as const,
+      content,
+    }
   }
 }
