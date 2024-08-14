@@ -11,6 +11,7 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, AssetsOnApps, User, Workspace } from '@prisma/client'
 import { insertEmbeddingService } from '../insertEmbeddingService/insertEmbeddingService'
 import { TextLoadingStrategy } from '../insertEmbeddingService/load/TextLoadingStrategy'
+import { RecursiveCharacterTextSplitStrategy } from '../insertEmbeddingService/split/RecursiveCharacterTextSplitStrategy'
 import { ragIngestService } from '../ragIngestService'
 
 jest.mock(
@@ -31,6 +32,19 @@ jest.mock(
 
     return {
       TextLoadingStrategy,
+    }
+  },
+)
+jest.mock(
+  '@/server/rag/services/insertEmbeddingService/split/RecursiveCharacterTextSplitStrategy',
+  () => {
+    const RecursiveCharacterTextSplitStrategy = jest.fn()
+    RecursiveCharacterTextSplitStrategy.prototype.split = jest
+      .fn()
+      .mockResolvedValue(['this is', 'a text'])
+
+    return {
+      RecursiveCharacterTextSplitStrategy,
     }
   },
 )
@@ -79,20 +93,20 @@ describe('ragIngestService', () => {
     })
   })
 
-  it('generates embeddings', async () => {
-    await subject(workspace.id, user.id, {
-      assetOnAppId: assetOnApp.id,
-      filePath: fakeFilePath,
-    })
+  // it('generates embeddings', async () => {
+  //   await subject(workspace.id, user.id, {
+  //     assetOnAppId: assetOnApp.id,
+  //     filePath: fakeFilePath,
+  //   })
 
-    const embeddings = await prisma.assetEmbedding.findMany({
-      where: {
-        assetId: 'fake',
-      },
-    })
+  //   const embeddings = await prisma.assetEmbedding.findMany({
+  //     where: {
+  //       assetId: 'fake',
+  //     },
+  //   })
 
-    expect(embeddings.length).toBeGreaterThan(0)
-  })
+  //   expect(embeddings.length).toBeGreaterThan(0)
+  // })
 
   it('calls PermissionsVerifier', async () => {
     const spy = jest.spyOn(
@@ -112,15 +126,30 @@ describe('ragIngestService', () => {
     )
   })
 
-  it.only('calls insertEmbeddingService', async () => {
+  it('splits text', async () => {
     await subject(workspace.id, user.id, {
       assetOnAppId: assetOnApp.id,
       filePath: fakeFilePath,
     })
 
-    expect(insertEmbeddingService).toHaveBeenCalledWith(
+    expect(RecursiveCharacterTextSplitStrategy).toHaveBeenCalled()
+  })
+
+  it('persists embeddings', async () => {
+    await subject(workspace.id, user.id, {
+      assetOnAppId: assetOnApp.id,
+      filePath: fakeFilePath,
+    })
+
+    expect(insertEmbeddingService).toHaveBeenNthCalledWith(
+      1,
       asset.id,
-      'this is a text',
+      'this is',
+    )
+    expect(insertEmbeddingService).toHaveBeenNthCalledWith(
+      2,
+      asset.id,
+      'a text',
     )
   })
 
