@@ -64,7 +64,7 @@ describe('ragRetrievalService', () => {
     })
     const embedding = pgvector.toSql(
       Array.from({ length: 1024 }).map(() => Math.random()),
-    )
+    ) as number[]
 
     assetEmbedding = await prisma.$queryRaw`
     INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")

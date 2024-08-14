@@ -14,7 +14,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "db:deploy": "npm run prisma:deploy 2>&1 && tsx src/server/dataMigrations/dataMigrator.ts up 2>&1",
     "production:deploy": "prisma generate && npm run build && npm run db:deploy",
-    "test:prepare": "env-cmd -f .env.test prisma migrate reset && env-cmd -f .env.test prisma db push",
+    "test:prepare": "env-cmd -f .env.test prisma migrate reset --force && env-cmd -f .env.test prisma db push",
     "test": "jest --watch",
     "test:ci": "jest --ci",
     "prepare": "husky install",

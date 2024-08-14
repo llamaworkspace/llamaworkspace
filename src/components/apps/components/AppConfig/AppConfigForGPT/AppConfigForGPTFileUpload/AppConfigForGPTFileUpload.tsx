@@ -71,7 +71,7 @@ export const AppConfigForGPTFileUpload = ({
         <div className="pt-4">
           <Alert variant="fuchsia" className="lg:max-w-[500px]">
             <AlertDescription className="space-y-2">
-              You've reached the maximum of uploadable 10 files for this app.
+              You have reached the maximum of 10 uploadable files for this app.
             </AlertDescription>
           </Alert>
         </div>
