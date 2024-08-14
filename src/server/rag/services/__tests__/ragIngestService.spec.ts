@@ -22,6 +22,7 @@ jest.mock('@/server/rag/services/insertEmbeddingService', () => {
 })
 jest.mock('@/server/rag/services/strategies/load/TextLoadingStrategy', () => {
   const TextLoadingStrategy = jest.fn()
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
   TextLoadingStrategy.prototype.load = jest
     .fn()
     .mockResolvedValue('this is a text')
@@ -34,6 +35,7 @@ jest.mock(
   '@/server/rag/services/strategies/split/RecursiveCharacterTextSplitStrategy',
   () => {
     const RecursiveCharacterTextSplitStrategy = jest.fn()
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access */
     RecursiveCharacterTextSplitStrategy.prototype.split = jest
       .fn()
       .mockResolvedValue(['this is', 'a text'])
@@ -87,21 +89,6 @@ describe('ragIngestService', () => {
       appId: app.id,
     })
   })
-
-  // it('generates embeddings', async () => {
-  //   await subject(workspace.id, user.id, {
-  //     assetOnAppId: assetOnApp.id,
-  //     filePath: fakeFilePath,
-  //   })
-
-  //   const embeddings = await prisma.assetEmbedding.findMany({
-  //     where: {
-  //       assetId: 'fake',
-  //     },
-  //   })
-
-  //   expect(embeddings.length).toBeGreaterThan(0)
-  // })
 
   it('calls PermissionsVerifier', async () => {
     const spy = jest.spyOn(
@@ -197,6 +184,7 @@ describe('ragIngestService', () => {
       })
 
       expect(TextLoadingStrategy).toHaveBeenCalled()
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(TextLoadingStrategy.prototype.load).toHaveBeenCalled()
     })
 

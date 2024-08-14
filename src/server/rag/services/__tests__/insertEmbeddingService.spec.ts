@@ -61,11 +61,13 @@ describe('insertEmbeddingService', () => {
       text: 'pepe car',
     })
 
-    const embeddings = (await prisma.$queryRaw`
+    const embeddings = await prisma.$queryRaw<
+      { id: string; embedding: number[] }[]
+    >`
       SELECT id, model, "assetId", contents, embedding::real[]
       FROM "AssetEmbedding"
       WHERE "assetId" = ${asset.id};
-    `) as { id: string; contents: string }[]
+    `
 
     expect(embeddings).toHaveLength(1)
     const embedding = embeddings[0]!
@@ -74,7 +76,8 @@ describe('insertEmbeddingService', () => {
       assetId: asset.id,
       model: DEFAULT_EMBEDDING_MODEL,
       contents: 'pepe car',
-      embedding: expect.any(Array),
     })
+
+    expect(embedding.embedding).toHaveLength(1024)
   })
 })

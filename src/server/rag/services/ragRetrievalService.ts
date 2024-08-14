@@ -15,6 +15,14 @@ export const ragRetrievalService = async (
   payload: RagRetrievalPayload,
 ) => {
   const { assetId, text } = payload
+
+  await prisma.asset.findFirstOrThrow({
+    where: {
+      id: assetId,
+      workspaceId: uowContext.workspaceId,
+    },
+  })
+
   const { embedding: targetEmbedding } = await embed({
     model: openaiClient.embedding(DEFAULT_EMBEDDING_MODEL, {
       dimensions: 1024,
@@ -22,13 +30,13 @@ export const ragRetrievalService = async (
     value: text,
   })
 
-  const res = (await prisma.$queryRaw`
+  const res = await prisma.$queryRaw<{ id: string; contents: string }[]>`
     SELECT id, contents
     FROM "AssetEmbedding"
     WHERE 1 - (embedding <=> ${targetEmbedding}::real[]) >= 0.3
     AND "assetId" = ${assetId}
     LIMIT 5;
-  `) as { id: string; contents: string }[]
+  `
 
   return res.map((item) => item.contents)
 }

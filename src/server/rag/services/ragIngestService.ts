@@ -44,7 +44,7 @@ export const ragIngestService = async (
 
     const splitted = await splitText(text)
     await Promise.map(splitted, async (text) => {
-      await insertEmbeddingService(assetId, text)
+      await insertEmbeddingService(prisma, uowContext, { assetId, text })
     })
   })
 }

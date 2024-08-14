@@ -42,6 +42,11 @@ export class DefaultAppEngine extends AbstractAppEngine {
     const { prisma, messages, providerSlug, modelSlug, providerKVs } = ctx
 
     const provider = aiProvidersFetcherService.getProvider(providerSlug)
+    const context = await this.createContext(
+      ctx.prisma,
+      ctx.workspaceId,
+      ctx.userId,
+    )
 
     // EXTRA HERE
     const assetsOnApps = await prisma.assetsOnApps.findMany({
@@ -55,12 +60,15 @@ export class DefaultAppEngine extends AbstractAppEngine {
 
     const lastMessage = messages[messages.length - 1]!
 
-    let ragItems = await Promise.reduce(
+    const ragItems = await Promise.reduce(
       assetIds,
       async (memo: string[], assetId: string) => {
         return [
           ...memo,
-          ...(await ragRetrievalService(assetId, lastMessage?.content)),
+          ...(await ragRetrievalService(prisma, context, {
+            assetId,
+            text: lastMessage.content,
+          })),
         ]
       },
       [],
@@ -80,11 +88,12 @@ export class DefaultAppEngine extends AbstractAppEngine {
       await callbacks.usage(promptTokens, completionTokens)
     }
 
+    const content = `You answer questions based on the context provided next. It is very important to Say "I dont know" if you are unsure, it cannot be answered with the context or if the context is empty. Also if the context explicitly reads "EMPTY". Use up to three sentences and keep the answer concise. Always respond in english.
+    Context: ${ragItems.join('\n')}`
+
     messages.unshift({
       role: 'system',
-      content: `You answer questions based on the context provided next. It is very important to Say "I dont know" if you are unsure, it cannot be answered with the context or if the context is empty. Also if the context explicitly reads "EMPTY". Use up to three sentences and keep the answer concise. Always respond in english.
-          Context: Context: ${ragItems.concat('\n')}
-          `,
+      content,
     })
 
     await provider.executeAsStream(
