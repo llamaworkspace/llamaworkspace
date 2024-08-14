@@ -125,13 +125,15 @@ describe('ragIngestService', () => {
 
     expect(insertEmbeddingService).toHaveBeenNthCalledWith(
       1,
-      asset.id,
-      'this is',
+      expect.anything(),
+      expect.anything(),
+      { assetId: asset.id, text: 'this is' },
     )
     expect(insertEmbeddingService).toHaveBeenNthCalledWith(
       2,
-      asset.id,
-      'a text',
+      expect.anything(),
+      expect.anything(),
+      { assetId: asset.id, text: 'a text' },
     )
   })
 
