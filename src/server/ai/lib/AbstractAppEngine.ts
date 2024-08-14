@@ -53,7 +53,7 @@ export interface AppEngineCallbacks {
 }
 
 export interface OnAssetAddedCallbacks {
-  onSuccess: (externalId: string) => Promise<void>
+  onSuccess: (externalId?: string) => Promise<void>
   onFailure: (failureMessage: string) => Promise<void>
 }
 

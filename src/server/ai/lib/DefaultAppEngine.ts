@@ -111,7 +111,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
       ctx.userId,
     )
     await ragIngestService(ctx.prisma, context, { filePath, assetOnAppId })
-    await onSuccess('ok')
+    await onSuccess()
   }
 
   async onAssetRemoved() {
