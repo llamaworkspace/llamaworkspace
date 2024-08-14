@@ -80,7 +80,7 @@ const hasEmbeddingsForAsset = async (
 }
 
 const loadFile = async (type: string, filePath: string) => {
-  switch (type) {
+  switch (type.replace('.', '')) {
     case 'txt':
       return await new TextLoadingStrategy().load(filePath)
     default:

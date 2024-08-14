@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { ensureError } from '@/lib/utils'
 import { getAppByIdService } from '@/server/apps/services/getAppById.service'
 import { downloadAssetFromS3Service } from '@/server/assets/services/downloadAssetFromS3.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
@@ -137,11 +138,22 @@ export class AppEngineRunner {
       })
     }
 
-    await engine.onAssetAdded(
-      ctx,
-      { filePath, assetOnAppId: assetOnApp.id },
-      { onSuccess, onFailure },
-    )
+    try {
+      await engine.onAssetAdded(
+        ctx,
+        { filePath, assetOnAppId: assetOnApp.id },
+        { onSuccess, onFailure },
+      )
+    } catch (_error) {
+      const error = ensureError(_error)
+      await deleteLocalFileCopy()
+      await this.updateAssetOnApp(assetOnAppId, {
+        status: AssetOnAppStatus.Failed,
+        failureMessage: 'Server error attaching asset',
+      })
+      throw error
+    }
+
     await deleteLocalFileCopy()
 
     if (!onSuccessHasBeenCalled && !onFailureHasBeenCalled) {

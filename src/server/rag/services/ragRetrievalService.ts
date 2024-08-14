@@ -24,9 +24,12 @@ export const ragRetrievalService = async (
   })
 
   const { embedding: targetEmbedding } = await embed({
-    model: openaiClient.embedding(DEFAULT_EMBEDDING_MODEL, {
-      dimensions: 1024,
-    }),
+    model: openaiClient.embedding(
+      DEFAULT_EMBEDDING_MODEL.replace('openai/', ''),
+      {
+        dimensions: 1024,
+      },
+    ),
     value: text,
   })
 
