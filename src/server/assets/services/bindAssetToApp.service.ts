@@ -9,17 +9,17 @@ import {
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { TRPCError } from '@trpc/server'
 import { scopeAssetByWorkspace } from '../assetUtils'
-import { bindAssetQueue } from '../queues/bindAssetQueue'
+import { bindAssetToAppQueue } from '../queues/bindAssetToAppQueue'
 
-interface BindAssetPayload {
+interface BindAssetToAppPayload {
   assetId: string
   appId: string
 }
 
-export const bindAssetService = async (
+export const bindAssetToAppService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
-  payload: BindAssetPayload,
+  payload: BindAssetToAppPayload,
 ) => {
   const { workspaceId, userId } = uowContext
   const { assetId, appId } = payload
@@ -42,24 +42,24 @@ export const bindAssetService = async (
       })
     }
 
-    const relationExists = await prisma.assetsOnApps.count({
+    let assetOnApp = await prisma.assetsOnApps.findFirst({
       where: {
         appId,
         assetId,
       },
     })
-    if (!relationExists) {
-      await prisma.assetsOnApps.create({
+
+    if (!assetOnApp) {
+      assetOnApp = await prisma.assetsOnApps.create({
         data: {
           appId,
           assetId,
           status: AssetOnAppStatus.Processing,
         },
       })
-      await bindAssetQueue.enqueue('bindAsset', {
+      await bindAssetToAppQueue.enqueue('bindAssetToApp', {
         userId,
-        appId,
-        assetId,
+        assetOnAppId: assetOnApp.id,
       })
     }
   })

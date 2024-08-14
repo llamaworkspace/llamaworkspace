@@ -1,5 +1,5 @@
 import {
-  useBindAsset,
+  useBindAssetToApp,
   useCreateFileUploadPresignedUrl,
   useNotifyAssetUploadSuccess,
 } from '@/components/assets/assetsHooks'
@@ -19,7 +19,7 @@ export const useUploadFile = (
     useCreateFileUploadPresignedUrl()
   const { mutateAsync: notifyAssetUploadSuccess } =
     useNotifyAssetUploadSuccess()
-  const { mutateAsync: bindAsset } = useBindAsset()
+  const { mutateAsync: bindAssetToApp } = useBindAssetToApp()
   const utils = api.useContext()
   const { data: workspace } = useCurrentWorkspace()
   const errorHandler = useErrorHandler()
@@ -51,7 +51,7 @@ export const useUploadFile = (
         await notifyAssetUploadSuccess({ assetId: asset.id })
 
         onFileUploaded(file.name, asset)
-        await bindAsset({ assetId: asset.id, appId })
+        await bindAssetToApp({ assetId: asset.id, appId })
         await utils.apps.getAppAssets.invalidate()
       } catch (error) {
         errorHandler('Failed to upload file')(error)
@@ -64,7 +64,7 @@ export const useUploadFile = (
       onFileUploaded,
       workspace,
       appId,
-      bindAsset,
+      bindAssetToApp,
       utils.apps.getAppAssets,
       errorHandler,
     ],
