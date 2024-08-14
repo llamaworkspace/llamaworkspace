@@ -9,6 +9,7 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, AssetsOnApps, User, Workspace } from '@prisma/client'
+import cuid from 'cuid'
 import { insertEmbeddingService } from '../insertEmbeddingService/insertEmbeddingService'
 import { TextLoadingStrategy } from '../insertEmbeddingService/load/TextLoadingStrategy'
 import { RecursiveCharacterTextSplitStrategy } from '../insertEmbeddingService/split/RecursiveCharacterTextSplitStrategy'
@@ -154,11 +155,44 @@ describe('ragIngestService', () => {
   })
 
   describe('when asset already has embeddings', () => {
-    it.todo('does nothing')
+    it('does nothing', async () => {
+      const vector = Array.from({ length: 1024 }).map(() => Math.random())
+      await prisma.$queryRaw`
+        INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
+        VALUES (
+          ${cuid()},
+          ${asset.id},
+          'model-x',
+          'this is',
+          ${vector}::real[]
+        )`
+
+      await subject(workspace.id, user.id, {
+        assetOnAppId: assetOnApp.id,
+        filePath: fakeFilePath,
+      })
+
+      expect(insertEmbeddingService).not.toHaveBeenCalled()
+      expect(TextLoadingStrategy).not.toHaveBeenCalled()
+      expect(RecursiveCharacterTextSplitStrategy).not.toHaveBeenCalled()
+    })
   })
 
   describe('when the format is not supported', () => {
-    it.todo('throws')
+    beforeEach(async () => {
+      await prisma.asset.update({
+        where: { id: asset.id },
+        data: { extension: 'rand', originalName: 'file.rand' },
+      })
+    })
+    it('throws', async () => {
+      await expect(
+        subject(workspace.id, user.id, {
+          assetOnAppId: assetOnApp.id,
+          filePath: fakeFilePath,
+        }),
+      ).rejects.toThrow()
+    })
   })
 
   describe('when the format is supported', () => {

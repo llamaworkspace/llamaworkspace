@@ -35,10 +35,10 @@ export const ragIngestService = async (
     )
 
     // Checks that the asset is not already ingested
-    // const hasEmbeddings = await hasEmbeddingsForAsset(prisma, assetId)
-    // if (hasEmbeddings) {
-    //   return
-    // }
+    const hasEmbeddings = await hasEmbeddingsForAsset(prisma, assetId)
+    if (hasEmbeddings) {
+      return
+    }
 
     const text = await loadFile(asset.extension, filePath)
 
