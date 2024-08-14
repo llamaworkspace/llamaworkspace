@@ -139,7 +139,7 @@ export class AppEngineRunner {
 
     await engine.onAssetAdded(
       ctx,
-      { filePath, assetOnAppId: assetOnApp.id, assetId },
+      { filePath, assetOnAppId: assetOnApp.id },
       { onSuccess, onFailure },
     )
     await deleteLocalFileCopy()

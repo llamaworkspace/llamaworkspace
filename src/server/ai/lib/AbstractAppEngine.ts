@@ -43,7 +43,6 @@ export interface AppEngineConfigParams<T> {
 }
 
 export interface AppEngineAssetParams {
-  readonly assetId: string
   readonly assetOnAppId: string
   readonly filePath: string
 }
