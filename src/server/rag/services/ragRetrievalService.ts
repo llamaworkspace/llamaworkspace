@@ -1,7 +1,7 @@
 import { prisma } from '@/server/db'
 import { embed } from 'ai'
 import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
-import { openaiClient } from './openaiClient'
+import { openaiClient } from './utils/openaiClient'
 
 export const ragRetrievalService = async (assetId: string, text: string) => {
   const { embedding: targetEmbedding } = await embed({

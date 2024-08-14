@@ -5,9 +5,9 @@ import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { PrismaClientOrTrxClient, PrismaTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { Promise } from 'bluebird'
-import { insertEmbeddingService } from './insertEmbeddingService/insertEmbeddingService'
-import { TextLoadingStrategy } from './insertEmbeddingService/load/TextLoadingStrategy'
-import { RecursiveCharacterTextSplitStrategy } from './insertEmbeddingService/split/RecursiveCharacterTextSplitStrategy'
+import { insertEmbeddingService } from './insertEmbeddingService'
+import { TextLoadingStrategy } from './strategies/load/TextLoadingStrategy'
+import { RecursiveCharacterTextSplitStrategy } from './strategies/split/RecursiveCharacterTextSplitStrategy'
 
 interface RagIngestPayload {
   filePath: string

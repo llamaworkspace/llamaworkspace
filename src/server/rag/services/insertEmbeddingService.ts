@@ -1,8 +1,8 @@
 import { prisma } from '@/server/db'
 import { embed } from 'ai'
 import cuid from 'cuid'
-import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
-import { openaiClient } from '../openaiClient'
+import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
+import { openaiClient } from './utils/openaiClient'
 
 export const insertEmbeddingService = async (
   assetId: string,
