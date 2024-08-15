@@ -26,7 +26,8 @@
     "datamigrate:down": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts down",
     "dev:deleteAllOpenaiVectorStores": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiVectorStores.ts",
     "dev:deleteAllOpenaiFiles": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts",
-    "dev:clearOpenai": "npm run dev:deleteAllOpenaiVectorStores && npm run dev:deleteAllOpenaiFiles"
+    "dev:clearOpenai": "npm run dev:deleteAllOpenaiVectorStores && npm run dev:deleteAllOpenaiFiles",
+    "dco:up-all": "docker-compose -f docker-compose.yml -f docker-compose.optional.yml up -d"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.24",
