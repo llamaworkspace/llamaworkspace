@@ -5,15 +5,11 @@ import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { AssetFactory } from '@/server/testing/factories/AssetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import type {
-  App,
-  Asset,
-  AssetEmbedding,
-  User,
-  Workspace,
-} from '@prisma/client'
+import { vectorDb } from '@/server/vectorDb'
+import type { App, Asset, User, Workspace } from '@prisma/client'
 import cuid from 'cuid'
 import pgvector from 'pgvector'
+import { type AssetEmbedding } from 'prisma/pgvector-prisma-client'
 import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
 import { ragRetrievalService } from '../ragRetrievalService'
 
@@ -66,7 +62,7 @@ describe('ragRetrievalService', () => {
       Array.from({ length: 1024 }).map(() => Math.random()),
     ) as number[]
 
-    assetEmbedding = await prisma.$queryRaw`
+    assetEmbedding = await vectorDb.$queryRaw`
     INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
     VALUES (
       ${cuid()},

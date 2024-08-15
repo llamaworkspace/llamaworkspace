@@ -13,4 +13,4 @@ CREATE TABLE "AssetEmbedding" (
 CREATE INDEX "AssetEmbedding_assetId_idx" ON "AssetEmbedding"("assetId");
 
 -- CreateIndex
-CREATE INDEX "AssetEmbedding_embedding_idx" ON "AssetEmbedding"("embedding");
+CREATE INDEX "AssetEmbedding_embedding_idx" ON "AssetEmbedding" USING hnsw (embedding vector_l2_ops);

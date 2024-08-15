@@ -1,5 +1,6 @@
-import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
-import { PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import { vectorDb } from '@/server/vectorDb'
+import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { OpenAIEmbeddingStrategy } from './strategies/embed/OpenAIEmbeddingStrategy'
 
 interface RagRetrievalPayload {
@@ -23,7 +24,7 @@ export const ragRetrievalService = async (
 
   const targetEmbedding = await new OpenAIEmbeddingStrategy().embed(text)
 
-  const res = await prisma.$queryRaw<{ id: string; contents: string }[]>`
+  const res = await vectorDb.$queryRaw<{ id: string; contents: string }[]>`
     SELECT id, contents
     FROM "AssetEmbedding"
     WHERE 1 - (embedding <=> ${targetEmbedding}::vector) >= 0.3
