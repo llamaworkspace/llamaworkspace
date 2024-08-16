@@ -2,6 +2,7 @@ import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiMode
 import { useAppById } from '@/components/apps/appsHooks'
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { StyledLink } from '@/components/ui/StyledLink'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
@@ -80,31 +81,43 @@ export const AppConfigForGPTSettings = ({
         }}
       />
 
-      {app && !isAssistantEngineType && (
-        <div className="grid md:grid-cols-2">
-          <Field
-            name="model"
-            validate={stringRequired}
-            render={({ input }) => {
-              return (
-                <SelectAiModelsFormField
-                  {...input}
-                  placeholder="Select a model"
-                  label="AI model"
-                  helperText={modelHelperText}
-                  disabled={disabled}
-                />
-              )
-            }}
-          />
-        </div>
-      )}
       {app && isAssistantEngineType && (
         <div>
           <AppConfigForGPTFileUpload
             appId={appId}
             supportedFileTypes={supportedFileTypes}
           />
+        </div>
+      )}
+
+      {app && isAssistantEngineType && (
+        <div>
+          <div className="grid md:grid-cols-2">
+            <Field
+              name="model"
+              validate={stringRequired}
+              render={({ input }) => {
+                return (
+                  <SelectAiModelsFormField
+                    {...input}
+                    placeholder="Select a model"
+                    label="AI model"
+                    // helperText={modelHelperText}
+                    disabled={true}
+                  />
+                )
+              }}
+            />
+          </div>
+          <div className="pt-4">
+            <Alert variant="fuchsia" className="lg:max-w-[500px]">
+              {/* <AlertTitle>Knowledge limitations</AlertTitle> */}
+              <AlertDescription className="space-y-2">
+                Adding knowledge as contextual files is currently only available
+                with GPT-4o.
+              </AlertDescription>
+            </Alert>
+          </div>
         </div>
       )}
     </>

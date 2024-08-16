@@ -1,4 +1,6 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { AssetUploadStatus } from '@/components/assets/assetTypes'
+import { getLatestAppConfigForAppIdService } from '@/server/apps/services/getLatestAppConfigForAppId.service'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -57,10 +59,57 @@ export const bindAssetToAppService = async (
           status: AssetOnAppStatus.Processing,
         },
       })
-      await bindAssetToAppQueue.enqueue('bindAssetToApp', {
-        userId,
-        assetOnAppId: assetOnApp.id,
-      })
+
+      const configVersion = await getLatestAppConfigForAppIdService(
+        prisma,
+        uowContext,
+        {
+          appId,
+        },
+      )
+
+      await Promise.all([
+        setModelToGpt4o(prisma, configVersion.id),
+        setAppEngineTypeToAssistant(prisma, appId),
+      ])
+
+      await enqueueBindAssetToApp(userId, assetOnApp.id)
     }
+  })
+}
+
+const setModelToGpt4o = async (
+  prisma: PrismaClientOrTrxClient,
+  appConfigVersionId: string,
+) => {
+  await prisma.appConfigVersion.update({
+    where: {
+      id: appConfigVersionId,
+    },
+    data: {
+      model: 'openai/gpt-4o',
+    },
+  })
+}
+
+const setAppEngineTypeToAssistant = async (
+  prisma: PrismaClientOrTrxClient,
+  appId: string,
+) => {
+  await prisma.app.update({
+    where: {
+      id: appId,
+    },
+    data: {
+      engineType: AppEngineType.Assistant,
+    },
+  })
+}
+
+const enqueueBindAssetToApp = async (userId: string, assetOnAppId: string) => {
+  // Do the actual binding here
+  await bindAssetToAppQueue.enqueue('bindAssetToApp', {
+    userId,
+    assetOnAppId,
   })
 }
