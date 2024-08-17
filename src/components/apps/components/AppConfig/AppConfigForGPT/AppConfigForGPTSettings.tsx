@@ -2,7 +2,7 @@ import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiMode
 import { useAppById } from '@/components/apps/appsHooks'
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { StyledLink } from '@/components/ui/StyledLink'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
@@ -102,7 +102,7 @@ export const AppConfigForGPTSettings = ({
                     {...input}
                     placeholder="Select a model"
                     label="AI model"
-                    // helperText={modelHelperText}
+                    helperText={modelHelperText}
                     disabled={true}
                   />
                 )
@@ -110,11 +110,10 @@ export const AppConfigForGPTSettings = ({
             />
           </div>
           <div className="pt-4">
-            <Alert variant="fuchsia" className="lg:max-w-[500px]">
-              {/* <AlertTitle>Knowledge limitations</AlertTitle> */}
+            <Alert variant="default" className="lg:max-w-[600px]">
+              <AlertTitle>Limited AI model selection</AlertTitle>
               <AlertDescription className="space-y-2">
-                Adding knowledge as contextual files is currently only available
-                with GPT-4o.
+                Currently, adding knowledge files is only supported with GPT-4o.
               </AlertDescription>
             </Alert>
           </div>
