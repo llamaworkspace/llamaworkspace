@@ -120,10 +120,12 @@ export class AppEngineRunner {
     let onSuccessHasBeenCalled = false
     let onFailureHasBeenCalled = false
 
-    const onSuccess = async (externalId: string) => {
+    const onSuccess = async (externalId?: string) => {
       if (onFailureHasBeenCalled) return
       onSuccessHasBeenCalled = true
-      await this.saveExternalAssetId(assetOnAppId, externalId)
+      if (externalId) {
+        await this.saveExternalAssetId(assetOnAppId, externalId)
+      }
       await this.updateAssetOnApp(assetOnAppId, {
         status: AssetOnAppStatus.Success,
       })

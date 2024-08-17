@@ -1,0 +1,23 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["postgresqlExtensions"]
+    output          = "../node_modules/prisma/pgvector-prisma-client"
+    migrations      = "./migrations/pgvector-migrations"
+}
+
+datasource db {
+    provider   = "postgresql"
+    url        = env("PGVECTOR_DATABASE_URL")
+    extensions = [vector]
+}
+
+model AssetEmbedding {
+    id        String                      @id @default(cuid())
+    assetId   String
+    contents  String
+    model     String
+    embedding Unsupported("vector(1024)")
+
+    @@index(assetId)
+    @@index(embedding)
+}

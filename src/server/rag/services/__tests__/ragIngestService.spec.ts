@@ -7,6 +7,7 @@ import { AssetFactory } from '@/server/testing/factories/AssetFactory'
 import { AssetsOnAppsFactory } from '@/server/testing/factories/AssetsOnAppsFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { vectorDb } from '@/server/vectorDb'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, AssetsOnApps, User, Workspace } from '@prisma/client'
 import cuid from 'cuid'
@@ -140,7 +141,8 @@ describe('ragIngestService', () => {
   describe('when asset already has embeddings', () => {
     it('does nothing', async () => {
       const vector = Array.from({ length: 1024 }).map(() => Math.random())
-      await prisma.$queryRaw`
+
+      await vectorDb.$queryRaw`
         INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
         VALUES (
           ${cuid()},
