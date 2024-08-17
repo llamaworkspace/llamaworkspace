@@ -41,9 +41,7 @@ export const AppConfigForGPTSettings = ({
     }
   }, [focusQueryStringEl, disabled])
 
-  const isAssistantEngineType =
-    app?.engineType === AppEngineType.Assistant ||
-    app?.engineType === AppEngineType.Default
+  const isAssistantEngineType = app?.engineType === AppEngineType.Assistant
 
   const supportedFileTypes =
     app?.engineType === AppEngineType.Assistant
@@ -81,7 +79,7 @@ export const AppConfigForGPTSettings = ({
         }}
       />
 
-      {app && isAssistantEngineType && (
+      {app && (
         <div>
           <AppConfigForGPTFileUpload
             appId={appId}
@@ -90,35 +88,33 @@ export const AppConfigForGPTSettings = ({
         </div>
       )}
 
-      {app && isAssistantEngineType && (
-        <div>
-          <div className="grid md:grid-cols-2">
-            <Field
-              name="model"
-              validate={stringRequired}
-              render={({ input }) => {
-                return (
-                  <SelectAiModelsFormField
-                    {...input}
-                    placeholder="Select a model"
-                    label="AI model"
-                    helperText={modelHelperText}
-                    disabled={true}
-                  />
-                )
-              }}
-            />
-          </div>
-          <div className="pt-4">
-            <Alert variant="default" className="lg:max-w-[600px]">
-              <AlertTitle>Limited AI model selection</AlertTitle>
-              <AlertDescription className="space-y-2">
-                Currently, adding knowledge files is only supported with GPT-4o.
-              </AlertDescription>
-            </Alert>
-          </div>
+      <div>
+        <div className="grid md:grid-cols-2">
+          <Field
+            name="model"
+            validate={stringRequired}
+            render={({ input }) => {
+              return (
+                <SelectAiModelsFormField
+                  {...input}
+                  placeholder="Select a model"
+                  label="AI model"
+                  helperText={modelHelperText}
+                  disabled={disabled || isAssistantEngineType}
+                />
+              )
+            }}
+          />
         </div>
-      )}
+        <div className="pt-4">
+          <Alert variant="default" className="lg:max-w-[600px]">
+            <AlertTitle>Limited AI model selection</AlertTitle>
+            <AlertDescription className="space-y-2">
+              Currently, adding knowledge files is only supported with GPT-4o.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </div>
     </>
   )
 }
