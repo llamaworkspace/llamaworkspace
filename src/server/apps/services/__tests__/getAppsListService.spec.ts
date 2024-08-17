@@ -123,7 +123,7 @@ describe('getAppsListService', () => {
   })
 
   describe('when an app is marked as deleted', () => {
-    it.only('does not return soft deleted apps', async () => {
+    it('does not return soft deleted apps', async () => {
       await prisma.app.update({
         where: { id: appWithScopePrivate.id },
         data: { markAsDeletedAt: new Date() },
