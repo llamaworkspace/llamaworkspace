@@ -1,9 +1,9 @@
 import { env } from '@/env.mjs'
 import { PrismaClient } from '@prisma/client'
 import { fieldEncryptionExtension } from 'prisma-field-encryption'
+import { globalForPrisma } from './dbUtils'
 
 const DEV_DEBUG_DB = false
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 
 export const prisma =
   globalForPrisma.prisma ||

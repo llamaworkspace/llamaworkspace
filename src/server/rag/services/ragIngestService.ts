@@ -2,6 +2,7 @@ import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
+import { vectorDb } from '@/server/vectorDb'
 import { PrismaClientOrTrxClient, PrismaTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { Promise } from 'bluebird'
@@ -35,7 +36,7 @@ export const ragIngestService = async (
     )
 
     // Checks that the asset is not already ingested
-    const hasEmbeddings = await hasEmbeddingsForAsset(prisma, assetId)
+    const hasEmbeddings = await hasEmbeddingsForAsset(assetId)
     if (hasEmbeddings) {
       return
     }
@@ -66,11 +67,8 @@ const getAssetOnApp = (
   })
 }
 
-const hasEmbeddingsForAsset = async (
-  prisma: PrismaTrxClient,
-  assetId: string,
-) => {
-  const embeddings = await prisma.assetEmbedding.findMany({
+const hasEmbeddingsForAsset = async (assetId: string) => {
+  const embeddings = await vectorDb.assetEmbedding.findMany({
     where: {
       assetId,
     },

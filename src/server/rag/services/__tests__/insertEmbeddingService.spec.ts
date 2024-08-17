@@ -5,6 +5,7 @@ import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { AssetFactory } from '@/server/testing/factories/AssetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { vectorDb } from '@/server/vectorDb'
 import type { App, Asset, User, Workspace } from '@prisma/client'
 import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
 import { insertEmbeddingService } from '../insertEmbeddingService'
@@ -68,7 +69,7 @@ describe('insertEmbeddingService', () => {
       text: 'pepe car',
     })
 
-    const embeddings = await prisma.$queryRaw<
+    const embeddings = await vectorDb.$queryRaw<
       { id: string; embedding: number[] }[]
     >`
       SELECT id, model, "assetId", contents, embedding::real[]
