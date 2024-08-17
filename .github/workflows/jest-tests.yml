@@ -56,7 +56,7 @@ jobs:
         run: npm install --frozen-lockfile
 
       - name: Prepare test environment
-        run: npm run test:prepare && cp .env.test .env
+        run: npm run test:prepare && npm run test:prepare-pgvector && cp .env.test .env
 
       - name: Run Jest tests
         run: npm run test:ci
