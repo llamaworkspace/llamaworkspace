@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { AssetUploadStatus } from '@/components/assets/assetTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
@@ -137,7 +138,7 @@ describe('bindAssetToAppService', () => {
         id: app.id,
       },
       data: {
-        engineType: 'default',
+        engineType: AppEngineType.Default,
       },
     })
 

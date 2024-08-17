@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -112,5 +113,52 @@ describe('unbindAssetService', () => {
         assetOnAppId: assetOnApp.id,
       },
     )
+  })
+
+  it('does not change the engine type if there are other assets bound', async () => {
+    const asset2 = await AssetFactory.create(prisma, {
+      workspaceId: workspace.id,
+      originalName: 'file2.txt',
+    })
+
+    await AssetsOnAppsFactory.create(prisma, {
+      assetId: asset2.id,
+      appId: app.id,
+    })
+
+    const appBefore = await prisma.app.findFirstOrThrow({
+      where: { id: app.id },
+    })
+
+    expect(appBefore.engineType).toEqual(AppEngineType.Assistant)
+
+    await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
+
+    const appAfter = await prisma.app.findFirstOrThrow({
+      where: { id: app.id },
+    })
+
+    expect(appAfter.engineType).toEqual(AppEngineType.Assistant)
+  })
+
+  describe('when there are no more assets bound', () => {
+    it('does changes the engine type', async () => {
+      const appBefore = await prisma.app.findFirstOrThrow({
+        where: { id: app.id },
+      })
+
+      expect(appBefore.engineType).toEqual(AppEngineType.Assistant)
+
+      await subject(workspace.id, user.id, {
+        appId: app.id,
+        assetId: asset.id,
+      })
+
+      const appAfter = await prisma.app.findFirstOrThrow({
+        where: { id: app.id },
+      })
+
+      expect(appAfter.engineType).toEqual(AppEngineType.Default)
+    })
   })
 })
