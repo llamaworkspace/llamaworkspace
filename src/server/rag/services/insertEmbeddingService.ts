@@ -1,6 +1,6 @@
-import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { vectorDb } from '@/server/vectorDb'
-import { PrismaClientOrTrxClient } from '@/shared/globalTypes'
+import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import cuid from 'cuid'
 import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
 import { OpenAIEmbeddingStrategy } from './strategies/embed/OpenAIEmbeddingStrategy'

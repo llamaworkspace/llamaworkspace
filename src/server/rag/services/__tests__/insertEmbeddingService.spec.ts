@@ -10,13 +10,6 @@ import type { App, Asset, User, Workspace } from '@prisma/client'
 import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
 import { insertEmbeddingService } from '../insertEmbeddingService'
 
-jest.mock('ai', () => {
-  return {
-    embed: jest.fn().mockResolvedValue({
-      embedding: Array.from({ length: 1024 }).map(() => Math.random()),
-    }),
-  }
-})
 jest.mock(
   '@/server/rag/services/strategies/embed/OpenAIEmbeddingStrategy.ts',
   () => {
