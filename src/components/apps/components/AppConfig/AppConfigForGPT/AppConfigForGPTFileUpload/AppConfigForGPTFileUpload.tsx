@@ -1,18 +1,20 @@
 import { useAppAssets } from '@/components/apps/appsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
-import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/apps/appConstants'
 import type { Asset, AssetsOnApps } from '@prisma/client'
 import { useState, type ChangeEvent } from 'react'
 import { AppConfigForGPTUploadedFile } from './AppConfigForGPTUploadedFile'
 import { useUploadFile } from './appConfigForGPTFileUploadHooks'
 
 interface AppConfigForGPTFileUploadProps {
+  supportedFileTypes: string
   appId?: string
 }
 
 export const AppConfigForGPTFileUpload = ({
   appId,
+  supportedFileTypes,
 }: AppConfigForGPTFileUploadProps) => {
   const [uploadableFiles, setUploadeableFiles] = useState<
     Record<string, Asset>
@@ -37,6 +39,8 @@ export const AppConfigForGPTFileUpload = ({
     Array.from(event.target.files).forEach((file) => void uploadFile(file))
   }
 
+  const maxFilesReached = appFiles && appFiles.length >= 10
+
   return (
     <div className="space-y-2">
       <div className="space-y-4">
@@ -54,13 +58,24 @@ export const AppConfigForGPTFileUpload = ({
           uploadableFiles={uploadableFiles}
         />
       </div>
-      <FileUploadInput
-        buttonText="Upload files"
-        onChange={handleChange}
-        type="file"
-        multiple
-        accept={OPENAI_SUPPORTED_FILE_TYPES}
-      />
+      {!maxFilesReached && (
+        <FileUploadInput
+          buttonText="Upload files"
+          onChange={handleChange}
+          type="file"
+          multiple
+          accept={supportedFileTypes}
+        />
+      )}
+      {maxFilesReached && (
+        <div className="pt-4">
+          <Alert variant="fuchsia" className="lg:max-w-[500px]">
+            <AlertDescription className="space-y-2">
+              You have reached the maximum of 10 uploadable files for this app.
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,0 +1,17 @@
+services:
+  pgvector:
+    container_name: llamaws_pgvector
+    image: pgvector/pgvector:pg16
+
+    volumes:
+      - llamaws_pgvector:/var/lib/postgresql/data
+
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: llamawsvector
+
+volumes:
+  llamaws_pgvector:
