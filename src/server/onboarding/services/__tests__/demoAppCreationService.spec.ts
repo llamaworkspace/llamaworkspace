@@ -33,7 +33,7 @@ describe('demoAppCreationService', () => {
     })
 
     expect(app).toMatchObject({
-      title: 'Fun facts teller',
+      title: 'Fun facts demo app',
       engineType: AppEngineType.Default,
     })
     expect(app.shares[0]!.scope).toBe(ShareScope.Everybody.toString())

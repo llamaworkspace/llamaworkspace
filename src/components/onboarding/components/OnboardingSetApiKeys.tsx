@@ -12,27 +12,9 @@ import { usePeformInitialModelSetup } from '../onboardingHooks'
 
 const options = [
   {
-    value: InitialModel.Llama,
-    title: 'Llama 3',
-    description:
-      'Llama 3.1 405B will be used as default. This option requires an Openrouter API key.',
-    apiKeyLabel: 'Openrouter.ai API key',
-    apiKeyHelperText: (
-      <span>
-        You can obtain an openrouter API key at{' '}
-        <StyledLink href="https://openrouter.ai" target="_blank">
-          openrouter.ai
-        </StyledLink>
-      </span>
-    ),
-    providerSlug: 'openrouter',
-    modelSlug: 'meta-llama/llama-3.1-405b-instruct',
-  },
-  {
     value: InitialModel.Openai,
-    title: 'GPT-4',
-    description:
-      'GPT-4o will be used as default. This option requires an OpenAI API key.',
+    title: 'GPT-4o',
+    description: 'GPT-4o will be used as the default model for all chats.',
     apiKeyLabel: 'OpenAI API key',
     apiKeyHelperText: (
       <span>
@@ -45,6 +27,23 @@ const options = [
     providerSlug: 'openai',
     modelSlug: 'openai/gpt-4o',
   },
+  {
+    value: InitialModel.Llama,
+    title: 'GPT-4o + Llama 3',
+    description:
+      'Llama 3.1 405B will be used as the default model for all chats.',
+    apiKeyLabel: 'Openrouter.ai API key',
+    apiKeyHelperText: (
+      <span>
+        You can obtain an openrouter API key at{' '}
+        <StyledLink href="https://openrouter.ai" target="_blank">
+          openrouter.ai
+        </StyledLink>
+      </span>
+    ),
+    providerSlug: 'openrouter',
+    modelSlug: 'meta-llama/llama-3.1-405b-instruct',
+  },
 ]
 
 interface FormValues {
@@ -55,11 +54,13 @@ interface FormValues {
 
 const textClasses = 'text-sm text-zinc-700'
 
-interface OnboardingScreenProps {
+interface OnboardingSetApiKeysProps {
   onSuccess?: () => Promise<void>
 }
 
-export const OnboardingScreen = ({ onSuccess }: OnboardingScreenProps) => {
+export const OnboardingSetApiKeys = ({
+  onSuccess,
+}: OnboardingSetApiKeysProps) => {
   const { data: workspace } = useCurrentWorkspace()
   const { mutateAsync: performInitialModelSetup } = usePeformInitialModelSetup()
   const utils = api.useContext()
@@ -84,9 +85,8 @@ export const OnboardingScreen = ({ onSuccess }: OnboardingScreenProps) => {
   return (
     <div className="space-y-4">
       <div className={textClasses}>
-        You must set up at least one model provider for the product to work.
-        Select the initial Large Language Model you want to use. You will be
-        able to add more models later.
+        Great! Now select which models you want to start working with and add
+        the necessary API keys.
       </div>
       <FinalForm<FormValues>
         onSubmit={handleSubmit}
@@ -105,7 +105,7 @@ export const OnboardingScreen = ({ onSuccess }: OnboardingScreenProps) => {
                 render={({ input, meta }) => {
                   return (
                     <BoxedRadioGroupField
-                      label="Initial model"
+                      label="Initial models"
                       meta={meta}
                       options={options}
                       {...input}
@@ -113,22 +113,6 @@ export const OnboardingScreen = ({ onSuccess }: OnboardingScreenProps) => {
                   )
                 }}
               />
-              {option && (
-                <Field
-                  name="apiKey"
-                  validate={stringRequired}
-                  render={({ input, meta }) => {
-                    return (
-                      <InputField
-                        label={option.apiKeyLabel}
-                        helperText={option.apiKeyHelperText}
-                        meta={meta}
-                        {...input}
-                      />
-                    )
-                  }}
-                />
-              )}
 
               {option && option.value === InitialModel.Llama && (
                 <div className="space-y-4">
@@ -148,14 +132,30 @@ export const OnboardingScreen = ({ onSuccess }: OnboardingScreenProps) => {
                       }}
                     />
                   </div>
-                  <div className={textClasses}>
+                  {/* <div className={textClasses}>
                     <strong>Why is an OpenAI API key needed?</strong> We are
                     actively working on making the project fully independent of
                     closed-source models. However, we still need an OpenAI key
                     for specific use cases like generating embeddings. We expect
                     to remove this dependency in an upcoming update.
-                  </div>
+                  </div> */}
                 </div>
+              )}
+              {option && (
+                <Field
+                  name="apiKey"
+                  validate={stringRequired}
+                  render={({ input, meta }) => {
+                    return (
+                      <InputField
+                        label={option.apiKeyLabel}
+                        helperText={option.apiKeyHelperText}
+                        meta={meta}
+                        {...input}
+                      />
+                    )
+                  }}
+                />
               )}
 
               <Button onClick={() => void handleSubmit()}>Continue</Button>
