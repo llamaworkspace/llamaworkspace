@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -30,7 +31,7 @@ export const unbindAssetService = async (
       where: scopeAssetByWorkspace({ id: assetId }, workspaceId),
     })
 
-    const assetsOnApps = await prisma.assetsOnApps.updateMany({
+    await prisma.assetsOnApps.updateMany({
       where: {
         assetId,
         appId,
@@ -40,6 +41,17 @@ export const unbindAssetService = async (
       },
     })
 
+    const count = await prisma.assetsOnApps.count({
+      where: {
+        appId,
+        markAsDeletedAt: null,
+      },
+    })
+
+    if (count === 0) {
+      await setAppEngineTypeToDefault(prisma, appId)
+    }
+
     const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
       where: {
         assetId,
@@ -47,9 +59,30 @@ export const unbindAssetService = async (
       },
     })
 
-    await unbindAssetFromAppQueue.enqueue('unbindAssetFromApp', {
-      userId,
-      assetOnAppId: assetOnApp.id,
-    })
+    await enqueueUnbindAssetFromApp(userId, assetOnApp.id)
+  })
+}
+
+const setAppEngineTypeToDefault = async (
+  prisma: PrismaClientOrTrxClient,
+  appId: string,
+) => {
+  await prisma.app.update({
+    where: {
+      id: appId,
+    },
+    data: {
+      engineType: AppEngineType.Default,
+    },
+  })
+}
+
+const enqueueUnbindAssetFromApp = async (
+  userId: string,
+  assetOnAppId: string,
+) => {
+  await unbindAssetFromAppQueue.enqueue('unbindAssetFromApp', {
+    userId,
+    assetOnAppId,
   })
 }

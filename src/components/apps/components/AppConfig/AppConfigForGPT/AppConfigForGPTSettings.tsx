@@ -1,15 +1,11 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
 import { useAppById } from '@/components/apps/appsHooks'
 import { AppEngineType } from '@/components/apps/appsTypes'
-import { StyledLink } from '@/components/ui/StyledLink'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import {
-  DEFAULT_ENGINE_SUPPORTED_FILE_TYPES,
-  OPENAI_SUPPORTED_FILE_TYPES,
-} from '@/server/apps/appConstants'
+import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/apps/appConstants'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
 import { AppConfigForGPTFileUpload } from './AppConfigForGPTFileUpload/AppConfigForGPTFileUpload'
@@ -40,21 +36,14 @@ export const AppConfigForGPTSettings = ({
     }
   }, [focusQueryStringEl, disabled])
 
-  const isAssistantEngineType =
-    app?.engineType === AppEngineType.Assistant ||
-    app?.engineType === AppEngineType.Default
+  const isAssistantEngineType = app?.engineType === AppEngineType.Assistant
 
-  const supportedFileTypes =
-    app?.engineType === AppEngineType.Assistant
-      ? OPENAI_SUPPORTED_FILE_TYPES
-      : DEFAULT_ENGINE_SUPPORTED_FILE_TYPES
-
-  const profileUrl = `/w/${workspace?.id}/profile`
+  const supportedFileTypes = OPENAI_SUPPORTED_FILE_TYPES
 
   const modelHelperText = (
     <>
-      Update the default model{' '}
-      <StyledLink href={profileUrl}>in your profile</StyledLink>.
+      Currently, model selection is not available when uploading knowledge
+      files.
     </>
   )
   return (
@@ -80,7 +69,16 @@ export const AppConfigForGPTSettings = ({
         }}
       />
 
-      {app && !isAssistantEngineType && (
+      {app && (
+        <div>
+          <AppConfigForGPTFileUpload
+            appId={appId}
+            supportedFileTypes={supportedFileTypes}
+          />
+        </div>
+      )}
+
+      <div>
         <div className="grid md:grid-cols-2">
           <Field
             name="model"
@@ -91,22 +89,16 @@ export const AppConfigForGPTSettings = ({
                   {...input}
                   placeholder="Select a model"
                   label="AI model"
-                  helperText={modelHelperText}
-                  disabled={disabled}
+                  helperText={
+                    isAssistantEngineType ? modelHelperText : undefined
+                  }
+                  disabled={disabled || isAssistantEngineType}
                 />
               )
             }}
           />
         </div>
-      )}
-      {app && isAssistantEngineType && (
-        <div>
-          <AppConfigForGPTFileUpload
-            appId={appId}
-            supportedFileTypes={supportedFileTypes}
-          />
-        </div>
-      )}
+      </div>
     </>
   )
 }
