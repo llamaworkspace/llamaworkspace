@@ -6,9 +6,10 @@ import {
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
+import { AssetOnAppStatus } from '@/shared/globalTypes'
 import type { Asset, AssetsOnApps } from '@prisma/client'
 import { Promise } from 'bluebird'
-import { useState, type ChangeEvent } from 'react'
+import { useMemo, useState, type ChangeEvent } from 'react'
 import { AppConfigForGPTUploadedFile } from './AppConfigForGPTUploadedFile'
 import { useUploadFile } from './appConfigForGPTFileUploadHooks'
 
@@ -41,7 +42,26 @@ export const AppConfigForGPTFileUpload = ({
   }
 
   const uploadFile = useUploadFile(onFileUploadStarted, onFileUploaded, appId)
-  const { data: appFiles } = useAppAssets(appId)
+
+  // Poll file processing status
+  const [allFilesUploaded, setAllFilesUploaded] = useState(true)
+  const { data: appFiles } = useAppAssets(appId, {
+    refetchInterval: allFilesUploaded ? 0 : 2000,
+  })
+
+  useMemo(() => {
+    const result = appFiles?.reduce((acc, file) => {
+      if (acc === false) return false
+
+      return file.assetsOnApps.reduce((acc, assetOnApp) => {
+        if (acc === false) return false
+        return assetOnApp.status === AssetOnAppStatus.Success.toString()
+      }, true)
+    }, true)
+
+    setAllFilesUploaded(!!result)
+  }, [appFiles])
+  // --END-- Poll file processing status
 
   const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return

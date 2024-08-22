@@ -254,7 +254,12 @@ export const useUpdateShareAccessLevelForApp = () => {
   })
 }
 
-export const useAppAssets = (appId?: string) => {
+type UseAppAssetsOptions = Parameters<typeof api.apps.getAppAssets.useQuery>[1]
+
+export const useAppAssets = (
+  appId?: string,
+  options?: { refetchInterval?: number },
+) => {
   const errorHandler = useErrorHandler()
 
   return api.apps.getAppAssets.useQuery(
@@ -262,6 +267,7 @@ export const useAppAssets = (appId?: string) => {
     {
       onError: errorHandler(),
       enabled: !!appId,
+      ...options,
     },
   )
 }
