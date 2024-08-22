@@ -7,10 +7,7 @@ import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import {
-  DEFAULT_ENGINE_SUPPORTED_FILE_TYPES,
-  OPENAI_SUPPORTED_FILE_TYPES,
-} from '@/server/apps/appConstants'
+import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/apps/appConstants'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
 import { AppConfigForGPTFileUpload } from './AppConfigForGPTFileUpload/AppConfigForGPTFileUpload'
@@ -43,10 +40,7 @@ export const AppConfigForGPTSettings = ({
 
   const isAssistantEngineType = app?.engineType === AppEngineType.Assistant
 
-  const supportedFileTypes =
-    app?.engineType === AppEngineType.Assistant
-      ? OPENAI_SUPPORTED_FILE_TYPES
-      : DEFAULT_ENGINE_SUPPORTED_FILE_TYPES
+  const supportedFileTypes = OPENAI_SUPPORTED_FILE_TYPES
 
   const profileUrl = `/w/${workspace?.id}/profile`
 

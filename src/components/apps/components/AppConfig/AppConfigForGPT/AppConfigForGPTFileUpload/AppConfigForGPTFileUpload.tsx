@@ -55,7 +55,7 @@ export const AppConfigForGPTFileUpload = ({
 
       return file.assetsOnApps.reduce((acc, assetOnApp) => {
         if (acc === false) return false
-        return assetOnApp.status === AssetOnAppStatus.Success.toString()
+        return assetOnApp.status !== AssetOnAppStatus.Processing.toString()
       }, true)
     }, true)
 
