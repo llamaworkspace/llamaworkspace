@@ -81,15 +81,6 @@ jobs:
             echo "IMAGE_EXISTS_IN_DOCKERHUB=false" >> $GITHUB_ENV
           fi
 
-      # - name: Stop if version is not higher or image already exists
-      #   if: env.RUN_BUILD == 'false' || env.IMAGE_EXISTS_IN_DOCKERHUB == 'true'
-      #   run: |
-      #     if [ "${{ env.RUN_BUILD }}" == "false" ]; then
-      #       echo "Action terminates here.."
-      #     else
-      #       echo "Image already exists in Docker Hub. Skipping build."
-      #     fi
-
       - name: Set up Docker Buildx
         if: env.RUN_BUILD == 'true' && env.IMAGE_EXISTS_IN_DOCKERHUB == 'false'
         uses: docker/setup-buildx-action@v2
