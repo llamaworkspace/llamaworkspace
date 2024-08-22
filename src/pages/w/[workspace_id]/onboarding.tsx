@@ -1,9 +1,11 @@
-import { OnboardingScreen } from '@/components/onboarding/components/OnboardingScreen'
+import { OnboardingSetApiKeys } from '@/components/onboarding/components/OnboardingSetApiKeys'
+import { OnboardingSetWorkspaceName } from '@/components/onboarding/components/OnboardingSetWorkspaceName'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { getServerAuthSession } from '@/server/auth/nextauth'
 import { prisma } from '@/server/db'
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Image from 'next/image'
+import { useState } from 'react'
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext,
@@ -51,8 +53,15 @@ export const getServerSideProps: GetServerSideProps = async (
 
 export default function Onboarding() {
   const navigation = useNavigation()
+  const [step, setStep] = useState(1)
   const handleSuccess = async () => {
-    await navigation.push('/p')
+    const nextStep = step + 1
+
+    if (nextStep > 2) {
+      await navigation.push('/p')
+    } else {
+      setStep(nextStep)
+    }
   }
 
   return (
@@ -71,7 +80,10 @@ export default function Onboarding() {
           <div className="leading-nont text-xl font-semibold tracking-tight">
             Welcome to Llama Workspace
           </div>
-          <OnboardingScreen onSuccess={handleSuccess} />
+          {step === 1 && (
+            <OnboardingSetWorkspaceName onSuccess={handleSuccess} />
+          )}
+          {step === 2 && <OnboardingSetApiKeys onSuccess={handleSuccess} />}
         </div>
       </div>
     </div>
