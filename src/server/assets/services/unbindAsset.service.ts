@@ -26,12 +26,6 @@ export const unbindAssetService = async (
       userId,
       appId,
     )
-    const count1 = await prisma.assetsOnApps.count({
-      where: {
-        appId,
-        markAsDeletedAt: null,
-      },
-    })
 
     await prisma.asset.findFirstOrThrow({
       where: scopeAssetByWorkspace({ id: assetId }, workspaceId),

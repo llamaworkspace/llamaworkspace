@@ -1,8 +1,13 @@
-import { useAppAssets } from '@/components/apps/appsHooks'
+import {
+  useAppAssets,
+  useAppById,
+  useLatestAppConfigVersionForApp,
+} from '@/components/apps/appsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
 import type { Asset, AssetsOnApps } from '@prisma/client'
+import { Promise } from 'bluebird'
 import { useState, type ChangeEvent } from 'react'
 import { AppConfigForGPTUploadedFile } from './AppConfigForGPTUploadedFile'
 import { useUploadFile } from './appConfigForGPTFileUploadHooks'
@@ -20,6 +25,11 @@ export const AppConfigForGPTFileUpload = ({
     Record<string, Asset>
   >({})
 
+  const { refetch: refetchAppConfigVersion } =
+    useLatestAppConfigVersionForApp(appId)
+
+  const { refetch: refetchApp } = useAppById(appId)
+
   const onFileUploadStarted = (fileName: string, appFile: Asset) => {
     setUploadeableFiles((prev) => ({ ...prev, [fileName]: appFile }))
   }
@@ -33,10 +43,16 @@ export const AppConfigForGPTFileUpload = ({
   const uploadFile = useUploadFile(onFileUploadStarted, onFileUploaded, appId)
   const { data: appFiles } = useAppAssets(appId)
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return
 
-    Array.from(event.target.files).forEach((file) => void uploadFile(file))
+    await Promise.map(Array.from(event.target.files), async (file) => {
+      await uploadFile(file)
+    })
+
+    // Refetch to potentially update the engine type that will change
+    // based on whether there are any files uploaded
+    await Promise.all([refetchApp(), refetchAppConfigVersion()])
   }
 
   const maxFilesReached = appFiles && appFiles.length >= 10
@@ -61,7 +77,7 @@ export const AppConfigForGPTFileUpload = ({
       {!maxFilesReached && (
         <FileUploadInput
           buttonText="Upload files"
-          onChange={handleChange}
+          onChange={(event) => void handleFileUpload(event)}
           type="file"
           multiple
           accept={supportedFileTypes}

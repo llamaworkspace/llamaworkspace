@@ -1,3 +1,7 @@
+import {
+  useAppById,
+  useLatestAppConfigVersionForApp,
+} from '@/components/apps/appsHooks'
 import { useUnbindAsset } from '@/components/assets/assetsHooks'
 import { useSuccessToast } from '@/components/ui/toastHooks'
 import {
@@ -40,6 +44,9 @@ export const AppConfigForGPTUploadedFile = ({
 }: UploadedFileProps) => {
   const { mutateAsync: unbindAsset } = useUnbindAsset()
   const toast = useSuccessToast()
+  const { refetch: refetchAppConfigVersion } =
+    useLatestAppConfigVersionForApp(appId)
+  const { refetch: refetchApp } = useAppById(appId)
   const utils = api.useContext()
 
   const handleFileDelete = async () => {
@@ -47,6 +54,9 @@ export const AppConfigForGPTUploadedFile = ({
     if (!appId) return
     await unbindAsset({ assetId, appId })
 
+    // Refetch to potentially update the engine type that will change
+    // based on whether there are any files uploaded
+    await Promise.all([refetchApp(), refetchAppConfigVersion()])
     toast(undefined, 'File successfully deleted')
     await utils.apps.getAppAssets.invalidate()
   }
