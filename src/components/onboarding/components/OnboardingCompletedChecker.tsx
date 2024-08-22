@@ -5,19 +5,30 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
+import { useNavigation } from '@/lib/frontend/useNavigation'
+import { useEffect } from 'react'
 import { OnboardingScreen } from './OnboardingScreen'
 
-export const OnboardingModal = () => {
+export const OnboardingCompletedChecker = () => {
   const { data: workspace } = useCurrentWorkspace()
+  const navigation = useNavigation()
 
-  const modalIsOpen = workspace && !workspace?.onboardingCompletedAt
+  const redirectToOnboarding = workspace && !workspace?.onboardingCompletedAt
+  const workspaceId = workspace?.id
 
-  if (!modalIsOpen) {
+  useEffect(() => {
+    if (!workspaceId) return
+    void navigation.replace('/w/:workspaceId/onboarding', {
+      workspaceId,
+    })
+  }, [redirectToOnboarding, navigation, workspaceId])
+
+  if (!redirectToOnboarding) {
     return null
   }
 
   return (
-    <Dialog open={modalIsOpen}>
+    <Dialog open={redirectToOnboarding}>
       <DialogContent
         hideCloseButton={true}
         className="max-h-screen overflow-y-scroll sm:max-w-[600px]"

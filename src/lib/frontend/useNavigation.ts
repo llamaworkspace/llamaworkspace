@@ -15,6 +15,7 @@ export type ApplicationPaths =
   | '/w/:workspaceId/profile'
   | '/w/:workspaceId/settings'
   | '/w/:workspaceId/settings/:tab'
+  | '/w/:workspaceId/onboarding'
   | '/p'
   | '/p/:appId'
   | '/p/:appId/history'
