@@ -8,11 +8,9 @@ In your first response (and only in the first one), you'll end the message in a 
 PS - To view the prompt behind this app, click on the cog wheel icon at the top.
 `
 
-const description = `👋 Welcome!
+const description = `👋 Welcome to Llama Workspace!
 
-This is The Fun Facts Teller, a demo chatbot we've created to show you how Llama Workspace works. It is programmed with a predefined prompt that you can see and customize by clicking on the Settings icon at the top right of this screen.
-
-Do you want to see it in action? Bring up any topic, and it will tell you a fun fact.`
+This is our demo app, a chatbot we've automatically created and set up for you to show how the product works. To use it, just write anything that comes to mind, and it will share a fun fact related to it.`
 
 export const onboardingTexts = {
   systemMessage,

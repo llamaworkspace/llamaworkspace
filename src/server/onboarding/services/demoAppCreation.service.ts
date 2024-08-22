@@ -12,8 +12,8 @@ export const demoAppCreationService = async (
   return await prismaAsTrx(prisma, async (prisma) => {
     // Create the app
     const demoApp = await appCreateService(prisma, uowContext, {
-      title: `Fun facts teller`,
-      emoji: '1f920', // Cowboy emoji 🤠
+      title: `Fun facts demo app`,
+      emoji: '1f984', // Unicorn emoji 🦄
       isDemo: true,
       engineType: AppEngineType.Default,
     })
