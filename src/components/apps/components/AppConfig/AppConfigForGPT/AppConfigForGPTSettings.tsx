@@ -1,8 +1,6 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
 import { useAppById } from '@/components/apps/appsHooks'
 import { AppEngineType } from '@/components/apps/appsTypes'
-import { StyledLink } from '@/components/ui/StyledLink'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
@@ -42,12 +40,10 @@ export const AppConfigForGPTSettings = ({
 
   const supportedFileTypes = OPENAI_SUPPORTED_FILE_TYPES
 
-  const profileUrl = `/w/${workspace?.id}/profile`
-
   const modelHelperText = (
     <>
-      Update the default model{' '}
-      <StyledLink href={profileUrl}>in your profile</StyledLink>.
+      Currently, model selection is not available when uploading knowledge
+      files.
     </>
   )
   return (
@@ -93,20 +89,14 @@ export const AppConfigForGPTSettings = ({
                   {...input}
                   placeholder="Select a model"
                   label="AI model"
-                  helperText={modelHelperText}
+                  helperText={
+                    isAssistantEngineType ? modelHelperText : undefined
+                  }
                   disabled={disabled || isAssistantEngineType}
                 />
               )
             }}
           />
-        </div>
-        <div className="pt-4">
-          <Alert variant="default" className="lg:max-w-[600px]">
-            <AlertTitle>Limited AI model selection</AlertTitle>
-            <AlertDescription className="space-y-2">
-              Currently, adding knowledge files is only supported with GPT-4o.
-            </AlertDescription>
-          </Alert>
         </div>
       </div>
     </>
