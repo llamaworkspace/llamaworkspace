@@ -42,8 +42,8 @@ export const AppConfigForGPTSettings = ({
 
   const modelHelperText = (
     <>
-      Currently, model selection is not available when uploading knowledge
-      files.
+      Currently, AI assistants with knowledge files only work with OpenAI&apos;s
+      GPT-4o.
     </>
   )
   return (
