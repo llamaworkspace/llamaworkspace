@@ -151,7 +151,7 @@ export class AppEngineRunner {
       await deleteLocalFileCopy()
       await this.updateAssetOnApp(assetOnAppId, {
         status: AssetOnAppStatus.Failed,
-        failureMessage: 'Server error attaching asset',
+        failureMessage: 'Server error while attaching asset',
       })
       throw error
     }

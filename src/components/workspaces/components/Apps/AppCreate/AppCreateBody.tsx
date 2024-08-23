@@ -16,12 +16,6 @@ const options = [
       'A simple assistant that acts based on a set of predefined instructions. Compatible with any Large Language model.',
   },
   {
-    value: AppEngineType.Assistant,
-    title: getAppEngineFriendlyName(AppEngineType.Assistant),
-    description:
-      'A GPT-4o based assistant that accepts document uploads which will be used to deliver contextually relevant responses.',
-  },
-  {
     value: AppEngineType.External,
     title: getAppEngineFriendlyName(AppEngineType.External),
     description:
