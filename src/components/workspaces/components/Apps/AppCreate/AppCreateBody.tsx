@@ -13,13 +13,13 @@ const options = [
     value: AppEngineType.Default,
     title: getAppEngineFriendlyName(AppEngineType.Default),
     description:
-      'A simple assistant that acts based on a set of predefined instructions. Compatible with any Large Language model.',
+      'An assistant that acts based on a set of predefined instructions. Upload documents to ask questions about them.',
   },
   {
     value: AppEngineType.External,
     title: getAppEngineFriendlyName(AppEngineType.External),
     description:
-      'Build your own assistant with custom logic and integrate it here for easy access.',
+      'Build your assistant using your own code and integrate it here for easy access.',
   },
 ]
 
