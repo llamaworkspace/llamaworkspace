@@ -46,7 +46,7 @@ export const AppConfigForExternalAppSettings = ({
                 label="Access Key"
                 placeholder="A set of random characters, eg: sadfokanpoccxhjwq"
                 contentEditable={false}
-                helperText="An unique code that will be sent along with the request to your servers, so that you can verify is legitimacy."
+                helperText="A unique code will be sent along with the request to your servers, allowing you to verify its legitimacy."
                 {...input}
               />
             </>

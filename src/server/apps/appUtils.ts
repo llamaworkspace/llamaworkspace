@@ -14,12 +14,11 @@ export const scopeAppByWorkspace = (
 export const getAppEngineFriendlyName = (engineType: AppEngineType) => {
   switch (engineType) {
     case AppEngineType.Default:
-      return 'Universal assistant'
     case AppEngineType.Assistant:
-      return 'Document-enhanced assistant'
+      return 'AI Assistant'
     case AppEngineType.External:
-      return 'Externally-powered assistant'
+      return 'Externally-powered Assistant'
     default:
-      throw new Error(`A friendly name has not been set for an engine type`)
+      throw new Error(`A friendly name has not been set for engine type`)
   }
 }

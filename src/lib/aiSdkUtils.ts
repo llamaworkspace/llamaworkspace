@@ -1,5 +1,19 @@
 import createHttpError from 'http-errors'
 
+export const convertErrorToAiSdkCompatibleError = (error: Error) => {
+  // structuredClone is a deep clone of an object.
+  // This comment is here so that lookups for "deep" or "clone" will find this.
+  const nextError = structuredClone(error)
+
+  if (createHttpError.isHttpError(error)) {
+    if (error.status < 500) {
+      nextError.message = '::public::' + error.message
+    }
+  }
+
+  return nextError
+}
+
 export const generateAiSdkCompatibleErrorString = (error: Error) => {
   // Make the string JSON safe; otherwise contents
   // with double quotes will break the string
@@ -13,6 +27,7 @@ export const generateAiSdkCompatibleErrorString = (error: Error) => {
       return `3:"::public::${message}"\n`
     }
   }
+
   return `3:"${message}"\n`
 }
 
@@ -21,4 +36,11 @@ export const isAiSdkErrorString = (errorString: string) => {
     return true
   }
   return false
+}
+
+export const maskServerErrorString = (errorString: string) => {
+  if (errorString.startsWith('3:"::public::')) {
+    return errorString.replace('::public::', '')
+  }
+  return '3:"Internal Server Error"\n'
 }
