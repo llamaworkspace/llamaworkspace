@@ -2,7 +2,7 @@ import { AppEngineType } from '@/components/apps/appsTypes'
 import { createReadStreamSafe } from '@/lib/backend/nodeUtils'
 import {
   AbstractAppEngine,
-  AppEngineAssetParams,
+  type AppEngineAssetParams,
   type AppEngineCallbacks,
   type AppEngineConfigParams,
   type AppEngineRunParams,

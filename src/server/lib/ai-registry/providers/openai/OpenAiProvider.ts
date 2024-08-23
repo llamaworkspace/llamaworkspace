@@ -1,4 +1,7 @@
+import { ensureError } from '@/lib/utils'
 import { createOpenAI } from '@ai-sdk/openai'
+import { APICallError } from 'ai'
+import createHttpError from 'http-errors'
 import { openAiModels } from './lib/openAiModels'
 import type {
   OpenAiExecuteOptions,
@@ -62,26 +65,46 @@ export const OpenAiProvider = (
         ...openAiClientPayload,
         compatibility: 'strict', // Needed to have tokens returned in the response
       })
+      try {
+        const { textStream, usage } = await streamText({
+          model: oai(payload.model),
+          messages: payload.messages,
+        })
+        for await (const chunk of textStream) {
+          await pushText(chunk)
+        }
+        const usageResult = await usage // This is a running promise already
 
-      const { textStream, usage } = await streamText({
-        model: oai(payload.model),
-        messages: payload.messages,
-      })
+        await callbacks.usage(
+          usageResult.promptTokens,
+          usageResult.completionTokens,
+        )
+      } catch (_error) {
+        const error = ensureError(_error)
 
-      for await (const chunk of textStream) {
-        await pushText(chunk)
+        if (error instanceof APICallError) {
+          if (
+            error.data &&
+            typeof error.data === 'object' &&
+            'error' in error.data &&
+            error.data.error &&
+            typeof error.data.error === 'object' &&
+            'code' in error.data.error
+          ) {
+            const code = error.data.error.code
+            if (code === 'invalid_api_key') {
+              throw createHttpError(401, 'Invalid API key')
+            }
+          }
+        }
+
+        throw error
       }
-
-      const usageResult = await usage // This is a running promise already
-
-      await callbacks.usage(
-        usageResult.promptTokens,
-        usageResult.completionTokens,
-      )
     },
     hasFallbackCredentials: !!params?.fallbackApiKey,
   }
 }
+
 const validateModelExistsOrThrow = (modelName: string) => {
   if (!openAiModels.find((model) => model.slug === modelName)) {
     throw new Error(`Model ${modelName} does not exist.`)

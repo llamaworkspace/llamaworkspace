@@ -1,6 +1,7 @@
 import {
   generateAiSdkCompatibleErrorString,
   isAiSdkErrorString,
+  maskServerErrorString,
 } from '@/lib/aiSdkUtils'
 import { ensureError } from '@/lib/utils'
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
@@ -57,13 +58,15 @@ export async function chatStreamedResponseHandler(req: NextRequest) {
     const stream = await appEngineRunner.call(chatId)
 
     const textDecoder = new TextDecoder()
-    const nextStream = stream.pipeThrough<Uint8Array>(
+    const textEncoder = new TextEncoder()
+    const pipedStream = stream.pipeThrough<Uint8Array>(
       new TransformStream({
         transform: (chunk, controller) => {
           const text = textDecoder.decode(chunk)
+          console.log(4444, text)
           if (isAiSdkErrorString(text)) {
-            const textEncoder = new TextEncoder()
             const errorString = maskServerErrorString(text)
+            console.log(11122222, errorString)
             const encodedError = textEncoder.encode(errorString)
             controller.enqueue(encodedError)
             return
@@ -73,18 +76,20 @@ export async function chatStreamedResponseHandler(req: NextRequest) {
         },
       }),
     )
-    return new NextResponse(nextStream, { headers: RESPONSE_HEADERS })
+
+    return new NextResponse(pipedStream, { headers: RESPONSE_HEADERS })
   } catch (_error) {
     // Here we will arrive and process all the errors BEFORE
     // the stream is returned.
+
     const error = ensureError(_error)
     errorLogger(error)
 
-    const errorMessage = maskServerErrorString(
+    const stringifiedError = maskServerErrorString(
       generateAiSdkCompatibleErrorString(error),
     )
 
-    return new NextResponse(errorMessage, { headers: RESPONSE_HEADERS })
+    return new NextResponse(stringifiedError, { headers: RESPONSE_HEADERS })
   }
 }
 
@@ -119,11 +124,4 @@ const getParsedBody = async (req: NextRequest) => {
     const error = ensureError(_error)
     throw createHttpError(500, error)
   }
-}
-
-const maskServerErrorString = (errorString: string) => {
-  if (errorString.startsWith('3:"::public::')) {
-    return errorString.replace('::public::', '')
-  }
-  return '3:"Internal Server Error"\n'
 }

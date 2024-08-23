@@ -22,3 +22,12 @@ export const isAiSdkErrorString = (errorString: string) => {
   }
   return false
 }
+
+export const maskServerErrorString = (errorString: string) => {
+  console.log(33333, errorString)
+  if (errorString.startsWith('3:"::public::')) {
+    console.log(4444, errorString.replace('::public::', ''))
+    return errorString.replace('::public::', '')
+  }
+  return '3:"Internal Server Error"\n'
+}
