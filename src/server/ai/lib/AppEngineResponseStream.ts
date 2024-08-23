@@ -1,3 +1,4 @@
+import { convertErrorToAiSdkCompatibleError } from '@/lib/aiSdkUtils'
 import { ensureError } from '@/lib/utils'
 import {
   AssistantResponse as AssistantResponseFromAiSdk,
@@ -56,6 +57,7 @@ export const AppEngineResponseStream = (
     forwardStream,
   }) => {
     let fullMessage = ''
+    const textEncoder = new TextEncoder()
 
     const readable = new ReadableStream<Uint8Array>({
       async start(controller) {
@@ -63,7 +65,7 @@ export const AppEngineResponseStream = (
         // that will push text strings to the client
         const pushText = async (text: string) => {
           const threadMessageDelta = generateThreadMessageDelta(messageId, text)
-          const encoded = new TextEncoder().encode(
+          const encoded = textEncoder.encode(
             stringifyPayload(threadMessageDelta),
           )
           controller.enqueue(encoded)
@@ -79,7 +81,7 @@ export const AppEngineResponseStream = (
             chatRunId,
             messageId,
           )
-          const encodedThreadMessageCreated = new TextEncoder().encode(
+          const encodedThreadMessageCreated = textEncoder.encode(
             stringifyPayload(threadMessageCreated),
           )
           controller.enqueue(encodedThreadMessageCreated)
@@ -94,7 +96,7 @@ export const AppEngineResponseStream = (
             threadId,
             chatRunId,
           )
-          const encodedThreadRunCompleted = new TextEncoder().encode(
+          const encodedThreadRunCompleted = textEncoder.encode(
             stringifyPayload(threadRunCompleted),
           )
           controller.enqueue(encodedThreadRunCompleted)
@@ -115,8 +117,10 @@ export const AppEngineResponseStream = (
       await forwardStream(stream)
     } catch (_error) {
       const error = ensureError(_error)
-      await Promise.resolve(onError(error, fullMessage))
-      throw error
+
+      const nextError = convertErrorToAiSdkCompatibleError(error)
+      await Promise.resolve(onError(nextError, fullMessage))
+      throw nextError
     }
   }
 

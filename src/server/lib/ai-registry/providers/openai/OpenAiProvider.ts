@@ -1,3 +1,4 @@
+import { convertErrorToAiSdkCompatibleError } from '@/lib/aiSdkUtils'
 import { ensureError } from '@/lib/utils'
 import { createOpenAI } from '@ai-sdk/openai'
 import { APICallError } from 'ai'
@@ -81,7 +82,6 @@ export const OpenAiProvider = (
         )
       } catch (_error) {
         const error = ensureError(_error)
-
         if (error instanceof APICallError) {
           if (
             error.data &&
@@ -93,7 +93,11 @@ export const OpenAiProvider = (
           ) {
             const code = error.data.error.code
             if (code === 'invalid_api_key') {
-              throw createHttpError(401, 'Invalid API key')
+              const nextError = createHttpError(
+                401,
+                'Invalid OpenAI API key. Update the key in Workspace settings section.',
+              )
+              throw convertErrorToAiSdkCompatibleError(nextError)
             }
           }
         }

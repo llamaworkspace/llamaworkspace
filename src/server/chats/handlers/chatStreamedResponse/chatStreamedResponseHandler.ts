@@ -63,10 +63,9 @@ export async function chatStreamedResponseHandler(req: NextRequest) {
       new TransformStream({
         transform: (chunk, controller) => {
           const text = textDecoder.decode(chunk)
-          console.log(4444, text)
+
           if (isAiSdkErrorString(text)) {
             const errorString = maskServerErrorString(text)
-            console.log(11122222, errorString)
             const encodedError = textEncoder.encode(errorString)
             controller.enqueue(encodedError)
             return
@@ -84,7 +83,6 @@ export async function chatStreamedResponseHandler(req: NextRequest) {
 
     const error = ensureError(_error)
     errorLogger(error)
-
     const stringifiedError = maskServerErrorString(
       generateAiSdkCompatibleErrorString(error),
     )
