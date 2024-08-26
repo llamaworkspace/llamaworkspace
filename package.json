@@ -65,6 +65,7 @@
     "@tailwindcss/typography": "^0.5.10",
     "@tanstack/react-query": "^4.35.0",
     "@tanstack/react-table": "^8.10.7",
+    "@trigger.dev/sdk": "3.0.0-beta.55",
     "@trpc/client": "^10.38.1",
     "@trpc/next": "^10.38.1",
     "@trpc/react-query": "^10.38.1",
