@@ -1,6 +1,7 @@
 import { env } from '@/env.mjs'
 import { ensureError } from '@/lib/utils'
 import type { FetchError } from '@/shared/globalTypes'
+import { helloWorldTask } from '@/trigger/example'
 import type { z, ZodType } from 'zod'
 
 type PayloadType<T extends ZodType> = z.infer<T>
@@ -37,6 +38,11 @@ export abstract class AbstractQueueManager<T extends ZodType> {
     }
 
     try {
+      const res1 = await helloWorldTask.trigger({
+        message: 'Pepe, ola q ase',
+      })
+
+      return
       const res = await fetch(this.enqueueUrl, {
         method: 'POST',
         body: JSON.stringify(body),
