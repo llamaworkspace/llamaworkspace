@@ -35,20 +35,51 @@ services:
     ports:
       - 8080:8080
 
-  llamaq:
-    container_name: llamaq
-    image: llamaworkspace/llamaq:latest
+  # llamaq:
+  #   container_name: llamaq
+  #   image: llamaworkspace/llamaq:latest
+  #   environment:
+  #     - NODE_ENV=production
+  #     - REDIS_URL=redis://llamaq_redis:6379
+  #     - LLAMAQ_ACCESS_KEY=llamaq-access-key
+  #     - NEXTJS_PROCESSOR_URL=http://host.docker.internal:3000/api/llamaq
+  #     - NEXTJS_API_ACCESS_KEY=incoming-api-route-access-key
+  #   ports:
+  #     - 4000:4000
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+
+  trigger:
+    container_name: trigger_dot_dev
+    image: ghcr.io/triggerdotdev/trigger.dev:main
     environment:
-      - NODE_ENV=production
-      - REDIS_URL=redis://llamaq_redis:6379
-      - LLAMAQ_ACCESS_KEY=llamaq-access-key
-      - NEXTJS_PROCESSOR_URL=http://host.docker.internal:3000/api/llamaq
-      - NEXTJS_API_ACCESS_KEY=incoming-api-route-access-key
-    ports:
-      - 4000:4000
+      - MAGIC_LINK_SECRET=8ec6d8caea21c0a4e3148dda124dee74
+      - SESSION_SECRET=9e1fb6457fa57af893a8aac5099dbef4
+      - ENCRYPTION_KEY=f38ff3675de3650bcf8dd45c0c0173d2
+      - LOGIN_ORIGIN=http://localhost:3000
+      - APP_ORIGIN=http://localhost:3000
+      - DIRECT_URL=postgresql://postgres:password@postgres_trigger:5432/triggerdotdev
+      - DATABASE_URL=postgresql://postgres:password@postgres_trigger:5432/triggerdotdev
+      - REDIS_HOST=llamaq_redis2
+      - REDIS_PORT=6379
     depends_on:
-      redis:
-        condition: service_healthy
+      - postgres_trigger
+    restart: always
+
+  postgres_trigger:
+    container_name: postgres_trigger
+    image: postgres:15
+
+    volumes:
+      - llamaws_trigger_dot_dev:/var/lib/postgresql/data
+
+    restart: always
+    ports:
+      - 5442:5432
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: triggerdotdev
 
   redis:
     container_name: llamaq_redis
@@ -62,7 +93,21 @@ services:
       timeout: 5s
       retries: 10
 
+  redis2:
+    container_name: llamaq_redis2
+    image: redis
+    restart: always
+    volumes:
+      - llamaq_redis_data2:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
 volumes:
   llamaws_db:
+  llamaws_trigger_dot_dev:
   llamaws_minio_data:
   llamaq_redis_data:
+  llamaq_redis_data2:
