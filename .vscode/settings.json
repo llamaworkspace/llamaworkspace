@@ -9,6 +9,7 @@
         "**/package-lock.json": true,
         "**/tsconfig.tsbuildinfo": true,
         "**/.turbo": true,
+        "**/.trigger": true,
         "**/dist": true,
     }
 }
