@@ -1,15 +1,8 @@
-import { env } from '@/env.mjs'
+import {
+  sendEmailTaskHandler,
+  type SendEmailTaskPayload,
+} from '@/server/messaging/queues/sendEmailTaskHandler'
 import { configure, task } from '@trigger.dev/sdk/v3'
-import nodemailer from 'nodemailer'
-import { z } from 'zod'
-
-const { SMTP_EMAIL_SERVER, NEXT_PUBLIC_DEMO_MODE } = env
-const isDemo = NEXT_PUBLIC_DEMO_MODE === 'true'
-let mailer: ReturnType<typeof nodemailer.createTransport> | null = null
-
-if (SMTP_EMAIL_SERVER) {
-  mailer = nodemailer.createTransport(SMTP_EMAIL_SERVER)
-}
 
 configure({
   // baseURL: 'http://localhost:3040',
@@ -17,29 +10,9 @@ configure({
   secretKey: 'tr_dev_dyMdXb2busz71wtLimL5',
 })
 
-const zPayload = z.object({
-  from: z.string(),
-  to: z.string(),
-  subject: z.string(),
-  text: z.string().optional(),
-  html: z.string().optional(),
-})
-
-type SendEmailEventPayload = z.infer<typeof zPayload>
-
 export const sendEmailTask = task({
   id: 'sendEmailTask',
-  run: async (payload: SendEmailEventPayload, { ctx }) => {
-    if (!mailer || isDemo) {
-      return logEmailToConsole(payload)
-    }
-    return await mailer.sendMail(payload)
+  run: async (payload: SendEmailTaskPayload, { ctx }) => {
+    return await sendEmailTaskHandler(payload)
   },
 })
-
-const logEmailToConsole = (payload: SendEmailEventPayload) => {
-  console.log(
-    `EMAIL SENDING IS DISABLED: An email would have been sent to ${payload.to}, with payload:`,
-    payload,
-  )
-}

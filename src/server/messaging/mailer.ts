@@ -32,12 +32,4 @@ export const sendEmail = async (params: ISendEmailParams) => {
     text,
     html,
   })
-
-  // await sendEmailQueue.enqueue('send', {
-  //   from,
-  //   to,
-  //   subject,
-  //   text,
-  //   html,
-  // })
 }
