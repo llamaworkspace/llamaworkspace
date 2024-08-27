@@ -10,7 +10,7 @@ interface LlamaQParams {
   accessToken?: string
 }
 
-export abstract class AbstractQueueManager<T extends ZodType> {
+export abstract class AbstractQueueManagerV2<T extends ZodType> {
   private readonly zPayloadSchema: T
   public readonly enqueueUrl: string
   public readonly accessToken: string
