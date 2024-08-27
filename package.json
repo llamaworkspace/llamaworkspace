@@ -1,6 +1,6 @@
 {
   "name": "llamaworkspace-app",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbo",
@@ -29,7 +29,8 @@
     "dev:deleteAllOpenaiVectorStores": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiVectorStores.ts",
     "dev:deleteAllOpenaiFiles": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts",
     "dev:clearOpenai": "npm run dev:deleteAllOpenaiVectorStores && npm run dev:deleteAllOpenaiFiles",
-    "dco:up-all": "docker-compose -f docker-compose.yml -f docker-compose.optional.yml up -d"
+    "dco:up-all": "docker-compose -f docker-compose.yml -f docker-compose.optional.yml up -d",
+    "docker:build": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo ."
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.24",
