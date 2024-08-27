@@ -39,7 +39,7 @@ export function SignInMethods({ callbackUrl }: { callbackUrl?: string }) {
     setIsLoading(true)
     if (isDemo) {
       alert(
-        'Email sending is disabled in demo mode. To log in, go to your terminal and copy/paste the magic link we have provided.',
+        'Emails are disabled in demo mode. To log in, go to your terminal and copy/paste the magic link provided.',
       )
     }
     await signIn('email', {
