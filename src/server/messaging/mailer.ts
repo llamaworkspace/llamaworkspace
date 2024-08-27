@@ -1,6 +1,5 @@
 import { env } from '@/env.mjs'
 import { sendEmailTask } from '@/trigger/sendEmailTask'
-import { sendEmailQueue } from './queues/sendEmailQueue'
 
 const { SMTP_EMAIL_FROM } = env
 
@@ -34,11 +33,11 @@ export const sendEmail = async (params: ISendEmailParams) => {
     html,
   })
 
-  await sendEmailQueue.enqueue('send', {
-    from,
-    to,
-    subject,
-    text,
-    html,
-  })
+  // await sendEmailQueue.enqueue('send', {
+  //   from,
+  //   to,
+  //   subject,
+  //   text,
+  //   html,
+  // })
 }

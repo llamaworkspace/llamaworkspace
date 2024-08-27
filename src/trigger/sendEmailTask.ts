@@ -13,7 +13,8 @@ if (SMTP_EMAIL_SERVER) {
 
 configure({
   // baseURL: 'http://localhost:3040',
-  secretKey: 'tr_pat_a5qcfmm15sdtr37tpdonqyw65vq3tgwqc7k8ezgy',
+  // secretKey: 'tr_pat_a5qcfmm15sdtr37tpdonqyw65vq3tgwqc7k8ezgy',
+  secretKey: 'tr_dev_dyMdXb2busz71wtLimL5',
 })
 
 const zPayload = z.object({
