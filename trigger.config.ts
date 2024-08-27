@@ -1,7 +1,7 @@
 import type { TriggerConfig } from '@trigger.dev/sdk/v3'
 
 export const config: TriggerConfig = {
-  project: 'proj_wuecurjznxnzkbxfkfsk',
+  project: 'proj_bzjfxrneiwxfbrtchysb',
   logLevel: 'log',
   retries: {
     enabledInDev: true,

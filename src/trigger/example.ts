@@ -1,8 +1,8 @@
 import { configure, logger, task, wait } from '@trigger.dev/sdk/v3'
 
 configure({
-  baseURL: 'http://localhost:3040',
-  secretKey: 'tr_dev_w90kAphukHiGQgu4gJnz',
+  // baseURL: 'http://localhost:3040',
+  secretKey: 'tr_pat_a5qcfmm15sdtr37tpdonqyw65vq3tgwqc7k8ezgy',
 })
 
 export interface HelloWorldTaskPayload {
