@@ -6,6 +6,8 @@ const generateDefaults = () => {
   return {
     ...generateBaseForDefaults(),
     name: faker.person.firstName() + "'s workspace",
+    onboardingCompletedAt: null,
+    defaultModel: null,
   }
 }
 
