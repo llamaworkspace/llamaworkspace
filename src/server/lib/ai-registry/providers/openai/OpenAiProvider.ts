@@ -43,16 +43,12 @@ export const OpenAiProvider = (): OpenAiProviderType => {
       validateModelExistsOrThrow(payload.model)
 
       const openAiClientPayload: { apiKey?: string; baseUrl?: string } = {
-        apiKey: options.apiKey || params?.fallbackApiKey,
+        apiKey: options.apiKey,
         baseUrl: undefined,
       }
 
       if (options?.baseUrl) {
         openAiClientPayload.baseUrl = options?.baseUrl
-      }
-
-      if (params?.fallbackBaseUrl && !openAiClientPayload.baseUrl) {
-        openAiClientPayload.baseUrl = params?.fallbackBaseUrl
       }
 
       const oai = createOpenAI({
@@ -98,7 +94,6 @@ export const OpenAiProvider = (): OpenAiProviderType => {
         throw error
       }
     },
-    hasFallbackCredentials: !!params?.fallbackApiKey,
   }
 }
 
