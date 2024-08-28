@@ -7,7 +7,7 @@ services:
     env_file:
       - ./.env.demo
     environment:
-      - NODE_ENV=production
+      - DEMO_MODE=${DEMO_MODE:-false}
     depends_on:
       postgres:
         condition: service_healthy
