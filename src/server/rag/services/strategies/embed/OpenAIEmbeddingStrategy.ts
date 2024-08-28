@@ -1,4 +1,3 @@
-import { env } from '@/env.mjs'
 import { DEFAULT_EMBEDDING_MODEL } from '@/server/rag/ragConstants'
 import { createOpenAI } from '@ai-sdk/openai'
 import { embed } from 'ai'
@@ -6,7 +5,7 @@ import { embed } from 'ai'
 export class OpenAIEmbeddingStrategy {
   async embed(text: string) {
     const openaiClient = createOpenAI({
-      apiKey: env.INTERNAL_OPENAI_API_KEY,
+      apiKey: 'this_will_fail',
     })
     const { embedding } = await embed({
       model: openaiClient.embedding(

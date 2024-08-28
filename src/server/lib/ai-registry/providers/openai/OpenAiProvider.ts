@@ -9,14 +9,7 @@ import type {
   OpenAiProviderType,
 } from './lib/openAiProviderTypes'
 
-interface OpenaAiProviderParams {
-  fallbackApiKey?: string
-  fallbackBaseUrl?: string
-}
-
-export const OpenAiProvider = (
-  params?: OpenaAiProviderParams,
-): OpenAiProviderType => {
+export const OpenAiProvider = (): OpenAiProviderType => {
   return {
     slug: 'openai' as const,
     publicName: 'OpenAI' as const,
@@ -50,16 +43,12 @@ export const OpenAiProvider = (
       validateModelExistsOrThrow(payload.model)
 
       const openAiClientPayload: { apiKey?: string; baseUrl?: string } = {
-        apiKey: options.apiKey || params?.fallbackApiKey,
+        apiKey: options.apiKey,
         baseUrl: undefined,
       }
 
       if (options?.baseUrl) {
         openAiClientPayload.baseUrl = options?.baseUrl
-      }
-
-      if (params?.fallbackBaseUrl && !openAiClientPayload.baseUrl) {
-        openAiClientPayload.baseUrl = params?.fallbackBaseUrl
       }
 
       const oai = createOpenAI({
@@ -105,7 +94,6 @@ export const OpenAiProvider = (
         throw error
       }
     },
-    hasFallbackCredentials: !!params?.fallbackApiKey,
   }
 }
 

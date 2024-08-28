@@ -116,9 +116,7 @@ export const SettingsAiProvidersCustomKeys = () => {
             render={({ handleSubmit }) => {
               const isOpenAi = provider.slug === 'openai'
               const showOpenAiDefaultKeysAlert =
-                isOpenAi &&
-                provider.hasFallbackCredentials &&
-                provider.hasMissingFields
+                isOpenAi && provider.hasMissingFields
 
               return (
                 <Card key={provider.slug}>
