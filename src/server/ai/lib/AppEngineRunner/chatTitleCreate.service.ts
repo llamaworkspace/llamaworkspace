@@ -1,5 +1,5 @@
 import { getProviderAndModelFromFullSlug } from '@/server/ai/aiUtils'
-import { getAiProviderKVsWithFallbackToInternalKeysService } from '@/server/ai/services/getProvidersForWorkspace.service'
+import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { ChatAuthor, OpenAiModelEnum } from '@/shared/aiTypesAndMappers'
 import type { PrismaClient } from '@prisma/client'
@@ -28,7 +28,7 @@ export const chatTitleCreateService = async (
 
   let openaiProviderKVs: ClientOptions
   try {
-    openaiProviderKVs = await getAiProviderKVsWithFallbackToInternalKeysService(
+    openaiProviderKVs = await getAiProviderKVsService(
       prisma,
       uowContext,
       'openai',

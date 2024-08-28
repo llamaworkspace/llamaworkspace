@@ -23,8 +23,6 @@ const server = z.object({
   ),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-  INTERNAL_OPENAI_API_KEY: z.string(),
-  OPTIONAL_OPENAI_BASE_URL: z.string().optional(),
   SMTP_EMAIL_SERVER: z.string().min(1),
   SMTP_EMAIL_FROM: z.string().email(),
   ENCRYPTION_KEY: z.string().refine((v) => v.length > 36, {
@@ -75,8 +73,6 @@ const processEnv = {
   LLAMAQ_ACCESS_KEY: process.env.LLAMAQ_ACCESS_KEY,
   LLAMAQ_INCOMING_API_ROUTE_ACCESS_KEY:
     process.env.LLAMAQ_INCOMING_API_ROUTE_ACCESS_KEY,
-  INTERNAL_OPENAI_API_KEY: process.env.INTERNAL_OPENAI_API_KEY,
-  OPTIONAL_OPENAI_BASE_URL: process.env.OPTIONAL_OPENAI_BASE_URL,
   SMTP_EMAIL_SERVER: process.env.SMTP_EMAIL_SERVER,
   SMTP_EMAIL_FROM: process.env.SMTP_EMAIL_FROM,
   NEXT_PUBLIC_ENV: process.env.NODE_ENV,

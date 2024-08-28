@@ -1,12 +1,14 @@
 import { env } from '@/env.mjs'
 import OpenAI from 'openai'
 
+const INTERNAL_OPENAI_API_KEY = process.env.INTERNAL_OPENAI_API_KEY
+
 async function main() {
   if (env.NODE_ENV !== 'development') {
     console.error('This script can only be run in development mode')
     return
   }
-  const openai = new OpenAI({ apiKey: env.INTERNAL_OPENAI_API_KEY })
+  const openai = new OpenAI({ apiKey: INTERNAL_OPENAI_API_KEY })
 
   const files = await openai.files.list()
 

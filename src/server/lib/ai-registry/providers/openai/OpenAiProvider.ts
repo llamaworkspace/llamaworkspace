@@ -9,14 +9,7 @@ import type {
   OpenAiProviderType,
 } from './lib/openAiProviderTypes'
 
-interface OpenaAiProviderParams {
-  fallbackApiKey?: string
-  fallbackBaseUrl?: string
-}
-
-export const OpenAiProvider = (
-  params?: OpenaAiProviderParams,
-): OpenAiProviderType => {
+export const OpenAiProvider = (): OpenAiProviderType => {
   return {
     slug: 'openai' as const,
     publicName: 'OpenAI' as const,

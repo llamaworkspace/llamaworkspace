@@ -1,5 +1,4 @@
 import { workspaceVisibilityFilter } from '@/components/workspaces/backend/workspacesBackendUtils'
-import { env } from '@/env.mjs'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import type {
@@ -31,30 +30,6 @@ export const getAiProviderKVsService = async (
     return {}
   }
   return result[providerSlug] ?? {}
-}
-
-export const getAiProviderKVsWithFallbackToInternalKeysService = async (
-  prisma: PrismaClientOrTrxClient,
-  uowContext: UserOnWorkspaceContext,
-  providerSlug: string,
-) => {
-  const providerKVs = await getAiProviderKVsService(
-    prisma,
-    uowContext,
-    providerSlug,
-  )
-
-  if (!providerKVs.apiKey && providerSlug === 'openai') {
-    const res: Record<string, string> = {
-      apiKey: env.INTERNAL_OPENAI_API_KEY,
-    }
-    if (env.OPTIONAL_OPENAI_BASE_URL) {
-      res.baseUrl = env.OPTIONAL_OPENAI_BASE_URL
-    }
-    return res
-  }
-
-  return providerKVs
 }
 
 const getAiProvidersIncludingKeyValues = async (
