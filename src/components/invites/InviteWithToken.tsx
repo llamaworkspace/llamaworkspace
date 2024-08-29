@@ -7,6 +7,7 @@ interface InviteWithTokenProps {
   invitingUserName: string
   invitingUserEmail: string
   workspaceName: string
+  isDemoMode?: boolean
 }
 
 export default function InviteWithToken({
@@ -14,6 +15,7 @@ export default function InviteWithToken({
   invitingUserName,
   invitingUserEmail,
   workspaceName,
+  isDemoMode,
 }: InviteWithTokenProps) {
   const callbackUrl = `/api/auth/invite-flow-success?token=${token}`
 
@@ -42,7 +44,10 @@ export default function InviteWithToken({
             <div className="space-y-2">
               <h3>To accept the invitation, proceed by signing up.</h3>
 
-              <SignInMethods callbackUrl={callbackUrl} />
+              <SignInMethods
+                callbackUrl={callbackUrl}
+                isDemoMode={isDemoMode}
+              />
             </div>
           </div>
         </div>
