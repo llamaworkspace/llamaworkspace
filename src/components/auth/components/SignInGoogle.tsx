@@ -29,7 +29,6 @@ export const SignInGoogle = ({
 
   const buttonEl = (
     <div className={cn(isDemoMode && 'opacity-50')}>
-      {'Demo mode 2:  ' + isDemoMode?.toString()}
       <button
         onClick={() => void handleSignIn()}
         disabled={isDemoMode}

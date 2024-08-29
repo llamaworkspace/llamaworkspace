@@ -1,7 +1,7 @@
 services:
   llamaworkspace:
     container_name: llamaws_demo
-    image: local1
+    image: llamaworkspace/llamaworkspace:latest
     ports:
       - 3000:3000
     env_file:
