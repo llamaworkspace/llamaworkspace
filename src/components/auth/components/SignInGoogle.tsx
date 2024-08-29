@@ -12,7 +12,7 @@ import { signIn } from 'next-auth/react'
 const { NEXT_PUBLIC_DEMO_MODE } = env
 
 const isDemo = NEXT_PUBLIC_DEMO_MODE === 'true'
-
+console.log(1, NEXT_PUBLIC_DEMO_MODE, isDemo)
 interface SignInGoogleProps {
   callbackUrl?: string
 }
@@ -30,6 +30,7 @@ export const SignInGoogle = ({ callbackUrl }: SignInGoogleProps) => {
 
   const buttonEl = (
     <div className={cn(isDemo && 'opacity-50')}>
+      {'Demo mode: ' + isDemo.toString()}
       <button
         onClick={() => void handleSignIn()}
         disabled={isDemo}

@@ -1,13 +1,13 @@
 services:
   llamaworkspace:
     container_name: llamaws_demo
-    image: llamaworkspace/llamaworkspace:latest
+    image: local1
     ports:
       - 3000:3000
     env_file:
       - ./.env.demo
     environment:
-      - DEMO_MODE=${DEMO_MODE:-false}
+      - NEXT_PUBLIC_DEMO_MODE=${NEXT_PUBLIC_DEMO_MODE:-true}
     depends_on:
       postgres:
         condition: service_healthy

@@ -16,9 +16,6 @@ RUN npm run postinstall \
   && npm run build \
   && rm .env
 
-ARG DEMO_MODE=false
-ENV NEXT_PUBLIC_DEMO_MODE=$DEMO_MODE
-
 EXPOSE 5000
 RUN chmod +x /app/infra/entrypoint.demo.sh
 ENTRYPOINT ["/app/infra/entrypoint.demo.sh"]

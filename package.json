@@ -26,11 +26,11 @@
     "datamigrate:create": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts create --name",
     "datamigrate:up": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts up",
     "datamigrate:down": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts down",
-    "dev:deleteAllOpenaiVectorStores": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiVectorStores.ts",
-    "dev:deleteAllOpenaiFiles": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts",
-    "dev:clearOpenai": "npm run dev:deleteAllOpenaiVectorStores && npm run dev:deleteAllOpenaiFiles",
+    "dev:delete-all-openai-vector-stores": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiVectorStores.ts",
+    "dev:delete-all-openai-files": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts",
+    "dev:clear-openai": "npm run dev:deleteAllOpenaiVectorStores && npm run dev:deleteAllOpenaiFiles",
     "dco:up-all": "docker-compose -f docker-compose.yml -f docker-compose.optional.yml up -d",
-    "docker:build": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo ."
+    "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo ."
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.24",
