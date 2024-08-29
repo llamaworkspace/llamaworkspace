@@ -1,11 +1,10 @@
 import { env } from '@/env.mjs'
+import { isDemoMode } from '@/shared/globalUtils'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
 import { AbstractQueueManager } from '../../lib/AbstractQueueManager/AbstractQueueManager'
 
-const { SMTP_EMAIL_SERVER, NEXT_PUBLIC_DEMO_MODE } = env
-
-const isDemo = NEXT_PUBLIC_DEMO_MODE === 'true'
+const { SMTP_EMAIL_SERVER } = env
 
 let mailer: ReturnType<typeof nodemailer.createTransport> | null = null
 
@@ -31,7 +30,7 @@ class SendEmailQueue extends AbstractQueueManager<typeof zPayload> {
   }
 
   protected async handle(action: string, payload: SendEmailEventPayload) {
-    if (!mailer || isDemo) {
+    if (!mailer || isDemoMode) {
       return this.logEmailToConsole(payload)
     }
     return await mailer.sendMail(payload)

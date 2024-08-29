@@ -1,4 +1,5 @@
 import { env } from '@/env.mjs'
+import { isTest } from '@/shared/globalUtils'
 import { sendEmailQueue } from './queues/sendEmailQueue'
 
 const { SMTP_EMAIL_FROM } = env
@@ -13,7 +14,7 @@ interface ISendEmailParams {
 }
 
 export const sendEmail = async (params: ISendEmailParams) => {
-  if (env.NODE_ENV === 'test') {
+  if (isTest) {
     throw new Error('sendEmail is not available in test environment')
   }
 

@@ -1,5 +1,5 @@
-import { env } from '@/env.mjs'
 import { errorLoggerForTRPC } from '@/shared/errors/errorLogger'
+import { isDevelopment } from '@/shared/globalUtils'
 import type { createNextApiHandler } from '@trpc/server/adapters/next'
 import { getHTTPStatusCodeFromError } from '@trpc/server/http'
 
@@ -22,7 +22,7 @@ export const trpcOnErrorHandler: TRPCNextApiHandlerOnErrorCallback = (
   const { path, error, type } = params
   const ctx = params.ctx as MockedContext
 
-  if (env.NODE_ENV === 'development') {
+  if (isDevelopment) {
     console.error(`❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`)
   }
 
