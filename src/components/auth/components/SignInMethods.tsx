@@ -34,7 +34,7 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
   const { query } = navigation
   const queryCallbackUrl =
     callbackUrl ?? (navigation.query?.callbackUrl as string | undefined)
-  console.log(222444, isDemoMode)
+
   const handleEmailFormSubmit = async (values: UserAuthFormValues) => {
     setIsLoading(true)
     if (isDemoMode) {
