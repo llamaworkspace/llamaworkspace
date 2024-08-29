@@ -7,7 +7,7 @@ services:
     env_file:
       - ./.env.demo
     environment:
-      - NEXT_PUBLIC_DEMO_MODE=${NEXT_PUBLIC_DEMO_MODE:-true}
+      - DEMO_MODE=${DEMO_MODE:-false}
     depends_on:
       postgres:
         condition: service_healthy
