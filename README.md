@@ -4,84 +4,67 @@
 </a>
 </p>
 
-<h3 align="center"><strong>An extensible ChatGPT Teams/Enterprise alternative</strong></h3>
+<p align="center">
+	<h1 align="center"><b>Llama Workspace</b></h1>
 
-> [!WARNING]
-> Both the repo and this README is still a work in progress. Some of the benefits stated are not yet implemented and the product is not yet ready for production.
+<h3 align="center"><strong>An extensible ChatGPT Enterprise alternative</strong></h3>
+<p align="center">
+    <a href="https://go.midday.ai/anPiuRx">Discord</a>
+    ·
+    <a href="https://twitter.com/llamaworkspace">Twitter</a>
+</p>
 
-## What is it
+## About
 
-An open source & extensible ChatGPT Teams/Enterprise alternative, designed for organizations to provide generative AI access to their teams, while still retaining full control of their data.
+Llama Workspace is an open source & extensible ChatGPT Teams/Enterprise alternative. It helps organizations to:
 
-## Main features
+- **Cut between 50% and 75% the cost of running an AI assistant** in the workplace.
+- **Centralize access to generative AI tools** in a single interface.
+- **Retain full control over sensitive data** by hosting the product on their infrastructure.
 
-- **User management**: Manage people access. Decide who has access to what with a granular permissions system.
-- **All LLM vendors in one place**: Ask questions to GPT-4, Claude, Mistral or any other major LLM from a single place. Ollama and LLamaCpp are also supported.
-- **Apps / GPTs**: Create apps for repeatable use cases and share them across your teams.
-- **Talk to your documents and data**: Upload your documents and ask questions to them.
-- **Extend with other AI tools**: Bring all your company's AI toolkit to a single place. Integrate with Flowise, Gradio, Hugging Face, Langchain and more.
+## Features
+
+- **User & permissions management**: Manage people access & decide who has access to which apps.
+- **All Large Language Models in one place**: Ask questions to GPT-4, Claude, Mistral or any other major Large Language Model.
+- **Apps / GPTs**: Create apps for repeatable use cases and share them across teams.
+- **Chat with documents and data**: Upload documents and ask questions to them.
+- **Build AI chats with your own code**: [Javascript SDK](https://docs.llamaworkspace.ai/javascript-sdk/installation) to build your own AI workflows.
 - **Straightforward self-hosting**: Get up and running with a fewest possible number of commands.
-
-<!-- There are other great AI chat apps out there
-
-The project's goal is to create a single entrypoint for an organization's generative AI: From single-shot questions to an LLM, to integrations
-
-to access all the company's generative AI. The UI is heavily inspired in the category-defining ChatGPT, so that the product feels familiar to the largest number of people.
-
-as we believe this but we have made it easy to connect with other AI products and tools.
-
-It shines by being:
-
-- **Teams first**: It comes with user management and granular permissions built-in.
-- **Extensible**: Easily build AI chatbots and agents, and use Llama Workspace as the UI. That'll help you centralize all your AI products in a single place.
-- **Straightforward to self-host**: Get up and running with a fewest possible number of commands.
-
-The easiest way to get started with Llama Workspace is by creating a [Llama Workspace Cloud account](https://llamaworkspace.ai/). If you prefer to self-host Llama Workspace, please refer to our documentation below.
-
-## Main features & benefits
-
-- **Efortlessly manage team access** to collaborative AI workspace.
-- Ask any question to an AI Chat **powered by the model of your choice** (GPT-x, Claude, Llama 3, etc).
-- Create **collaborative apps** for repeatable use cases and share them across your teams.
-- Ask questions to **your documents and company data**.
-- Integrate with major **LLM providers**, your own tools, or embed gradio-compatible UIs.
-- **Avoid data leakages and stay compliant** by hosting Llama Workspace on your infrastructure.
-
-## Cost savings vs ChatGPT Teams/Enterprise
-
-- **Save between of 50% and 75%** (depends on usage) compared to _ChatGPT for Teams_ and _ChatGPT Enterprise_. -->
 
 ## Getting started
 
-#### Vercel
+All the information on how to self host Llama Workspace can be found in our documentation: https://docs.llamaworkspace.ai
 
-To deploy on Vercel, follow these steps:
+If you want to skip the docs and get started right away, here's a **tl;dr**:
 
-1. Create a project by clicking on **Add New... > Project**.
-2. Select **Import Third-Party Git Repository** and enter the URL of this repository.
-3. Insert the environment variables. To do so, use `.env.example` as a reference for the variables to fill in. You'll need to set the `DATABASE_URL` variable to point to your Postgres database, which you can provision with Vercel.
-4. Deploy the project.
-5. Set up your domain to point to the Vercel deployment.
+```bash
+# 1. Clone the repo
+git clone https://github.com/llamaworkspace/llamaworkspace.git && cd llamaworkspace
 
-#### Fully self-hosted
+# 2. Bootstrap the app
+DEMO_MODE=true docker-compose -f infra/docker-compose.demo.yml up
+```
 
-To self host a Llama Workspace app you'll need to follow the next steps:
+## Tech stack
 
-1. Provision a Postgres database. The details may vary based on your stup.
-2. Clone or copy this repository.
-3. Create an `.env` file based on the `.env.example` file. You'll need to set the `DATABASE_URL` variable to point to your Postgres database.
-4. Install the dependencies by running `npm install`.
-5. Build the NextJS app by running `npm run production:build`. This will prepare NextJS to be built and run the build itself.
-6. Run a post-install script by running `npm run production:postbuild`. This script will run the migrations.
-7. Bootstrap the app by running `npm run production:start`.
+- [NextJS](https://nextjs.org/) - Framework
+- [Trpc](https://trpc.io/) + [Tanstack Query](https://tanstack.com/query/latest) - [BFF](https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends) and type safe client/server communications
+- [Typescript](https://www.typescriptlang.org/) - Language
+- [TailwindCSS](https://tailwindcss.com/) - Styling
+- [shadcn/ui](https://ui.shadcn.com/) - UI components
+- [Prisma](https://www.prisma.io/) - ORM
+- [PostgreSQL](https://www.postgresql.org/) - Database
+- [NextAuth.js](https://next-auth.js.org/) - Authentication
+- [BullMQ](https://docs.bullmq.io/) + [LlamaQ](https://github.com/llamaworkspace/llamaq) (custom-made service) + [Redis](https://redis.io/) - Workers and queues management
+- [Minio](https://min.io/) - Object storage
 
-## Feedback
+## Feedback & Roadmap
 
-We are happy to hear your valuable feedback. For this purpose, we have created a [Discord channel](https://discord.com/invite/wTHhNBDKvW) where you can share your thoughts and ideas. [Join the channel here](https://discord.com/invite/wTHhNBDKvW).
+We are happy to hear your valuable feedback. Reach out to us in the [official Discord channel](https://discord.com/invite/wTHhNBDKvW).
 
 ## Roadmap
 
-We welcome feedback from our community. To stay up to date with all the latest news and product updates or to reach us, [follow us on X (formerly Twitter)](https://twitter.com/llamaworkspace).
+Stay up to date with all the latest news and product updates on [X (formerly Twitter)](https://twitter.com/llamaworkspace).
 
 ## License & Trademarks
 
