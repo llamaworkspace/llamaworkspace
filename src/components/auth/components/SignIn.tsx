@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { SignInMethods } from './SignInMethods'
 
-export const SignIn = () => {
+export const SignIn = ({ isDemoMode }: { isDemoMode?: boolean }) => {
   return (
     <>
       <Head>
@@ -28,7 +28,7 @@ export const SignIn = () => {
                 you up if you&apos;re new.
               </p>
 
-              <SignInMethods />
+              <SignInMethods isDemoMode={isDemoMode} />
               <p className="text-muted-foreground px-8 text-center text-sm">
                 By clicking continue, you agree to our{' '}
                 <Link

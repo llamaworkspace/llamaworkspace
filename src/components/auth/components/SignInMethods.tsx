@@ -1,7 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { InputField } from '@/components/ui/forms/InputField'
-import { env } from '@/env.mjs'
 import {
   composeValidators,
   email,
@@ -12,10 +11,6 @@ import { signIn } from 'next-auth/react'
 import * as React from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { SignInGoogle } from './SignInGoogle'
-
-const { NEXT_PUBLIC_DEMO_MODE } = env
-
-const isDemo = NEXT_PUBLIC_DEMO_MODE === 'true'
 
 interface UserAuthFormValues {
   email: string
@@ -28,7 +23,12 @@ const errorMessages = {
     'There was a system error signing you in. Please try again or contact the administrator.',
 }
 
-export function SignInMethods({ callbackUrl }: { callbackUrl?: string }) {
+interface SignInMethodsProps {
+  callbackUrl?: string
+  isDemoMode?: boolean
+}
+
+export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
   const [isLoading, setIsLoading] = React.useState(false)
   const navigation = useNavigation()
   const { query } = navigation
@@ -37,7 +37,7 @@ export function SignInMethods({ callbackUrl }: { callbackUrl?: string }) {
 
   const handleEmailFormSubmit = async (values: UserAuthFormValues) => {
     setIsLoading(true)
-    if (isDemo) {
+    if (isDemoMode) {
       alert(
         'Emails are disabled in demo mode. To log in, go to your terminal and copy/paste the magic link provided.',
       )
@@ -63,7 +63,7 @@ export function SignInMethods({ callbackUrl }: { callbackUrl?: string }) {
           </AlertDescription>
         </Alert>
       )}
-      <SignInGoogle callbackUrl={callbackUrl} />
+      <SignInGoogle callbackUrl={callbackUrl} isDemoMode={isDemoMode} />
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">

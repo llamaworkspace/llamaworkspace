@@ -1,4 +1,5 @@
 import InviteWithToken from '@/components/invites/InviteWithToken'
+import { env } from '@/env.mjs'
 import { prisma } from '@/server/db'
 import type { GetServerSideProps } from 'next'
 
@@ -19,9 +20,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const invitingUserName = data.invitedBy.name
     const invitingUserEmail = data.invitedBy.email
     const workspaceName = data.workspace.name
+    const isDemoMode = env.DEMO_MODE === 'true'
 
     return {
-      props: { token, invitingUserName, invitingUserEmail, workspaceName },
+      props: {
+        token,
+        invitingUserName,
+        invitingUserEmail,
+        workspaceName,
+        isDemoMode,
+      },
     }
   } catch (error) {
     // Todo: handle cases. Understand if sentry picks this up by default.
@@ -34,6 +42,7 @@ interface InviteWithTokenPageProps {
   invitingUserName: string
   invitingUserEmail: string
   workspaceName: string
+  isDemoMode: boolean
 }
 
 export default function InviteWithTokenPage({
@@ -41,6 +50,7 @@ export default function InviteWithTokenPage({
   invitingUserName,
   invitingUserEmail,
   workspaceName,
+  isDemoMode,
 }: InviteWithTokenPageProps) {
   return (
     <InviteWithToken
@@ -48,6 +58,7 @@ export default function InviteWithTokenPage({
       invitingUserEmail={invitingUserEmail}
       invitingUserName={invitingUserName}
       workspaceName={workspaceName}
+      isDemoMode={isDemoMode}
     />
   )
 }

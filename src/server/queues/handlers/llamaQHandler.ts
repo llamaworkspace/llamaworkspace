@@ -2,6 +2,7 @@ import { env } from '@/env.mjs'
 import { ensureError } from '@/lib/utils'
 import { queuesManager } from '@/server/queues/queuesManager'
 import { errorLogger } from '@/shared/errors/errorLogger'
+import { isDevelopment } from '@/shared/globalUtils'
 import { NextResponse, type NextRequest } from 'next/server'
 import { z } from 'zod'
 
@@ -24,7 +25,7 @@ export const _llamaQHandler = async (req: NextRequest) => {
 
   const json = (await req.json()) as unknown
 
-  if (env.NODE_ENV === 'development') {
+  if (isDevelopment) {
     logIncomingEvent(json as Payload)
   }
 

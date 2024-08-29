@@ -4,20 +4,19 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { env } from '@/env.mjs'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { cn } from '@/lib/utils'
 import { signIn } from 'next-auth/react'
 
-const { NEXT_PUBLIC_DEMO_MODE } = env
-
-const isDemo = NEXT_PUBLIC_DEMO_MODE === 'true'
-
 interface SignInGoogleProps {
   callbackUrl?: string
+  isDemoMode?: boolean
 }
 
-export const SignInGoogle = ({ callbackUrl }: SignInGoogleProps) => {
+export const SignInGoogle = ({
+  callbackUrl,
+  isDemoMode,
+}: SignInGoogleProps) => {
   const navigation = useNavigation()
   const queryCallbackUrl =
     callbackUrl ?? (navigation.query?.callbackUrl as string | undefined)
@@ -29,13 +28,13 @@ export const SignInGoogle = ({ callbackUrl }: SignInGoogleProps) => {
   }
 
   const buttonEl = (
-    <div className={cn(isDemo && 'opacity-50')}>
+    <div className={cn(isDemoMode && 'opacity-50')}>
       <button
         onClick={() => void handleSignIn()}
-        disabled={isDemo}
+        disabled={isDemoMode}
         className={cn(
           'focus-visible:button-focus-outline relative flex w-full min-w-[60px] flex-row items-center justify-center space-x-1  rounded-lg bg-white px-3 py-4 text-sm font-medium text-zinc-700 shadow ring-1 ring-black/5 transition hover:bg-zinc-50 focus:outline-none disabled:cursor-not-allowed disabled:text-zinc-400 disabled:hover:bg-white',
-          isDemo && 'cursor-not-allowed',
+          isDemoMode && 'cursor-not-allowed',
         )}
       >
         <GoogleSvg />
@@ -46,7 +45,7 @@ export const SignInGoogle = ({ callbackUrl }: SignInGoogleProps) => {
     </div>
   )
 
-  if (!isDemo) {
+  if (!isDemoMode) {
     return buttonEl
   }
 
