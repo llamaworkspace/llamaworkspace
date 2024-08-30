@@ -1,4 +1,4 @@
-import { AnalyticsProvider } from '@/components/global/clientTrack'
+import { AnalyticsProvider } from '@/components/global/clientAnalytics'
 import { RouterEventListenerProvider } from '@/components/global/components/RouterEventListenerProvider'
 import { GlobalStateProvider } from '@/components/global/globalState'
 import { TooltipProvider } from '@/components/ui/tooltip'

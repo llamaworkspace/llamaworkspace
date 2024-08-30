@@ -5,6 +5,7 @@ import { PostHogProvider } from 'posthog-js/react'
 import { useEffect, useRef, type PropsWithChildren } from 'react'
 import { useSelf } from '../users/usersHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
+import type { EventsRegistry } from './eventsRegistry'
 
 const OSS_POSTHOG_KEY = 'phc_L07v1DhPpbN1dMkanlCVDQNgIhXT3lvy36zZMecGyNC'
 
@@ -54,7 +55,7 @@ export const AnalyticsProvider = ({ children }: PropsWithChildren) => {
 export const useTrack = () => {
   const { data: workspace } = useCurrentWorkspace()
   return (
-    eventName: string,
+    eventName: EventsRegistry,
     attributes: Record<string, SimplePrimitive> = {},
   ) => {
     if (!workspace) return
