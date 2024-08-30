@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs'
-import { isTest } from '@/shared/globalUtils'
+import { isTest } from '@/server/utils/globalServerUtils'
 import { sendEmailQueue } from './queues/sendEmailQueue'
 
 const { SMTP_EMAIL_FROM } = env

@@ -1,8 +1,8 @@
 import { env } from '@/env.mjs'
 import { ensureError } from '@/lib/utils'
 import { queuesManager } from '@/server/queues/queuesManager'
+import { isDevelopment } from '@/server/utils/globalServerUtils'
 import { errorLogger } from '@/shared/errors/errorLogger'
-import { isDevelopment } from '@/shared/globalUtils'
 import { NextResponse, type NextRequest } from 'next/server'
 import { z } from 'zod'
 

@@ -1,5 +1,5 @@
 import { env } from '@/env.mjs'
-import { isDemoMode } from '@/shared/globalUtils'
+import { isDemoMode } from '@/server/utils/globalServerUtils'
 import nodemailer from 'nodemailer'
 import { z } from 'zod'
 import { AbstractQueueManager } from '../../lib/AbstractQueueManager/AbstractQueueManager'
