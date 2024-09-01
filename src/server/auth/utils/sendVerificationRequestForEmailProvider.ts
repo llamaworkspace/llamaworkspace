@@ -1,5 +1,5 @@
 import { ensureError } from '@/lib/utils'
-import { isDemoMode } from '@/server/utils/globalServerUtils'
+import { isDemoMode, isDevelopment } from '@/server/utils/globalServerUtils'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import type { SendVerificationRequestParams } from 'next-auth/providers/email'
 import { EmailService } from '../../messaging/EmailService'
