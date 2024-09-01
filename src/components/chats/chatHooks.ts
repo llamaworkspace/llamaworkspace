@@ -7,7 +7,9 @@ import { produce } from 'immer'
 import { debounce } from 'lodash'
 import { useCallback, useEffect } from 'react'
 import { useDefaultApp } from '../apps/appsHooks'
+import { useTrack } from '../global/clientAnalytics'
 import { useErrorHandler } from '../global/errorHandlingHooks'
+import { EventsRegistry } from '../global/eventsRegistry'
 import { useErrorToast } from '../ui/toastHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
@@ -46,12 +48,14 @@ export const useCreateChatForApp = () => {
 export const useCreateStandaloneChat = () => {
   const errorHandler = useErrorHandler()
   const { data: defaultApp } = useDefaultApp()
+  const track = useTrack()
 
   const utils = api.useContext()
   const navigation = useNavigation()
   const { mutate, ...obj } = api.chats.createChat.useMutation({
     onError: errorHandler(),
     onSuccess: (chat) => {
+      track(EventsRegistry.ChatCreated, { chatId: chat.id })
       void utils.sidebar.invalidate()
       void navigation.push(`/c/:chatId`, {
         chatId: chat.id,

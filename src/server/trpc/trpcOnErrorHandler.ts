@@ -1,5 +1,5 @@
+import { isDevelopment } from '@/server/utils/globalServerUtils'
 import { errorLoggerForTRPC } from '@/shared/errors/errorLogger'
-import { isDevelopment } from '@/shared/globalUtils'
 import type { createNextApiHandler } from '@trpc/server/adapters/next'
 import { getHTTPStatusCodeFromError } from '@trpc/server/http'
 
