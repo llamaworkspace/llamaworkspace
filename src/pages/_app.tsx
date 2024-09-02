@@ -1,4 +1,3 @@
-import { AnalyticsProvider } from '@/components/global/clientAnalytics'
 import { RouterEventListenerProvider } from '@/components/global/components/RouterEventListenerProvider'
 import { GlobalStateProvider } from '@/components/global/globalState'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -21,13 +20,11 @@ const MainApp: AppType<{ session: Session | null }> = ({
         <RouterEventListenerProvider>
           <SessionProvider session={session}>
             <ChakraProvider>
-              <AnalyticsProvider>
-                <TooltipProvider>
-                  <DndProvider backend={HTML5Backend}>
-                    <Component {...pageProps} />
-                  </DndProvider>
-                </TooltipProvider>
-              </AnalyticsProvider>
+              <TooltipProvider>
+                <DndProvider backend={HTML5Backend}>
+                  <Component {...pageProps} />
+                </DndProvider>
+              </TooltipProvider>
             </ChakraProvider>
           </SessionProvider>
         </RouterEventListenerProvider>
