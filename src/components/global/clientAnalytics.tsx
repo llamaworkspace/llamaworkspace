@@ -22,9 +22,16 @@ const doInit = () => {
     posthog.init(posthogKey, {
       api_host: 'https://eu.i.posthog.com',
       autocapture: false,
-      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+      capture_pageview: false,
+      capture_heatmaps: false,
+      capture_pageleave: false,
+      capture_performance: false,
+      disable_session_recording: true,
+      disable_surveys: true,
+      person_profiles: 'identified_only',
       loaded: (posthog) => {
-        if (process.env.NODE_ENV === 'development') posthog.debug() // debug mode in development
+        // debug mode in development. "doInit" must still be called somehow
+        if (process.env.NODE_ENV === 'development') posthog.debug()
       },
     })
   }
@@ -33,6 +40,7 @@ const doInit = () => {
 if (isProduction) {
   doInit()
 }
+doInit()
 
 export const AnalyticsProvider = ({ children }: PropsWithChildren) => {
   const hasRun = useRef(false)
