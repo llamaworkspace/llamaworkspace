@@ -28,6 +28,7 @@ class CreateAppQueue extends AbstractQueueManager<typeof zPayload> {
       const app = await prismaAsTrx.app.findFirstOrThrow({
         where: {
           id: payload.appId,
+          markAsDeletedAt: null,
         },
         include: {
           assetsOnApps: true,

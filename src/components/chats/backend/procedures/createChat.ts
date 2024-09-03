@@ -17,6 +17,7 @@ export const createChat = protectedProcedure
     const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
         id: appId,
+        markAsDeletedAt: null,
       },
     })
 

@@ -15,6 +15,7 @@ export const performAppShare = protectedProcedure
     const app = await ctx.prisma.app.findUniqueOrThrow({
       where: {
         id: input.appId,
+        markAsDeletedAt: null,
       },
     })
     const context = await createUserOnWorkspaceContext(

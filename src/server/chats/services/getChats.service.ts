@@ -36,6 +36,9 @@ export const getChatsService = async (
           createdAt: {
             gte: date30DaysAgo,
           },
+          app: {
+            markAsDeletedAt: null,
+          },
           ...messagesWhereFilter,
         },
         workspaceId,

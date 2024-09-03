@@ -17,6 +17,7 @@ export const appsUpdate = protectedProcedure
     const app = await ctx.prisma.app.findFirstOrThrow({
       where: {
         id,
+        markAsDeletedAt: null,
       },
     })
 
