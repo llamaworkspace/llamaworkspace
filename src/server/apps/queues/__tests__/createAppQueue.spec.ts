@@ -38,7 +38,6 @@ describe('createAppQueue', () => {
     app = await AppFactory.create(prisma, {
       userId: user.id,
       workspaceId: workspace.id,
-      markAsDeletedAt: new Date(),
     })
   })
 
