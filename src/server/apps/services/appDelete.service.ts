@@ -33,6 +33,7 @@ export const appDeleteService = async (
         {
           id: appId,
           isDefault: false, // Keep this to avoid deleting the default app.
+          markAsDeletedAt: null,
         },
         workspaceId,
       ),
