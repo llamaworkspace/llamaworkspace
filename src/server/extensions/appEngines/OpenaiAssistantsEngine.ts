@@ -21,7 +21,6 @@ type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
 
 const providerKeyValuesSchema = z.object({
   apiKey: z.string(),
-  baseUrl: z.string().optional(),
 })
 
 const appKVsSchema = z
@@ -58,10 +57,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     const typedProviderKVs = this.getTypedProviderKVsOrThrow(providerKVs)
 
-    const openai = this.getOpenaiInstance(
-      typedProviderKVs.apiKey,
-      typedProviderKVs.baseUrl,
-    )
+    const openai = this.getOpenaiInstance(typedProviderKVs.apiKey)
 
     const { systemMessage, messages: messagesWithoutSystem } =
       this.filterSystemMessage(messages)
@@ -120,10 +116,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     const typedProviderKVs = this.getTypedProviderKVsOrThrow(openaiProvider)
 
-    const openai = this.getOpenaiInstance(
-      typedProviderKVs.apiKey,
-      typedProviderKVs.baseUrl,
-    )
+    const openai = this.getOpenaiInstance(typedProviderKVs.apiKey)
 
     const vectorStoreId = appKvs.vectorStoreId
 
@@ -151,10 +144,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     const typedProviderKVs = this.getTypedProviderKVsOrThrow(openaiProvider)
 
-    const openai = this.getOpenaiInstance(
-      typedProviderKVs.apiKey,
-      typedProviderKVs.baseUrl,
-    )
+    const openai = this.getOpenaiInstance(typedProviderKVs.apiKey)
 
     const vectorStore = await this.createOrGetVectorStore(
       openai,
@@ -195,10 +185,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
     const typedProviderKVs = this.getTypedProviderKVsOrThrow(openaiProvider)
 
-    const openai = this.getOpenaiInstance(
-      typedProviderKVs.apiKey,
-      typedProviderKVs.baseUrl,
-    )
+    const openai = this.getOpenaiInstance(typedProviderKVs.apiKey)
 
     await openai.files.del(externalId)
   }
@@ -300,8 +287,8 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
     return providerKeyValuesSchema.parse(providerKVs)
   }
 
-  private getOpenaiInstance(apiKey: string, baseURL?: string) {
-    return new OpenAI({ apiKey, baseURL })
+  private getOpenaiInstance(apiKey: string) {
+    return new OpenAI({ apiKey })
   }
 
   private filterSystemMessage(messages: AiRegistryMessage[]) {

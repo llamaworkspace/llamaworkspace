@@ -24,12 +24,6 @@ export const OpenAiProvider = (): OpenAiProviderType => {
         required: true,
         encrypted: true,
       },
-      {
-        slug: 'baseUrl',
-        publicName: 'Base URL',
-        required: false,
-        encrypted: false,
-      },
     ],
     executeAsStream: async (
       payload,
@@ -42,13 +36,8 @@ export const OpenAiProvider = (): OpenAiProviderType => {
 
       validateModelExistsOrThrow(payload.model)
 
-      const openAiClientPayload: { apiKey?: string; baseUrl?: string } = {
+      const openAiClientPayload: { apiKey?: string } = {
         apiKey: options.apiKey,
-        baseUrl: undefined,
-      }
-
-      if (options?.baseUrl) {
-        openAiClientPayload.baseUrl = options?.baseUrl
       }
 
       const oai = createOpenAI({
