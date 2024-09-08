@@ -1,5 +1,4 @@
 import { useCreateChatForApp } from '@/components/chats/chatHooks'
-import { useCanPerformActionForApp } from '@/components/permissions/permissionsHooks'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +9,6 @@ import { DropdownMenuItemLink } from '@/components/ui/extensions/dropdown-menu'
 import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import type { RouterOutputs } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import {
   PencilIcon,
   PencilSquareIcon,
@@ -20,10 +18,15 @@ import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
 
 interface AppsListRowProps {
   app: RouterOutputs['apps']['getList'][0]
+  canDelete: boolean
   onRowDelete: (appId: string) => void
 }
 
-export const AppsListRow = ({ app, onRowDelete }: AppsListRowProps) => {
+export const AppsListRow = ({
+  app,
+  canDelete,
+  onRowDelete,
+}: AppsListRowProps) => {
   const { mutate: createChat } = useCreateChatForApp()
 
   const handleCreateChat = () => {
@@ -78,7 +81,11 @@ export const AppsListRow = ({ app, onRowDelete }: AppsListRowProps) => {
             'hover:bg-zinc-200',
           )}
         >
-          <EllipsisDropdown appId={app.id} onDelete={handleDelete} />
+          <EllipsisDropdown
+            appId={app.id}
+            canDelete={canDelete}
+            onDelete={handleDelete}
+          />
         </div>
       </div>
     </div>
@@ -87,14 +94,15 @@ export const AppsListRow = ({ app, onRowDelete }: AppsListRowProps) => {
 
 interface EllipsisDropdownProps {
   appId: string
+  canDelete: boolean
   onDelete: () => void
 }
 
-const EllipsisDropdown = ({ appId, onDelete }: EllipsisDropdownProps) => {
-  const { data: canDelete, isLoading } = useCanPerformActionForApp(
-    PermissionAction.Delete,
-    appId,
-  )
+const EllipsisDropdown = ({
+  appId,
+  canDelete,
+  onDelete,
+}: EllipsisDropdownProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -123,9 +131,7 @@ const EllipsisDropdown = ({ appId, onDelete }: EllipsisDropdownProps) => {
             ev.preventDefault()
             canDelete && onDelete()
           }}
-          className={cn(
-            !isLoading && !canDelete && 'cursor-not-allowed opacity-50',
-          )}
+          className={cn(!canDelete && 'cursor-not-allowed opacity-50')}
         >
           <TrashIcon className="mr-2 h-4 w-4" />
           <span>Delete</span>
