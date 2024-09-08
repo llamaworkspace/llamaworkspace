@@ -16,3 +16,18 @@ export const useCanPerformActionForApp = (
     },
   )
 }
+
+export const useCanPerformActionForAppIds = (
+  action: PermissionAction,
+  appIds?: string[],
+) => {
+  const errorHandler = useErrorHandler()
+
+  return api.permissions.canPerformActionForAppIds.useQuery(
+    { action, appIds: appIds! },
+    {
+      onError: errorHandler(),
+      enabled: !!appIds,
+    },
+  )
+}

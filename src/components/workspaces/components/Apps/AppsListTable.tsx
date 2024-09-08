@@ -1,11 +1,21 @@
 import { useAppsForAppsList, useDeleteApp } from '@/components/apps/appsHooks'
+import { useCanPerformActionForAppIds } from '@/components/permissions/permissionsHooks'
 import { DeleteConfirmationDialog } from '@/components/ui/DeleteConfirmationDialog'
 import { useSuccessToast } from '@/components/ui/toastHooks'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { useState } from 'react'
 import { AppsListRow } from './AppsListRow'
 
 export const AppsListTable = () => {
   const { data: apps } = useAppsForAppsList()
+
+  const appIds = apps?.map((app) => app.id)
+
+  const { data: appsAndCanDeletePermission } = useCanPerformActionForAppIds(
+    PermissionAction.Delete,
+    appIds,
+  )
+
   const [deleteModalTargetAppId, setDeleteModalTargetAppId] = useState<
     string | null
   >(null)
@@ -49,10 +59,20 @@ export const AppsListTable = () => {
   return (
     <div className="space-y-1">
       {apps?.map((app) => {
+        let canDelete = appsAndCanDeletePermission?.find(
+          (item) => item.id === app.id,
+        )?.can
+
+        // Just a guard clause to prevent undefined from being passed to the row
+        if (canDelete === undefined) {
+          canDelete = false
+        }
+
         return (
           <AppsListRow
             key={app.id}
             app={app}
+            canDelete={canDelete}
             onRowDelete={handleAppDeletetionRequest}
           />
         )
