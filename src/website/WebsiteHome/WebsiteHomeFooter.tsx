@@ -11,7 +11,7 @@ const navigation = {
     },
     {
       name: 'Github',
-      href: 'https://github.com/imayolas/joia',
+      href: 'https://github.com/llamaworkspace/llamaworkspace',
     },
     {
       name: 'Discord',
@@ -108,7 +108,7 @@ export function WebsiteHomeFooter() {
         <div className="flex items-center justify-center space-x-10 text-sm text-zinc-500">
           Follow us on
           <a
-            href="https://twitter.com/joiahq"
+            href="https://twitter.com/llamaworkspace"
             target="_blank"
             className="px-2 text-zinc-400 hover:text-zinc-500"
           >

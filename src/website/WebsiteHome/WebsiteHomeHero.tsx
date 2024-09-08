@@ -25,7 +25,7 @@ export function WebsiteHomeHero() {
                 <br className="md:hidden" />
                 <div className="my-2 md:hidden"></div>
                 <span className="rounded-full border border-fuchsia-800 px-4 py-1 text-sm font-semibold text-fuchsia-800 hover:bg-fuchsia-300">
-                  <a href="https://github.com/imayolas/joia" target="_blank">
+                  <a href="https://github.com/llamaworkspace/llamaworkspace" target="_blank">
                     Star us on GitHub
                   </a>
                 </span>
@@ -95,7 +95,7 @@ export function WebsiteHomeHero() {
                 </Button>
               </Link>
               {/* <Link
-                href="https://github.com/imayolas/joia"
+                href="https://github.com/llamaworkspace/llamaworkspace"
                 className="rounded-md border bg-white px-12 py-4 font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
               >
                 Talk to us

@@ -67,7 +67,7 @@ export function WebsiteHomeHeader() {
               Docs
             </Link>
             <Link
-              href="https://github.com/imayolas/joia"
+              href="https://github.com/llamaworkspace/llamaworkspace"
               className="inline-flex items-center rounded-full px-4 py-1  text-sm  leading-6 text-zinc-900 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
             >
               <GitHubLogoIcon className="mr-2" />

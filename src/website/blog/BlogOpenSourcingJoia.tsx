@@ -32,7 +32,7 @@ export const BlogOpenSourcingJoia = () => {
       </Head>
       <BlogLayout title={POST_TITLE} postDate={POST_DATE}>
         <p>
-          <StyledLink href="https://github.com/imayolas/joia">
+          <StyledLink href="https://github.com/llamaworkspace/llamaworkspace">
             <Image
               className="rounded bg-zinc-100 p-2"
               src="https://assets.llamaworkspace.ai/joia_github_feb_2024.png"
@@ -57,7 +57,7 @@ export const BlogOpenSourcingJoia = () => {
         <p>
           After lots of testing and refining the product with my network of
           friends and some brave early-adopting companies, I am happy to{' '}
-          <StyledLink href="https://github.com/imayolas/joia">
+          <StyledLink href="https://github.com/llamaworkspace/llamaworkspace">
             open-source the project
           </StyledLink>
           .
@@ -135,7 +135,7 @@ export const BlogOpenSourcingJoia = () => {
           It is also possible to extend Joia with your own provider and models.
           It&apos;s not yet documented how, but it should be quite
           straightforward to do so by copying and pasting the{' '}
-          <StyledLink href="https://github.com/imayolas/joia/tree/main/src/server/lib/ai-registry/providers">
+          <StyledLink href="https://github.com/llamaworkspace/llamaworkspace/tree/main/src/server/lib/ai-registry/providers">
             examples of the existing providers
           </StyledLink>
           . Beware that the implementation is still in its early stages and
@@ -262,15 +262,15 @@ export const BlogOpenSourcingJoia = () => {
         <p>
           If you enjoy the project and would like to see it expand, I&apos;d
           appreciate it{' '}
-          <StyledLink href="https://github.com/imayolas/joia">
+          <StyledLink href="https://github.com/llamaworkspace/llamaworkspace">
             if you could star it on Github
           </StyledLink>
           , as this helps me spread the word.
         </p>
         <p>
           I&apos;ll be sharing updates and insights from{' '}
-          <StyledLink href="https://twitter.com/joiahq">
-            @joiaHQ on Twitter
+          <StyledLink href="https://twitter.com/llamaworkspace">
+            @llamaworkspace on Twitter
           </StyledLink>
           . If you want to stay informed about the project, simply give it a
           follow.
