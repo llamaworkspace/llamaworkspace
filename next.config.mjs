@@ -7,6 +7,14 @@ await import('./src/env.mjs')
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.llamaworkspace.ai',
+      },
+    ],
+  },
 
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
@@ -16,15 +24,6 @@ const config = {
   i18n: {
     locales: ['en'],
     defaultLocale: 'en',
-  },
-  async redirects() {
-    return Promise.resolve([
-      {
-        source: '/',
-        destination: '/p',
-        permanent: false,
-      },
-    ])
   },
 }
 
