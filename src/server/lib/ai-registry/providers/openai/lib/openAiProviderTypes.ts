@@ -3,7 +3,6 @@ import type { IKnownProvider } from '../../../aiRegistryTypes'
 
 export interface OpenAiExecuteOptions {
   apiKey: string
-  baseUrl?: string
 }
 
 export type OpenAiChatCompletionParams = Omit<
