@@ -1,34 +1,44 @@
-import { BookOpenIcon } from '@heroicons/react/24/outline'
-import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export function WebsiteHomeHeader() {
+  // const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   return (
     <>
+      <div
+        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+        aria-hidden="true"
+      >
+        <div
+          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+          }}
+        />
+      </div>
       <header className="z-100">
         <nav
           className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
           aria-label="Global"
         >
-          <Link href="/">
-            <div className="flex lg:flex-1">
-              <Image
-                alt="Llama Workspace logo"
-                src="/images/llama-workspace-logo-black-square.svg"
-                width="72"
-                height="72"
-                className="h-12 self-center md:h-16"
-              />
-            </div>
-          </Link>
+          <div className="flex lg:flex-1">
+            <Image
+              className="h-6 w-auto"
+              src="/images/joia_logo_red.svg"
+              alt="Joia"
+              width="38"
+              height="32"
+            />
+          </div>
           <div className="flex lg:hidden">
-            {/* <Link
+            <Link
               href="/p"
-              className="rounded-full px-4 py-1 text-sm font-semibold leading-6 text-zinc-900  hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
+              className="rounded-full bg-zinc-900 px-4 py-1 text-sm font-semibold leading-6  text-white hover:bg-zinc-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
             >
-              Open beta access <span aria-hidden="true">&rarr;</span>
-            </Link> */}
+              Log in <span aria-hidden="true">&rarr;</span>
+            </Link>
             {/* <button
               type="button"
               className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-slate-700"
@@ -58,33 +68,18 @@ export function WebsiteHomeHeader() {
             Company
           </a> */}
           </div>
-          <div className="hidden items-center space-x-2 lg:flex lg:flex-1 lg:justify-end">
+          <div className="hidden space-x-2 lg:flex lg:flex-1 lg:justify-end">
             <Link
-              href="/example"
-              className="inline-flex items-center rounded-full px-4 py-1  text-sm leading-6 text-zinc-900 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-            >
-              Example
-            </Link>
-            <Link
-              href="https://docs.llamaworkspace.ai"
-              className="inline-flex items-center rounded-full px-4 py-1  text-sm leading-6 text-zinc-900 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-            >
-              <BookOpenIcon className="mr-2 h-4 w-4" />
-              Docs
-            </Link>
-            <Link
-              href="https://github.com/llamaworkspace/llamaworkspace"
-              className="inline-flex items-center rounded-full px-4 py-1  text-sm  leading-6 text-zinc-900 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-            >
-              <GitHubLogoIcon className="mr-2" />
-              Github
-            </Link>
-            <div className="px-2 text-zinc-500">|</div>
-            <Link
-              href="/p"
+              href="/auth/signin"
               className="rounded-full px-4 py-1 text-sm font-semibold leading-6 text-zinc-900  hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
             >
-              Open beta sign-in <span aria-hidden="true">&rarr;</span>
+              Sign up
+            </Link>
+            <Link
+              href="/p"
+              className="rounded-full bg-zinc-900 px-4 py-1 text-sm font-semibold leading-6 text-white  hover:bg-zinc-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
+            >
+              Log in <span aria-hidden="true">&rarr;</span>
             </Link>
           </div>
         </nav>

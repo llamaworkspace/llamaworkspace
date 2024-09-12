@@ -42,21 +42,26 @@ export function WebsiteHomeFAQs() {
                     <p>
                       Yes and no. Joia is free to use, while in beta, in the
                       sense that we do not charge you for our chat UI. However
-                      you still need to pay for the costs of the LLM Providers
-                      like OpenAI. To do so, you can either use your own OpenAI
-                      API key or purchase credits from us.
+                      you still need to pay for the OpenAI costs. To do so, you
+                      can either use your own OpenAI API key or purchase credits
+                      from us.
                     </p>
-                    <p>We expect to be in beta at least until March 2024.</p>
+                    <p>We expect to be in beta at least until February 2024.</p>
                   </>
                 )
               }}
             />
             <Faq
-              question="Can I use my own API keys?"
+              question="Can I use my own OpenAI API keys?"
               answer={() => {
                 return (
                   <>
-                    <p>Yes. It is totally possible and encouraged.</p>
+                    <p>
+                      Yes. In fact it&apos;s currently the only option
+                      available. We are exploring to allow buying OpenAI credits
+                      through us directly, but this option is not available at
+                      the moment.
+                    </p>
                   </>
                 )
               }}
@@ -83,8 +88,8 @@ export function WebsiteHomeFAQs() {
                   <>
                     <p>
                       If you want to reach out send us an email to{' '}
-                      <StyledLink href="mailto:info@llamaworkspace.ai">
-                        info@llamaworkspace.ai
+                      <StyledLink href="mailto:hello@joia.so">
+                        hello@joia.so
                       </StyledLink>
                       .
                     </p>

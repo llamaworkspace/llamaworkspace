@@ -1,26 +1,7 @@
 const navigation = {
   main: [
     { name: 'Sign up / Log in', href: '/p' },
-    {
-      name: 'Contact: info@llamaworkspace.ai',
-      href: 'mailto:info@llamaworkspace.ai',
-    },
-    {
-      name: 'Privacy policy',
-      href: '/blog/privacy-policy',
-    },
-    {
-      name: 'Github',
-      href: 'https://github.com/llamaworkspace/llamaworkspace',
-    },
-    {
-      name: 'Discord',
-      href: 'https://discord.gg/wTHhNBDKvW',
-    },
-    {
-      name: 'Blog',
-      href: '/blog',
-    },
+    { name: 'Contact: support@joia.so', href: 'mailto:support@joia.so' },
   ],
   social: [
     // {
@@ -88,10 +69,10 @@ const navigation = {
 }
 export function WebsiteHomeFooter() {
   return (
-    <footer className="mt-24 bg-white">
+    <footer className="bg-white">
       <div className="mx-auto max-w-7xl space-y-4 overflow-hidden px-6 py-12 lg:px-8">
         <nav
-          className="-mb-6 sm:flex sm:columns-2 sm:justify-center sm:space-x-12"
+          className="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12"
           aria-label="Footer"
         >
           {navigation.main.map((item) => (
@@ -108,7 +89,7 @@ export function WebsiteHomeFooter() {
         <div className="flex items-center justify-center space-x-10 text-sm text-zinc-500">
           Follow us on
           <a
-            href="https://twitter.com/llamaworkspace"
+            href="https://twitter.com/joiahq"
             target="_blank"
             className="px-2 text-zinc-400 hover:text-zinc-500"
           >
@@ -121,7 +102,7 @@ export function WebsiteHomeFooter() {
           </a>
         </div>
         <p className="text-center text-xs leading-5 text-zinc-500">
-          &copy; 2024 All rights reserved.
+          &copy; 2023 Targeteer 2020 SL. All rights reserved.
         </p>
       </div>
     </footer>

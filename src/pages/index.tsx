@@ -1,5 +1,5 @@
 import { WebsiteHome } from '@/website/WebsiteHome'
 
-export default function Home() {
+export default function HomePage() {
   return <WebsiteHome />
 }
