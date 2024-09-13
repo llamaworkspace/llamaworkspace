@@ -1,4 +1,3 @@
-import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 
 export function WebsiteHomeHero() {
@@ -32,7 +31,7 @@ export function WebsiteHomeHero() {
               href="https://docs.llamaworkspace.ai"
               className="flex items-center rounded-md border border-zinc-900 px-12 py-4 font-semibold  shadow-sm hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
             >
-              <GitHubLogoIcon className="mr-2" /> Github repo
+              Talk to us
             </Link>
           </div>
         </div>

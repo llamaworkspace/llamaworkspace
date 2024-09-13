@@ -1,6 +1,9 @@
 import Head from 'next/head'
 import { WebsiteHomeFeatureApps } from './WebsiteHomeFeatureApps'
+import { WebsiteHomeFeatureChatWithDocs } from './WebsiteHomeFeatureChatWithDocs'
+import { WebsiteHomeFeatureIntegrations } from './WebsiteHomeFeatureIntegrations'
 import { WebsiteHomeFeatureMultiModel } from './WebsiteHomeFeatureMultiModel'
+import { WebsiteHomeFeatureValueForMoney } from './WebsiteHomeFeatureValueForMoney'
 import { WebsiteHomeFooter } from './WebsiteHomeFooter'
 import { WebsiteHomeHeader } from './WebsiteHomeHeader'
 import { WebsiteHomeHero } from './WebsiteHomeHero'
@@ -10,13 +13,11 @@ export function WebsiteHome() {
     <>
       <Head>
         <title>
-          Llama Workspace - The self-hostable ChatGPT Teams/Enterprise
-          alternative.
+          Llama Workspace - Open Source ChatGPT Enterprise alternative.
         </title>
         <meta
           property="og:title"
-          content="The self-hostable ChatGPT Teams/Enterprise
-          alternative."
+          content="Open Source ChatGPT Enterprise alternative"
         />
         {/* <meta
           name="image"
@@ -51,7 +52,10 @@ export function WebsiteHome() {
           <div className="mb-32 space-y-24">
             <WebsiteHomeFeatureMultiModel />
             <WebsiteHomeFeatureApps />
+            <WebsiteHomeFeatureChatWithDocs />
+            <WebsiteHomeFeatureIntegrations />
           </div>
+          <WebsiteHomeFeatureValueForMoney />
           {/* <WebsiteHomeFeatureValueForMoney />
           <WebsiteHomeFAQs /> */}
           {/* <WebsiteHomeCTA /> */}
