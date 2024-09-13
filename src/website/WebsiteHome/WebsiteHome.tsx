@@ -1,9 +1,9 @@
 import Head from 'next/head'
-import { WebsiteHomeFeatureChatbots } from './WebsiteHome/WebsiteHomeFeatureChatbots'
-import { WebsiteHomeFeatureGpt4 } from './WebsiteHome/WebsiteHomeFeatureGpt4'
-import { WebsiteHomeFooter } from './WebsiteHome/WebsiteHomeFooter'
-import { WebsiteHomeHeader } from './WebsiteHome/WebsiteHomeHeader'
-import { WebsiteHomeHero } from './WebsiteHome/WebsiteHomeHero'
+import { WebsiteHomeFeatureApps } from './WebsiteHomeFeatureApps'
+import { WebsiteHomeFeatureMultiModel } from './WebsiteHomeFeatureMultiModel'
+import { WebsiteHomeFooter } from './WebsiteHomeFooter'
+import { WebsiteHomeHeader } from './WebsiteHomeHeader'
+import { WebsiteHomeHero } from './WebsiteHomeHero'
 
 export function WebsiteHome() {
   return (
@@ -49,8 +49,8 @@ export function WebsiteHome() {
           <WebsiteHomeHero />
 
           <div className="mb-32 space-y-24">
-            <WebsiteHomeFeatureGpt4 />
-            <WebsiteHomeFeatureChatbots />
+            <WebsiteHomeFeatureMultiModel />
+            <WebsiteHomeFeatureApps />
           </div>
           {/* <WebsiteHomeFeatureValueForMoney />
           <WebsiteHomeFAQs /> */}
