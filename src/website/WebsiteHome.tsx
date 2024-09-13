@@ -1,4 +1,6 @@
 import Head from 'next/head'
+import { WebsiteHomeFeatureChatbots } from './WebsiteHome/WebsiteHomeFeatureChatbots'
+import { WebsiteHomeFeatureGpt4 } from './WebsiteHome/WebsiteHomeFeatureGpt4'
 import { WebsiteHomeFooter } from './WebsiteHome/WebsiteHomeFooter'
 import { WebsiteHomeHeader } from './WebsiteHome/WebsiteHomeHeader'
 import { WebsiteHomeHero } from './WebsiteHome/WebsiteHomeHero'
@@ -45,13 +47,11 @@ export function WebsiteHome() {
 
         <div className="space-y-32">
           <WebsiteHomeHero />
-          {/* <WebsiteHomeTestimonials /> */}
 
-          {/* <div className="mb-32 space-y-24">
-            <WebsiteHomeFeatureUserManagement />
-            <WebsiteHomeFeatureAnyLlm />
+          <div className="mb-32 space-y-24">
+            <WebsiteHomeFeatureGpt4 />
             <WebsiteHomeFeatureChatbots />
-          </div> */}
+          </div>
           {/* <WebsiteHomeFeatureValueForMoney />
           <WebsiteHomeFAQs /> */}
           {/* <WebsiteHomeCTA /> */}
