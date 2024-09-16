@@ -177,7 +177,6 @@ export class AppEngineRunner {
     })
 
     const appId = assetOnApp.appId
-    const assetId = assetOnApp.assetId
     const externalId = assetOnApp.externalId
 
     if (!externalId) {
