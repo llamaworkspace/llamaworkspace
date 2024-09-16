@@ -16,7 +16,7 @@ export class PreprocessingHandler {
     // const asset = await this.pullAssetFromRemote(assetId)
 
     // Send it to llamaparse.
-    const docs = this.sendItToLlamaParse()
+    const docs = await this.sendItToLlamaParse()
     console.log(1, docs)
 
     // // Poll.
@@ -41,14 +41,31 @@ export class PreprocessingHandler {
     const apiKey = env.LLAMACLOUD_API_KEY
     const reader = new LlamaParseReader({
       apiKey,
-      resultType: 'markdown',
+      resultType: 'text',
       verbose: true,
       language: 'en',
       fastMode: true,
     })
 
-    const buffer = fs.readFileSync('./sample.pdf')
+    const buffer = fs.readFileSync('./thing/sample.pdf')
+
+    // This loadDataAsContent waits until the result is returnd
     const documents = await reader.loadDataAsContent(new Uint8Array(buffer))
     return documents
   }
 }
+
+// 1 [
+//   Document {
+//     id_: 'aed0bb7e-9f1e-4fc6-9630-c5dd93224454',
+//     metadata: {},
+//     excludedEmbedMetadataKeys: [],
+//     excludedLlmMetadataKeys: [],
+//     relationships: {},
+//     embedding: undefined,
+//     text: 'This is an example\n' +
+//       'There are 1,000 people working in my company, which is named Lorem Jarl.',
+//     textTemplate: '',
+//     metadataSeparator: '\n'
+//   }
+// ]
