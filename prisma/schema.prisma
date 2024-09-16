@@ -151,18 +151,22 @@ model AppsOnUsers {
 }
 
 model Asset {
-    id                String         @id @default(cuid())
-    workspaceId       String
-    uploadStatus      String
-    originalName      String
-    extension         String
-    path              String
-    markedAsDeletedAt DateTime?
-    remoteDeletedAt   DateTime?
-    createdAt         DateTime       @default(now())
-    updatedAt         DateTime       @updatedAt
-    workspace         Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    assetsOnApps      AssetsOnApps[]
+    id                        String         @id @default(cuid())
+    workspaceId               String
+    uploadStatus              String
+    originalName              String
+    extension                 String
+    path                      String
+    markedAsDeletedAt         DateTime?
+    remoteDeletedAt           DateTime?
+    processedVersionOfAssetId String?        @unique
+    contentsAsMarkdown        String?
+    createdAt                 DateTime       @default(now())
+    updatedAt                 DateTime       @updatedAt
+    workspace                 Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    assetsOnApps              AssetsOnApps[]
+    originalVersion           Asset?         @relation("ProcessedVersionOf", fields: [processedVersionOfAssetId], references: [id])
+    processedVersion          Asset?         @relation("ProcessedVersionOf")
 }
 
 model AssetsOnApps {

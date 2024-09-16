@@ -5,7 +5,9 @@ import { prisma } from './server/db'
 async function main() {
   const workspace = await prisma.workspace.findFirstOrThrow()
   const user = await prisma.user.findFirstOrThrow()
-  const asset = await prisma.asset.findFirstOrThrow()
+  const asset = await prisma.asset.findFirstOrThrow({
+    orderBy: { createdAt: 'desc' },
+  })
 
   const context = await createUserOnWorkspaceContext(
     prisma,

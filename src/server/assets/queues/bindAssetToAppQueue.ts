@@ -48,13 +48,12 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
       userId,
     )
 
-    await new PreprocessingHandler(prisma, context).run(assetOnApp.assetId)
+    // TODO: If app has flag "preprocessAssets", then we should enqueue preprocessing here.
+    const doAssetPreprocessing = true
 
-    // If app has flag "preprocessAssets", then we should enqueue preprocessing here.
-    // alt: Instead of calling "onAssAdded", we will call "preprocessAssets" queue.
-    // on the on preprocessAssets queue...
-    // if preprocess is "none", then we will call "onAssetAdded" directly.
-    // if preprocesss is active, we will do the preprocessing and then do the polling. When the preprocessing is done, we will call "onAssetAdded".
+    if (doAssetPreprocessing) {
+      await new PreprocessingHandler(prisma, context).run(assetOnApp.assetId)
+    }
 
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
     await appEngineRunner.onAssetAdded(assetOnAppId)
