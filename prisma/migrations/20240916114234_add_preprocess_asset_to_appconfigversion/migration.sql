@@ -1,3 +1,3 @@
 -- AlterTable
-ALTER TABLE "AppConfigVersion" ADD COLUMN     "preprocessAsset" BOOLEAN DEFAULT false;
-ALTER TABLE "AppConfigVersion" ALTER COLUMN "preprocessAsset" SET NOT NULL;
+ALTER TABLE "AppConfigVersion" ADD COLUMN     "preprocessAssets" BOOLEAN DEFAULT false;
+ALTER TABLE "AppConfigVersion" ALTER COLUMN "preprocessAssets" SET NOT NULL;

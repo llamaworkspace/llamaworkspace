@@ -48,7 +48,7 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
       userId,
     )
 
-    // TODO: If app has flag "preprocessAssets", then we should enqueue preprocessing here.
+    // TODO: If app has flag "preprocessAssetss", then we should enqueue preprocessing here.
     const doAssetPreprocessing = true
 
     if (doAssetPreprocessing) {

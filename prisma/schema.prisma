@@ -151,22 +151,19 @@ model AppsOnUsers {
 }
 
 model Asset {
-    id                        String         @id @default(cuid())
-    workspaceId               String
-    uploadStatus              String
-    originalName              String
-    extension                 String
-    path                      String
-    markedAsDeletedAt         DateTime?
-    remoteDeletedAt           DateTime?
-    processedVersionOfAssetId String?        @unique
-    contentsAsMarkdown        String?
-    createdAt                 DateTime       @default(now())
-    updatedAt                 DateTime       @updatedAt
-    workspace                 Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    assetsOnApps              AssetsOnApps[]
-    originalVersion           Asset?         @relation("ProcessedVersionOf", fields: [processedVersionOfAssetId], references: [id])
-    processedVersion          Asset?         @relation("ProcessedVersionOf")
+    id                 String         @id @default(cuid())
+    workspaceId        String
+    uploadStatus       String
+    originalName       String
+    extension          String
+    path               String
+    markedAsDeletedAt  DateTime?
+    remoteDeletedAt    DateTime?
+    contentsAsMarkdown String?
+    createdAt          DateTime       @default(now())
+    updatedAt          DateTime       @updatedAt
+    workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    assetsOnApps       AssetsOnApps[]
 }
 
 model AssetsOnApps {
@@ -243,16 +240,16 @@ model Message {
 }
 
 model AppConfigVersion {
-    id              String    @id @default(cuid())
-    appId           String
-    app             App       @relation(fields: [appId], references: [id], onDelete: Cascade)
-    description     String?
-    model           String
-    preprocessAsset Boolean   @default(false)
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
-    chats           Chat[]
-    messages        Message[]
+    id               String    @id @default(cuid())
+    appId            String
+    app              App       @relation(fields: [appId], references: [id], onDelete: Cascade)
+    description      String?
+    model            String
+    preprocessAssets Boolean   @default(false)
+    createdAt        DateTime  @default(now())
+    updatedAt        DateTime  @updatedAt
+    chats            Chat[]
+    messages         Message[]
 }
 
 model ChatRun {
