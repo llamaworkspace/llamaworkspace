@@ -20,9 +20,12 @@ export const ChatHeaderAppLinks = ({
 
   const activeTab = getTabForRoute(navigation.route)
 
-  const chatLink = appId && chatId ? `/p/${appId}/c/${chatId}` : '#'
-  const configLink =
-    appId && chatId ? `/p/${appId}/c/${chatId}/configuration` : '#'
+  let chatLink = appId && !chatId ? `/p/${appId}` : '#'
+  chatLink = appId && chatId ? `/p/${appId}/c/${chatId}` : chatLink
+
+  let configLink = appId && !chatId ? `/p/${appId}/configuration` : '#'
+  configLink =
+    appId && chatId ? `/p/${appId}/c/${chatId}/configuration` : configLink
 
   return (
     <nav className="flex items-center gap-x-4 text-sm text-zinc-900">
