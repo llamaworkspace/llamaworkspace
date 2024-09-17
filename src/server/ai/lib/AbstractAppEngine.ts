@@ -45,6 +45,7 @@ export interface AppEngineConfigParams<T> {
 export interface AppEngineAssetParams {
   readonly assetOnAppId: string
   readonly filePath: string
+  readonly markdownContents?: string
 }
 
 export interface AppEngineCallbacks {

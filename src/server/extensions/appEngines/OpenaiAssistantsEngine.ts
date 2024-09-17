@@ -1,5 +1,8 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
-import { createReadStreamSafe } from '@/lib/backend/nodeUtils'
+import {
+  createReadStreamSafe,
+  writeFileSafeAsUtf8,
+} from '@/lib/backend/nodeUtils'
 import {
   AbstractAppEngine,
   type AppEngineAssetParams,
@@ -129,7 +132,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
 
   async onAssetAdded(
     ctx: AppEngineConfigParams<AppKeyValues>,
-    { filePath }: AppEngineAssetParams,
+    { filePath, markdownContents }: AppEngineAssetParams,
     callbacks: OnAssetAddedCallbacks,
   ) {
     const { onSuccess, onFailure } = callbacks
@@ -156,7 +159,14 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       await appKeyValuesStore.set('vectorStoreId', vectorStore.id)
     }
 
-    const readStream = await createReadStreamSafe(filePath)
+    let targetFilePath = filePath
+
+    if (markdownContents) {
+      const nextFilePath = filePath.split('.').slice(0, -1).join('.') + '_.md'
+      await writeFileSafeAsUtf8(nextFilePath, markdownContents)
+      targetFilePath = nextFilePath
+    }
+    const readStream = await createReadStreamSafe(targetFilePath)
 
     const { file, failureMessage } = await this.uploadAssetToVectorStore(
       openai,

@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { env } from '@/env.mjs'
 import { generateToken } from '@/lib/utils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
@@ -12,6 +13,9 @@ import {
 } from '@/shared/globalTypes'
 import { updateAppSortingService } from './updateAppSorting.service'
 import { upsertAppKeyValuesService } from './upsertAppKeyValues.service'
+
+const workspaceIdsWithFilesPreprocessing =
+  env.NEXT_PUBLIC_FF_PREPROCESS_FILES?.split(',')
 
 interface AppCreateServiceInputProps {
   engineType: AppEngineType
@@ -59,6 +63,9 @@ const createApp = async (
   targetModel: string,
   input: AppCreateServiceInputProps,
 ) => {
+  const preprocessAssets =
+    workspaceIdsWithFilesPreprocessing?.includes(workspaceId) ?? false
+
   return await prisma.app.create({
     data: {
       workspaceId,
@@ -68,6 +75,7 @@ const createApp = async (
         create: [
           {
             model: targetModel,
+            preprocessAssets,
             messages: {
               create: [
                 {

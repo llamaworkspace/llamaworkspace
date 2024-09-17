@@ -1,6 +1,7 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { ensureError } from '@/lib/utils'
 import { getAppByIdService } from '@/server/apps/services/getAppById.service'
+import { getLatestAppConfigForAppIdService } from '@/server/apps/services/getLatestAppConfigForAppId.service'
 import { downloadAssetFromS3Service } from '@/server/assets/services/downloadAssetFromS3.service'
 import { type UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { getApplicableAppConfigToChatService } from '@/server/chats/services/getApplicableAppConfigToChat.service'
@@ -106,10 +107,28 @@ export class AppEngineRunner {
         id: assetOnAppId,
         markAsDeletedAt: null,
       },
+      include: {
+        asset: true,
+        app: true,
+      },
     })
 
-    const appId = assetOnApp.appId
-    const assetId = assetOnApp.assetId
+    const asset = assetOnApp.asset
+    const app = assetOnApp.app
+    const assetId = asset.id
+    const appId = app.id
+
+    const appConfigVersion = await getLatestAppConfigForAppIdService(
+      this.prisma,
+      this.context,
+      { appId },
+    )
+
+    let markdownContents: string | undefined
+
+    if (appConfigVersion.preprocessAssets && asset.contentsAsMarkdown) {
+      markdownContents = asset.contentsAsMarkdown
+    }
 
     const engine = await this.getEngine(appId)
     const ctx = await this.generateAppScopedEngineContext(appId)
@@ -143,7 +162,7 @@ export class AppEngineRunner {
     try {
       await engine.onAssetAdded(
         ctx,
-        { filePath, assetOnAppId: assetOnApp.id },
+        { filePath, assetOnAppId: assetOnApp.id, markdownContents },
         { onSuccess, onFailure },
       )
     } catch (_error) {
