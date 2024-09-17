@@ -17,6 +17,7 @@ export const getEntrypointRedirectUrlService = async (
   const chatRuns = await prisma.chatRun.count({
     where: {
       chat: {
+        authorId: userId,
         app: {
           workspaceId: workspace.id,
         },
@@ -25,7 +26,7 @@ export const getEntrypointRedirectUrlService = async (
   })
 
   if (chatRuns) {
-    return await handleCaseChatRunsExist(prisma, workspace.id)
+    return await handleCaseChatRunsExist(prisma, workspace.id, userId)
   }
   return await handleCaseNoChatRuns(prisma, workspace.id, userId)
 }
@@ -33,9 +34,11 @@ export const getEntrypointRedirectUrlService = async (
 const handleCaseChatRunsExist = async (
   prisma: PrismaClientOrTrxClient,
   workspaceId: string,
+  userId: string,
 ) => {
   const latestPrivateChat = await prisma.chat.findFirst({
     where: {
+      authorId: userId,
       app: scopeAppByWorkspace(
         {
           isDefault: true,
