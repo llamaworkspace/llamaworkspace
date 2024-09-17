@@ -5,6 +5,7 @@ import { prisma } from '@/server/db'
 import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import { AbstractQueueManager } from '@/server/lib/AbstractQueueManager/AbstractQueueManager'
 import { z } from 'zod'
+import { PreprocessingHandler } from './PreprocessingHandler'
 
 const zPayload = z.object({
   userId: z.string(),
@@ -23,7 +24,7 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
   protected async handle(action: string, payload: Payload) {
     const engines = [new DefaultAppEngine(), ...enginesRegistry]
 
-    const assetOnAppId = payload.assetOnAppId
+    const { assetOnAppId, userId } = payload
 
     const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
       where: {
@@ -44,8 +45,15 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
     const context = await createUserOnWorkspaceContext(
       prisma,
       app.workspaceId,
-      payload.userId,
+      userId,
     )
+
+    // TODO: If app has flag "preprocessAssetss", then we should enqueue preprocessing here.
+    const doAssetPreprocessing = true
+
+    if (doAssetPreprocessing) {
+      await new PreprocessingHandler(prisma, context).run(assetOnApp.assetId)
+    }
 
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
     await appEngineRunner.onAssetAdded(assetOnAppId)

@@ -7,6 +7,7 @@ import { z } from 'zod'
  * built with invalid env vars.
  */
 const server = z.object({
+  LLAMACLOUD_API_KEY: z.string(),
   DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(['development', 'test', 'production']),
   NEXT_PUBLIC_FRONTEND_URL: z.string().url(),
@@ -58,6 +59,7 @@ const client = z.object({
  * @type {Record<keyof z.infer<typeof server> | keyof z.infer<typeof client>, string | undefined>}
  */
 const processEnv = {
+  LLAMACLOUD_API_KEY: process.env.LLAMACLOUD_API_KEY,
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.ENCRYPTION_KEY,
