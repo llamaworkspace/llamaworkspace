@@ -46,17 +46,13 @@ export const getTabConfigForAppId = (appId: string) => {
 
 export const getTabForRoute = (route: string): Tab | null => {
   switch (route) {
+    case '/p/[app_id]':
     case '/p/[app_id]/c/[chat_id]':
       return 'chat'
 
-    case '/p/[app_id]/history':
-      return 'history'
-
+    case '/p/[app_id]/configuration':
     case '/p/[app_id]/c/[chat_id]/configuration':
       return 'configuration'
-
-    case '/p/[app_id]/publishing':
-      return 'publishing'
 
     default:
       return null
