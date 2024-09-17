@@ -8,7 +8,7 @@ export function WebsiteHomeFeatureApps() {
         <div className="lg:pr-8 lg:pt-4">
           <div className="lg:max-w-lg">
             <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-              Create and share custom AI apps to maximize productivity.
+              Create and share AI apps to maximize productivity.
             </p>
             <p className="mt-6 text-2xl leading-8 tracking-tighter text-zinc-900">
               Lorem, ipsum dolor sit amet consectetur adipisicing elit.

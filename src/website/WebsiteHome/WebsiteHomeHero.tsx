@@ -16,7 +16,7 @@ export function WebsiteHomeHero() {
               <span className="font-semibold text-zinc-950">
                 ChatGPT Enterprise alternative
               </span>{' '}
-              that runs on any Large Language Model, all while helping you save
+              that runs on any Large Language Model. All while helping you save
               up to 70% in subscription costs.
             </h2>
           </div>
