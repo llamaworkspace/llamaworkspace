@@ -30,7 +30,8 @@
     "dev:delete-all-openai-files": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts",
     "dev:clear-openai": "npm run dev:deleteAllOpenaiVectorStores && npm run dev:deleteAllOpenaiFiles",
     "dco:up-all": "docker-compose -f docker-compose.yml -f docker-compose.optional.yml up -d",
-    "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo ."
+    "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo .",
+    "deploy": "git push prod sept-24:main"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.24",
