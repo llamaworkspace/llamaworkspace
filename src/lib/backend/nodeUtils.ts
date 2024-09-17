@@ -88,7 +88,7 @@ export const writeFileSafeAsUtf8 = async (
   if (!fullPath.startsWith(baseDir)) {
     throw new Error('Invalid file path')
   }
-  console.log('fullPath', fullPath)
+
   return await writeFile(fullPath, contents)
 }
 

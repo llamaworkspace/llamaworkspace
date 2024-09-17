@@ -52,11 +52,15 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
     const doAssetPreprocessing = true
 
     if (doAssetPreprocessing) {
+      console.log('Starting asset preprocessing')
       await new PreprocessingHandler(prisma, context).run(assetOnApp.assetId)
+      console.log('Finish asset preprocessing')
     }
 
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
+    console.log('Start onAssetAdded callback')
     await appEngineRunner.onAssetAdded(assetOnAppId)
+    console.log('Finish onAssetAdded callback')
   }
 }
 
