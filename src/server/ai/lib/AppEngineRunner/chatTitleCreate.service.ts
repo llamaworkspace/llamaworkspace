@@ -50,7 +50,7 @@ export const chatTitleCreateService = async (
   content += instructions && `INSTRUCTIONS: ${instructions}. `
   content += request && `REQUEST: ${request}. `
 
-  const { model } = getProviderAndModelFromFullSlug(OpenAiModelEnum.GPT4)
+  const { model } = getProviderAndModelFromFullSlug(OpenAiModelEnum.GPT4O)
 
   const params: OpenAI.Chat.ChatCompletionCreateParamsNonStreaming = {
     messages: [
