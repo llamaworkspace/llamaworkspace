@@ -87,7 +87,7 @@
     "llamaworkspace": "^0.4.0",
     "lodash": "^4.17.21",
     "micro": "^10.0.1",
-    "next": "^14.2.3",
+    "next": "^14.2.12",
     "next-api-middleware": "^2.0.1",
     "next-auth": "^4.24.7",
     "next-joi": "^2.2.1",
