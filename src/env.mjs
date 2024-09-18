@@ -39,6 +39,7 @@ const server = z.object({
   LLAMAQ_ACCESS_KEY: z.string(),
   LLAMAQ_INCOMING_API_ROUTE_ACCESS_KEY: z.string(),
   DEMO_MODE: z.string().optional(),
+  SENTRY_AUTH_TOKEN: z.string().optional(),
 })
 
 /**
@@ -51,6 +52,7 @@ const client = z.object({
   NEXT_PUBLIC_TRPC_DEBUG: z.string().optional(),
   NEXT_PUBLIC_POSTHOG_API_KEY: z.string().optional(),
   NEXT_PUBLIC_FF_PREPROCESS_FILES: z.string().optional(),
+  NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
 })
 
 /**
@@ -80,11 +82,13 @@ const processEnv = {
   SMTP_EMAIL_SERVER: process.env.SMTP_EMAIL_SERVER,
   SMTP_EMAIL_FROM: process.env.SMTP_EMAIL_FROM,
   DEMO_MODE: process.env.DEMO_MODE,
+  SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
   NEXT_PUBLIC_ENV: process.env.NODE_ENV,
   NEXT_PUBLIC_FRONTEND_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
   NEXT_PUBLIC_TRPC_DEBUG: process.env.NEXT_PUBLIC_TRPC_DEBUG,
   NEXT_PUBLIC_POSTHOG_API_KEY: process.env.NEXT_PUBLIC_POSTHOG_API_KEY,
   NEXT_PUBLIC_FF_PREPROCESS_FILES: process.env.NEXT_PUBLIC_FF_PREPROCESS_FILES,
+  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
 }
 
 // Don't touch the part below

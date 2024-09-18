@@ -259,7 +259,7 @@ const sendShareNotificationEmail = async (
     subject,
     text: getEmailBody(
       invitingUserName ?? 'A colleague',
-      invitingUserEmail,
+      invitedUserEmail,
       app.title ?? 'Untitled app',
       appUrl || undefined,
       workspaceInviteUrl || undefined,
@@ -269,7 +269,7 @@ const sendShareNotificationEmail = async (
 
 const getEmailBody = (
   invitingUserName: string,
-  email: string,
+  invitedUserEmail: string,
   appName: string,
   appUrl?: string,
   workspaceUrl?: string,
@@ -293,7 +293,7 @@ ${appUrl}
     str += `Since you do not have an account with us, you will need to create one first. To do so, please click on the following link:
 ${workspaceUrl}
 
-You must use the email "${email}" to create your account; otherwise the invitation won't work.
+You must use the email "${invitedUserEmail}" to create your account; otherwise the invitation won't work.
 
 `
   }
