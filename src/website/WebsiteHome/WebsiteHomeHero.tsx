@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
+import Link from 'next/link'
 
 declare global {
   interface Window {
@@ -12,10 +13,6 @@ export function WebsiteHomeHero() {
   // if (typeof window !== 'undefined') {
   //   isEU = euCountriesGDPR.includes(window.userCountry)
   // }
-
-  const handleClick = () => {
-    throw new Error('Sentry test by im')
-  }
 
   return (
     <div className="relative isolate pt-6">
@@ -92,10 +89,11 @@ export function WebsiteHomeHero() {
               </div>
             </div> */}
             <div className="mt-8 flex flex-col items-center justify-center gap-x-6 gap-y-4 md:flex-row">
-              <Button variant="outline" onClick={handleClick}>
-                <GitHubLogoIcon className="mr-2" /> Github repo
-              </Button>
-
+              <Link passHref href="https://github.com/imayolas/llamaworkspace">
+                <Button variant="outline">
+                  <GitHubLogoIcon className="mr-2" /> Github repo
+                </Button>
+              </Link>
               {/* <Link
                 href="https://github.com/llamaworkspace/llamaworkspace"
                 className="rounded-md border bg-white px-12 py-4 font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
