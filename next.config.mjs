@@ -9,6 +9,9 @@ await import('./src/env.mjs')
 
 /** @type {import("next").NextConfig} */
 const config = {
+  experimental: {
+    instrumentationHook: true,
+  },
   reactStrictMode: true,
   images: {
     remotePatterns: [
