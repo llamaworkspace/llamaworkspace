@@ -4,6 +4,21 @@ import * as Sentry from '@sentry/nextjs'
 import Head from 'next/head'
 
 export default function Page() {
+  const handleClick = async () => {
+    await Sentry.startSpan(
+      {
+        name: 'Example Frontend Span',
+        op: 'test',
+      },
+      async () => {
+        const res = await fetch('/api/sentry-example-api')
+        if (!res.ok) {
+          throw new Error('Sentry Example Frontend Error')
+        }
+      },
+    )
+  }
+
   return (
     <div>
       <Head>
@@ -48,20 +63,7 @@ export default function Page() {
             fontSize: '14px',
             margin: '18px',
           }}
-          onClick={async () => {
-            await Sentry.startSpan(
-              {
-                name: 'Example Frontend Span',
-                op: 'test',
-              },
-              async () => {
-                const res = await fetch('/api/sentry-example-api')
-                if (!res.ok) {
-                  throw new Error('Sentry Example Frontend Error')
-                }
-              },
-            )
-          }}
+          onClick={() => void handleClick()}
         >
           Throw error!
         </button>
