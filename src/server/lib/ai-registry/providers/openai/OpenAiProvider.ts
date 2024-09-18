@@ -80,7 +80,7 @@ export const OpenAiProvider = (): OpenAiProviderType => {
             if (code === 'model_not_found') {
               const nextError = createHttpError(
                 403,
-                'OpenAI responded with a "Model not found" error. This is likely due to not having added any funds to your OpenAI account. Please check your OpenAI account status or reach out to us if you believe this is an error.',
+                'OpenAI responded with a "Model not found" error. This is likely due to not ever having added any funds to your OpenAI account. Please check your OpenAI account status or reach out to us if you believe this is an error.',
               )
               throw convertErrorToAiSdkCompatibleError(nextError)
             }
