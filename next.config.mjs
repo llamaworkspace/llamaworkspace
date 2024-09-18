@@ -1,4 +1,6 @@
 import { withSentryConfig } from '@sentry/nextjs'
+import { env } from './src/env.mjs'
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
@@ -32,11 +34,11 @@ export default withSentryConfig(config, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
-  org: 'joia',
-  project: 'joia-nextjs',
-
-  // Only print logs for uploading source maps in CI
-  silent: !process.env.CI,
+  org: 'llamaworkspace',
+  project: 'app',
+  authToken: env.SENTRY_AUTH_TOKEN,
+  // Only print logs when uploading source maps is possible, as the token exists
+  silent: !env.SENTRY_AUTH_TOKEN,
 
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
