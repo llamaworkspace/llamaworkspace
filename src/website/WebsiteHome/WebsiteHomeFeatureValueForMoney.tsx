@@ -178,7 +178,7 @@ const EnterpriseTier = () => {
         href="/auth/signin"
         className="mt-10 block rounded-md bg-zinc-950 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
       >
-        Talk to us
+        Get started
       </Link>
       <p className="mt-10 text-sm font-semibold leading-6 text-zinc-900">
         Everything in &quot;Teams&quot;, plus:

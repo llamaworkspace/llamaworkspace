@@ -1,5 +1,5 @@
-import { WebsiteHomeFooter } from '@/website_prev/WebsiteHome/WebsiteHomeFooter'
-import { WebsiteHomeHeader } from '@/website_prev/WebsiteHome/WebsiteHomeHeader'
+import { WebsiteHomeFooter } from '@/website/WebsiteHome/WebsiteHomeFooter'
+import { WebsiteHomeHeader } from '@/website/WebsiteHome/WebsiteHomeHeader'
 import Image from 'next/image'
 import type { PropsWithChildren } from 'react'
 

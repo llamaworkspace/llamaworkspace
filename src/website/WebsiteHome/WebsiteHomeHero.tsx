@@ -16,8 +16,8 @@ export function WebsiteHomeHero() {
               <span className="font-semibold text-zinc-950">
                 ChatGPT Enterprise alternative
               </span>{' '}
-              that runs on any Large Language Model. All while helping you save
-              up to 70% in subscription costs.
+              that runs on any Large Language Model. On your infra or ours. All
+              while helping you save up to 70% in subscription costs.
             </h2>
           </div>
           <div className="mt-10 flex items-center gap-x-6">
@@ -27,12 +27,12 @@ export function WebsiteHomeHero() {
             >
               Sign up
             </Link>
-            <Link
+            {/* <Link
               href="https://docs.llamaworkspace.ai"
               className="flex items-center rounded-md border border-zinc-900 px-12 py-4 font-semibold  shadow-sm hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
             >
               Talk to us
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

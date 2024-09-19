@@ -18,8 +18,8 @@ const navigation = {
       href: 'https://discord.gg/wTHhNBDKvW',
     },
     {
-      name: 'Blog',
-      href: '/blog',
+      name: 'Contact',
+      href: 'mailto:info@llamaworkspace.ai',
     },
   ],
   social: [
