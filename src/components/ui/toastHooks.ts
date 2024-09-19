@@ -4,7 +4,7 @@
 import { useToast } from '@chakra-ui/react'
 import { useCallback } from 'react'
 
-const TOAST_DURATION = 3000
+const TOAST_DURATION = 5000
 
 interface ToastOptions {
   duration?: number
