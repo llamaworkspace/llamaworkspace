@@ -11,16 +11,14 @@ export function WebsiteHomeFeatureChatWithDocs() {
               Ask questions to your company&apos;s documents.
             </p>
             <p className="mt-6 text-2xl leading-8 tracking-tighter text-zinc-900">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-              Voluptatem ut et nisi, veniam explicabo minima, quaerat quasi
-              adipisci delectus consequuntur sunt vero sapiente esse obcaecati
-              neque temporibus distinctio fugiat laboriosam.
+              Boost productivity by letting the AI summarize long documents,
+              explain complex concepts, and find key information in seconds.
             </p>
           </div>
         </div>
         <Image
-          src="/images/chatbot_app_homepage.png"
-          alt="Joia's app homepage"
+          src="/images/2024-09/home_test3.png"
+          alt="Chat with documents"
           className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-zinc-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
           width={2432}
           height={1442}

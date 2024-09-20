@@ -11,16 +11,15 @@ export function WebsiteHomeFeatureApps() {
               Create and share AI apps to maximize productivity.
             </p>
             <p className="mt-6 text-2xl leading-8 tracking-tighter text-zinc-900">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-              Voluptatem ut et nisi, veniam explicabo minima, quaerat quasi
-              adipisci delectus consequuntur sunt vero sapiente esse obcaecati
-              neque temporibus distinctio fugiat laboriosam.
+              Build and share task-specific apps using natural language for
+              repeating use cases. Enrich them with your own documents and
+              external function calling.
             </p>
           </div>
         </div>
         <Image
-          src="/images/chatbot_app_homepage.png"
-          alt="Joia's app homepage"
+          src="/images/2024-09/home_apps.png"
+          alt="Shareable apps"
           className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-zinc-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
           width={2432}
           height={1442}

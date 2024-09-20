@@ -1,10 +1,7 @@
 const navigation = {
   main: [
     { name: 'Sign up / Log in', href: '/p' },
-    {
-      name: 'Contact: info@llamaworkspace.ai',
-      href: 'mailto:info@llamaworkspace.ai',
-    },
+
     {
       name: 'Privacy policy',
       href: '/blog/privacy-policy',
@@ -18,7 +15,7 @@ const navigation = {
       href: 'https://discord.gg/wTHhNBDKvW',
     },
     {
-      name: 'Contact',
+      name: 'Contact: info@llamaworkspace.ai',
       href: 'mailto:info@llamaworkspace.ai',
     },
   ],
