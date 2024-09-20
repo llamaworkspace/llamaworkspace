@@ -6,12 +6,12 @@ export function WebsiteHomeHero() {
       <div className="pb-24 sm:py-8 md:pt-12">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="max-w-2xl space-y-4">
-            <h1 className=" text-3xl font-bold tracking-tighter text-zinc-950 sm:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tighter text-zinc-950 sm:text-6xl">
               The open-source
               <br />
               AI assistant for work.
             </h1>
-            <h2 className="font-demi text-3xl tracking-tight text-zinc-700 sm:text-2xl">
+            <h2 className="font-demi text-xl tracking-tight text-zinc-700 sm:text-2xl">
               A{' '}
               <span className="font-semibold text-zinc-950">
                 ChatGPT Enterprise alternative
@@ -20,7 +20,7 @@ export function WebsiteHomeHero() {
               while helping you save up to 70% in subscription costs.
             </h2>
           </div>
-          <div className="mt-10 flex items-center gap-x-6">
+          <div className="mt-10 items-center gap-x-6 sm:flex">
             <Link
               href="/auth/signin"
               className="rounded-md border border-zinc-900 bg-zinc-900 px-12 py-4 font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
@@ -30,7 +30,7 @@ export function WebsiteHomeHero() {
 
             <Link
               href="https://github.com/llamaworkspace/llamaworkspace"
-              className="flex items-center rounded-md border border-zinc-900 px-12 py-4 font-semibold  shadow-sm hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
+              className="hidden items-center rounded-md border border-zinc-900 px-12 py-4 font-semibold shadow-sm  hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600 sm:flex"
             >
               ⭐️ Star us on Github
             </Link>
