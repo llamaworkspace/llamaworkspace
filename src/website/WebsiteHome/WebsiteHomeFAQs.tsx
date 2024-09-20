@@ -83,21 +83,58 @@ export function WebsiteHomeFAQs() {
             answer={() => {
               return (
                 <>
-                  <p>Yes. It is totally possible and encouraged.</p>
+                  <p>Yes. In fact it is currently a requirement.</p>
                 </>
               )
             }}
           />
           <Faq
-            question="Is Joia suitable for individual users or it's only made for organizations?"
+            question="Is Llama Workspace suitable for individual users or it's only made for organizations?"
             answer={() => {
               return (
                 <>
                   <p>
                     Both. Individual users can benefit of a more affordable and
-                    faster access to ChatGPT. Organizations, in addition, will
-                    benefit from the product&apos;s collaborative features that
-                    help teams be more productive.
+                    access to an AI assistant.
+                  </p>
+                </>
+              )
+            }}
+          />
+          <Faq
+            question="Can I self-host Llama Workspace?"
+            answer={() => {
+              return (
+                <>
+                  <p>
+                    Yes. Check out{' '}
+                    <StyledLink href="https://docs.llamaworkspace.ai/">
+                      our documentation
+                    </StyledLink>{' '}
+                    to learn more.
+                  </p>
+                </>
+              )
+            }}
+          />
+          <Faq
+            question="What does it mean that Llama Workspace is open-source? What are the implications?"
+            answer={() => {
+              return (
+                <>
+                  <p>
+                    It means that the code that runs the product is built in
+                    public, and freely available to everyone. The code is
+                    released under an AGPL-3.0 license, which{' '}
+                    <StyledLink href="https://github.com/llamaworkspace/llamaworkspace?tab=AGPL-3.0-1-ov-file#readme">
+                      you can read in our GitHub repository
+                    </StyledLink>
+                    .
+                  </p>
+                  <p>
+                    For individuals and organizations that do not want to deal
+                    with the hassle of self-hosting, we also offer a fully
+                    managed cloud version of the product.
                   </p>
                 </>
               )

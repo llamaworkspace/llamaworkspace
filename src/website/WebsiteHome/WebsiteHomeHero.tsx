@@ -29,7 +29,7 @@ export function WebsiteHomeHero() {
             </Link>
 
             <Link
-              href="https://docs.llamaworkspace.ai"
+              href="https://github.com/llamaworkspace/llamaworkspace"
               className="flex items-center rounded-md border border-zinc-900 px-12 py-4 font-semibold  shadow-sm hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
             >
               ⭐️ Star us on Github
