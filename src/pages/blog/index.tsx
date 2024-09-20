@@ -3,8 +3,8 @@ import Link from 'next/link'
 
 const pages = [
   {
-    name: 'Open-sourcing Llama Workspace, a ChatGPT alternative built for collaboration',
-    href: '/blog/open-sourcing-joia',
+    name: 'Privacy policy',
+    href: '/blog/privacy-policy',
   },
 ]
 
