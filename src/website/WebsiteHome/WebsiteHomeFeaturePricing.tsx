@@ -2,10 +2,13 @@ import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link'
 import { WebsiteHomeFeatureWrapper } from './WebsiteHomeFeatureWrapper'
 
-export function WebsiteHomeFeatureValueForMoney() {
+export function WebsiteHomeFeaturePricing() {
   return (
     <WebsiteHomeFeatureWrapper>
-      <div className="relative rounded-lg border border-[#f0f5e8] py-8">
+      <div
+        id="pricing"
+        className="relative rounded-lg border border-[#f0f5e8] py-8"
+      >
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
           aria-hidden="true"
@@ -24,14 +27,12 @@ export function WebsiteHomeFeatureValueForMoney() {
               <h2 className="text-base font-bold uppercase leading-7 text-zinc-400">
                 Pricing
               </h2>
-              <p className="mt-2 text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl">
+              <p className="mt-2 text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
                 Start free, pay as you team grows.
               </p>
             </div>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-zinc-600 sm:text-center">
-              Distinctio et nulla eum soluta et neque labore quibusdam. Saepe et
-              quasi iusto modi velit ut non voluptas in. Explicabo id ut
-              laborum.
+              Get all the benefits of the commercial AI
             </p>
             <div className="mt-20 flow-root">
               <div className="isolate -mt-16 grid max-w-sm grid-cols-1 gap-y-16 divide-y divide-zinc-100 sm:mx-auto lg:-mx-8 lg:mt-0 lg:max-w-none lg:grid-cols-3 lg:divide-x lg:divide-y-0 xl:-mx-4">
@@ -48,6 +49,7 @@ export function WebsiteHomeFeatureValueForMoney() {
 }
 
 const freeTierFeatures = [
+  'Free forever for single-user mode',
   'Access to all Large Language Models',
   'Create custom apps',
   'Bring your own API keys',
@@ -66,7 +68,7 @@ const FreeTier = () => {
       <p className="mt-3 text-sm leading-6 text-gray-500">
         Plus token usage
         <br />
-        (expect $4-$8/seat/month)
+        (expect $2-$6/seat/month)
       </p>
 
       <Link
@@ -119,7 +121,7 @@ const TeamsTier = () => {
       <p className="mt-3 text-sm leading-6 text-gray-500">
         Plus token usage
         <br />
-        (expect $4-$8/seat/month)
+        (expect $2-$6/seat/month)
       </p>
       <Link
         href="/auth/signin"

@@ -1,9 +1,10 @@
 import Head from 'next/head'
+import { WebsiteHomeFAQs } from './WebsiteHomeFAQs'
 import { WebsiteHomeFeatureApps } from './WebsiteHomeFeatureApps'
 import { WebsiteHomeFeatureChatWithDocs } from './WebsiteHomeFeatureChatWithDocs'
 import { WebsiteHomeFeatureIntegrations } from './WebsiteHomeFeatureIntegrations'
 import { WebsiteHomeFeatureMultiModel } from './WebsiteHomeFeatureMultiModel'
-import { WebsiteHomeFeatureValueForMoney } from './WebsiteHomeFeatureValueForMoney'
+import { WebsiteHomeFeaturePricing } from './WebsiteHomeFeaturePricing'
 import { WebsiteHomeFooter } from './WebsiteHomeFooter'
 import { WebsiteHomeHeader } from './WebsiteHomeHeader'
 import { WebsiteHomeHero } from './WebsiteHomeHero'
@@ -55,9 +56,8 @@ export function WebsiteHome() {
             <WebsiteHomeFeatureChatWithDocs />
             <WebsiteHomeFeatureIntegrations />
           </div>
-          <WebsiteHomeFeatureValueForMoney />
-          {/* <WebsiteHomeFeatureValueForMoney />
-          <WebsiteHomeFAQs /> */}
+          <WebsiteHomeFeaturePricing />
+          <WebsiteHomeFAQs />
           {/* <WebsiteHomeCTA /> */}
         </div>
 

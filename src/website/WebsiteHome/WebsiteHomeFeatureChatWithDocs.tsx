@@ -17,7 +17,7 @@ export function WebsiteHomeFeatureChatWithDocs() {
           </div>
         </div>
         <Image
-          src="/images/2024-09/home_test3.png"
+          src="/images/2024-09/home_chat_with_docs.png"
           alt="Chat with documents"
           className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-zinc-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
           width={2432}

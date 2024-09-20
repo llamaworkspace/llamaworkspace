@@ -24,12 +24,19 @@ export function WebsiteHomeHeader() {
         <div className="hidden lg:flex lg:gap-x-12"></div>
         <div className="hidden items-center space-x-2 lg:flex lg:flex-1 lg:justify-end">
           <Link
+            href="#pricing"
+            className="inline-flex items-center rounded-full px-4 py-1  text-sm leading-6 text-zinc-900 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
+          >
+            Pricing
+          </Link>
+          <Link
             href="https://docs.llamaworkspace.ai"
             className="inline-flex items-center rounded-full px-4 py-1  text-sm leading-6 text-zinc-900 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
           >
             <BookOpenIcon className="mr-2 h-4 w-4" />
             Docs
           </Link>
+
           <Link
             href="https://github.com/llamaworkspace/llamaworkspace"
             className="inline-flex items-center rounded-full px-4 py-1  text-sm  leading-6 text-zinc-900 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
