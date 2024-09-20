@@ -32,7 +32,7 @@
     "dco:up-all": "docker-compose -f docker-compose.yml -f docker-compose.optional.yml up -d",
     "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo .",
     "deploy": "git push prod sept-24:main",
-    "uu": "git fetch && git merge upstream/main"
+    "uu": "git fetch upstream && git merge upstream/main"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.24",
