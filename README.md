@@ -9,6 +9,8 @@
 
 <h3 align="center"><strong>An extensible ChatGPT Enterprise alternative</strong></h3>
 <p align="center">
+    <a href="https://llamaworkspace.ai/">Website</a>
+    ·
     <a href="https://go.midday.ai/anPiuRx">Discord</a>
     ·
     <a href="https://twitter.com/llamaworkspace">Twitter</a>
@@ -16,11 +18,11 @@
 
 ## About
 
-Llama Workspace is an open source & extensible ChatGPT Teams/Enterprise alternative. It helps organizations to:
+Llama Workspace is an open-source & extensible ChatGPT Teams/Enterprise alternative. It is designed to help organizations:
 
 - **Cut between 50% and 75% the cost of running an AI assistant** in the workplace.
 - **Centralize access to generative AI tools** in a single interface.
-- **Retain full control over sensitive data** by hosting the product on their infrastructure.
+- **Retain full control over sensitive data** by hosting the product on their own infrastructure.
 
 ## Features
 
