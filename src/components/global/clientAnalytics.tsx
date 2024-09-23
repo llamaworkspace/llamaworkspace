@@ -2,7 +2,13 @@ import { env } from '@/env.mjs'
 import type { SimplePrimitive } from '@/shared/globalTypes'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
-import { useEffect, useRef, useState, type PropsWithChildren } from 'react'
+import {
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+  type PropsWithChildren,
+} from 'react'
 import { useSelf } from '../users/usersHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 import type { EventsRegistry } from './eventsRegistry'
@@ -11,8 +17,6 @@ const OSS_POSTHOG_KEY = 'phc_L07v1DhPpbN1dMkanlCVDQNgIhXT3lvy36zZMecGyNC'
 
 const posthogKey = env.NEXT_PUBLIC_POSTHOG_API_KEY ?? OSS_POSTHOG_KEY
 const isOss = !env.NEXT_PUBLIC_POSTHOG_API_KEY
-
-const isProduction = env.NEXT_PUBLIC_ENV === 'production'
 
 let isInitialized = false
 
@@ -32,7 +36,7 @@ const posthogInitialize = (trackPageViews = false) => {
       person_profiles: 'identified_only',
       loaded: (posthog) => {
         // debug mode in development. "doInit" must still be called in development
-        if (process.env.NODE_ENV === 'development') {
+        if (true || process.env.NODE_ENV === 'development') {
           posthog.debug()
         }
       },
@@ -42,25 +46,13 @@ const posthogInitialize = (trackPageViews = false) => {
 
 interface AnalyticsProviderProps extends PropsWithChildren {
   trackPageViews?: boolean
+  identifyUser?: boolean
 }
 
-export const AnalyticsProvider = ({
-  children,
-  trackPageViews = false,
-}: AnalyticsProviderProps) => {
-  const [isInitialized, setIsInitialized] = useState(false)
+const IdentifyUser = ({ children }: PropsWithChildren) => {
   const isUserIdentified = useRef(false)
 
-  // This errors with Unauthorized.
   const { data: user } = useSelf()
-
-  useEffect(() => {
-    if (isInitialized) {
-      return
-    }
-    setIsInitialized(true)
-    posthogInitialize(trackPageViews)
-  }, [isInitialized, trackPageViews])
 
   useEffect(() => {
     if (isUserIdentified.current) {
@@ -70,10 +62,34 @@ export const AnalyticsProvider = ({
       return
     }
     isUserIdentified.current = true
+
     posthog.identify(user.id)
   }, [user])
+  return <>{children}</>
+}
 
-  return <PostHogProvider client={posthog}>{children}</PostHogProvider>
+export const AnalyticsProvider = ({
+  children,
+  trackPageViews = false,
+  identifyUser = false,
+}: AnalyticsProviderProps) => {
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  useEffect(() => {
+    if (isInitialized) {
+      return
+    }
+    setIsInitialized(true)
+    posthogInitialize(trackPageViews)
+  }, [isInitialized, trackPageViews])
+
+  const Wrapper = identifyUser ? IdentifyUser : Fragment
+
+  return (
+    <Wrapper>
+      <PostHogProvider client={posthog}>{children}</PostHogProvider>
+    </Wrapper>
+  )
 }
 
 export const useTrack = () => {

@@ -3,7 +3,7 @@ import { WebsiteHome } from '@/website/WebsiteHome/WebsiteHome'
 
 export default function HomePage() {
   return (
-    <AnalyticsProvider>
+    <AnalyticsProvider trackPageViews>
       <WebsiteHome />
     </AnalyticsProvider>
   )
