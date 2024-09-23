@@ -40,7 +40,7 @@ export function MainLayout({
       <Head>
         <title>{head}</title>
       </Head>
-      <AnalyticsProvider>
+      <AnalyticsProvider trackPageViews identifyUser>
         <OnboardingCompletedChecker />
         <Sidebar />
         <div
