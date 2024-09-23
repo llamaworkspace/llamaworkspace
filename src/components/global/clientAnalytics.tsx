@@ -2,7 +2,7 @@ import { env } from '@/env.mjs'
 import type { SimplePrimitive } from '@/shared/globalTypes'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
-import { useEffect, useRef, type PropsWithChildren } from 'react'
+import { useEffect, useRef, useState, type PropsWithChildren } from 'react'
 import { useSelf } from '../users/usersHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 import type { EventsRegistry } from './eventsRegistry'
@@ -10,19 +10,20 @@ import type { EventsRegistry } from './eventsRegistry'
 const OSS_POSTHOG_KEY = 'phc_L07v1DhPpbN1dMkanlCVDQNgIhXT3lvy36zZMecGyNC'
 
 const posthogKey = env.NEXT_PUBLIC_POSTHOG_API_KEY ?? OSS_POSTHOG_KEY
+const isOss = !env.NEXT_PUBLIC_POSTHOG_API_KEY
 
 const isProduction = env.NEXT_PUBLIC_ENV === 'production'
 
 let isInitialized = false
 
-const doInit = () => {
+const posthogInitialize = (trackPageViews = false) => {
   if (isInitialized) return
   if (typeof window !== 'undefined') {
     isInitialized = true
     posthog.init(posthogKey, {
       api_host: 'https://eu.i.posthog.com',
       autocapture: false,
-      capture_pageview: false,
+      capture_pageview: !isOss && trackPageViews,
       capture_heatmaps: false,
       capture_pageleave: false,
       capture_performance: false,
@@ -30,30 +31,45 @@ const doInit = () => {
       disable_surveys: true,
       person_profiles: 'identified_only',
       loaded: (posthog) => {
-        // debug mode in development. "doInit" must still be called somehow
-        if (process.env.NODE_ENV === 'development') posthog.debug()
+        // debug mode in development. "doInit" must still be called in development
+        if (process.env.NODE_ENV === 'development') {
+          posthog.debug()
+        }
       },
     })
   }
 }
 
-if (isProduction) {
-  doInit()
+interface AnalyticsProviderProps extends PropsWithChildren {
+  trackPageViews?: boolean
 }
-doInit()
 
-export const AnalyticsProvider = ({ children }: PropsWithChildren) => {
-  const hasRun = useRef(false)
+export const AnalyticsProvider = ({
+  children,
+  trackPageViews = false,
+}: AnalyticsProviderProps) => {
+  const [isInitialized, setIsInitialized] = useState(false)
+  const isUserIdentified = useRef(false)
+
+  // This errors with Unauthorized.
   const { data: user } = useSelf()
 
   useEffect(() => {
-    if (hasRun.current) {
+    if (isInitialized) {
+      return
+    }
+    setIsInitialized(true)
+    posthogInitialize(trackPageViews)
+  }, [isInitialized, trackPageViews])
+
+  useEffect(() => {
+    if (isUserIdentified.current) {
       return
     }
     if (!user) {
       return
     }
-    hasRun.current = true
+    isUserIdentified.current = true
     posthog.identify(user.id)
   }, [user])
 

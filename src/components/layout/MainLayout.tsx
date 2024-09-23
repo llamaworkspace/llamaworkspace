@@ -3,7 +3,6 @@ import Head from 'next/head'
 import { type PropsWithChildren } from 'react'
 import { EMPTY_APP_NAME } from '../apps/appsConstants'
 import { useAppById } from '../apps/appsHooks'
-import { AnalyticsProvider } from '../global/clientAnalytics'
 import { useGlobalState } from '../global/globalState'
 import { OnboardingCompletedChecker } from '../onboarding/components/OnboardingCompletedChecker'
 import { Sidebar } from '../sidebar/components/Sidebar/Sidebar'
@@ -40,22 +39,21 @@ export function MainLayout({
       <Head>
         <title>{head}</title>
       </Head>
-      <AnalyticsProvider>
-        <OnboardingCompletedChecker />
-        <Sidebar />
-        <div
-          className={cn(
-            'transition-spacing h-full duration-200 ease-out ',
-            isDesktopSidebarOpen && 'lg:pl-72',
-          )}
-        >
-          <div className="relative flex h-full w-full min-w-[300px] flex-1 flex-col overflow-hidden">
-            <MainLayoutHeader appId={appId} chatId={chatId} variant={variant} />
-            <SidebarToggler />
-            {children}
-          </div>
+
+      <OnboardingCompletedChecker />
+      <Sidebar />
+      <div
+        className={cn(
+          'transition-spacing h-full duration-200 ease-out ',
+          isDesktopSidebarOpen && 'lg:pl-72',
+        )}
+      >
+        <div className="relative flex h-full w-full min-w-[300px] flex-1 flex-col overflow-hidden">
+          <MainLayoutHeader appId={appId} chatId={chatId} variant={variant} />
+          <SidebarToggler />
+          {children}
         </div>
-      </AnalyticsProvider>
+      </div>
     </MainLayoutSessionChecker>
   )
 }
