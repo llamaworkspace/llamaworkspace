@@ -62,23 +62,6 @@ export function WebsiteHomeFAQs() {
             }}
           />
           <Faq
-            question="Is Joia free of charge?"
-            answer={() => {
-              return (
-                <>
-                  <p>
-                    Yes and no. Joia is free to use, while in beta, in the sense
-                    that we do not charge you for our chat UI. However you still
-                    need to pay for the costs of the LLM Providers like OpenAI.
-                    To do so, you can either use your own OpenAI API key or
-                    purchase credits from us.
-                  </p>
-                  <p>We expect to be in beta at least until March 2024.</p>
-                </>
-              )
-            }}
-          />
-          <Faq
             question="Can I use my own API keys?"
             answer={() => {
               return (
