@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import type { TRPCError } from '@trpc/server'
 import chalk from 'chalk'
 
@@ -12,6 +13,8 @@ export const errorLogger = (error: Error) => {
   log(chalk.red.bold.bgWhite('  *** START: Logging error ***  '))
   logError(error)
   log(chalk.red.bold.bgWhite('  *** END: Logging error ***  '))
+
+  Sentry.captureException(error)
 }
 
 interface ErrorLoggerForTRPCMeta {
@@ -21,9 +24,16 @@ interface ErrorLoggerForTRPCMeta {
 }
 export const errorLoggerForTRPC = (
   error: TRPCError,
-  _: ErrorLoggerForTRPCMeta,
+  meta: ErrorLoggerForTRPCMeta,
 ) => {
   log(chalk.red.bold.bgWhite('  *** START: Logging error (trpc) ***  '))
   logError(error)
   log(chalk.red.bold.bgWhite('  *** END: Logging error (trpc) ***  '))
+
+  Sentry.captureException(error, {
+    tags: {
+      isTRPCError: true,
+      ...meta,
+    },
+  })
 }

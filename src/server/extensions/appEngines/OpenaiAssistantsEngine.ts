@@ -258,7 +258,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       await openai.beta.vectorStores.files.createAndPoll(vectorStoreId, {
         file_id: file.id,
       })
-    console.log('vectorStoreUploadRes', vectorStoreUploadRes)
+
     if (vectorStoreUploadRes.status === 'completed') {
       return {
         file,
