@@ -73,13 +73,19 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       const error = ensureError(_error)
 
       if (
-        error instanceof OpenAI.OpenAIError &&
-        error.error?.message?.match(/Vector store with id '.*' not found\./)
+        error instanceof OpenAI.APIError &&
+        error.error &&
+        typeof error.error === 'object' &&
+        'message' in error.error &&
+        typeof error.error.message === 'string' &&
+        error.error.message.match(/Vector store with id '.*' not found\./)
       ) {
         // Handle the case where the vector store is not found
         throw createHttpError(
           404,
-          generatePublicErrorString('Vector store not found'),
+          generatePublicErrorString(
+            'The vector store that powers this app was deleted from OpenAI. Please duplicate this app to continue using it.',
+          ),
         )
       }
       throw error
