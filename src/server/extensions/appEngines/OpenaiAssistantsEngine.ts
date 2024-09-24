@@ -84,7 +84,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         throw createHttpError(
           400,
           generatePublicErrorString(
-            'The vector store that powers this app was deleted from OpenAI. Please duplicate this app to continue using it.',
+            'The configuration created in OpenAI to power this app has been deleted. Please duplicate this app to continue using it.',
           ),
         )
       }
