@@ -82,7 +82,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       ) {
         // Handle the case where the vector store is not found
         throw createHttpError(
-          404,
+          400,
           generatePublicErrorString(
             'The vector store that powers this app was deleted from OpenAI. Please duplicate this app to continue using it.',
           ),
