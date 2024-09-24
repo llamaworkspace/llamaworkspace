@@ -1,5 +1,7 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { generatePublicErrorString } from '@/lib/aiSdkUtils'
 import { createReadStreamSafe } from '@/lib/backend/nodeUtils'
+import { ensureError } from '@/lib/utils'
 import {
   AbstractAppEngine,
   type AppEngineAssetParams,
@@ -67,7 +69,21 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       chatId,
       systemMessage,
       appKvs.vectorStoreId,
-    )
+    ).catch((_error) => {
+      const error = ensureError(_error)
+
+      if (
+        error instanceof OpenAI.OpenAIError &&
+        error.error?.message?.match(/Vector store with id '.*' not found\./)
+      ) {
+        // Handle the case where the vector store is not found
+        throw createHttpError(
+          404,
+          generatePublicErrorString('Vector store not found'),
+        )
+      }
+      throw error
+    })
 
     const response = await openai.beta.threads.createAndRun({
       assistant_id: assistant.id,
