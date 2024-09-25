@@ -87,7 +87,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
         throw createHttpError(
           400,
           generatePublicErrorString(
-            'The configuration created in OpenAI to power this app has been deleted. Please duplicate this app to continue using it.',
+            'The configuration created in OpenAI to power this app has been deleted, or the OpenAI account has been changed. Please duplicate this app to continue using it.',
           ),
         )
       }
