@@ -14,6 +14,10 @@ export const convertErrorToAiSdkCompatibleError = (error: Error) => {
   return nextError
 }
 
+export const generatePublicErrorString = (message: string) => {
+  return '::public::' + message
+}
+
 export const generateAiSdkCompatibleErrorString = (error: Error) => {
   // Make the string JSON safe; otherwise contents
   // with double quotes will break the string

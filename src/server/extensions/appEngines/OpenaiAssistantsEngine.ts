@@ -1,8 +1,10 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { generatePublicErrorString } from '@/lib/aiSdkUtils'
 import {
   createReadStreamSafe,
   writeFileSafeAsUtf8,
 } from '@/lib/backend/nodeUtils'
+import { ensureError } from '@/lib/utils'
 import {
   AbstractAppEngine,
   type AppEngineAssetParams,
@@ -70,7 +72,27 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       chatId,
       systemMessage,
       appKvs.vectorStoreId,
-    )
+    ).catch((_error) => {
+      const error = ensureError(_error)
+
+      if (
+        error instanceof OpenAI.APIError &&
+        error.error &&
+        typeof error.error === 'object' &&
+        'message' in error.error &&
+        typeof error.error.message === 'string' &&
+        error.error.message.match(/Vector store with id '.*' not found\./)
+      ) {
+        // Handle the case where the vector store is not found
+        throw createHttpError(
+          400,
+          generatePublicErrorString(
+            'The configuration created in OpenAI to power this app has been deleted. Please duplicate this app to continue using it.',
+          ),
+        )
+      }
+      throw error
+    })
 
     const response = await openai.beta.threads.createAndRun({
       assistant_id: assistant.id,
@@ -268,7 +290,7 @@ export class OpenaiAssistantsEngine extends AbstractAppEngine {
       await openai.beta.vectorStores.files.createAndPoll(vectorStoreId, {
         file_id: file.id,
       })
-    console.log('vectorStoreUploadRes', vectorStoreUploadRes)
+
     if (vectorStoreUploadRes.status === 'completed') {
       return {
         file,

@@ -14,6 +14,7 @@
     "prisma:push": "npm run prisma db push",
     "prisma:deploy": "prisma migrate deploy",
     "db:deploy": "npm run prisma:deploy 2>&1 && tsx src/server/dataMigrations/dataMigrator.ts up 2>&1",
+    "reset": "prisma migrate reset --force && prisma db push",
     "production:deploy": "npm run prisma:generate && npm run build && npm run db:deploy",
     "test:prepare": "env-cmd -f .env.test prisma migrate reset --force && env-cmd -f .env.test prisma db push",
     "test:prepare-pgvector": "env-cmd -f .env.test prisma migrate reset --force --schema prisma-pgvector/schema.pgvector.prisma && env-cmd -f .env.test prisma db push --schema prisma-pgvector/schema.pgvector.prisma",
