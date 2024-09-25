@@ -46,6 +46,11 @@ export const useUploadFile = (
         await ky(presignedUrl.url, {
           method: 'POST',
           body: formData,
+          timeout: 1_800_000, // 30 minutes,
+          retry: {
+            limit: 3,
+            maxRetryAfter: 600_000, // 10 minutes
+          },
         })
 
         await notifyAssetUploadSuccess({ assetId: asset.id })
