@@ -15,7 +15,9 @@ import { AppConfigVersion, Message } from '@prisma/client'
 import { Promise } from 'bluebird'
 import _ from 'underscore'
 import { appCreateService } from './appCreate.service'
+import { getAppKeyValuesService } from './getAppKeyValues.service'
 import { getLatestAppConfigForAppIdService } from './getLatestAppConfigForAppId.service'
+import { upsertAppKeyValuesService } from './upsertAppKeyValues.service'
 
 interface AppDuplicateServiceProps {
   appId: string
@@ -60,13 +62,22 @@ export const appDuplicateService = async (
       duplicatedApp.id,
     )
 
-    await duplicateSystemMessages(
-      prisma,
-      baseAppConfigVersion.messages,
-      duplicatedAppConfigVersion.id,
-    )
+    await Promise.all([
+      await duplicateSystemMessages(
+        prisma,
+        baseAppConfigVersion.messages,
+        duplicatedAppConfigVersion.id,
+      ),
 
-    await duplicateAssets(prisma, uowContext, baseApp.id, duplicatedApp.id)
+      await duplicateAssets(prisma, uowContext, baseApp.id, duplicatedApp.id),
+
+      await duplicateKeyValues(
+        prisma,
+        uowContext,
+        baseApp.id,
+        duplicatedApp.id,
+      ),
+    ])
 
     return duplicatedApp
   })
@@ -162,5 +173,21 @@ const duplicateAssets = async (
       assetId: assetOnApp.assetId,
       appId: duplicatedAppId,
     })
+  })
+}
+
+const duplicateKeyValues = async (
+  prisma: PrismaTrxClient,
+  uowContext: UserOnWorkspaceContext,
+  originalAppId: string,
+  duplicatedAppId: string,
+) => {
+  const { data } = await getAppKeyValuesService(prisma, uowContext, {
+    appId: originalAppId,
+  })
+
+  await upsertAppKeyValuesService(prisma, uowContext, {
+    appId: duplicatedAppId,
+    keyValuePairs: data,
   })
 }

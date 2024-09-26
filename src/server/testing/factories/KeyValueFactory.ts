@@ -1,3 +1,4 @@
+import type { KeyValueType } from '@/shared/globalTypes'
 import type { KeyValue, PrismaClient } from '@prisma/client'
 import { generateBaseForDefaults } from './utils/testingFactoryUtils'
 
@@ -5,7 +6,7 @@ type KeyValueFactoryFields = {
   appId: string
   key: string
   value: string
-  type: string
+  type: KeyValueType
 } & Partial<KeyValue>
 
 const generateDefaults = () => {
@@ -14,7 +15,7 @@ const generateDefaults = () => {
   }
 }
 
-export const AppFactory = {
+export const KeyValueFactory = {
   build: (overrides: KeyValueFactoryFields) => {
     return {
       ...generateDefaults(),
@@ -24,7 +25,7 @@ export const AppFactory = {
 
   create: async (prisma: PrismaClient, overrides: KeyValueFactoryFields) => {
     return await prisma.keyValue.create({
-      data: AppFactory.build(overrides),
+      data: KeyValueFactory.build(overrides),
     })
   },
 }

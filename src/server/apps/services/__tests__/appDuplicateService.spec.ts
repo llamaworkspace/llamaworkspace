@@ -6,10 +6,11 @@ import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { AssetFactory } from '@/server/testing/factories/AssetFactory'
 import { AssetsOnAppsFactory } from '@/server/testing/factories/AssetsOnAppsFactory'
+import { KeyValueFactory } from '@/server/testing/factories/KeyValueFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { Author } from '@/shared/aiTypesAndMappers'
-import { ShareScope } from '@/shared/globalTypes'
+import { KeyValueType, ShareScope } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
 import _ from 'underscore'
@@ -193,5 +194,30 @@ describe('appDuplicateService', () => {
     })
 
     expect(assetsOnApps).toHaveLength(1)
+  })
+
+  it('duplicates the keyValues', async () => {
+    await KeyValueFactory.create(prisma, {
+      appId: app.id,
+      key: 'test',
+      value: 'test',
+      type: KeyValueType.String,
+    })
+
+    const nextApp = await subject(workspace.id, user.id, { appId: app.id })
+
+    const keyValues = await prisma.keyValue.findMany({
+      where: {
+        appId: nextApp.id,
+      },
+    })
+
+    expect(keyValues).toHaveLength(1)
+    expect(keyValues[0]).toMatchObject({
+      appId: nextApp.id,
+      key: 'test',
+      value: 'test',
+      type: KeyValueType.String,
+    })
   })
 })
