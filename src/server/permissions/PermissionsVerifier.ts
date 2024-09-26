@@ -24,7 +24,7 @@ export class PermissionsVerifier {
     })
 
     await this.userBelongsWorkspaceOrThrow(app.workspaceId, userId)
-    // return await Promise.resolve(true)
+
     if (scope === ShareScope.Everybody) {
       return await this.handleEverybodyScope(userId, appId, action)
     }

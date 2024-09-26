@@ -1,11 +1,17 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { AssetUploadStatus } from '@/components/assets/assetTypes'
 import { getEnumByValue } from '@/lib/utils'
+import { bindAssetToAppService } from '@/server/assets/services/bindAssetToApp.service'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
+import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import {
   type PrismaClientOrTrxClient,
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { Promise } from 'bluebird'
+import _ from 'underscore'
 import { appCreateService } from './appCreate.service'
 import { getLatestAppConfigForAppIdService } from './getLatestAppConfigForAppId.service'
 
@@ -20,15 +26,17 @@ export const appDuplicateService = async (
 ) => {
   return await prismaAsTrx(prisma, async (prisma: PrismaTrxClient) => {
     const { userId, workspaceId } = uowContext
-    const user = await prisma.user.findUniqueOrThrow({
-      where: {
-        id: userId,
-      },
-    })
+    const { appId } = input
+
+    await new PermissionsVerifier(prisma).passOrThrowTrpcError(
+      PermissionAction.Use,
+      userId,
+      appId,
+    )
 
     const baseApp = await prisma.app.findUniqueOrThrow({
       where: {
-        id: input.appId,
+        id: appId,
       },
     })
 
@@ -47,7 +55,7 @@ export const appDuplicateService = async (
     const duplicatedAppConfigVersion =
       await prisma.appConfigVersion.findFirstOrThrow({
         where: {
-          appId: baseApp.id,
+          appId: duplicatedApp.id,
         },
       })
 
@@ -59,6 +67,53 @@ export const appDuplicateService = async (
         description: baseAppConfigVersion.description,
         preprocessAssets: baseAppConfigVersion.preprocessAssets,
       },
+    })
+
+    await prisma.message.deleteMany({
+      where: {
+        appConfigVersionId: duplicatedAppConfigVersion.id,
+      },
+    })
+
+    await Promise.map(baseAppConfigVersion.messages, async (message) => {
+      const partialMessage = _.omit(message, [
+        'id',
+        'chatId',
+        'appConfigVersionId',
+        'createdAt',
+        'updatedAt',
+      ])
+      await prisma.message.create({
+        data: {
+          ...partialMessage,
+          appConfigVersionId: duplicatedAppConfigVersion.id,
+        },
+      })
+    })
+
+    await prisma.message.updateMany({
+      where: {
+        appConfigVersionId: baseAppConfigVersion.id,
+      },
+      data: {
+        message: duplicatedAppConfigVersion.id,
+      },
+    })
+
+    const assetsOnApps = await prisma.assetsOnApps.findMany({
+      where: {
+        appId: baseApp.id,
+        asset: {
+          uploadStatus: AssetUploadStatus.Success,
+        },
+      },
+    })
+
+    await Promise.map(assetsOnApps, async (assetOnApp) => {
+      await bindAssetToAppService(prisma, uowContext, {
+        assetId: assetOnApp.assetId,
+        appId: duplicatedApp.id,
+      })
     })
 
     return duplicatedApp
