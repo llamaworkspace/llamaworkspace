@@ -1,23 +1,26 @@
+import { StyledLink } from '@/components/ui/StyledLink'
 import Link from 'next/link'
 
 export function WebsiteHomeHero() {
   return (
     <div className="relative isolate pt-6">
       <div className="pb-24 sm:py-8 md:pt-12">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-6 ">
           <div className="max-w-2xl space-y-4">
-            <h1 className="text-4xl font-bold tracking-tighter text-zinc-950 sm:text-6xl">
-              The open-source
+            <h1 className="text-3xl font-semibold tracking-tighter text-zinc-950 sm:text-6xl">
+              Meet the open-source
               <br />
               AI assistant for work.
             </h1>
-            <h2 className="font-demi text-xl tracking-tight text-zinc-700 sm:text-2xl">
-              A{' '}
-              <span className="font-semibold text-zinc-950">
-                ChatGPT Enterprise alternative
+            <h2 className="text-xl font-medium tracking-tight text-zinc-800 sm:text-2xl">
+              We are an open-source{' '}
+              <span className="font-bold text-zinc-950">
+                ChatGPT Enterprise alternative.
               </span>{' '}
-              that runs on any Large Language Model. On your infra or ours. All
-              while helping you save up to 70% in subscription costs.
+              We run on any Large Language, on your infra or ours. All while
+              helping you{' '}
+              <StyledLink href="/pricing">save up to 70%</StyledLink> in
+              subscription costs.
             </h2>
           </div>
           <div className="mt-10 items-center gap-x-6 sm:flex">
@@ -25,14 +28,7 @@ export function WebsiteHomeHero() {
               href="/auth/signin"
               className="rounded-md border border-zinc-900 bg-zinc-900 px-12 py-4 font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
             >
-              Sign up
-            </Link>
-
-            <Link
-              href="https://github.com/llamaworkspace/llamaworkspace"
-              className="hidden items-center rounded-md border border-zinc-900 px-12 py-4 font-semibold shadow-sm  hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600 sm:flex"
-            >
-              ⭐️ Star us on Github
+              Get started
             </Link>
           </div>
         </div>

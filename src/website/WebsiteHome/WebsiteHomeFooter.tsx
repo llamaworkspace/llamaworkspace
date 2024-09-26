@@ -86,7 +86,7 @@ const navigation = {
 export function WebsiteHomeFooter() {
   return (
     <footer className="mt-24 bg-white">
-      <div className="mx-auto max-w-7xl space-y-4 overflow-hidden px-6 py-12 lg:px-8">
+      <div className="mx-auto max-w-6xl space-y-4 overflow-hidden px-6 py-12 ">
         <nav
           className="-mb-6 sm:flex sm:columns-2 sm:justify-center sm:space-x-12"
           aria-label="Footer"

@@ -5,6 +5,7 @@ import { WebsiteHomeFeatureChatWithDocs } from './WebsiteHomeFeatureChatWithDocs
 import { WebsiteHomeFeatureIntegrations } from './WebsiteHomeFeatureIntegrations'
 import { WebsiteHomeFeatureMultiModel } from './WebsiteHomeFeatureMultiModel'
 import { WebsiteHomeFeaturePricing } from './WebsiteHomeFeaturePricing'
+import { WebsiteHomeFeatureWrapper } from './WebsiteHomeFeatureWrapper'
 import { WebsiteHomeFooter } from './WebsiteHomeFooter'
 import { WebsiteHomeHeader } from './WebsiteHomeHeader'
 import { WebsiteHomeHero } from './WebsiteHomeHero'
@@ -50,11 +51,26 @@ export function WebsiteHome() {
         <div className="space-y-32">
           <WebsiteHomeHero />
 
-          <div className="mb-32 space-y-24">
-            <WebsiteHomeFeatureMultiModel />
-            <WebsiteHomeFeatureApps />
-            <WebsiteHomeFeatureChatWithDocs />
-            <WebsiteHomeFeatureIntegrations />
+          <div className="space-y-8">
+            <WebsiteHomeFeatureWrapper>
+              <div className="space-y-3">
+                <h2 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-5xl">
+                  All the functionality you expect
+                  <br />
+                  from an AI assistant
+                </h2>
+                <h3 className="text-xl font-medium tracking-tight text-zinc-600 sm:text-xl">
+                  We have all the functionality you expect from an AI assistant,
+                  and more.
+                </h3>
+              </div>
+            </WebsiteHomeFeatureWrapper>
+            <div className="mb-32 space-y-24">
+              <WebsiteHomeFeatureMultiModel />
+              <WebsiteHomeFeatureApps />
+              <WebsiteHomeFeatureChatWithDocs />
+              <WebsiteHomeFeatureIntegrations />
+            </div>
           </div>
           <WebsiteHomeFeaturePricing />
           <WebsiteHomeFAQs />
