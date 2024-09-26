@@ -160,6 +160,19 @@ export const useDeleteApp = () => {
   })
 }
 
+export const useDuplicateApp = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+
+  return api.apps.duplicate.useMutation({
+    onError: errorHandler(),
+    onSuccess: async () => {
+      await utils.apps.invalidate()
+      await utils.sidebar.invalidate()
+    },
+  })
+}
+
 export const useAppById = (appId?: string) => {
   const errorHandler = useErrorHandler()
 

@@ -3,6 +3,7 @@ import { appsConfigGetLatestForAppId } from './procedures/appsConfigGetLatestFor
 import { appsConfigUpdate } from './procedures/appsConfigUpdate'
 import { appsCreate } from './procedures/appsCreate'
 import { appsDelete } from './procedures/appsDelete'
+import { appsDuplicate } from './procedures/appsDuplicate'
 import { appsGetById } from './procedures/appsGetById'
 import { appsGetDefault } from './procedures/appsGetDefault'
 import { appsGetList } from './procedures/appsGetList'
@@ -22,6 +23,7 @@ export const appsRouter = createTRPCRouter({
   create: appsCreate,
   update: appsUpdate,
   delete: appsDelete,
+  duplicate: appsDuplicate,
   share: performAppShare,
   getShare: appsGetShare,
   updateShare: appsShareUpdate,

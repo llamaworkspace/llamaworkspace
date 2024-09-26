@@ -10,6 +10,7 @@ import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import type { RouterOutputs } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import {
+  DocumentDuplicateIcon,
   PencilIcon,
   PencilSquareIcon,
   TrashIcon,
@@ -19,13 +20,17 @@ import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
 interface AppsListRowProps {
   app: RouterOutputs['apps']['getList'][0]
   canDelete: boolean
-  onRowDelete: (appId: string) => void
+  canDuplicate: boolean
+  onDelete: (appId: string) => void
+  onDuplicate: (appId: string) => void
 }
 
 export const AppsListRow = ({
   app,
+  canDuplicate,
+  onDuplicate,
   canDelete,
-  onRowDelete,
+  onDelete,
 }: AppsListRowProps) => {
   const { mutate: createChat } = useCreateChatForApp()
 
@@ -34,7 +39,11 @@ export const AppsListRow = ({
   }
 
   const handleDelete = () => {
-    onRowDelete(app.id)
+    onDelete(app.id)
+  }
+
+  const handleDuplicate = () => {
+    onDuplicate(app.id)
   }
 
   return (
@@ -85,6 +94,8 @@ export const AppsListRow = ({
             appId={app.id}
             canDelete={canDelete}
             onDelete={handleDelete}
+            onDuplicate={handleDuplicate}
+            canDuplicate={canDuplicate}
           />
         </div>
       </div>
@@ -96,12 +107,15 @@ interface EllipsisDropdownProps {
   appId: string
   canDelete: boolean
   onDelete: () => void
+  onDuplicate: () => void
 }
 
 const EllipsisDropdown = ({
   appId,
   canDelete,
+  canDuplicate,
   onDelete,
+  onDuplicate,
 }: EllipsisDropdownProps) => {
   return (
     <DropdownMenu>
@@ -125,6 +139,17 @@ const EllipsisDropdown = ({
           <PencilIcon className="mr-2 h-4 w-4" />
           <span>Edit</span>
         </DropdownMenuItemLink>
+        <DropdownMenuItem
+          onClick={(ev) => {
+            ev.stopPropagation()
+            ev.preventDefault()
+            canDuplicate && onDuplicate()
+          }}
+          className={cn(!canDuplicate && 'cursor-not-allowed opacity-50')}
+        >
+          <DocumentDuplicateIcon className="mr-2 h-4 w-4" />
+          <span>Duplicate</span>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={(ev) => {
             ev.stopPropagation()

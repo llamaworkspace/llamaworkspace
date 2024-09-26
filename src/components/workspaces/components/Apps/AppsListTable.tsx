@@ -1,4 +1,8 @@
-import { useAppsForAppsList, useDeleteApp } from '@/components/apps/appsHooks'
+import {
+  useAppsForAppsList,
+  useDeleteApp,
+  useDuplicateApp,
+} from '@/components/apps/appsHooks'
 import { useCanPerformActionForAppIds } from '@/components/permissions/permissionsHooks'
 import { DeleteConfirmationDialog } from '@/components/ui/DeleteConfirmationDialog'
 import { useSuccessToast } from '@/components/ui/toastHooks'
@@ -21,10 +25,15 @@ export const AppsListTable = () => {
   >(null)
 
   const { mutateAsync: deleteApp } = useDeleteApp()
+  const { mutateAsync: duplicateApp } = useDuplicateApp()
   const successToast = useSuccessToast()
 
-  const handleAppDeletetionRequest = (appId: string) => {
+  const handleAppDeletionRequest = (appId: string) => {
     setDeleteModalTargetAppId(appId)
+  }
+
+  const handleAppDuplication = (appId: string) => {
+    void duplicateApp({ appId })
   }
 
   const handleAppDelete = () => {
@@ -73,7 +82,9 @@ export const AppsListTable = () => {
             key={app.id}
             app={app}
             canDelete={canDelete}
-            onRowDelete={handleAppDeletetionRequest}
+            onDelete={handleAppDeletionRequest}
+            canDuplicate={true}
+            onDuplicate={handleAppDuplication}
           />
         )
       })}
