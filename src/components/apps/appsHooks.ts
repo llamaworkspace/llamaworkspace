@@ -2,6 +2,7 @@ import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { serialDebouncer } from '@/lib/utils'
 import { produce } from 'immer'
+import { useRouter } from 'next/router'
 import { useMemo, useRef } from 'react'
 import { throttle } from 'underscore'
 import { useErrorHandler } from '../global/errorHandlingHooks'
@@ -163,10 +164,12 @@ export const useDeleteApp = () => {
 export const useDuplicateApp = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
+  const router = useRouter()
 
   return api.apps.duplicate.useMutation({
     onError: errorHandler(),
-    onSuccess: async () => {
+    onSuccess: async (app) => {
+      await router.push(`/p/${app.id}/configuration?focus=title`)
       await utils.apps.invalidate()
       await utils.sidebar.invalidate()
     },

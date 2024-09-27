@@ -108,6 +108,7 @@ interface EllipsisDropdownProps {
   canDelete: boolean
   onDelete: () => void
   onDuplicate: () => void
+  canDuplicate: boolean
 }
 
 const EllipsisDropdown = ({
@@ -141,8 +142,7 @@ const EllipsisDropdown = ({
         </DropdownMenuItemLink>
         <DropdownMenuItem
           onClick={(ev) => {
-            ev.stopPropagation()
-            ev.preventDefault()
+            ev.stopPropagation() // otherwise it will navigate away from the page
             canDuplicate && onDuplicate()
           }}
           className={cn(!canDuplicate && 'cursor-not-allowed opacity-50')}
