@@ -9,6 +9,10 @@ interface LatestAppConfigForAppInputProps {
   appId: string
 }
 
+// We have getLatestAppConfigForAppIdService (this file)
+// and getApplicableAppConfigToChatService (in chats folder)
+// getLatestAppConfigForAppIdService => The latest version of the app config
+// getApplicableAppConfigToChatService => The one to send to the LLM. If chatId alreadyhas a configversionid assigne,  it will use that, otherwise it will use the latest.
 export const getLatestAppConfigForAppIdService = async (
   prisma: PrismaClientOrTrxClient,
   uowContext: UserOnWorkspaceContext,
