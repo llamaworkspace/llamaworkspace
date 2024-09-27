@@ -1,3 +1,4 @@
+// npx tsx ./src/scripts/dev_deleteAllOpenaiFiles.ts
 import { env } from '@/env.mjs'
 import OpenAI from 'openai'
 
@@ -13,7 +14,7 @@ async function main() {
   const files = await openai.files.list()
 
   const length = files.data.length
-  console.log(`Found ${length} vector stores.`)
+  console.log(`Found ${length} files.`)
 
   for (const [index, file] of files.data.entries()) {
     console.log(`${index + 1}/${length} Deleting file ${file.id}`)
