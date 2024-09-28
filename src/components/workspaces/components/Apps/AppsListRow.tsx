@@ -9,23 +9,17 @@ interface AppsListRowProps {
   app: RouterOutputs['apps']['getList'][0]
   canDelete: boolean
   canDuplicate: boolean
-  onDuplicate: (appId: string) => void
 }
 
 export const AppsListRow = ({
   app,
   canDuplicate,
-  onDuplicate,
   canDelete,
 }: AppsListRowProps) => {
   const { mutate: createChat } = useCreateChatForApp()
 
   const handleCreateChat = () => {
     createChat({ appId: app.id })
-  }
-
-  const handleDuplicate = () => {
-    onDuplicate(app.id)
   }
 
   return (
@@ -80,7 +74,6 @@ export const AppsListRow = ({
           <AppOptionsDropdown
             appId={app.id}
             canDelete={canDelete}
-            onDuplicate={handleDuplicate}
             canDuplicate={canDuplicate}
           />
         </div>

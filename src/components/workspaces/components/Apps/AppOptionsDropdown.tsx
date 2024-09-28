@@ -1,4 +1,4 @@
-import { useDeleteApp } from '@/components/apps/appsHooks'
+import { useDeleteApp, useDuplicateApp } from '@/components/apps/appsHooks'
 import { DeleteConfirmationDialog } from '@/components/ui/DeleteConfirmationDialog'
 import {
   DropdownMenu,
@@ -21,7 +21,6 @@ interface AppOptionsDropdownProps {
   appId: string
   canDelete: boolean
   canDuplicate: boolean
-  onDuplicate: () => void
   fromChatId?: string
   onDeleteSuccessRedirectTo?: string
 }
@@ -30,11 +29,12 @@ export const AppOptionsDropdown = ({
   appId,
   canDelete,
   canDuplicate,
-  onDuplicate,
   fromChatId,
   onDeleteSuccessRedirectTo,
 }: AppOptionsDropdownProps) => {
   const { mutateAsync: deleteApp } = useDeleteApp(onDeleteSuccessRedirectTo)
+  const { mutateAsync: duplicateApp } = useDuplicateApp()
+
   const successToast = useSuccessToast()
   const [displayAppDeleteConfirmation, setDisplayAppDeleteConfirmation] =
     useState<boolean>(false)
@@ -52,6 +52,9 @@ export const AppOptionsDropdown = ({
       setDisplayAppDeleteConfirmation(false)
     }
     void _doAppDeletion()
+  }
+  const handleAppDuplication = () => {
+    void duplicateApp({ appId })
   }
 
   return (
@@ -88,7 +91,7 @@ export const AppOptionsDropdown = ({
           <DropdownMenuItem
             onClick={(ev) => {
               ev.stopPropagation() // otherwise it will navigate away from the page
-              canDuplicate && onDuplicate()
+              canDuplicate && handleAppDuplication()
             }}
             className={cn(!canDuplicate && 'cursor-not-allowed opacity-50')}
           >

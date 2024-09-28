@@ -18,7 +18,7 @@ export async function getAssetsService(
   const { userId, workspaceId } = uowContext
 
   await new PermissionsVerifier(prisma).passOrThrowTrpcError(
-    PermissionAction.Update,
+    PermissionAction.Use,
     userId,
     appId,
   )

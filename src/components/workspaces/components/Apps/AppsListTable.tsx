@@ -1,7 +1,4 @@
-import {
-  useAppsForAppsList,
-  useDuplicateApp,
-} from '@/components/apps/appsHooks'
+import { useAppsForAppsList } from '@/components/apps/appsHooks'
 import { useCanPerformActionForAppIds } from '@/components/permissions/permissionsHooks'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { AppsListRow } from './AppsListRow'
@@ -16,12 +13,10 @@ export const AppsListTable = () => {
     PermissionAction.Delete,
     appIds,
   )
-
-  const { mutateAsync: duplicateApp } = useDuplicateApp()
-
-  const handleAppDuplication = (appId: string) => {
-    void duplicateApp({ appId })
-  }
+  const { data: appsCanUsePermission } = useCanPerformActionForAppIds(
+    PermissionAction.Use,
+    appIds,
+  )
 
   if (apps && !apps.length) {
     return (
@@ -41,9 +36,17 @@ export const AppsListTable = () => {
           (item) => item.id === app.id,
         )?.can
 
-        // Just a guard clause to prevent undefined from being passed to the row
+        let canDuplicate = appsCanUsePermission?.find(
+          (item) => item.id === app.id,
+        )?.can
+
+        // Just some guard clauses to prevent undefined from being passed to the row
         if (canDelete === undefined) {
           canDelete = false
+        }
+
+        if (canDuplicate === undefined) {
+          canDuplicate = false
         }
 
         return (
@@ -51,8 +54,7 @@ export const AppsListTable = () => {
             key={app.id}
             app={app}
             canDelete={canDelete}
-            canDuplicate={true}
-            onDuplicate={handleAppDuplication}
+            canDuplicate={canDuplicate}
           />
         )
       })}
