@@ -84,6 +84,7 @@ export const OpenAiProvider = (): OpenAiProviderType => {
               )
               throw convertErrorToAiSdkCompatibleError(nextError)
             }
+            throw convertErrorToAiSdkCompatibleError(error)
           }
         }
 

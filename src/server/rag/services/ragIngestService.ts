@@ -1,9 +1,12 @@
 import { scopeAppByWorkspace } from '@/server/apps/appUtils'
-import { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
+import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { vectorDb } from '@/server/vectorDb'
-import { PrismaClientOrTrxClient, PrismaTrxClient } from '@/shared/globalTypes'
+import type {
+  PrismaClientOrTrxClient,
+  PrismaTrxClient,
+} from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { Promise } from 'bluebird'
 import { insertEmbeddingService } from './insertEmbeddingService'
