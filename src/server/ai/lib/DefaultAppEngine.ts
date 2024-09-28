@@ -2,23 +2,23 @@ import { AppEngineType } from '@/components/apps/appsTypes'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import {
   createUserOnWorkspaceContext,
-  UserOnWorkspaceContext,
+  type UserOnWorkspaceContext,
 } from '@/server/auth/userOnWorkspaceContext'
-import { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
+import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
 import { ragIngestService } from '@/server/rag/services/ragIngestService'
 import { ragRetrievalService } from '@/server/rag/services/ragRetrievalService'
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@prisma/client'
 import { streamText } from 'ai'
 import { Promise } from 'bluebird'
 import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {
   AbstractAppEngine,
-  AppEngineAssetParams,
-  AppEngineConfigParams,
-  OnAssetAddedCallbacks,
+  type AppEngineAssetParams,
   type AppEngineCallbacks,
+  type AppEngineConfigParams,
   type AppEngineRunParams,
+  type OnAssetAddedCallbacks,
 } from './AbstractAppEngine'
 
 const payloadSchema = z.object({})

@@ -2,7 +2,6 @@ import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiMode
 import { useAppById } from '@/components/apps/appsHooks'
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
-import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/apps/appConstants'
@@ -26,7 +25,7 @@ export const AppConfigForGPTSettings = ({
   disabled = false,
 }: AppConfigForGPTSettingsProps) => {
   const navigation = useNavigation()
-  const { data: workspace } = useCurrentWorkspace()
+
   const { data: app } = useAppById(appId)
   const ref = useRef<HTMLTextAreaElement>(null)
   const focusQueryStringEl = navigation.query?.focus

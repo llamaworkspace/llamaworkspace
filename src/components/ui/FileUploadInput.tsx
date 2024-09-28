@@ -8,18 +8,20 @@ export interface InputProps
 }
 
 const FileUploadInput = forwardRef<HTMLInputElement, InputProps>(
-  ({ buttonText, ...props }, ref) => {
+  ({ buttonText, disabled, ...props }, ref) => {
     const internalRef = useRef<HTMLInputElement>(null)
 
     return (
       <span className="relative inline-block overflow-hidden">
-        <Button>{buttonText}</Button>
-        <input
-          className="absolute inset-0 cursor-pointer opacity-0"
-          ref={mergeRefs([internalRef, ref])}
-          {...props}
-          type="file"
-        />
+        <Button disabled={disabled}>{buttonText}</Button>
+        {!disabled && (
+          <input
+            className="absolute inset-0 cursor-pointer opacity-0"
+            ref={mergeRefs([internalRef, ref])}
+            {...props}
+            type="file"
+          />
+        )}
       </span>
     )
   },

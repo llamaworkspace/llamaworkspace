@@ -3,10 +3,12 @@ import {
   useAppById,
   useLatestAppConfigVersionForApp,
 } from '@/components/apps/appsHooks'
+import { useCanPerformActionForApp } from '@/components/permissions/permissionsHooks'
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
 import { AssetOnAppStatus } from '@/shared/globalTypes'
+import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Asset, AssetsOnApps } from '@prisma/client'
 import { Promise } from 'bluebird'
 import { useMemo, useState, type ChangeEvent } from 'react'
@@ -30,6 +32,11 @@ export const AppConfigForGPTFileUpload = ({
     useLatestAppConfigVersionForApp(appId)
 
   const { refetch: refetchApp } = useAppById(appId)
+
+  const { data: canUpdate } = useCanPerformActionForApp(
+    PermissionAction.Update,
+    appId,
+  )
 
   const onFileUploadStarted = (fileName: string, appFile: Asset) => {
     setUploadeableFiles((prev) => ({ ...prev, [fileName]: appFile }))
@@ -101,16 +108,15 @@ export const AppConfigForGPTFileUpload = ({
           type="file"
           multiple
           accept={supportedFileTypes}
+          disabled={!canUpdate}
         />
       )}
       {maxFilesReached && (
-        <div className="pt-4">
-          <Alert variant="fuchsia" className="lg:max-w-[500px]">
-            <AlertDescription className="space-y-2">
-              You have reached the maximum of 10 uploadable files for this app.
-            </AlertDescription>
-          </Alert>
-        </div>
+        <Alert variant="fuchsia" className="lg:max-w-[500px]">
+          <AlertDescription className="space-y-2">
+            You have reached the maximum of 10 uploadable files for this app.
+          </AlertDescription>
+        </Alert>
       )}
     </div>
   )
