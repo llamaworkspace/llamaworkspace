@@ -48,7 +48,6 @@ export const useCreateApp = () => {
           appId: app.id,
         },
         {
-          backButton: false,
           focus: 'title',
         },
       )
@@ -147,13 +146,18 @@ export const useUpdateApp = (debounceMs = 0) => {
   }
 }
 
-export const useDeleteApp = () => {
+export const useDeleteApp = (onSuccessRedirectTo?: string) => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
+  const router = useRouter()
 
   return api.apps.delete.useMutation({
     onError: errorHandler(),
     onSuccess: async () => {
+      if (onSuccessRedirectTo) {
+        await router.push(onSuccessRedirectTo)
+      }
+
       // Important: Invalidate the entire sidebar cache!
       await utils.sidebar.invalidate()
       await utils.apps.invalidate()
@@ -164,12 +168,16 @@ export const useDeleteApp = () => {
 export const useDuplicateApp = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
-  const router = useRouter()
+  const navigation = useNavigation()
 
   return api.apps.duplicate.useMutation({
     onError: errorHandler(),
     onSuccess: async (app) => {
-      await router.push(`/p/${app.id}/configuration?focus=title`)
+      await navigation.push(
+        `/p/:appId/configuration`,
+        { appId: app.id },
+        { focus: 'title' },
+      )
       await utils.apps.invalidate()
       await utils.sidebar.invalidate()
     },
@@ -269,8 +277,6 @@ export const useUpdateShareAccessLevelForApp = () => {
     },
   })
 }
-
-type UseAppAssetsOptions = Parameters<typeof api.apps.getAppAssets.useQuery>[1]
 
 export const useAppAssets = (
   appId?: string,

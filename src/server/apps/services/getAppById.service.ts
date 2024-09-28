@@ -2,10 +2,12 @@ import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import type { Prisma } from '@prisma/client'
 import { scopeAppByWorkspace } from '../appUtils'
 
 interface GetAppByIdServiceInputProps {
   appId: string
+  showMarkedAsDeleted?: boolean
 }
 
 export const getAppByIdService = async (
@@ -14,7 +16,7 @@ export const getAppByIdService = async (
   payload: GetAppByIdServiceInputProps,
 ) => {
   const { userId, workspaceId } = uowContext
-  const { appId } = payload
+  const { appId, showMarkedAsDeleted = false } = payload
 
   await new PermissionsVerifier(prisma).passOrThrowTrpcError(
     PermissionAction.Use,
@@ -22,11 +24,19 @@ export const getAppByIdService = async (
     appId,
   )
 
+  const whereClause: Prisma.AppWhereInput = {
+    id: appId,
+  }
+  if (showMarkedAsDeleted) {
+    whereClause.markAsDeletedAt = {
+      not: null,
+    }
+  } else {
+    whereClause.markAsDeletedAt = null
+  }
+
   return await prisma.app.findFirstOrThrow({
-    where: scopeAppByWorkspace(
-      { id: appId, markAsDeletedAt: null },
-      workspaceId,
-    ),
+    where: scopeAppByWorkspace(whereClause, workspaceId),
     include: {
       chats: {
         select: { id: true, createdAt: true },

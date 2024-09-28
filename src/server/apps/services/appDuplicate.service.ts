@@ -11,7 +11,7 @@ import {
   type PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { AppConfigVersion, Message } from '@prisma/client'
+import type { AppConfigVersion, Message } from '@prisma/client'
 import { Promise } from 'bluebird'
 import _ from 'underscore'
 import { appCreateService } from './appCreate.service'
