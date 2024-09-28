@@ -270,8 +270,6 @@ export const useUpdateShareAccessLevelForApp = () => {
   })
 }
 
-type UseAppAssetsOptions = Parameters<typeof api.apps.getAppAssets.useQuery>[1]
-
 export const useAppAssets = (
   appId?: string,
   options?: { refetchInterval?: number },

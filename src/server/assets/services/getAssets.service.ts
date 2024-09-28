@@ -3,11 +3,10 @@ import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import type { Prisma } from '@prisma/client'
 import { scopeAssetByWorkspace } from '../assetUtils'
 
 interface GetAppFilesPayload {
-  appId?: string
+  appId: string
 }
 
 export async function getAssetsService(
@@ -18,31 +17,31 @@ export async function getAssetsService(
   const { appId } = payload
   const { userId, workspaceId } = uowContext
 
-  if (appId) {
-    await new PermissionsVerifier(prisma).passOrThrowTrpcError(
-      PermissionAction.Update,
-      userId,
-      appId,
-    )
-  }
+  await new PermissionsVerifier(prisma).passOrThrowTrpcError(
+    PermissionAction.Update,
+    userId,
+    appId,
+  )
 
-  const baseWhere: Prisma.AssetWhereInput = {
-    uploadStatus: AssetUploadStatus.Success,
-  }
-
-  if (appId) {
-    baseWhere.assetsOnApps = {
-      some: {
-        appId,
-        markAsDeletedAt: null,
-      },
-    }
+  const assetsOnAppsFilter = {
+    appId,
+    markAsDeletedAt: null,
   }
 
   return await prisma.asset.findMany({
-    where: scopeAssetByWorkspace(baseWhere, workspaceId),
+    where: scopeAssetByWorkspace(
+      {
+        uploadStatus: AssetUploadStatus.Success,
+        assetsOnApps: {
+          some: assetsOnAppsFilter,
+        },
+      },
+      workspaceId,
+    ),
     include: {
-      assetsOnApps: true,
+      assetsOnApps: {
+        where: assetsOnAppsFilter,
+      },
     },
   })
 }

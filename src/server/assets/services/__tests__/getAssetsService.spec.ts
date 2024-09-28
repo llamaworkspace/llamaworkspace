@@ -11,7 +11,7 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, User, Workspace } from '@prisma/client'
 import { getAssetsService } from '../getAssets.service'
 
-const subject = async (workspaceId: string, userId: string, appId?: string) => {
+const subject = async (workspaceId: string, userId: string, appId: string) => {
   const context = await createUserOnWorkspaceContext(
     prisma,
     workspaceId,
@@ -64,50 +64,39 @@ describe('getAssetsService', () => {
       uploadStatus: AssetUploadStatus.Pending,
     })
   })
+  it('calls PermissionsVerifier', async () => {
+    const spy = jest.spyOn(
+      PermissionsVerifier.prototype,
+      'passOrThrowTrpcError',
+    )
+    await subject(workspace.id, user.id, app.id)
 
-  it('returns the apps', async () => {
-    const result = await subject(workspace.id, user.id)
-    expect(result).toHaveLength(3)
-    expect(result[0]!.id).toEqual(file1.id)
-    expect(result[1]!.id).toEqual(file2ForApp1.id)
-    expect(result[2]!.id).toEqual(file3ForApp2.id)
+    expect(spy).toHaveBeenCalledWith(
+      PermissionAction.Update,
+      expect.anything(),
+      expect.anything(),
+    )
   })
 
-  describe('when appId is provided', () => {
-    it('calls PermissionsVerifier', async () => {
-      const spy = jest.spyOn(
-        PermissionsVerifier.prototype,
-        'passOrThrowTrpcError',
-      )
-      await subject(workspace.id, user.id, app.id)
-
-      expect(spy).toHaveBeenCalledWith(
-        PermissionAction.Update,
-        expect.anything(),
-        expect.anything(),
-      )
+  it('returns the apps linked to the appId', async () => {
+    await AssetsOnAppsFactory.create(prisma, {
+      assetId: file2ForApp1.id,
+      appId: app.id,
+    })
+    const otherAsset = await AssetFactory.create(prisma, {
+      workspaceId: workspace.id,
+      originalName: 'file.txt',
+      uploadStatus: AssetUploadStatus.Success,
+    })
+    await AssetsOnAppsFactory.create(prisma, {
+      assetId: otherAsset.id,
+      appId: app.id,
+      markAsDeletedAt: new Date(),
     })
 
-    it('returns the apps linked to the appId', async () => {
-      await AssetsOnAppsFactory.create(prisma, {
-        assetId: file2ForApp1.id,
-        appId: app.id,
-      })
-      const otherAsset = await AssetFactory.create(prisma, {
-        workspaceId: workspace.id,
-        originalName: 'file.txt',
-        uploadStatus: AssetUploadStatus.Success,
-      })
-      await AssetsOnAppsFactory.create(prisma, {
-        assetId: otherAsset.id,
-        appId: app.id,
-        markAsDeletedAt: new Date(),
-      })
+    const result = await subject(workspace.id, user.id, app.id)
 
-      const result = await subject(workspace.id, user.id, app.id)
-
-      expect(result).toHaveLength(1)
-      expect(result[0]!.id).toEqual(file2ForApp1.id)
-    })
+    expect(result).toHaveLength(1)
+    expect(result[0]!.id).toEqual(file2ForApp1.id)
   })
 })
