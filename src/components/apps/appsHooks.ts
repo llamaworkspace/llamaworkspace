@@ -169,12 +169,16 @@ export const useDeleteApp = (onSuccessRedirectTo?: string) => {
 export const useDuplicateApp = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
-  const router = useRouter()
+  const navigation = useNavigation()
 
   return api.apps.duplicate.useMutation({
     onError: errorHandler(),
     onSuccess: async (app) => {
-      await router.push(`/p/${app.id}/configuration?focus=title`)
+      await navigation.push(
+        `/p/:appId/configuration`,
+        { appId: app.id },
+        { focus: 'title' },
+      )
       await utils.apps.invalidate()
       await utils.sidebar.invalidate()
     },
