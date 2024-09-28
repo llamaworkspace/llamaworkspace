@@ -5,13 +5,9 @@ import { ChatHeaderShare } from './ChatHeaderShare/ChatHeaderShare'
 
 interface ChatHeaderAppLinksProps {
   appId?: string
-  chatId?: string
 }
 
-export const ChatHeaderAppLinks = ({
-  appId,
-  chatId,
-}: ChatHeaderAppLinksProps) => {
+export const ChatHeaderAppLinks = ({ appId }: ChatHeaderAppLinksProps) => {
   return (
     <nav className="flex items-center gap-x-4 text-sm text-zinc-900">
       {!appId && <Skeleton className="h-3 w-36" />}
@@ -34,6 +30,7 @@ export const ChatHeaderAppLinks = ({
                   canDelete={true}
                   onDuplicate={() => console.log('duplicate')}
                   canDuplicate={true}
+                  onDeleteSuccessRedirectTo={`/p`}
                 />
               </div>
             </li>

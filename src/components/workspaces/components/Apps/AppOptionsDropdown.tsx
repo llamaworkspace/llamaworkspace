@@ -20,8 +20,9 @@ import { useState } from 'react'
 interface AppOptionsDropdownProps {
   appId: string
   canDelete: boolean
-  onDuplicate: () => void
   canDuplicate: boolean
+  onDuplicate: () => void
+  onDeleteSuccessRedirectTo?: string
 }
 
 export const AppOptionsDropdown = ({
@@ -29,8 +30,9 @@ export const AppOptionsDropdown = ({
   canDelete,
   canDuplicate,
   onDuplicate,
+  onDeleteSuccessRedirectTo,
 }: AppOptionsDropdownProps) => {
-  const { mutateAsync: deleteApp } = useDeleteApp()
+  const { mutateAsync: deleteApp } = useDeleteApp(onDeleteSuccessRedirectTo)
   const successToast = useSuccessToast()
   const [displayAppDeleteConfirmation, setDisplayAppDeleteConfirmation] =
     useState<boolean>(false)

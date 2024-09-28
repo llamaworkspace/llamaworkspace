@@ -147,13 +147,18 @@ export const useUpdateApp = (debounceMs = 0) => {
   }
 }
 
-export const useDeleteApp = () => {
+export const useDeleteApp = (onSuccessRedirectTo?: string) => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
+  const router = useRouter()
 
   return api.apps.delete.useMutation({
     onError: errorHandler(),
     onSuccess: async () => {
+      if (onSuccessRedirectTo) {
+        await router.push(onSuccessRedirectTo)
+      }
+
       // Important: Invalidate the entire sidebar cache!
       await utils.sidebar.invalidate()
       await utils.apps.invalidate()
