@@ -30,13 +30,15 @@ export const AppsListRow = ({
 
   return (
     <div
-      onClick={handleCreateChat}
       className={cn(
         'group grid grid-cols-12 rounded-lg py-3',
         'cursor-pointer bg-zinc-50 transition delay-0 duration-75 hover:bg-zinc-200 ',
       )}
     >
-      <div className="flex items-start justify-center">
+      <div
+        onClick={handleCreateChat}
+        className="flex items-start justify-center"
+      >
         <div className="col-span-2 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-50">
           <EmojiWithFallback
             size={24}
@@ -45,7 +47,10 @@ export const AppsListRow = ({
           />
         </div>
       </div>
-      <div className="col-span-9 flex flex-col justify-center">
+      <div
+        onClick={handleCreateChat}
+        className="col-span-9 flex flex-col justify-center"
+      >
         <div className="line-clamp-1 font-semibold">
           {app.title ?? 'Untitled'}
         </div>
