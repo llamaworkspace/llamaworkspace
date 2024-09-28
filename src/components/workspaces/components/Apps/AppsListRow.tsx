@@ -3,7 +3,7 @@ import { EmojiWithFallback } from '@/components/ui/icons/EmojiWithFallback'
 import type { RouterOutputs } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
-import { AppEllipsisDropdown } from './AppEllipsisDropdown'
+import { AppOptionsDropdown } from './AppOptionsDropdown'
 
 interface AppsListRowProps {
   app: RouterOutputs['apps']['getList'][0]
@@ -72,7 +72,7 @@ export const AppsListRow = ({
             'hover:bg-zinc-200',
           )}
         >
-          <AppEllipsisDropdown
+          <AppOptionsDropdown
             appId={app.id}
             canDelete={canDelete}
             onDuplicate={handleDuplicate}

@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton'
-import { AppEllipsisDropdown } from '@/components/workspaces/components/Apps/AppEllipsisDropdown'
+import { AppOptionsDropdown } from '@/components/workspaces/components/Apps/AppOptionsDropdown'
 import { cn } from '@/lib/utils'
 import { ChatHeaderShare } from './ChatHeaderShare/ChatHeaderShare'
 
@@ -29,7 +29,7 @@ export const ChatHeaderAppLinks = ({
                   'hover:bg-zinc-200',
                 )}
               >
-                <AppEllipsisDropdown
+                <AppOptionsDropdown
                   appId={appId}
                   canDelete={true}
                   onDuplicate={() => console.log('duplicate')}

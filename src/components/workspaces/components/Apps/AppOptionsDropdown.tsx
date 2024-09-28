@@ -17,19 +17,19 @@ import {
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react'
 
-interface AppEllipsisDropdownProps {
+interface AppOptionsDropdownProps {
   appId: string
   canDelete: boolean
   onDuplicate: () => void
   canDuplicate: boolean
 }
 
-export const AppEllipsisDropdown = ({
+export const AppOptionsDropdown = ({
   appId,
   canDelete,
   canDuplicate,
   onDuplicate,
-}: AppEllipsisDropdownProps) => {
+}: AppOptionsDropdownProps) => {
   const { mutateAsync: deleteApp } = useDeleteApp()
   const successToast = useSuccessToast()
   const [displayAppDeleteConfirmation, setDisplayAppDeleteConfirmation] =
