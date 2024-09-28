@@ -8,6 +8,7 @@ import {
   canForAccessLevel,
   type PermissionAction,
 } from '@/shared/permissions/permissionDefinitions'
+import type { App } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { createUserOnWorkspaceContext } from '../auth/userOnWorkspaceContext'
 
@@ -18,23 +19,24 @@ export class PermissionsVerifier {
     const scope = await this.getShareScope(appId)
     const app = await this.prisma.app.findFirstOrThrow({
       where: {
+        // We cannot add "markAsDeleted" filter here
+        // as some resources that handle app deletion will need to access this code
         id: appId,
-        markAsDeletedAt: null,
       },
     })
 
     await this.userBelongsWorkspaceOrThrow(app.workspaceId, userId)
-    // return await Promise.resolve(true)
+
     if (scope === ShareScope.Everybody) {
-      return await this.handleEverybodyScope(userId, appId, action)
+      return await this.handleEverybodyScope(userId, app, action)
     }
 
     if (scope === ShareScope.Private) {
-      return await this.handlePrivateScope(userId, appId)
+      return await this.handlePrivateScope(userId, app)
     }
 
     if (scope === ShareScope.User) {
-      return await this.handleUserScope(userId, appId, action)
+      return await this.handleUserScope(userId, app, action)
     }
 
     throw new TRPCError({
@@ -105,33 +107,27 @@ export class PermissionsVerifier {
 
   private async handleEverybodyScope(
     userId: string,
-    appId: string,
+    app: App,
     action: PermissionAction,
   ) {
     // If the userId is the owner of the app, then he can do anything
     // in other words: If they pass the handleUserScope test, then they can do anything
-
-    const privateScopeResponse = await this.handlePrivateScope(userId, appId)
+    const privateScopeResponse = await this.handlePrivateScope(userId, app)
     if (privateScopeResponse) return true
 
     return canForAccessLevel(action, UserAccessLevel.EditWithoutInvite)
   }
 
-  private async handlePrivateScope(userId: string, appId: string) {
-    const app = await this.prisma.app.findFirstOrThrow({
-      where: {
-        id: appId,
-        markAsDeletedAt: null,
-      },
-    })
-    return app.userId === userId
+  private async handlePrivateScope(userId: string, app: App) {
+    return await Promise.resolve(app.userId === userId)
   }
 
   private async handleUserScope(
     userId: string,
-    appId: string,
+    app: App,
     action: PermissionAction,
   ) {
+    const appId = app.id
     const userAccessLevel = await this.getUserAccessLevelToApp(userId, appId)
     if (!userAccessLevel) {
       return false

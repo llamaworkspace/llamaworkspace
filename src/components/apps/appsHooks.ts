@@ -2,6 +2,7 @@ import { api } from '@/lib/api'
 import { useNavigation } from '@/lib/frontend/useNavigation'
 import { serialDebouncer } from '@/lib/utils'
 import { produce } from 'immer'
+import { useRouter } from 'next/router'
 import { useMemo, useRef } from 'react'
 import { throttle } from 'underscore'
 import { useErrorHandler } from '../global/errorHandlingHooks'
@@ -47,7 +48,6 @@ export const useCreateApp = () => {
           appId: app.id,
         },
         {
-          backButton: false,
           focus: 'title',
         },
       )
@@ -146,16 +146,40 @@ export const useUpdateApp = (debounceMs = 0) => {
   }
 }
 
-export const useDeleteApp = () => {
+export const useDeleteApp = (onSuccessRedirectTo?: string) => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
+  const router = useRouter()
 
   return api.apps.delete.useMutation({
     onError: errorHandler(),
     onSuccess: async () => {
+      if (onSuccessRedirectTo) {
+        await router.push(onSuccessRedirectTo)
+      }
+
       // Important: Invalidate the entire sidebar cache!
       await utils.sidebar.invalidate()
       await utils.apps.invalidate()
+    },
+  })
+}
+
+export const useDuplicateApp = () => {
+  const errorHandler = useErrorHandler()
+  const utils = api.useContext()
+  const navigation = useNavigation()
+
+  return api.apps.duplicate.useMutation({
+    onError: errorHandler(),
+    onSuccess: async (app) => {
+      await navigation.push(
+        `/p/:appId/configuration`,
+        { appId: app.id },
+        { focus: 'title' },
+      )
+      await utils.apps.invalidate()
+      await utils.sidebar.invalidate()
     },
   })
 }
@@ -253,8 +277,6 @@ export const useUpdateShareAccessLevelForApp = () => {
     },
   })
 }
-
-type UseAppAssetsOptions = Parameters<typeof api.apps.getAppAssets.useQuery>[1]
 
 export const useAppAssets = (
   appId?: string,

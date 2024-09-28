@@ -23,8 +23,9 @@ export function AppConfig({ appId }: AppConfigProps) {
 
   if (!app) return null
 
-  const returnToChatRoute = router.asPath.replace(`/configuration`, '')
-  const hideBackButton = router.query?.backButton === 'false'
+  const fromChatId = router.query?.fromChatId as string | undefined
+  const returnToChatRoute = fromChatId && `/p/${appId}/c/${fromChatId}`
+
   let engineType: JSX.Element
 
   switch (getEnumByValue(AppEngineType, app.engineType)) {
@@ -42,7 +43,7 @@ export function AppConfig({ appId }: AppConfigProps) {
   }
   return (
     <SectionsShell>
-      {!hideBackButton && (
+      {returnToChatRoute && (
         <div className="mb-8">
           <Link href={returnToChatRoute}>
             <Button variant="outline">&larr; Back to chat</Button>

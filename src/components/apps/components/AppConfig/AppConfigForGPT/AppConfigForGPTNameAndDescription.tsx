@@ -26,6 +26,7 @@ export const AppConfigForGPTNameAndDescription = ({
   useEffect(() => {
     if (titleRef.current && focusQueryStringEl === 'title' && !disabled) {
       titleRef.current.focus()
+      titleRef.current.select()
     }
   }, [focusQueryStringEl, disabled])
 
