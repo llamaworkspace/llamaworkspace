@@ -200,8 +200,8 @@ export class AppEngineRunner {
   private async getEngine(appId: string) {
     const app = await getAppByIdService(this.prisma, this.context, {
       appId,
+      showMarkedAsDeleted: true,
     })
-
     const engineType = app.engineType
 
     if (engineType === AppEngineType.Default.toString()) {
