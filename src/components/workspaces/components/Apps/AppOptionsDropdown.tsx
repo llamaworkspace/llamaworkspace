@@ -22,6 +22,7 @@ interface AppOptionsDropdownProps {
   canDelete: boolean
   canDuplicate: boolean
   onDuplicate: () => void
+  fromChatId?: string
   onDeleteSuccessRedirectTo?: string
 }
 
@@ -30,6 +31,7 @@ export const AppOptionsDropdown = ({
   canDelete,
   canDuplicate,
   onDuplicate,
+  fromChatId,
   onDeleteSuccessRedirectTo,
 }: AppOptionsDropdownProps) => {
   const { mutateAsync: deleteApp } = useDeleteApp(onDeleteSuccessRedirectTo)
@@ -78,7 +80,7 @@ export const AppOptionsDropdown = ({
             onClick={(ev) => {
               ev.stopPropagation()
             }}
-            href={`/p/${appId}/configuration?backButton=false`}
+            href={`/p/${appId}/configuration?fromChatId=${fromChatId}`}
           >
             <PencilIcon className="mr-2 h-4 w-4" />
             <span>Edit</span>

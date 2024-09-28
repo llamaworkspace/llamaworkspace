@@ -48,7 +48,6 @@ export const useCreateApp = () => {
           appId: app.id,
         },
         {
-          backButton: false,
           focus: 'title',
         },
       )

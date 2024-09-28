@@ -31,7 +31,7 @@ export function MainLayoutHeaderForChatbot({
             <ChatHeaderAppTitle appId={appId} />
           </div>
           <div className="items-center text-sm">
-            <ChatHeaderAppLinks appId={appId} />
+            <ChatHeaderAppLinks appId={appId} chatId={chatId} />
           </div>
         </div>
       </div>
@@ -42,7 +42,7 @@ export function MainLayoutHeaderForChatbot({
             <ChatHeaderAppTitle appId={appId} />
           </div>
           <div className="items-center text-sm">
-            <ChatHeaderAppLinks appId={appId} />
+            <ChatHeaderAppLinks appId={appId} chatId={chatId} />
           </div>
         </div>
       </div>
