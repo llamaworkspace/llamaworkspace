@@ -27,11 +27,7 @@ export const getAppByIdService = async (
   const whereClause: Prisma.AppWhereInput = {
     id: appId,
   }
-  if (showMarkedAsDeleted) {
-    whereClause.markAsDeletedAt = {
-      not: null,
-    }
-  } else {
+  if (!showMarkedAsDeleted) {
     whereClause.markAsDeletedAt = null
   }
 
