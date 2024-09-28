@@ -75,15 +75,15 @@ export const AppOptionsDropdown = ({
             <EllipsisHorizontalIcon className="h-6 w-6" />
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuContent align="end" className="w-52">
           <DropdownMenuItemLink
             onClick={(ev) => {
               ev.stopPropagation()
             }}
             href={`/p/${appId}/configuration?fromChatId=${fromChatId}`}
           >
-            <PencilIcon className="mr-2 h-4 w-4" />
-            <span>Edit</span>
+            <PencilIcon className="mr-3 h-4 w-4" />
+            <span>Edit app settings</span>
           </DropdownMenuItemLink>
           <DropdownMenuItem
             onClick={(ev) => {
@@ -92,7 +92,7 @@ export const AppOptionsDropdown = ({
             }}
             className={cn(!canDuplicate && 'cursor-not-allowed opacity-50')}
           >
-            <DocumentDuplicateIcon className="mr-2 h-4 w-4" />
+            <DocumentDuplicateIcon className="mr-3 h-4 w-4" />
             <span>Duplicate</span>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -103,7 +103,7 @@ export const AppOptionsDropdown = ({
             }}
             className={cn(!canDelete && 'cursor-not-allowed opacity-50')}
           >
-            <TrashIcon className="mr-2 h-4 w-4" />
+            <TrashIcon className="mr-3 h-4 w-4" />
             <span>Delete</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
