@@ -72,7 +72,7 @@ describe('getAssetsService', () => {
     await subject(workspace.id, user.id, app.id)
 
     expect(spy).toHaveBeenCalledWith(
-      PermissionAction.Update,
+      PermissionAction.Use,
       expect.anything(),
       expect.anything(),
     )

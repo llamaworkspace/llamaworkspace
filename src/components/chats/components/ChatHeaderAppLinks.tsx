@@ -33,7 +33,6 @@ export const ChatHeaderAppLinks = ({
                   appId={appId}
                   fromChatId={chatId}
                   canDelete={true}
-                  onDuplicate={() => console.log('duplicate')}
                   canDuplicate={true}
                   onDeleteSuccessRedirectTo={`/p`}
                 />
