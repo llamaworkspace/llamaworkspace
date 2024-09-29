@@ -13,12 +13,12 @@ export function WebsiteHomeHero() {
               AI assistant for work.
             </h1>
             <h2 className="text-xl font-medium tracking-tight text-zinc-800 sm:text-2xl">
-              We are an open-source{' '}
+              We are an open and extensible{' '}
               <span className="font-bold text-zinc-950">
                 ChatGPT Enterprise alternative.
               </span>{' '}
-              We run on any Large Language, on your infra or ours. All while
-              helping you{' '}
+              We run on any Large Language Model, on your infra or ours. All
+              while helping you{' '}
               <StyledLink href="/pricing">save up to 70%</StyledLink> in
               subscription costs.
             </h2>
