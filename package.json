@@ -1,5 +1,6 @@
 {
   "name": "llamaworkspace-monorepo",
+  "version": "0.0.10",
   "private": true,
   "scripts": {
     "build": "turbo build",

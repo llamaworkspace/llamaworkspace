@@ -1,6 +1,6 @@
 {
   "name": "llamaworkspace-app",
-  "version": "0.0.11",
+  "version": "0.0.10",
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbo",
@@ -27,12 +27,7 @@
     "datamigrate": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts",
     "datamigrate:create": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts create --name",
     "datamigrate:up": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts up",
-    "datamigrate:down": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts down",
-    "dev:delete-all-openai-vector-stores": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiVectorStores.ts",
-    "dev:delete-all-openai-files": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts",
-    "dev:clear-openai": "npm run dev:delete-all-openai-vector-stores && npm run dev:delete-all-openai-files",
-    "dco:up-all": "docker-compose -f docker-compose.yml -f docker-compose.optional.yml up -d",
-    "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo ."
+    "datamigrate:down": "env-cmd -f .env tsx src/server/dataMigrations/dataMigrator.ts down"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.24",
