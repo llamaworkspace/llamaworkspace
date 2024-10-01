@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dokku": {
+      "predeploy": "npm run --workspace=apps/main production:deploy"
+    }
+  }
+}
