@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dokku": {
-      "predeploy": "npm run --workspace=apps/main production:deploy"
+      "predeploy": "pnpm -F main run build"
     }
   }
 }
