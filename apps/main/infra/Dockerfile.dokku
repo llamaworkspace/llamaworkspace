@@ -1,6 +1,19 @@
 FROM node:20.12
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install --frozen-lockfile --ignore-scripts
-COPY . ./
+RUN npm install -g pnpm
+
+# Copy root files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY turbo.json ./
+
+# Copy the entire contents of apps and packages
+COPY apps ./apps
+COPY packages ./packages
+
+# Install dependencies
+RUN pnpm install
+
+# Copy the rest of the application code
+COPY . .
+
 EXPOSE 5000

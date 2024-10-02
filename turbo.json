@@ -2,12 +2,6 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "env": [
-        "SENTRY_AUTH_TOKEN",
-        "SENTRY_ORG",
-        "SENTRY_PROJECT",
-        "SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING"
-      ],
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
