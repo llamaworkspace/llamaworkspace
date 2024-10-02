@@ -1,5 +1,5 @@
 {
-  "name": "llamaworkspace-app",
+  "name": "main",
   "version": "0.0.10",
   "scripts": {
     "build": "next build",
