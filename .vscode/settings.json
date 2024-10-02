@@ -1,4 +1,10 @@
 {
+
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
     "editor.indentSize": "tabSize",
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
