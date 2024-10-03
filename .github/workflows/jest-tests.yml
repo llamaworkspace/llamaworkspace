@@ -45,18 +45,22 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: npm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Prepare test environment
-        run: npm run test:prepare && npm run test:prepare-pgvector && cp .env.test .env
+        run: pnpm -F main run test:prepare && pnpm -F main run test:prepare-pgvector && cp .env.test .env
 
       - name: Run Jest tests
-        run: npm run test:ci
+        run: pnpm -F main run test:ci
