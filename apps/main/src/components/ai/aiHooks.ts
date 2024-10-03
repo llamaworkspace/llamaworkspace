@@ -51,8 +51,8 @@ export const useAiModels = (options?: UseAiModelsOptions) => {
       }
       if (options?.fullSlugs?.length) {
         models = models.filter(
-          (model) =>
-            model.fullSlug && options.fullSlugs!.includes(model.fullSlug),
+          (model =
+            model.fullSlug && options.fullSlugs!.includes(model.fullSlug)),
         )
       }
       return models
