@@ -1,7 +1,7 @@
 services:
   postgres:
     container_name: llamaws_postgres
-    image: postgres:15
+    image: pgvector/pgvector:pg16
 
     volumes:
       - llamaws_db:/var/lib/postgresql/data
