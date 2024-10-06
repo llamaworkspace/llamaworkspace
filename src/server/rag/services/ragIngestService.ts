@@ -2,7 +2,6 @@ import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { vectorDb } from '@/server/vectorDb'
 import type {
   PrismaClientOrTrxClient,
   PrismaTrxClient,
@@ -12,10 +11,12 @@ import type { Document } from '@langchain/core/documents'
 import { Promise } from 'bluebird'
 import cuid from 'cuid'
 import createHttpError from 'http-errors'
-import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
-import { OpenAIEmbeddingStrategy } from '../strategies/embed/OpenAIEmbeddingStrategy'
-import { PdfLoadingStrategy } from '../strategies/load/PdfLoadingStrategy'
-import { RecursiveCharacterTextSplitStrategy } from '../strategies/split/RecursiveCharacterTextSplitStrategy'
+import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
+import { OpenAIEmbeddingStrategy } from './strategies/embed/OpenAIEmbeddingStrategy'
+import type { ILoadingStrategy } from './strategies/load/ILoadingStrategy'
+import { PdfLoadingStrategy } from './strategies/load/PdfLoadingStrategy'
+import { TextLoadingStrategy } from './strategies/load/TextLoadingStrategy'
+import { RecursiveCharacterTextSplitStrategy } from './strategies/split/RecursiveCharacterTextSplitStrategy'
 
 interface RagIngestPayload {
   filePath: string
@@ -43,16 +44,15 @@ export const ragIngestService = async (
     )
 
     // Checks that the asset is not already ingested
-    // const hasEmbeddings = await hasEmbeddingsForAsset(assetId)
-    // if (hasEmbeddings) {
-    //   return
-    // }
-    const tempFilePath = './tmp/bb.pdf'
-    const document = await loadFile(asset.extension, tempFilePath)
+    const hasEmbeddings = await hasEmbeddingsForAsset(prisma, assetId)
+    if (hasEmbeddings) {
+      return
+    }
 
-    const split = await splitText(document, 50, 10)
-
+    const document = await loadFile(asset.extension, filePath)
+    const split = await splitText(document)
     const embeddingsWithDocuments = await generateEmbeddings(split)
+
     return await saveEmbeddings(prisma, assetId, embeddingsWithDocuments)
   })
 }
@@ -74,8 +74,11 @@ const getAssetOnApp = (
   })
 }
 
-const hasEmbeddingsForAsset = async (assetId: string) => {
-  const embeddings = await vectorDb.assetEmbedding.findMany({
+const hasEmbeddingsForAsset = async (
+  prisma: PrismaTrxClient,
+  assetId: string,
+) => {
+  const embeddings = await prisma.assetEmbedding.findMany({
     where: {
       assetId,
     },
@@ -84,22 +87,28 @@ const hasEmbeddingsForAsset = async (assetId: string) => {
   return embeddings.length > 0
 }
 
-const loadFile = async (type: string, filePath: string) => {
-  let document: Document
+const loadFile = async (
+  type: string,
+  filePath: string,
+): Promise<Document<Record<string, unknown>>> => {
+  let loadingStrategy: ILoadingStrategy
+
   switch (type.replace('.', '')) {
-    // case 'txt':
-    //   return await new TextLoadingStrategy().load(filePath)
+    case 'txt':
+      loadingStrategy = new TextLoadingStrategy()
+      break
+
     case 'pdf':
-      const documents = await new PdfLoadingStrategy().load(filePath)
-      if (!documents) {
-        throw createHttpError(500, 'No documents found')
-      }
-      document = documents[0]!
+      loadingStrategy = new PdfLoadingStrategy()
       break
     default:
       throw new Error(`Unsupported asset type: ${type}`)
   }
-  return document
+  const documents = await loadingStrategy.load(filePath)
+  if (!documents) {
+    throw createHttpError(500, 'No documents found')
+  }
+  return documents[0]!
 }
 
 const splitText = async (
