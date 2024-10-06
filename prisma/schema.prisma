@@ -153,7 +153,7 @@ model AppsOnUsers {
 }
 
 model Asset {
-    id                 String         @id @default(cuid())
+    id                 String           @id @default(cuid())
     workspaceId        String
     uploadStatus       String
     originalName       String
@@ -162,10 +162,11 @@ model Asset {
     markedAsDeletedAt  DateTime?
     remoteDeletedAt    DateTime?
     contentsAsMarkdown String?
-    createdAt          DateTime       @default(now())
-    updatedAt          DateTime       @updatedAt
-    workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt          DateTime         @default(now())
+    updatedAt          DateTime         @updatedAt
+    workspace          Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     assetsOnApps       AssetsOnApps[]
+    AssetEmbedding     AssetEmbedding[]
 }
 
 model AssetEmbedding {
@@ -174,6 +175,7 @@ model AssetEmbedding {
     contents  String
     model     String
     embedding Unsupported("vector(1024)")
+    asset     Asset                       @relation(fields: [assetId], references: [id], onDelete: Cascade)
     // Index on assetembedding also exists
 
     @@index(assetId)
