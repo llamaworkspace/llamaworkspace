@@ -10,16 +10,10 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, AssetsOnApps, User, Workspace } from '@prisma/client'
 import cuid from 'cuid'
-import { insertEmbeddingService } from '../insertEmbeddingService'
 import { ragIngestService } from '../ragIngestService'
 import { TextLoadingStrategy } from '../strategies/load/TextLoadingStrategy'
 import { RecursiveCharacterTextSplitStrategy } from '../strategies/split/RecursiveCharacterTextSplitStrategy'
 
-jest.mock('@/server/rag/services/insertEmbeddingService', () => {
-  return {
-    insertEmbeddingService: jest.fn(),
-  }
-})
 jest.mock('@/server/rag/services/strategies/load/TextLoadingStrategy', () => {
   const TextLoadingStrategy = jest.fn()
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
@@ -168,7 +162,6 @@ describe('ragIngestService', () => {
         filePath: fakeFilePath,
       })
 
-      expect(insertEmbeddingService).not.toHaveBeenCalled()
       expect(TextLoadingStrategy).not.toHaveBeenCalled()
       expect(RecursiveCharacterTextSplitStrategy).not.toHaveBeenCalled()
     })

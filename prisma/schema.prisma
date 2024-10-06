@@ -166,7 +166,7 @@ model Asset {
     updatedAt          DateTime         @updatedAt
     workspace          Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     assetsOnApps       AssetsOnApps[]
-    AssetEmbedding     AssetEmbedding[]
+    assetEmbeddings    AssetEmbedding[]
 }
 
 model AssetEmbedding {
