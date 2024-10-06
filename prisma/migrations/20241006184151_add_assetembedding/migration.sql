@@ -13,5 +13,4 @@ CREATE TABLE "AssetEmbedding" (
 CREATE INDEX "AssetEmbedding_assetId_idx" ON "AssetEmbedding"("assetId");
 
 -- CreateIndex
-CREATE INDEX "AssetEmbedding_embedding_idx" ON "AssetEmbedding"("embedding");
--- This is an empty migration.
+CREATE INDEX "AssetEmbedding_embedding_idx" ON "AssetEmbedding"(md5(embedding::text));

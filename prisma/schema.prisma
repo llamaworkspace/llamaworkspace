@@ -174,9 +174,9 @@ model AssetEmbedding {
     contents  String
     model     String
     embedding Unsupported("vector(1024)")
+    // Index on assetembedding also exists
 
     @@index(assetId)
-    @@index(embedding)
 }
 
 model AssetsOnApps {

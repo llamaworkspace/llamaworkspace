@@ -11,10 +11,10 @@ import { vectorDb } from '@/server/vectorDb'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, AssetsOnApps, User, Workspace } from '@prisma/client'
 import cuid from 'cuid'
-import { insertEmbeddingService } from '../insertEmbeddingService'
+import { insertEmbeddingService } from '../../insertEmbeddingService'
+import { TextLoadingStrategy } from '../../strategies/load/TextLoadingStrategy'
+import { RecursiveCharacterTextSplitStrategy } from '../../strategies/split/RecursiveCharacterTextSplitStrategy'
 import { ragIngestService } from '../ragIngestService'
-import { TextLoadingStrategy } from '../strategies/load/TextLoadingStrategy'
-import { RecursiveCharacterTextSplitStrategy } from '../strategies/split/RecursiveCharacterTextSplitStrategy'
 
 jest.mock('@/server/rag/services/insertEmbeddingService', () => {
   return {
