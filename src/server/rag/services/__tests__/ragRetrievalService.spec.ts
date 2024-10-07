@@ -25,6 +25,22 @@ jest.mock('ai', () => {
   }
 })
 
+jest.mock(
+  '@/server/rag/services/strategies/embed/OpenAIEmbeddingStrategy.ts',
+  () => {
+    const OpenAIEmbeddingStrategy = jest.fn()
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+    const array1024 = Array.from({ length: 1024 }, () => Math.random() * 2 - 1)
+    OpenAIEmbeddingStrategy.prototype.embed = jest
+      .fn()
+      .mockResolvedValue([array1024])
+
+    return {
+      OpenAIEmbeddingStrategy,
+    }
+  },
+)
+
 const subject = async (
   workspaceId: string,
   userId: string,
@@ -79,6 +95,9 @@ describe('ragRetrievalService', () => {
   })
 
   it('performs retrieval', async () => {
+    jest
+      .spyOn(prisma, '$queryRaw')
+      .mockResolvedValue([{ id: cuid(), contents: 'this is a text' }])
     const response = await subject(workspace.id, user.id, {
       assetId: asset.id,
       text: 'pepe car',
