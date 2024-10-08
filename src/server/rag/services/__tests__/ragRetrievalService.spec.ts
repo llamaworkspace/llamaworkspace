@@ -17,14 +17,6 @@ import pgvector from 'pgvector'
 import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
 import { ragRetrievalService } from '../ragRetrievalService'
 
-jest.mock('ai', () => {
-  return {
-    embed: jest.fn().mockResolvedValue({
-      embedding: Array.from({ length: 1024 }).map(() => Math.random()),
-    }),
-  }
-})
-
 jest.mock(
   '@/server/rag/services/strategies/embed/OpenAIEmbeddingStrategy.ts',
   () => {
