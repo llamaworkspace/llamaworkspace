@@ -7,7 +7,7 @@
     "start-demo": "docker-compose -f ./infra/docker-compose.demo.yml up",
     "preinstall": "npx only-allow npm",
     "postinstall": "npm run prisma:generate",
-    "prisma:generate": "prisma generate && prisma generate --schema prisma-pgvector/schema.pgvector.prisma",
+    "prisma:generate": "prisma generate",
     "lint": "next lint",
     "start": "next start",
     "prisma:dev": "npm run prisma migrate dev --name",
@@ -29,7 +29,7 @@
     "dev:delete-all-openai-vector-stores": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiVectorStores.ts",
     "dev:delete-all-openai-files": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts",
     "dev:clear-openai": "npm run dev:delete-all-openai-vector-stores && npm run dev:delete-all-openai-files",
-    "dco:up-all": "docker-compose -f docker-compose.yml -f docker-compose.optional.yml up -d",
+    "dco:up": "docker-compose -f docker-compose.yml up -d",
     "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo ."
   },
   "dependencies": {

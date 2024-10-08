@@ -5,21 +5,33 @@ import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { AssetFactory } from '@/server/testing/factories/AssetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { vectorDb } from '@/server/vectorDb'
-import type { App, Asset, User, Workspace } from '@prisma/client'
+import type {
+  App,
+  Asset,
+  AssetEmbedding,
+  User,
+  Workspace,
+} from '@prisma/client'
 import cuid from 'cuid'
 import pgvector from 'pgvector'
-import { type AssetEmbedding } from 'prisma/pgvector-prisma-client'
 import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
 import { ragRetrievalService } from '../ragRetrievalService'
 
-jest.mock('ai', () => {
-  return {
-    embed: jest.fn().mockResolvedValue({
-      embedding: Array.from({ length: 1024 }).map(() => Math.random()),
-    }),
-  }
-})
+jest.mock(
+  '@/server/rag/services/strategies/embed/OpenAIEmbeddingStrategy.ts',
+  () => {
+    const OpenAIEmbeddingStrategy = jest.fn()
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+    const array1024 = Array.from({ length: 1024 }, () => Math.random() * 2 - 1)
+    OpenAIEmbeddingStrategy.prototype.embed = jest
+      .fn()
+      .mockResolvedValue([array1024])
+
+    return {
+      OpenAIEmbeddingStrategy,
+    }
+  },
+)
 
 const subject = async (
   workspaceId: string,
@@ -62,7 +74,7 @@ describe('ragRetrievalService', () => {
       Array.from({ length: 1024 }).map(() => Math.random()),
     ) as number[]
 
-    assetEmbedding = await vectorDb.$queryRaw`
+    assetEmbedding = await prisma.$queryRaw`
     INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
     VALUES (
       ${cuid()},
@@ -75,6 +87,9 @@ describe('ragRetrievalService', () => {
   })
 
   it('performs retrieval', async () => {
+    jest
+      .spyOn(prisma, '$queryRaw')
+      .mockResolvedValue([{ id: cuid(), contents: 'this is a text' }])
     const response = await subject(workspace.id, user.id, {
       assetId: asset.id,
       text: 'pepe car',
