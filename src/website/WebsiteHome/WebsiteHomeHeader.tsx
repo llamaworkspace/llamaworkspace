@@ -17,7 +17,7 @@ export function WebsiteHomeHeader() {
               src="/images/llama-workspace-logo-black-square.svg"
               width="72"
               height="72"
-              className="h-16 self-center"
+              className="h-12 self-center md:h-16"
             />
           </div>
         </Link>
