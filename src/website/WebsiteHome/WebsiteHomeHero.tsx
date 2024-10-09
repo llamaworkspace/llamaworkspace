@@ -6,7 +6,7 @@ export function WebsiteHomeHero() {
       <div className="pb-24 sm:py-8 md:pt-12">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="max-w-2xl space-y-4">
-            <h1 className="text-3xl font-semibold tracking-tighter text-zinc-950 sm:text-6xl">
+            <h1 className="text-4xl font-semibold tracking-tighter text-zinc-950 sm:text-6xl">
               The open-source
               <br />
               AI assistant for work.
@@ -20,7 +20,7 @@ export function WebsiteHomeHero() {
               of your choice, and cuts subscription costs by up to 70%.
             </h2>
           </div>
-          <div className="mt-10 items-center gap-x-6 sm:flex">
+          <div className="mt-12 items-center gap-x-6 sm:flex lg:mt-8">
             <Link
               href="/auth/signin"
               className="rounded-md border border-zinc-900 bg-zinc-900 px-12 py-4 font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
