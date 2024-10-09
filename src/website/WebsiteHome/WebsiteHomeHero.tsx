@@ -4,7 +4,7 @@ export function WebsiteHomeHero() {
   return (
     <div className="relative isolate pt-6">
       <div className="pb-24 sm:py-8 md:pt-12">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <div className="max-w-2xl space-y-4">
             <h1 className="text-4xl font-semibold tracking-tighter text-zinc-950 sm:text-6xl">
               The open-source
