@@ -2,29 +2,80 @@ import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import Link from 'next/link'
 import { WebsiteHomeFeatureWrapper } from './WebsiteHomeFeatureWrapper'
 
-export function WebsiteHomeFeaturePricing() {
+export function WebsiteHomeManifesto() {
   return (
     <WebsiteHomeFeatureWrapper>
-      <div id="pricing" className="relative rounded-lg py-8">
-        <div className="">
-          <div className="mx-auto max-w-6xl px-6 ">
-            <div className="mx-auto max-w-4xl sm:text-center">
-              <h2 className="text-base font-bold uppercase leading-7 text-zinc-400">
-                Pricing
-              </h2>
-              <p className="mt-2 text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
-                Start free, pay as you team grows.
-              </p>
-            </div>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-zinc-600 sm:text-center">
-              Get all the benefits of the commercial AI
+      <div
+        id="manifesto"
+        className="relative rounded-lg border border-[#f0f5e8] py-8"
+      >
+        <div className="mx-auto max-w-6xl px-6 ">
+          <div className="mx-auto max-w-4xl sm:text-center">
+            <p className="mt-2 text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+              Our story
             </p>
-            <div className="mt-20 flow-root">
-              <div className="isolate -mt-16 grid max-w-sm grid-cols-1 gap-y-16 divide-y divide-zinc-100 sm:mx-auto lg:-mx-8 lg:mt-0 lg:max-w-none lg:grid-cols-3 lg:divide-x lg:divide-y-0 xl:-mx-4">
-                <FreeTier />
-                <TeamsTier />
-                <EnterpriseTier />
-              </div>
+          </div>
+          <div className="mx-auto mt-6 max-w-2xl space-y-4 text-lg">
+            {/* <div className="text-2xl font-semibold tracking-tight">
+              Building an Open AI Future Together
+            </div> */}
+            <p>
+              AI and Large Language Models have been around for quite a few
+              years now. But it was with ChatGPT, the user interface we all
+              know, that catapulted the mass adoption of those technologies;
+              changing in the process how millions of us work on a daily basis.
+            </p>
+            <p>
+              Like many of you, I was amazed by its power, and shortly after I
+              started prototyping how a collaborative version of ChatGPT would
+              look like. I shared it with friends and then.... what would become
+              Llama Workspace. It showed what&apos;s possible when powerful AI
+              is put directly into people&apos;s hands. But we think something
+              this important shouldn&apos;t be locked up by one company or
+              limited by closed systems. That&apos;s why we&apos;re building
+              Llama Workspace—an open-source alternative that anyone can use,
+              extend, and integrate.
+            </p>
+            <p>
+              Then Anthropic&apos;s Claude came out. And Gemini, Mistral AI,
+              then the Llama family. They are living proof that there isn't a
+              single model for
+            </p>
+
+            <p>PRoblems: -</p>
+            <p>
+              realized It showed what&apos;s possible when powerful AI is put
+              directly into people&apos;s hands. But we think something this
+              important shouldn&apos;t be locked up by one company or limited by
+              closed systems. That&apos;s why we&apos;re building Llama
+              Workspace—an open-source alternative that anyone can use, extend,
+              and integrate. **Why We&apos;re Building Llama Workspace** 1.
+              **Because Everyone Should Have Access** We believe AI tools that
+              impact so many lives should be open to all. By making Llama
+              Workspace open-source, we ensure anyone can benefit without being
+              tied down by a single vendor or restrictive licenses. We&apos;re
+              indie hackers and builders who want technology to serve everyone.
+              2. **To Keep Your Data Private** Privacy matters. With Llama
+              Workspace, you can run everything on your own servers or in your
+              own cloud. That means your data stays with you, not with some
+              third-party service. We think that&apos;s how it should be,
+              especially when dealing with sensitive information. 3. **To Save
+              You Money** AI shouldn&apos;t break the bank. By offering a simple
+              subscription and pay-as-you-go model for our cloud-hosted version,
+              we can help organizations save 50% to 70% compared to ChatGPT
+              Enterprise. We&apos;re all about making powerful tools affordable.
+              **Join Us** We&apos;re indie hackers, artisans, and product
+              builders who believe in an open, collaborative future for AI. If
+              that sounds like you, we&apos;d love for you to join us.
+              Let&apos;s build something amazing together. *Let&apos;s make AI
+              accessible, private, and affordable—for everyone.*
+            </p>
+          </div>
+          <div className="mt-20 flow-root">
+            <div className="isolate -mt-16 grid max-w-sm grid-cols-1 gap-y-16 divide-y divide-zinc-100 sm:mx-auto lg:-mx-8 lg:mt-0 lg:max-w-none lg:grid-cols-3 lg:divide-x lg:divide-y-0 xl:-mx-4">
+              <FreeTier />
+              <TeamsTier />
+              <EnterpriseTier />
             </div>
           </div>
         </div>

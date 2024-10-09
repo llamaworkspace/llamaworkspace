@@ -9,6 +9,7 @@ import { WebsiteHomeFeatureWrapper } from './WebsiteHomeFeatureWrapper'
 import { WebsiteHomeFooter } from './WebsiteHomeFooter'
 import { WebsiteHomeHeader } from './WebsiteHomeHeader'
 import { WebsiteHomeHero } from './WebsiteHomeHero'
+import { WebsiteHomeManifesto } from './WebsiteHomeManifesto'
 
 export function WebsiteHome() {
   return (
@@ -73,6 +74,7 @@ export function WebsiteHome() {
             </div>
           </div>
           <WebsiteHomeFeaturePricing />
+          <WebsiteHomeManifesto />
           <WebsiteHomeFAQs />
           {/* <WebsiteHomeCTA /> */}
         </div>
