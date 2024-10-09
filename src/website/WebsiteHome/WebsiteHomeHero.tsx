@@ -8,7 +8,7 @@ export function WebsiteHomeHero() {
         <div className="mx-auto max-w-6xl px-6 ">
           <div className="max-w-2xl space-y-4">
             <h1 className="text-3xl font-semibold tracking-tighter text-zinc-950 sm:text-6xl">
-              Meet the open-source
+              The open-source
               <br />
               AI assistant for work.
             </h1>
