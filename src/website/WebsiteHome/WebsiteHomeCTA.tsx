@@ -3,7 +3,7 @@ import Link from 'next/link'
 export function WebsiteHomeCTA() {
   return (
     <div className="bg-zinc-900 py-32 text-white">
-      <div className="px-6 sm:px-6 lg:px-8">
+      <div className="px-6 sm:px-6 ">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight  sm:text-5xl">
             Try Joia today.

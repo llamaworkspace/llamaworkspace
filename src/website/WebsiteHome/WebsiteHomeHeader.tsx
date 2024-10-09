@@ -7,7 +7,7 @@ export function WebsiteHomeHeader() {
   return (
     <header className="z-100">
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+        className="mx-auto flex max-w-6xl items-center justify-between p-6 "
         aria-label="Global"
       >
         <Link href="/">
