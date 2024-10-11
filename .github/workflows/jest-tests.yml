@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:15
+        image: pgvector/pgvector:pg16
         ports:
           - 5432:5432
         options: >-
@@ -22,19 +22,6 @@ jobs:
           --health-retries 5
         env:
           POSTGRES_DB: llamaws_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-      pgvector:
-        image: pgvector/pgvector:pg16
-        ports:
-          - 5433:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        env:
-          POSTGRES_DB: llamaws_test_pgvector
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
 
@@ -56,7 +43,7 @@ jobs:
         run: npm install --frozen-lockfile
 
       - name: Prepare test environment
-        run: npm run test:prepare && npm run test:prepare-pgvector && cp .env.test .env
+        run: npm run test:prepare && cp .env.test .env
 
       - name: Run Jest tests
         run: npm run test:ci

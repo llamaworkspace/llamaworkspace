@@ -7,26 +7,19 @@ import { AssetFactory } from '@/server/testing/factories/AssetFactory'
 import { AssetsOnAppsFactory } from '@/server/testing/factories/AssetsOnAppsFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { vectorDb } from '@/server/vectorDb'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, AssetsOnApps, User, Workspace } from '@prisma/client'
 import cuid from 'cuid'
-import { insertEmbeddingService } from '../insertEmbeddingService'
 import { ragIngestService } from '../ragIngestService'
 import { TextLoadingStrategy } from '../strategies/load/TextLoadingStrategy'
 import { RecursiveCharacterTextSplitStrategy } from '../strategies/split/RecursiveCharacterTextSplitStrategy'
 
-jest.mock('@/server/rag/services/insertEmbeddingService', () => {
-  return {
-    insertEmbeddingService: jest.fn(),
-  }
-})
 jest.mock('@/server/rag/services/strategies/load/TextLoadingStrategy', () => {
   const TextLoadingStrategy = jest.fn()
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
   TextLoadingStrategy.prototype.load = jest
     .fn()
-    .mockResolvedValue('this is a text')
+    .mockResolvedValue([{ pageContent: 'this is a text', metadata: {} }])
 
   return {
     TextLoadingStrategy,
@@ -39,10 +32,29 @@ jest.mock(
     /* eslint-disable @typescript-eslint/no-unsafe-member-access */
     RecursiveCharacterTextSplitStrategy.prototype.split = jest
       .fn()
-      .mockResolvedValue(['this is', 'a text'])
+      .mockResolvedValue([
+        { pageContent: 'this is', metadata: {} },
+        { pageContent: 'a text', metadata: {} },
+      ])
 
     return {
       RecursiveCharacterTextSplitStrategy,
+    }
+  },
+)
+
+jest.mock(
+  '@/server/rag/services/strategies/embed/OpenAIEmbeddingStrategy.ts',
+  () => {
+    const OpenAIEmbeddingStrategy = jest.fn()
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+    const array1024 = Array.from({ length: 1024 }, () => Math.random() * 2 - 1)
+    OpenAIEmbeddingStrategy.prototype.embed = jest
+      .fn()
+      .mockResolvedValue([array1024, array1024])
+
+    return {
+      OpenAIEmbeddingStrategy,
     }
   },
 )
@@ -124,32 +136,25 @@ describe('ragIngestService', () => {
       filePath: fakeFilePath,
     })
 
-    expect(insertEmbeddingService).toHaveBeenNthCalledWith(
-      1,
-      expect.anything(),
-      expect.anything(),
-      { assetId: asset.id, text: 'this is' },
-    )
-    expect(insertEmbeddingService).toHaveBeenNthCalledWith(
-      2,
-      expect.anything(),
-      expect.anything(),
-      { assetId: asset.id, text: 'a text' },
-    )
+    const embeddings = await prisma.assetEmbedding.findMany({
+      where: { assetId: asset.id },
+      include: { items: true },
+    })
+
+    expect(embeddings).toHaveLength(1)
+    expect(embeddings[0]?.items).toHaveLength(2)
   })
 
   describe('when asset already has embeddings', () => {
     it('does nothing', async () => {
       const vector = Array.from({ length: 1024 }).map(() => Math.random())
 
-      await vectorDb.$queryRaw`
-        INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
+      await prisma.$queryRaw`
+        INSERT INTO "AssetEmbedding" ("id", "assetId", "model")
         VALUES (
           ${cuid()},
           ${asset.id},
-          'model-x',
-          'this is',
-          ${vector}::real[]
+          'model-x'
         )`
 
       await subject(workspace.id, user.id, {
@@ -157,7 +162,6 @@ describe('ragIngestService', () => {
         filePath: fakeFilePath,
       })
 
-      expect(insertEmbeddingService).not.toHaveBeenCalled()
       expect(TextLoadingStrategy).not.toHaveBeenCalled()
       expect(RecursiveCharacterTextSplitStrategy).not.toHaveBeenCalled()
     })
@@ -178,21 +182,5 @@ describe('ragIngestService', () => {
         }),
       ).rejects.toThrow()
     })
-  })
-
-  describe('when the format is supported', () => {
-    it('and format is txt, it calls TextLoadingStrategy', async () => {
-      await subject(workspace.id, user.id, {
-        assetOnAppId: assetOnApp.id,
-        filePath: fakeFilePath,
-      })
-
-      expect(TextLoadingStrategy).toHaveBeenCalled()
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(TextLoadingStrategy.prototype.load).toHaveBeenCalled()
-    })
-
-    it.todo('and format is pdf, it calls PdfLoadingStrategy')
-    it.todo('and format is md, it calls Whatever')
   })
 })

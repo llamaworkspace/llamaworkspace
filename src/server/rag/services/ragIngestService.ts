@@ -2,14 +2,19 @@ import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
-import { vectorDb } from '@/server/vectorDb'
 import type {
   PrismaClientOrTrxClient,
   PrismaTrxClient,
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import type { Document } from '@langchain/core/documents'
 import { Promise } from 'bluebird'
-import { insertEmbeddingService } from './insertEmbeddingService'
+import cuid from 'cuid'
+import createHttpError from 'http-errors'
+import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
+import { OpenAIEmbeddingStrategy } from './strategies/embed/OpenAIEmbeddingStrategy'
+import type { ILoadingStrategy } from './strategies/load/ILoadingStrategy'
+import { PdfLoadingStrategy } from './strategies/load/PdfLoadingStrategy'
 import { TextLoadingStrategy } from './strategies/load/TextLoadingStrategy'
 import { RecursiveCharacterTextSplitStrategy } from './strategies/split/RecursiveCharacterTextSplitStrategy'
 
@@ -39,17 +44,16 @@ export const ragIngestService = async (
     )
 
     // Checks that the asset is not already ingested
-    const hasEmbeddings = await hasEmbeddingsForAsset(assetId)
+    const hasEmbeddings = await hasEmbeddingsForAsset(prisma, assetId)
     if (hasEmbeddings) {
       return
     }
 
-    const text = await loadFile(asset.extension, filePath)
+    const document = await loadFile(asset.extension, filePath)
+    const split = await splitText(document)
+    const embeddingsWithDocuments = await generateEmbeddings(split)
 
-    const splitted = await splitText(text)
-    await Promise.map(splitted, async (text) => {
-      await insertEmbeddingService(prisma, uowContext, { assetId, text })
-    })
+    return await saveEmbeddings(prisma, assetId, embeddingsWithDocuments)
   })
 }
 
@@ -70,8 +74,11 @@ const getAssetOnApp = (
   })
 }
 
-const hasEmbeddingsForAsset = async (assetId: string) => {
-  const embeddings = await vectorDb.assetEmbedding.findMany({
+const hasEmbeddingsForAsset = async (
+  prisma: PrismaTrxClient,
+  assetId: string,
+) => {
+  const embeddings = await prisma.assetEmbedding.findMany({
     where: {
       assetId,
     },
@@ -80,15 +87,76 @@ const hasEmbeddingsForAsset = async (assetId: string) => {
   return embeddings.length > 0
 }
 
-const loadFile = async (type: string, filePath: string) => {
+const loadFile = async (
+  type: string,
+  filePath: string,
+): Promise<Document<Record<string, unknown>>> => {
+  let loadingStrategy: ILoadingStrategy
+
   switch (type.replace('.', '')) {
     case 'txt':
-      return await new TextLoadingStrategy().load(filePath)
+      loadingStrategy = new TextLoadingStrategy()
+      break
+
+    case 'pdf':
+      loadingStrategy = new PdfLoadingStrategy()
+      break
     default:
       throw new Error(`Unsupported asset type: ${type}`)
   }
+  const documents = await loadingStrategy.load(filePath)
+  if (!documents) {
+    throw createHttpError(500, 'No documents found')
+  }
+  return documents[0]!
 }
 
-const splitText = async (text: string, chunkSize = 800, chunkOverlap = 400) => {
-  return new RecursiveCharacterTextSplitStrategy().split(text)
+const splitText = async (
+  document: Document,
+  chunkSize?: number,
+  chunkOverlap?: number,
+) => {
+  return new RecursiveCharacterTextSplitStrategy().split(
+    document,
+    chunkSize,
+    chunkOverlap,
+  )
+}
+
+const generateEmbeddings = async (documents: Document[]) => {
+  const embeddings = await new OpenAIEmbeddingStrategy().embed(documents)
+  return embeddings.map((embedding, index) => ({
+    document: documents[index]!,
+    embedding,
+  }))
+}
+
+const saveEmbeddings = async (
+  prisma: PrismaTrxClient,
+  assetId: string,
+  embeddingsWithDocuments: { document: Document; embedding: number[] }[],
+) => {
+  const [result] = await prisma.$queryRaw<{ id: string }[]>`
+    INSERT INTO "AssetEmbedding" ("id", "assetId", "model")
+    VALUES (
+      ${cuid()},
+      ${assetId},
+      ${DEFAULT_EMBEDDING_MODEL}
+      )
+    RETURNING id
+  `
+
+  const assetEmbeddingId = result!.id
+
+  await Promise.map(embeddingsWithDocuments, async (embeddingWithDocument) => {
+    return await prisma.$queryRaw`
+    INSERT INTO "AssetEmbeddingItem" ("id", "assetEmbeddingId", "contents", "embedding")
+    VALUES (
+      ${cuid()},
+      ${assetEmbeddingId},
+      ${embeddingWithDocument.document.pageContent},
+      ${embeddingWithDocument.embedding}::real[]      
+      )
+  `
+  })
 }
