@@ -36,13 +36,16 @@ export const ragRetrievalService = async (
   const res = await prisma.$queryRaw<
     { id: string; model: string; contents: string }[]
   >`
-    SELECT "AssetEmbedding"."id", "AssetEmbedding"."model", "AssetEmbeddingItem"."contents"
+    SELECT
+      "AssetEmbedding"."id",
+      "AssetEmbedding"."model",
+      "AssetEmbeddingItem"."contents"
     FROM "AssetEmbedding"
     LEFT JOIN "AssetEmbeddingItem" ON "AssetEmbeddingItem"."assetEmbeddingId" = "AssetEmbedding"."id"
     WHERE 1 - (embedding <=> ${targetEmbedding}::vector) >= 0.3
     AND "assetId" = ${assetId}
     LIMIT 20;
   `
-  console.log(2, res)
+
   return res.map((item) => item.contents)
 }
