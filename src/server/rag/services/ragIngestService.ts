@@ -136,13 +136,24 @@ const saveEmbeddings = async (
   assetId: string,
   embeddingsWithDocuments: { document: Document; embedding: number[] }[],
 ) => {
-  await Promise.map(embeddingsWithDocuments, async (embeddingWithDocument) => {
-    return await prisma.$queryRaw`
-    INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
+  const [result] = await prisma.$queryRaw<{ id: string }[]>`
+    INSERT INTO "AssetEmbedding" ("id", "assetId", "model")
     VALUES (
       ${cuid()},
       ${assetId},
-      ${DEFAULT_EMBEDDING_MODEL},
+      ${DEFAULT_EMBEDDING_MODEL}
+      )
+    RETURNING id
+  `
+
+  const assetEmbeddingId = result!.id
+
+  await Promise.map(embeddingsWithDocuments, async (embeddingWithDocument) => {
+    return await prisma.$queryRaw`
+    INSERT INTO "AssetEmbeddingItem" ("id", "assetEmbeddingId", "contents", "embedding")
+    VALUES (
+      ${cuid()},
+      ${assetEmbeddingId},
       ${embeddingWithDocument.document.pageContent},
       ${embeddingWithDocument.embedding}::real[]      
       )

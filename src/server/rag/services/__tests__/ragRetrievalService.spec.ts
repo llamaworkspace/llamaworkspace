@@ -9,6 +9,7 @@ import type {
   App,
   Asset,
   AssetEmbedding,
+  AssetEmbeddingItem,
   User,
   Workspace,
 } from '@prisma/client'
@@ -51,7 +52,8 @@ describe('ragRetrievalService', () => {
   let user: User
   let app: App
   let asset: Asset
-  let assetEmbedding: AssetEmbedding & { embedding: number[] }
+  let assetEmbedding: AssetEmbedding
+  let assetEmbeddingItems: AssetEmbeddingItem[]
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -71,15 +73,24 @@ describe('ragRetrievalService', () => {
       uploadStatus: AssetUploadStatus.Success,
     })
     const embedding = pgvector.toSql(
-      Array.from({ length: 1024 }).map(() => Math.random()),
+      Array.from({ length: 1024 }).map(() => 0),
     ) as number[]
 
-    assetEmbedding = await prisma.$queryRaw`
-    INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
+    const [assetEmbedding] = await prisma.$queryRaw<AssetEmbedding[]>`
+    INSERT INTO "AssetEmbedding" ("id", "assetId", "model")
     VALUES (
       ${cuid()},
       ${asset.id},
-      ${DEFAULT_EMBEDDING_MODEL},
+      ${DEFAULT_EMBEDDING_MODEL}
+      )
+    RETURNING *
+    `
+
+    assetEmbeddingItems = await prisma.$queryRaw`
+    INSERT INTO "AssetEmbeddingItem" ("id", "assetEmbeddingId", "contents", "embedding")
+    VALUES (
+      ${cuid()},
+      ${assetEmbedding!.id},
       'this is a text',
       ${embedding}::vector
       )
@@ -87,12 +98,9 @@ describe('ragRetrievalService', () => {
   })
 
   it('performs retrieval', async () => {
-    jest
-      .spyOn(prisma, '$queryRaw')
-      .mockResolvedValue([{ id: cuid(), contents: 'this is a text' }])
     const response = await subject(workspace.id, user.id, {
       assetId: asset.id,
-      text: 'pepe car',
+      text: '', // empty test to lead to an array of zeroes
     })
 
     expect(response).toHaveLength(1)
