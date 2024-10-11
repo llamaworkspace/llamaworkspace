@@ -22,7 +22,7 @@ export function WebsiteHomeFeaturePricing() {
           />
         </div>
         <div className="">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-6xl px-6">
             <div className="mx-auto max-w-4xl sm:text-center">
               <h2 className="text-base font-bold uppercase leading-7 text-zinc-400">
                 Pricing
@@ -58,7 +58,7 @@ const freeTierFeatures = [
 
 const FreeTier = () => {
   return (
-    <div className="pt-16 lg:px-8 lg:pt-0 xl:px-14">
+    <div className="pt-16 lg:pt-0 xl:px-14">
       <h3 className="text-base font-semibold leading-7 text-zinc-900">Free</h3>
       <p className="mt-6 flex items-baseline gap-x-1">
         <span className="text-5xl font-bold tracking-tight text-zinc-900">
@@ -108,7 +108,7 @@ const teamsFeatures = [
 
 const TeamsTier = () => {
   return (
-    <div className="pt-16 lg:px-8 lg:pt-0 xl:px-14">
+    <div className="pt-16 lg:pt-0 xl:px-14">
       <h3 className="text-base font-semibold leading-7 text-zinc-900">Teams</h3>
       <p className="mt-6 flex items-baseline gap-x-1">
         <span className="text-5xl font-bold tracking-tight text-zinc-900">
@@ -163,7 +163,7 @@ const enterpriseFeatures = [
 
 const EnterpriseTier = () => {
   return (
-    <div className="pt-16 lg:px-8 lg:pt-0 xl:px-14">
+    <div className="pt-16 lg:pt-0 xl:px-14">
       <h3 className="text-base font-semibold leading-7 text-zinc-900">
         Enterprise & Self-hosted
       </h3>
