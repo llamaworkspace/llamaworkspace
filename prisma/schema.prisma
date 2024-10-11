@@ -172,14 +172,20 @@ model Asset {
 model AssetEmbedding {
     id        String                      @id @default(cuid())
     assetId   String
-    contents  String
     model     String
-    embedding Unsupported("vector(1024)")
     asset     Asset                       @relation(fields: [assetId], references: [id], onDelete: Cascade)
-    // Index on assetembedding also exists
-
-    @@index(assetId)
+    items     AssetEmbeddingItem[]
 }
+
+model AssetEmbeddingItem {
+    id                String                      @id @default(cuid())
+    assetEmbeddingId  String
+    contents          String
+    embedding         Unsupported("vector(1024)")
+    assetEmbedding    AssetEmbedding             @relation(fields: [assetEmbeddingId], references: [id], onDelete: Cascade)
+    
+}
+
 
 model AssetsOnApps {
     id              String    @id @default(cuid())
