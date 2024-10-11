@@ -138,9 +138,11 @@ describe('ragIngestService', () => {
 
     const embeddings = await prisma.assetEmbedding.findMany({
       where: { assetId: asset.id },
+      include: { items: true },
     })
 
-    expect(embeddings).toHaveLength(2)
+    expect(embeddings).toHaveLength(1)
+    expect(embeddings[0]?.items).toHaveLength(2)
   })
 
   describe('when asset already has embeddings', () => {
@@ -148,13 +150,11 @@ describe('ragIngestService', () => {
       const vector = Array.from({ length: 1024 }).map(() => Math.random())
 
       await prisma.$queryRaw`
-        INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
+        INSERT INTO "AssetEmbedding" ("id", "assetId", "model")
         VALUES (
           ${cuid()},
           ${asset.id},
-          'model-x',
-          'this is',
-          ${vector}::real[]
+          'model-x'
         )`
 
       await subject(workspace.id, user.id, {
