@@ -1,8 +1,10 @@
 import { HuggingFaceInferenceEmbeddings } from '@langchain/community/embeddings/hf'
 import type { Document } from '@langchain/core/documents'
-import type { IEmbedStrategy } from './IEmbedStrategy'
+import type { IEmbeddingStrategy } from './embeddingStrategiesTypes'
 
-export class HugggingFaceEmbeddingStrategy implements IEmbedStrategy {
+export class HugggingFaceEmbeddingStrategy implements IEmbeddingStrategy {
+  name = 'huggingface'
+
   async embed(documents: Document[]) {
     const embeddingsHf = new HuggingFaceInferenceEmbeddings({
       apiKey: process.env.INTERNAL_HUGGINGFACE_API_KEY,

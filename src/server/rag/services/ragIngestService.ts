@@ -12,8 +12,7 @@ import { Promise } from 'bluebird'
 import cuid from 'cuid'
 import createHttpError from 'http-errors'
 import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
-import { HugggingFaceEmbeddingStrategy } from './strategies/embed/HuggingFaceEmbeddingStrategy'
-import { OpenAIEmbeddingStrategy } from './strategies/embed/OpenAIEmbeddingStrategy'
+import { embeddingsRegistry } from './registries/embeddingsRegistry'
 import type { ILoadingStrategy } from './strategies/load/ILoadingStrategy'
 import { PdfLoadingStrategy } from './strategies/load/PdfLoadingStrategy'
 import { TextLoadingStrategy } from './strategies/load/TextLoadingStrategy'
@@ -125,11 +124,8 @@ const splitText = async (
 }
 
 const generateEmbeddings = async (documents: Document[]) => {
-  const oaiEmbeddingEngine = new OpenAIEmbeddingStrategy()
-  const hfEmbeddingEngine = new HugggingFaceEmbeddingStrategy()
-
-  // const oaiEmbeddings = await oaiEmbeddingEngine.embed(documents)
-  const embeddings = await hfEmbeddingEngine.embed(documents)
+  const emebeddingEngine = embeddingsRegistry.getOrThrow('openai')
+  const embeddings = await emebeddingEngine.embed(documents)
 
   return embeddings.map((embedding, index) => ({
     document: documents[index]!,

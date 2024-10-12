@@ -1,5 +1,6 @@
 import type { Document } from '@langchain/core/documents'
 
-export interface IEmbedStrategy {
+export interface IEmbeddingStrategy {
+  name: string
   embed(documents: Document[]): Promise<number[][]>
 }

@@ -1,9 +1,11 @@
 import { DEFAULT_EMBEDDING_MODEL } from '@/server/rag/ragConstants'
 import type { Document } from '@langchain/core/documents'
 import { OpenAIEmbeddings } from '@langchain/openai'
-import type { IEmbedStrategy } from './IEmbedStrategy'
+import type { IEmbeddingStrategy } from './embeddingStrategiesTypes'
 
-export class OpenAIEmbeddingStrategy implements IEmbedStrategy {
+export class OpenAIEmbeddingStrategy implements IEmbeddingStrategy {
+  name = 'openai'
+
   async embed(documents: Document[]) {
     const embeddingsOai = new OpenAIEmbeddings({
       verbose: true,
