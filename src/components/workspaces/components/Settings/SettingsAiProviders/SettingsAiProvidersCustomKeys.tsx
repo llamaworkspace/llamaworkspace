@@ -1,6 +1,5 @@
 import { useAiProviders, useUpdateAiProvider } from '@/components/ai/aiHooks'
 import { StyledLink } from '@/components/ui/StyledLink'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -114,14 +113,10 @@ export const SettingsAiProvidersCustomKeys = () => {
             onSubmit={handleFormSubmit(provider.slug)}
             initialValues={initialValues?.[provider.slug]}
             render={({ handleSubmit }) => {
-              const isOpenAi = provider.slug === 'openai'
-              const showOpenAiDefaultKeysAlert =
-                isOpenAi && provider.hasMissingFields
-
               return (
                 <Card key={provider.slug}>
-                  <CardHeader>
-                    <CardTitle className="text-xl">
+                  <CardHeader className="mb-4 space-y-2">
+                    <CardTitle className="text-2xl">
                       <div className="flex items-center gap-x-2">
                         <div>{provider.publicName}</div>
                       </div>
@@ -134,8 +129,7 @@ export const SettingsAiProvidersCustomKeys = () => {
                       </CardDescription>
                     )}
                   </CardHeader>
-                  <CardContent className="space-y-2">
-                    {showOpenAiDefaultKeysAlert && <DefaultOpenAiKeyAlert />}
+                  <CardContent className="space-y-8">
                     <div className="space-y-4 py-2">
                       {provider.fields.map((field) => {
                         return (
@@ -154,11 +148,8 @@ export const SettingsAiProvidersCustomKeys = () => {
                           />
                         )
                       })}
-
-                      <SettingsAiProvidersModelsTable
-                        models={provider.models}
-                      />
                     </div>
+                    <SettingsAiProvidersModelsTable models={provider.models} />
                   </CardContent>
                   <CardFooter>
                     <Button onClick={() => void handleSubmit()}>
@@ -172,18 +163,5 @@ export const SettingsAiProvidersCustomKeys = () => {
         )
       })}
     </div>
-  )
-}
-
-const DefaultOpenAiKeyAlert = () => {
-  return (
-    <Alert variant="fuchsia">
-      <AlertTitle>Default OpenAI keys being used</AlertTitle>
-      <AlertDescription>
-        Since you haven&apos;t set up the OpenAI API credentials here, Llama
-        Workspace will use the OpenAI API keys defined in the environment
-        variables.
-      </AlertDescription>
-    </Alert>
   )
 }
