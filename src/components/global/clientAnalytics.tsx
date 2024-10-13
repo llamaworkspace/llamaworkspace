@@ -17,10 +17,12 @@ const OSS_POSTHOG_KEY = 'phc_L07v1DhPpbN1dMkanlCVDQNgIhXT3lvy36zZMecGyNC'
 
 const posthogKey = env.NEXT_PUBLIC_POSTHOG_API_KEY ?? OSS_POSTHOG_KEY
 const isOss = !env.NEXT_PUBLIC_POSTHOG_API_KEY
+const isProduction = env.NEXT_PUBLIC_ENV === 'production'
 
 let isInitialized = false
 
 const posthogInitialize = (trackPageViews = false) => {
+  if (!isProduction) return
   if (isInitialized) return
   if (typeof window !== 'undefined') {
     isInitialized = true
