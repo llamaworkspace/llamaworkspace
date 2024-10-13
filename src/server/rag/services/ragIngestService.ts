@@ -132,7 +132,7 @@ const generateEmbeddings = async (documents: Document[]) => {
     embedding,
   }))
 }
-console.log('Been here')
+
 const saveEmbeddings = async (
   prisma: PrismaTrxClient,
   assetId: string,

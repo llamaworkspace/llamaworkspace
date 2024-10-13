@@ -43,21 +43,23 @@ jest.mock(
   },
 )
 
-jest.mock(
-  '@/server/rag/services/strategies/embed/OpenAIEmbeddingStrategy.ts',
-  () => {
-    const OpenAIEmbeddingStrategy = jest.fn()
-    /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-    const array1024 = Array.from({ length: 1024 }, () => Math.random() * 2 - 1)
-    OpenAIEmbeddingStrategy.prototype.embed = jest
-      .fn()
-      .mockResolvedValue([array1024, array1024])
+jest.mock('@/server/rag/services/registries/embeddingsRegistry.ts', () => {
+  const array1024 = Array.from({ length: 1024 }, () => 0)
 
-    return {
-      OpenAIEmbeddingStrategy,
-    }
-  },
-)
+  const openAIEmbeddingStrategy = {
+    name: 'openai',
+    embed: jest.fn().mockResolvedValue([array1024, array1024]),
+  }
+
+  return {
+    embeddingsRegistry: {
+      register: jest.fn(),
+      get: () => openAIEmbeddingStrategy,
+      getOrThrow: () => openAIEmbeddingStrategy,
+      getAll: () => [openAIEmbeddingStrategy],
+    },
+  }
+})
 
 const subject = async (
   workspaceId: string,
@@ -147,8 +149,6 @@ describe('ragIngestService', () => {
 
   describe('when asset already has embeddings', () => {
     it('does nothing', async () => {
-      const vector = Array.from({ length: 1024 }).map(() => Math.random())
-
       await prisma.$queryRaw`
         INSERT INTO "AssetEmbedding" ("id", "assetId", "model")
         VALUES (

@@ -16,4 +16,8 @@ export class GenericRegistry<T extends { name: string }> {
     }
     return item
   }
+
+  getAll(): T[] {
+    return Array.from(this.items.values())
+  }
 }

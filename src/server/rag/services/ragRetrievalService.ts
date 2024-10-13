@@ -2,7 +2,7 @@ import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { Document } from '@langchain/core/documents'
 import createHttpError from 'http-errors'
-import { HugggingFaceEmbeddingStrategy } from './strategies/embed/HuggingFaceEmbeddingStrategy'
+import { embeddingsRegistry } from './registries/embeddingsRegistry'
 
 interface RagRetrievalPayload {
   assetId: string
@@ -25,9 +25,8 @@ export const ragRetrievalService = async (
 
   const document = new Document({ pageContent: text })
 
-  const targetEmbeddings = await new HugggingFaceEmbeddingStrategy().embed([
-    document,
-  ])
+  const emebeddingEngine = embeddingsRegistry.getOrThrow('openai')
+  const targetEmbeddings = await emebeddingEngine.embed([document])
 
   if (!targetEmbeddings.length) {
     throw createHttpError(500, 'No embeddings were generated')

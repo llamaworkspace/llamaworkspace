@@ -18,21 +18,24 @@ import pgvector from 'pgvector'
 import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
 import { ragRetrievalService } from '../ragRetrievalService'
 
-jest.mock(
-  '@/server/rag/services/strategies/embed/OpenAIEmbeddingStrategy.ts',
-  () => {
-    const OpenAIEmbeddingStrategy = jest.fn()
-    /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-    const array1024 = Array.from({ length: 1024 }, () => Math.random() * 2 - 1)
-    OpenAIEmbeddingStrategy.prototype.embed = jest
-      .fn()
-      .mockResolvedValue([array1024])
+jest.mock('@/server/rag/services/registries/embeddingsRegistry.ts', () => {
+  const array1024 = Array.from({ length: 1024 }, () => 0)
+  const vectorArray = pgvector.toSql(array1024) as number[]
 
-    return {
-      OpenAIEmbeddingStrategy,
-    }
-  },
-)
+  const openAIEmbeddingStrategy = {
+    name: 'openai',
+    embed: jest.fn().mockResolvedValue([vectorArray, vectorArray]),
+  }
+
+  return {
+    embeddingsRegistry: {
+      register: jest.fn(),
+      get: () => openAIEmbeddingStrategy,
+      getOrThrow: () => openAIEmbeddingStrategy,
+      getAll: () => [openAIEmbeddingStrategy],
+    },
+  }
+})
 
 const subject = async (
   workspaceId: string,
@@ -72,9 +75,7 @@ describe('ragRetrievalService', () => {
       extension: 'txt',
       uploadStatus: AssetUploadStatus.Success,
     })
-    const embedding = pgvector.toSql(
-      Array.from({ length: 1024 }).map(() => 0),
-    ) as number[]
+    const embedding = pgvector.toSql(Array.from({ length: 1024 }).map(() => 0))
 
     const [assetEmbedding] = await prisma.$queryRaw<AssetEmbedding[]>`
     INSERT INTO "AssetEmbedding" ("id", "assetId", "model")
