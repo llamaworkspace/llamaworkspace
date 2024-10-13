@@ -1,6 +1,5 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
 import { useAppById } from '@/components/apps/appsHooks'
-import { AppEngineType } from '@/components/apps/appsTypes'
 import { CheckboxField } from '@/components/ui/forms/CheckboxField'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
@@ -37,8 +36,6 @@ export const AppConfigForGPTSettings = ({
       ref.current.focus()
     }
   }, [focusQueryStringEl, disabled])
-
-  const isAssistantEngineType = app?.engineType === AppEngineType.Assistant
 
   const supportedFileTypes = OPENAI_SUPPORTED_FILE_TYPES
 

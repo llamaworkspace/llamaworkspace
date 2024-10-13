@@ -10,13 +10,15 @@ import {
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu'
 import { DropdownMenuItemLink } from '@/components/ui/extensions/dropdown-menu'
-import { useGetUserOnWorkspace } from '@/components/users/usersHooks'
+import {
+  useGetUserOnWorkspace,
+  useIsAdmin,
+} from '@/components/users/usersHooks'
 import {
   useCurrentWorkspace,
   useWorkspaces,
 } from '@/components/workspaces/workspacesHooks'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { UserRole } from '@/shared/globalTypes'
 import { CheckIcon } from '@heroicons/react/20/solid'
 
 function SidebarDesktopHeaderWorkspacesDropdownSub() {
@@ -66,6 +68,7 @@ export function SidebarFooterUserSettingsMenu() {
   const { data: userOnWorkspace } = useGetUserOnWorkspace()
   const { data: workspaces } = useWorkspaces()
   const numberOfWorkspaces = workspaces?.length ?? 0
+  const { isAdmin } = useIsAdmin()
 
   const { data: workspace } = useCurrentWorkspace()
   const profileLink = workspace?.id
@@ -92,11 +95,9 @@ export function SidebarFooterUserSettingsMenu() {
       })
     : '#'
 
-  const displayWorkspaceSection = userOnWorkspace?.role === UserRole.Admin
-
   return (
     <DropdownMenuContent align="start" className="w-64">
-      {displayWorkspaceSection && (
+      {isAdmin && (
         <>
           <DropdownMenuGroup>
             <DropdownMenuLabel>Workspace</DropdownMenuLabel>
