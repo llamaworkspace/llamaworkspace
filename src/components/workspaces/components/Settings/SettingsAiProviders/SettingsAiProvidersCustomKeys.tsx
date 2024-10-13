@@ -114,49 +114,53 @@ export const SettingsAiProvidersCustomKeys = () => {
             initialValues={initialValues?.[provider.slug]}
             render={({ handleSubmit }) => {
               return (
-                <Card key={provider.slug}>
-                  <CardHeader className="mb-4 space-y-2">
-                    <CardTitle className="text-2xl">
-                      <div className="flex items-center gap-x-2">
-                        <div>{provider.publicName}</div>
+                <div id={provider.slug.toLowerCase()}>
+                  <Card key={provider.slug}>
+                    <CardHeader className="mb-4 space-y-2">
+                      <CardTitle className="text-2xl">
+                        <div className="flex items-center gap-x-2">
+                          <div>{provider.publicName}</div>
+                        </div>
+                      </CardTitle>
+                      {provider.docsLink && (
+                        <CardDescription>
+                          <StyledLink href={provider.docsLink} target="_blank">
+                            {provider.docsLinkText ?? 'Documentation'}
+                          </StyledLink>
+                        </CardDescription>
+                      )}
+                    </CardHeader>
+                    <CardContent className="space-y-8">
+                      <div className="space-y-4 py-2">
+                        {provider.fields.map((field) => {
+                          return (
+                            <Field
+                              key={field.slug}
+                              name={field.slug}
+                              render={({ input }) => {
+                                return (
+                                  <InputField
+                                    {...input}
+                                    label={field.publicName}
+                                    required={field.required}
+                                  />
+                                )
+                              }}
+                            />
+                          )
+                        })}
                       </div>
-                    </CardTitle>
-                    {provider.docsLink && (
-                      <CardDescription>
-                        <StyledLink href={provider.docsLink} target="_blank">
-                          {provider.docsLinkText ?? 'Documentation'}
-                        </StyledLink>
-                      </CardDescription>
-                    )}
-                  </CardHeader>
-                  <CardContent className="space-y-8">
-                    <div className="space-y-4 py-2">
-                      {provider.fields.map((field) => {
-                        return (
-                          <Field
-                            key={field.slug}
-                            name={field.slug}
-                            render={({ input }) => {
-                              return (
-                                <InputField
-                                  {...input}
-                                  label={field.publicName}
-                                  required={field.required}
-                                />
-                              )
-                            }}
-                          />
-                        )
-                      })}
-                    </div>
-                    <SettingsAiProvidersModelsTable models={provider.models} />
-                  </CardContent>
-                  <CardFooter>
-                    <Button onClick={() => void handleSubmit()}>
-                      Save changes
-                    </Button>
-                  </CardFooter>
-                </Card>
+                      <SettingsAiProvidersModelsTable
+                        models={provider.models}
+                      />
+                    </CardContent>
+                    <CardFooter>
+                      <Button onClick={() => void handleSubmit()}>
+                        Save changes
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </div>
               )
             }}
           />

@@ -10,10 +10,7 @@ import {
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu'
 import { DropdownMenuItemLink } from '@/components/ui/extensions/dropdown-menu'
-import {
-  useGetUserOnWorkspace,
-  useIsAdmin,
-} from '@/components/users/usersHooks'
+import { useIsAdmin } from '@/components/users/usersHooks'
 import {
   useCurrentWorkspace,
   useWorkspaces,
@@ -65,7 +62,7 @@ function SidebarDesktopHeaderWorkspacesDropdownSub() {
 export function SidebarFooterUserSettingsMenu() {
   const navigation = useNavigation()
   const signOut = useSignOut()
-  const { data: userOnWorkspace } = useGetUserOnWorkspace()
+
   const { data: workspaces } = useWorkspaces()
   const numberOfWorkspaces = workspaces?.length ?? 0
   const { isAdmin } = useIsAdmin()

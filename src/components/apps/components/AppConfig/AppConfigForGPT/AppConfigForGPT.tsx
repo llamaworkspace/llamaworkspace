@@ -120,8 +120,6 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
         }) => {
           const shouldDisplayGlobalError = submitFailed && hasValidationErrors
 
-          const { model } = values
-
           const handleSave = async () => {
             await handleSubmit()
           }
@@ -132,7 +130,8 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
               <AppConfigForGPTSettings
                 appId={appId}
                 disabled={!canEdit}
-                showOpenaiAssistantSelector={model?.startsWith('openai')}
+                showOpenaiAssistantSelector={values.model?.startsWith('openai')}
+                isOpenAiAssistantSelected={values.isOpenaiAssistant}
               />
               <AppConfigSubmitButtonGroup
                 appId={appId}

@@ -6,7 +6,7 @@ interface HuggingFaceExecuteOptions {
 
 export const HuggingFaceProvider: () => AiRegistryProvider = () => {
   return {
-    slug: 'huggingFace' as const,
+    slug: 'huggingface' as const,
     publicName: 'Hugging Face' as const,
     models: [],
     fields: [
