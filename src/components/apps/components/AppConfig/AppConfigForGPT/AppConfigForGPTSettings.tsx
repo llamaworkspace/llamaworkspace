@@ -1,6 +1,7 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
 import { useAppById } from '@/components/apps/appsHooks'
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { CheckboxField } from '@/components/ui/forms/CheckboxField'
 import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
@@ -18,11 +19,13 @@ Act as a public speaker and write compelling speeches that can be used to inspir
 interface AppConfigForGPTSettingsProps {
   appId?: string
   disabled?: boolean
+  showOpenaiAssistantSelector?: boolean
 }
 
 export const AppConfigForGPTSettings = ({
   appId,
   disabled = false,
+  showOpenaiAssistantSelector = false,
 }: AppConfigForGPTSettingsProps) => {
   const navigation = useNavigation()
 
@@ -39,12 +42,6 @@ export const AppConfigForGPTSettings = ({
 
   const supportedFileTypes = OPENAI_SUPPORTED_FILE_TYPES
 
-  const modelHelperText = (
-    <>
-      Currently, AI assistants with knowledge files only work with OpenAI&apos;s
-      GPT-4o.
-    </>
-  )
   return (
     <>
       <Field
@@ -77,7 +74,7 @@ export const AppConfigForGPTSettings = ({
         </div>
       )}
 
-      <div>
+      <div className="space-y-4">
         <div className="grid md:grid-cols-2">
           <Field
             name="model"
@@ -88,15 +85,32 @@ export const AppConfigForGPTSettings = ({
                   {...input}
                   placeholder="Select a model"
                   label="AI model"
-                  helperText={
-                    isAssistantEngineType ? modelHelperText : undefined
-                  }
-                  disabled={disabled || isAssistantEngineType}
+                  disabled={disabled}
                 />
               )
             }}
           />
         </div>
+        {showOpenaiAssistantSelector && (
+          <div className="">
+            <Field
+              name="isOpenaiAssistant"
+              render={({ input }) => {
+                const handleCheckToggle = (checked: boolean) => {
+                  input.onChange(checked)
+                }
+                return (
+                  <CheckboxField
+                    onCheckedChange={handleCheckToggle}
+                    checked={!!input.value}
+                    {...input}
+                    label="Provide answers from files using OpenAI's processing engine instead of Llama Workspace"
+                  />
+                )
+              }}
+            />
+          </div>
+        )}
       </div>
     </>
   )

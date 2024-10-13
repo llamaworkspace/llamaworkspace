@@ -28,6 +28,7 @@ interface SubmitProps {
   systemMessage?: string
   description?: string
   model: OpenAiModelEnum
+  isOpenaiAssistant?: boolean
   redirect?: boolean
 }
 
@@ -51,7 +52,18 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
       return
     }
 
-    const { emoji, title, systemMessage, description, model } = values
+    const {
+      emoji,
+      title,
+      systemMessage,
+      description,
+      model,
+      isOpenaiAssistant,
+    } = values
+
+    const setAppEngineTypeToAssistant = !!(
+      model.startsWith('openai') && isOpenaiAssistant
+    )
 
     try {
       await Promise.all([
@@ -59,6 +71,9 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
           id: app?.id,
           emoji: emoji ?? null,
           title: title ?? null,
+          engineType: setAppEngineTypeToAssistant
+            ? AppEngineType.Assistant
+            : AppEngineType.Default,
         }),
         updateAppConfigVersion({
           id: appConfig?.id,
@@ -101,16 +116,24 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
           submitting,
           submitFailed,
           hasValidationErrors,
+          values,
         }) => {
           const shouldDisplayGlobalError = submitFailed && hasValidationErrors
+
+          const { model } = values
 
           const handleSave = async () => {
             await handleSubmit()
           }
+
           return (
             <div className="space-y-8">
               <AppConfigForGPTNameAndDescription disabled={!canEdit} />
-              <AppConfigForGPTSettings appId={appId} disabled={!canEdit} />
+              <AppConfigForGPTSettings
+                appId={appId}
+                disabled={!canEdit}
+                showOpenaiAssistantSelector={model?.startsWith('openai')}
+              />
               <AppConfigSubmitButtonGroup
                 appId={appId}
                 pristine={pristine}
