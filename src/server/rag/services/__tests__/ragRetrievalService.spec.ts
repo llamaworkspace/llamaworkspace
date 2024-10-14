@@ -10,7 +10,6 @@ import type {
   App,
   Asset,
   AssetEmbedding,
-  AssetEmbeddingItem,
   AssetsOnApps,
   User,
   Workspace,
@@ -58,8 +57,6 @@ describe('ragRetrievalService', () => {
   let app: App
   let asset: Asset
   let assetOnApp: AssetsOnApps
-  let assetEmbedding: AssetEmbedding
-  let assetEmbeddingItems: AssetEmbeddingItem[]
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -82,7 +79,9 @@ describe('ragRetrievalService', () => {
       assetId: asset.id,
       appId: app.id,
     })
-    const embedding = pgvector.toSql(Array.from({ length: 1024 }).map(() => 0))
+    const embedding = pgvector.toSql(
+      Array.from({ length: 1024 }).map(() => 0),
+    ) as number[]
 
     const [assetEmbedding] = await prisma.$queryRaw<AssetEmbedding[]>`
     INSERT INTO "AssetEmbedding" ("id", "assetId", "model")
@@ -94,7 +93,7 @@ describe('ragRetrievalService', () => {
     RETURNING *
     `
 
-    assetEmbeddingItems = await prisma.$queryRaw`
+    await prisma.$queryRaw`
     INSERT INTO "AssetEmbeddingItem" ("id", "assetEmbeddingId", "contents", "embedding")
     VALUES (
       ${cuid()},
