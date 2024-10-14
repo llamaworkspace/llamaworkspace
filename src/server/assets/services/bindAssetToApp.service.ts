@@ -1,6 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { AssetUploadStatus } from '@/components/assets/assetTypes'
-import { getLatestAppConfigForAppIdService } from '@/server/apps/services/getLatestAppConfigForAppId.service'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -59,19 +58,6 @@ export const bindAssetToAppService = async (
           status: AssetOnAppStatus.Processing,
         },
       })
-
-      const configVersion = await getLatestAppConfigForAppIdService(
-        prisma,
-        uowContext,
-        {
-          appId,
-        },
-      )
-
-      await Promise.all([
-        setModelToGpt4o(prisma, configVersion.id),
-        setAppEngineTypeToAssistant(prisma, appId),
-      ])
 
       await enqueueBindAssetToApp(userId, assetOnApp.id)
     }
