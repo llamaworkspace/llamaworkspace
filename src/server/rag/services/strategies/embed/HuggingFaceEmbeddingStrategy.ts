@@ -2,12 +2,16 @@ import { HuggingFaceInferenceEmbeddings } from '@langchain/community/embeddings/
 import type { Document } from '@langchain/core/documents'
 import type { IEmbeddingStrategy } from './embeddingStrategiesTypes'
 
-export class HugggingFaceEmbeddingStrategy implements IEmbeddingStrategy {
+interface EmbedOptions {
+  apiKey: string
+}
+
+export class HuggingFaceEmbeddingStrategy implements IEmbeddingStrategy {
   name = 'huggingface'
 
-  async embed(documents: Document[]) {
+  async embed(documents: Document[], options: EmbedOptions) {
     const embeddingsHf = new HuggingFaceInferenceEmbeddings({
-      apiKey: process.env.INTERNAL_HUGGINGFACE_API_KEY,
+      apiKey: options.apiKey,
       model: 'BAAI/bge-m3',
     })
 

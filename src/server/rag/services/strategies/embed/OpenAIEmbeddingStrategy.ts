@@ -3,13 +3,17 @@ import type { Document } from '@langchain/core/documents'
 import { OpenAIEmbeddings } from '@langchain/openai'
 import type { IEmbeddingStrategy } from './embeddingStrategiesTypes'
 
+interface EmbedOptions {
+  apiKey: string
+}
+
 export class OpenAIEmbeddingStrategy implements IEmbeddingStrategy {
   name = 'openai'
 
-  async embed(documents: Document[]) {
+  async embed(documents: Document[], options: EmbedOptions) {
     const embeddingsOai = new OpenAIEmbeddings({
       verbose: true,
-      apiKey: process.env.INTERNAL_OPENAI_API_KEY,
+      apiKey: options.apiKey,
       modelName: DEFAULT_EMBEDDING_MODEL.replace('openai/', ''),
       dimensions: 1024,
     })
