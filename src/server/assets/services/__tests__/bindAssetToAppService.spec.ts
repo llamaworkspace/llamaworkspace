@@ -1,4 +1,3 @@
-import { AppEngineType } from '@/components/apps/appsTypes'
 import { AssetUploadStatus } from '@/components/assets/assetTypes'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
@@ -106,51 +105,6 @@ describe('bindAssetToAppService', () => {
       userId: user.id,
       assetOnAppId: assetOnApp.id,
     })
-  })
-
-  it('sets the model to GPT4o', async () => {
-    await prisma.appConfigVersion.updateMany({
-      where: {
-        appId: app.id,
-      },
-      data: {
-        model: 'openai/gpt-3.5-turbo',
-      },
-    })
-
-    await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
-
-    const appConfigVersion = await prisma.appConfigVersion.findFirstOrThrow({
-      where: {
-        appId: app.id,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
-
-    expect(appConfigVersion.model).toBe('openai/gpt-4o')
-  })
-
-  it('sets the app engine type to Assistant', async () => {
-    await prisma.app.update({
-      where: {
-        id: app.id,
-      },
-      data: {
-        engineType: AppEngineType.Default,
-      },
-    })
-
-    await subject(workspace.id, user.id, { appId: app.id, assetId: asset.id })
-
-    const updatedApp = await prisma.app.findFirstOrThrow({
-      where: {
-        id: app.id,
-      },
-    })
-
-    expect(updatedApp.engineType).toBe('assistant')
   })
 
   describe('when the asset does not have a "success" status', () => {

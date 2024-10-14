@@ -3,6 +3,7 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { AssetFactory } from '@/server/testing/factories/AssetFactory'
+import { AssetsOnAppsFactory } from '@/server/testing/factories/AssetsOnAppsFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import type {
@@ -10,6 +11,7 @@ import type {
   Asset,
   AssetEmbedding,
   AssetEmbeddingItem,
+  AssetsOnApps,
   User,
   Workspace,
 } from '@prisma/client'
@@ -40,7 +42,7 @@ jest.mock('@/server/rag/services/registries/embeddingsRegistry.ts', () => {
 const subject = async (
   workspaceId: string,
   userId: string,
-  payload: { assetId: string; text: string },
+  payload: { assetOnAppId: string; text: string },
 ) => {
   const context = await createUserOnWorkspaceContext(
     prisma,
@@ -55,6 +57,7 @@ describe('ragRetrievalService', () => {
   let user: User
   let app: App
   let asset: Asset
+  let assetOnApp: AssetsOnApps
   let assetEmbedding: AssetEmbedding
   let assetEmbeddingItems: AssetEmbeddingItem[]
 
@@ -74,6 +77,10 @@ describe('ragRetrievalService', () => {
       originalName: 'test.txt',
       extension: 'txt',
       uploadStatus: AssetUploadStatus.Success,
+    })
+    assetOnApp = await AssetsOnAppsFactory.create(prisma, {
+      assetId: asset.id,
+      appId: app.id,
     })
     const embedding = pgvector.toSql(Array.from({ length: 1024 }).map(() => 0))
 
@@ -100,7 +107,7 @@ describe('ragRetrievalService', () => {
 
   it('performs retrieval', async () => {
     const response = await subject(workspace.id, user.id, {
-      assetId: asset.id,
+      assetOnAppId: assetOnApp.id,
       text: '', // empty test to lead to an array of zeroes
     })
 
