@@ -3,7 +3,7 @@ import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export function WebsiteHomeHeader() {
+export function WebsiteHeader() {
   return (
     <header className="z-100">
       <nav

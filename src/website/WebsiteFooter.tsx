@@ -83,7 +83,7 @@ const navigation = {
     // },
   ],
 }
-export function WebsiteHomeFooter() {
+export function WebsiteFooter() {
   return (
     <footer className="mt-24 bg-white">
       <div className="mx-auto max-w-6xl space-y-4 overflow-hidden px-6 py-12">

@@ -1,13 +1,13 @@
 import Head from 'next/head'
+import { WebsiteFooter } from '../WebsiteFooter'
 import { WebsiteFooterCTA } from '../WebsiteFooterCTA'
+import { WebsiteHeader } from '../WebsiteHeader'
 import { WebsiteHomeFAQs } from './WebsiteHomeFAQs'
 import { WebsiteHomeFeatureApps } from './WebsiteHomeFeatureApps'
 import { WebsiteHomeFeatureChatWithDocs } from './WebsiteHomeFeatureChatWithDocs'
 import { WebsiteHomeFeatureIntegrations } from './WebsiteHomeFeatureIntegrations'
 import { WebsiteHomeFeatureMultiModel } from './WebsiteHomeFeatureMultiModel'
 import { WebsiteHomeFeaturePricing } from './WebsiteHomeFeaturePricing'
-import { WebsiteHomeFooter } from './WebsiteHomeFooter'
-import { WebsiteHomeHeader } from './WebsiteHomeHeader'
 import { WebsiteHomeHero } from './WebsiteHomeHero'
 
 export function WebsiteHome() {
@@ -43,7 +43,7 @@ export function WebsiteHome() {
           />
         </div>
 
-        <WebsiteHomeHeader />
+        <WebsiteHeader />
 
         <div className="space-y-32">
           <WebsiteHomeHero />
@@ -59,7 +59,7 @@ export function WebsiteHome() {
           <WebsiteFooterCTA />
         </div>
 
-        <WebsiteHomeFooter />
+        <WebsiteFooter />
       </div>
     </>
   )

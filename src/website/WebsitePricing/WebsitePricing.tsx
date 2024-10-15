@@ -1,12 +1,10 @@
 import { Badge } from '@/components/ui/badge'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import Head from 'next/head'
-import Link from 'next/link'
+import { WebsiteFooter } from '../WebsiteFooter'
 import { WebsiteFooterCTA } from '../WebsiteFooterCTA'
+import { WebsiteHeader } from '../WebsiteHeader'
 import { WebsiteHomeFAQs } from '../WebsiteHome/WebsiteHomeFAQs'
-import { WebsiteHomeFeatureWrapper } from '../WebsiteHome/WebsiteHomeFeatureWrapper'
-import { WebsiteHomeFooter } from '../WebsiteHome/WebsiteHomeFooter'
-import { WebsiteHomeHeader } from '../WebsiteHome/WebsiteHomeHeader'
 
 export function WebsitePricing() {
   return (
@@ -35,7 +33,7 @@ export function WebsitePricing() {
           />
         </div>
 
-        <WebsiteHomeHeader />
+        <WebsiteHeader />
 
         <div className="space-y-32">
           <WebsiteHomeFeaturePricing />
@@ -43,7 +41,7 @@ export function WebsitePricing() {
           <WebsiteFooterCTA />
         </div>
 
-        <WebsiteHomeFooter />
+        <WebsiteFooter />
       </div>
     </>
   )
@@ -51,7 +49,7 @@ export function WebsitePricing() {
 
 function WebsiteHomeFeaturePricing() {
   return (
-    <WebsiteHomeFeatureWrapper>
+    <div className="mx-auto max-w-6xl overflow-hidden">
       <div
         className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
         aria-hidden="true"
@@ -74,10 +72,13 @@ function WebsiteHomeFeaturePricing() {
               Free while in beta.
             </h1>
           </div>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-zinc-600 sm:text-center">
-            Save up to 70% in subscription costs.
-          </p>
-          <div className="mt-20 flow-root">
+
+          <div className="mx-auto mt-48 max-w-4xl sm:text-center">
+            <h1 className="text-2xl font-semibold tracking-tighter text-zinc-950 sm:text-3xl">
+              Pricing plans after the beta period
+            </h1>
+          </div>
+          <div className="mt-8 flow-root">
             <div className="isolate -mt-16 grid max-w-sm grid-cols-1 gap-y-16 divide-y divide-zinc-100 sm:mx-auto lg:-mx-8 lg:mt-0 lg:max-w-none lg:grid-cols-3 lg:divide-x lg:divide-y-0 xl:-mx-4">
               <FreeTier />
               <TeamsTier />
@@ -86,7 +87,7 @@ function WebsiteHomeFeaturePricing() {
           </div>
         </div>
       </div>
-    </WebsiteHomeFeatureWrapper>
+    </div>
   )
 }
 
@@ -113,12 +114,6 @@ const FreeTier = () => {
         (expect $2-$6/seat/month)
       </p>
 
-      <Link
-        href="/auth/signin"
-        className="mt-10 block rounded-md bg-zinc-950 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-      >
-        Start free
-      </Link>
       <p className="mt-10 text-sm font-semibold leading-6 text-zinc-900">
         The easiest way to get started:
       </p>
@@ -167,12 +162,6 @@ const TeamsTier = () => {
         <br />
         (expect $2-$6/seat/month)
       </p>
-      <Link
-        href="/auth/signin"
-        className="mt-10 block rounded-md bg-zinc-950 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-      >
-        Start trial
-      </Link>
       <p className="mt-10 text-sm font-semibold leading-6 text-zinc-900">
         Everything in &quot;Free&quot;, plus:
       </p>
@@ -220,12 +209,6 @@ const EnterpriseTier = () => {
         Plus token fees, paid directly to the AI providers.
       </p>
 
-      <Link
-        href="/auth/signin"
-        className="mt-10 block rounded-md bg-zinc-950 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-      >
-        Get started
-      </Link>
       <p className="mt-10 text-sm font-semibold leading-6 text-zinc-900">
         Everything in &quot;Teams&quot;, plus:
       </p>
