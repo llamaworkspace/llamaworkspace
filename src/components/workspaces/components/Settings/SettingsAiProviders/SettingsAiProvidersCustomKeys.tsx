@@ -1,6 +1,5 @@
 import { useAiProviders, useUpdateAiProvider } from '@/components/ai/aiHooks'
 import { StyledLink } from '@/components/ui/StyledLink'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -114,76 +113,59 @@ export const SettingsAiProvidersCustomKeys = () => {
             onSubmit={handleFormSubmit(provider.slug)}
             initialValues={initialValues?.[provider.slug]}
             render={({ handleSubmit }) => {
-              const isOpenAi = provider.slug === 'openai'
-              const showOpenAiDefaultKeysAlert =
-                isOpenAi && provider.hasMissingFields
-
               return (
-                <Card key={provider.slug}>
-                  <CardHeader>
-                    <CardTitle className="text-xl">
-                      <div className="flex items-center gap-x-2">
-                        <div>{provider.publicName}</div>
+                <div id={provider.slug.toLowerCase()}>
+                  <Card key={provider.slug}>
+                    <CardHeader className="mb-4 space-y-2">
+                      <CardTitle className="text-2xl">
+                        <div className="flex items-center gap-x-2">
+                          <div>{provider.publicName}</div>
+                        </div>
+                      </CardTitle>
+                      {provider.docsLink && (
+                        <CardDescription>
+                          <StyledLink href={provider.docsLink} target="_blank">
+                            {provider.docsLinkText ?? 'Documentation'}
+                          </StyledLink>
+                        </CardDescription>
+                      )}
+                    </CardHeader>
+                    <CardContent className="space-y-8">
+                      <div className="space-y-4 py-2">
+                        {provider.fields.map((field) => {
+                          return (
+                            <Field
+                              key={field.slug}
+                              name={field.slug}
+                              render={({ input }) => {
+                                return (
+                                  <InputField
+                                    {...input}
+                                    label={field.publicName}
+                                    required={field.required}
+                                  />
+                                )
+                              }}
+                            />
+                          )
+                        })}
                       </div>
-                    </CardTitle>
-                    {provider.docsLink && (
-                      <CardDescription>
-                        <StyledLink href={provider.docsLink} target="_blank">
-                          {provider.docsLinkText ?? 'Documentation'}
-                        </StyledLink>
-                      </CardDescription>
-                    )}
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {showOpenAiDefaultKeysAlert && <DefaultOpenAiKeyAlert />}
-                    <div className="space-y-4 py-2">
-                      {provider.fields.map((field) => {
-                        return (
-                          <Field
-                            key={field.slug}
-                            name={field.slug}
-                            render={({ input }) => {
-                              return (
-                                <InputField
-                                  {...input}
-                                  label={field.publicName}
-                                  required={field.required}
-                                />
-                              )
-                            }}
-                          />
-                        )
-                      })}
-
                       <SettingsAiProvidersModelsTable
                         models={provider.models}
                       />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button onClick={() => void handleSubmit()}>
-                      Save changes
-                    </Button>
-                  </CardFooter>
-                </Card>
+                    </CardContent>
+                    <CardFooter>
+                      <Button onClick={() => void handleSubmit()}>
+                        Save changes
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </div>
               )
             }}
           />
         )
       })}
     </div>
-  )
-}
-
-const DefaultOpenAiKeyAlert = () => {
-  return (
-    <Alert variant="fuchsia">
-      <AlertTitle>Default OpenAI keys being used</AlertTitle>
-      <AlertDescription>
-        Since you haven&apos;t set up the OpenAI API credentials here, Llama
-        Workspace will use the OpenAI API keys defined in the environment
-        variables.
-      </AlertDescription>
-    </Alert>
   )
 }

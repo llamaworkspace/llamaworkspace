@@ -97,4 +97,100 @@ describe('appUpdateService', () => {
       ).rejects.toThrow()
     })
   })
+  describe('when updating engineType', () => {
+    it('allows changing from Default to Assistant', async () => {
+      await subject(workspace.id, user.id, app.id, {
+        engineType: AppEngineType.Assistant,
+      })
+
+      const appInDb = await prisma.app.findFirstOrThrow({
+        where: {
+          id: app.id,
+        },
+      })
+
+      expect(appInDb.engineType).toBe(AppEngineType.Assistant)
+    })
+
+    it('allows changing from Assistant to Default', async () => {
+      await subject(workspace.id, user.id, app.id, {
+        engineType: AppEngineType.Assistant,
+      })
+
+      await subject(workspace.id, user.id, app.id, {
+        engineType: AppEngineType.Default,
+      })
+
+      const appInDb = await prisma.app.findFirstOrThrow({
+        where: {
+          id: app.id,
+        },
+      })
+
+      expect(appInDb.engineType).toBe(AppEngineType.Default)
+    })
+
+    it('throws an error when changing to an invalid engineType', async () => {
+      await expect(
+        subject(workspace.id, user.id, app.id, {
+          engineType: 'invalidEngineType',
+        }),
+      ).rejects.toThrow(
+        'Engine type can only be changed between Default and Assistant',
+      )
+    })
+
+    it('throws an error when changing from Default to not Assistant', async () => {
+      await expect(
+        subject(workspace.id, user.id, app.id, {
+          engineType: AppEngineType.External,
+        }),
+      ).rejects.toThrow(
+        'Engine type can only be changed between Default and Assistant',
+      )
+    })
+
+    it('throws an error when changing from Assistant to not Assistant', async () => {
+      await subject(workspace.id, user.id, app.id, {
+        engineType: AppEngineType.Assistant,
+      })
+
+      await expect(
+        subject(workspace.id, user.id, app.id, {
+          engineType: AppEngineType.External,
+        }),
+      ).rejects.toThrow(
+        'Engine type can only be changed between Default and Assistant',
+      )
+    })
+
+    it('throws an error when changing from External to Default', async () => {
+      await prisma.app.update({
+        where: { id: app.id },
+        data: { engineType: AppEngineType.External },
+      })
+      await expect(
+        subject(workspace.id, user.id, app.id, {
+          engineType: AppEngineType.Default,
+        }),
+      ).rejects.toThrow(
+        'Engine type can only be changed between Default and Assistant',
+      )
+    })
+
+    it('throws an error when changing from External to Assistant', async () => {
+      await prisma.app.update({
+        where: { id: app.id },
+        data: { engineType: AppEngineType.External },
+      })
+
+      await expect(
+        subject(workspace.id, user.id, app.id, {
+          engineType: AppEngineType.Assistant,
+        }),
+      ).rejects.toThrow(
+        'Engine type can only be changed between Default and Assistant',
+      )
+    })
+  })
 })

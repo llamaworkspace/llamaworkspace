@@ -2,11 +2,13 @@ import { appUpdateService } from '@/server/apps/services/appUpdate.service'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { z } from 'zod'
+import { AppEngineType } from '../../appsTypes'
 
 const zUpdateInput = z.object({
   id: z.string(),
   title: z.optional(z.nullable(z.string())),
   emoji: z.optional(z.nullable(z.string())),
+  engineType: z.optional(z.nativeEnum(AppEngineType)),
 })
 
 export const appsUpdate = protectedProcedure

@@ -139,17 +139,17 @@ export class DefaultAppEngine extends AbstractAppEngine {
       },
     })
 
-    const assetIds = assetsOnApps.map((item) => item.assetId)
+    const assetsOnAppsIds = assetsOnApps.map((item) => item.id)
 
     const lastMessage = messages[messages.length - 1]!
 
     const ragItems = await Promise.reduce(
-      assetIds,
-      async (memo: string[], assetId: string) => {
+      assetsOnAppsIds,
+      async (memo: string[], assetOnAppId: string) => {
         return [
           ...memo,
           ...(await ragRetrievalService(prisma, context, {
-            assetId,
+            assetOnAppId,
             text: lastMessage.content,
           })),
         ]

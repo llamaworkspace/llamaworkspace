@@ -1,11 +1,13 @@
+import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { Document } from '@langchain/core/documents'
 import createHttpError from 'http-errors'
-import { OpenAIEmbeddingStrategy } from './strategies/embed/OpenAIEmbeddingStrategy'
+import { embeddingsRegistry } from './registries/embeddingsRegistry'
+import { getTargetEmbeddingModel } from './utils/getTargetEmbeddingModel'
 
 interface RagRetrievalPayload {
-  assetId: string
+  assetOnAppId: string
   text: string
 }
 
@@ -14,18 +16,38 @@ export const ragRetrievalService = async (
   uowContext: UserOnWorkspaceContext,
   payload: RagRetrievalPayload,
 ) => {
-  const { assetId, text } = payload
+  const { assetOnAppId, text } = payload
 
-  await prisma.asset.findFirstOrThrow({
+  const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
     where: {
-      id: assetId,
-      workspaceId: uowContext.workspaceId,
+      id: assetOnAppId,
+      asset: {
+        workspaceId: uowContext.workspaceId,
+      },
+    },
+    include: {
+      asset: true,
+      app: true,
     },
   })
 
-  const document = new Document({ pageContent: text })
+  const app = assetOnApp.app
 
-  const targetEmbeddings = await new OpenAIEmbeddingStrategy().embed([document])
+  const document = new Document({ pageContent: text })
+  const targetEmbeddingModel = await getTargetEmbeddingModel(
+    prisma,
+    uowContext,
+    app,
+  )
+  const providerKVs = await getAiProviderKVsService(
+    prisma,
+    uowContext,
+    targetEmbeddingModel,
+  )
+  const emebeddingEngine = embeddingsRegistry.getOrThrow(targetEmbeddingModel)
+  const targetEmbeddings = await emebeddingEngine.embed([document], {
+    apiKey: providerKVs.apiKey,
+  })
 
   if (!targetEmbeddings.length) {
     throw createHttpError(500, 'No embeddings were generated')
@@ -43,7 +65,7 @@ export const ragRetrievalService = async (
     FROM "AssetEmbedding"
     LEFT JOIN "AssetEmbeddingItem" ON "AssetEmbeddingItem"."assetEmbeddingId" = "AssetEmbedding"."id"
     WHERE 1 - (embedding <=> ${targetEmbedding}::vector) >= 0.3
-    AND "assetId" = ${assetId}
+    AND "assetId" = ${assetOnApp.assetId}
     LIMIT 20;
   `
 

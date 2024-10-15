@@ -19,9 +19,6 @@ export const AnthropicProvider: () => AiRegistryProvider = () => {
     slug: 'anthropic' as const,
     publicName: 'Anthropic' as const,
     models: anthropicModels,
-    docsLink:
-      'https://joiahq.notion.site/How-to-obtain-an-OpenAI-access-token-f29f71ba136145c9b84a43911c7d8709',
-    docsLinkText: 'Get help obtaining your Anthropic API key',
     fields: [
       {
         slug: 'apiKey',

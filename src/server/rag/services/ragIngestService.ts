@@ -1,3 +1,4 @@
+import { getAiProviderKVsService } from '@/server/ai/services/getProvidersForWorkspace.service'
 import { scopeAppByWorkspace } from '@/server/apps/appUtils'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
@@ -11,12 +12,12 @@ import type { Document } from '@langchain/core/documents'
 import { Promise } from 'bluebird'
 import cuid from 'cuid'
 import createHttpError from 'http-errors'
-import { DEFAULT_EMBEDDING_MODEL } from '../ragConstants'
-import { OpenAIEmbeddingStrategy } from './strategies/embed/OpenAIEmbeddingStrategy'
+import { embeddingsRegistry } from './registries/embeddingsRegistry'
 import type { ILoadingStrategy } from './strategies/load/ILoadingStrategy'
 import { PdfLoadingStrategy } from './strategies/load/PdfLoadingStrategy'
 import { TextLoadingStrategy } from './strategies/load/TextLoadingStrategy'
 import { RecursiveCharacterTextSplitStrategy } from './strategies/split/RecursiveCharacterTextSplitStrategy'
+import { getTargetEmbeddingModel } from './utils/getTargetEmbeddingModel'
 
 interface RagIngestPayload {
   filePath: string
@@ -43,6 +44,12 @@ export const ragIngestService = async (
       appId,
     )
 
+    const targetEmbeddingModel = await getTargetEmbeddingModel(
+      prisma,
+      uowContext,
+      assetOnApp.app,
+    )
+
     // Checks that the asset is not already ingested
     const hasEmbeddings = await hasEmbeddingsForAsset(prisma, assetId)
     if (hasEmbeddings) {
@@ -51,9 +58,19 @@ export const ragIngestService = async (
 
     const document = await loadFile(asset.extension, filePath)
     const split = await splitText(document)
-    const embeddingsWithDocuments = await generateEmbeddings(split)
+    const embeddingsWithDocuments = await generateEmbeddings(
+      prisma,
+      uowContext,
+      targetEmbeddingModel,
+      split,
+    )
 
-    return await saveEmbeddings(prisma, assetId, embeddingsWithDocuments)
+    return await saveEmbeddings(
+      prisma,
+      assetId,
+      targetEmbeddingModel,
+      embeddingsWithDocuments,
+    )
   })
 }
 
@@ -123,8 +140,18 @@ const splitText = async (
   )
 }
 
-const generateEmbeddings = async (documents: Document[]) => {
-  const embeddings = await new OpenAIEmbeddingStrategy().embed(documents)
+const generateEmbeddings = async (
+  prisma: PrismaTrxClient,
+  uowContext: UserOnWorkspaceContext,
+  engine: string,
+  documents: Document[],
+) => {
+  const providerKVs = await getAiProviderKVsService(prisma, uowContext, engine)
+  const emebeddingEngine = embeddingsRegistry.getOrThrow(engine)
+  const embeddings = await emebeddingEngine.embed(documents, {
+    apiKey: providerKVs.apiKey,
+  })
+
   return embeddings.map((embedding, index) => ({
     document: documents[index]!,
     embedding,
@@ -134,6 +161,7 @@ const generateEmbeddings = async (documents: Document[]) => {
 const saveEmbeddings = async (
   prisma: PrismaTrxClient,
   assetId: string,
+  model: string,
   embeddingsWithDocuments: { document: Document; embedding: number[] }[],
 ) => {
   const [result] = await prisma.$queryRaw<{ id: string }[]>`
@@ -141,7 +169,7 @@ const saveEmbeddings = async (
     VALUES (
       ${cuid()},
       ${assetId},
-      ${DEFAULT_EMBEDDING_MODEL}
+      ${model}
       )
     RETURNING id
   `

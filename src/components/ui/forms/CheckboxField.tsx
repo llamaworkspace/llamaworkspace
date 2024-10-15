@@ -26,7 +26,7 @@ export const CheckboxField = forwardRef<HTMLButtonElement, InputProps>(
           onCheckedChange={handleChange}
         />
         {label && (
-          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          <label className="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             {label}
           </label>
         )}

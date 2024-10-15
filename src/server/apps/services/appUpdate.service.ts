@@ -1,3 +1,4 @@
+import { AppEngineType } from '@/components/apps/appsTypes'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -49,6 +50,14 @@ export const appUpdateService = async (
         message: 'The default app cannot be updated',
       })
     }
+
+    if (payload.engineType) {
+      const currentEngineType = app.engineType as AppEngineType
+      const newEngineType = payload.engineType as AppEngineType
+
+      validateAppEngineChangeOrThrow(currentEngineType, newEngineType)
+    }
+
     return await prisma.app.update({
       where: {
         id: appId,
@@ -56,4 +65,31 @@ export const appUpdateService = async (
       data: payload,
     })
   })
+}
+
+const validateAppEngineChangeOrThrow = (
+  currentEngineType: AppEngineType,
+  newEngineType: AppEngineType,
+) => {
+  const allowedEngineTypes = [AppEngineType.Default, AppEngineType.Assistant]
+
+  if (
+    !allowedEngineTypes.includes(currentEngineType) ||
+    !allowedEngineTypes.includes(newEngineType)
+  ) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Engine type can only be changed between Default and Assistant',
+    })
+  }
+
+  if (
+    currentEngineType === AppEngineType.External ||
+    newEngineType === AppEngineType.External
+  ) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Engine type can only be changed between Default and Assistant',
+    })
+  }
 }
