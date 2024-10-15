@@ -3,28 +3,45 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { AppFactory } from '@/server/testing/factories/AppFactory'
 import { AssetFactory } from '@/server/testing/factories/AssetFactory'
+import { AssetsOnAppsFactory } from '@/server/testing/factories/AssetsOnAppsFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
-import { vectorDb } from '@/server/vectorDb'
-import type { App, Asset, User, Workspace } from '@prisma/client'
+import type {
+  App,
+  Asset,
+  AssetEmbedding,
+  AssetsOnApps,
+  User,
+  Workspace,
+} from '@prisma/client'
 import cuid from 'cuid'
 import pgvector from 'pgvector'
-import { type AssetEmbedding } from 'prisma/pgvector-prisma-client'
 import { DEFAULT_EMBEDDING_MODEL } from '../../ragConstants'
 import { ragRetrievalService } from '../ragRetrievalService'
 
-jest.mock('ai', () => {
+jest.mock('@/server/rag/services/registries/embeddingsRegistry.ts', () => {
+  const array1024 = Array.from({ length: 1024 }, () => 0)
+  const vectorArray = pgvector.toSql(array1024) as number[]
+
+  const openAIEmbeddingStrategy = {
+    name: 'openai',
+    embed: jest.fn().mockResolvedValue([vectorArray, vectorArray]),
+  }
+
   return {
-    embed: jest.fn().mockResolvedValue({
-      embedding: Array.from({ length: 1024 }).map(() => Math.random()),
-    }),
+    embeddingsRegistry: {
+      register: jest.fn(),
+      get: () => openAIEmbeddingStrategy,
+      getOrThrow: () => openAIEmbeddingStrategy,
+      getAll: () => [openAIEmbeddingStrategy],
+    },
   }
 })
 
 const subject = async (
   workspaceId: string,
   userId: string,
-  payload: { assetId: string; text: string },
+  payload: { assetOnAppId: string; text: string },
 ) => {
   const context = await createUserOnWorkspaceContext(
     prisma,
@@ -39,7 +56,7 @@ describe('ragRetrievalService', () => {
   let user: User
   let app: App
   let asset: Asset
-  let assetEmbedding: AssetEmbedding & { embedding: number[] }
+  let assetOnApp: AssetsOnApps
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -58,16 +75,29 @@ describe('ragRetrievalService', () => {
       extension: 'txt',
       uploadStatus: AssetUploadStatus.Success,
     })
+    assetOnApp = await AssetsOnAppsFactory.create(prisma, {
+      assetId: asset.id,
+      appId: app.id,
+    })
     const embedding = pgvector.toSql(
-      Array.from({ length: 1024 }).map(() => Math.random()),
+      Array.from({ length: 1024 }).map(() => 0),
     ) as number[]
 
-    assetEmbedding = await vectorDb.$queryRaw`
-    INSERT INTO "AssetEmbedding" ("id", "assetId", "model", "contents", "embedding")
+    const [assetEmbedding] = await prisma.$queryRaw<AssetEmbedding[]>`
+    INSERT INTO "AssetEmbedding" ("id", "assetId", "model")
     VALUES (
       ${cuid()},
       ${asset.id},
-      ${DEFAULT_EMBEDDING_MODEL},
+      ${DEFAULT_EMBEDDING_MODEL}
+      )
+    RETURNING *
+    `
+
+    await prisma.$queryRaw`
+    INSERT INTO "AssetEmbeddingItem" ("id", "assetEmbeddingId", "contents", "embedding")
+    VALUES (
+      ${cuid()},
+      ${assetEmbedding!.id},
       'this is a text',
       ${embedding}::vector
       )
@@ -76,8 +106,8 @@ describe('ragRetrievalService', () => {
 
   it('performs retrieval', async () => {
     const response = await subject(workspace.id, user.id, {
-      assetId: asset.id,
-      text: 'pepe car',
+      assetOnAppId: assetOnApp.id,
+      text: '', // empty test to lead to an array of zeroes
     })
 
     expect(response).toHaveLength(1)

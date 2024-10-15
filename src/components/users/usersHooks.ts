@@ -1,4 +1,5 @@
 import { api } from '@/lib/api'
+import { UserRole } from '@/shared/globalTypes'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useCurrentWorkspace } from '../workspaces/workspacesHooks'
 
@@ -31,4 +32,12 @@ export const useGetUserOnWorkspace = () => {
       enabled: !!workspace?.id,
     },
   )
+}
+
+export const useIsAdmin = () => {
+  const { data: userOnWorkspace, isLoading } = useGetUserOnWorkspace()
+  return {
+    isAdmin: userOnWorkspace?.role === UserRole.Admin,
+    isLoading,
+  }
 }

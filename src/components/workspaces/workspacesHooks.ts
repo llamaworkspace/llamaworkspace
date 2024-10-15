@@ -19,6 +19,15 @@ export const useWorkspaces = () => {
   })
 }
 
+export const useWorkspaceProperties = (workspaceId: string) => {
+  const errorHandler = useErrorHandler()
+
+  return api.workspaces.getWorkspaceProperties.useQuery(
+    { workspaceId },
+    { onError: errorHandler() },
+  )
+}
+
 export const useUpdateWorkspace = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()

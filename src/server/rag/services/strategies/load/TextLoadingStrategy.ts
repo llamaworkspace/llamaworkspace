@@ -1,7 +1,9 @@
-import { readFileSafeAsUtf8 } from '@/lib/backend/nodeUtils'
+import { TextLoader } from 'langchain/document_loaders/fs/text'
+import type { ILoadingStrategy } from './ILoadingStrategy'
 
-export class TextLoadingStrategy {
+export class TextLoadingStrategy implements ILoadingStrategy {
   async load(filePath: string) {
-    return await readFileSafeAsUtf8(filePath)
+    const docs = new TextLoader(filePath)
+    return await docs.load()
   }
 }

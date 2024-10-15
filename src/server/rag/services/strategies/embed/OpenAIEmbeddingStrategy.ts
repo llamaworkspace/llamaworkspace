@@ -1,21 +1,25 @@
 import { DEFAULT_EMBEDDING_MODEL } from '@/server/rag/ragConstants'
-import { createOpenAI } from '@ai-sdk/openai'
-import { embed } from 'ai'
+import type { Document } from '@langchain/core/documents'
+import { OpenAIEmbeddings } from '@langchain/openai'
+import type { IEmbeddingStrategy } from './embeddingStrategiesTypes'
 
-export class OpenAIEmbeddingStrategy {
-  async embed(text: string) {
-    const openaiClient = createOpenAI({
-      apiKey: 'this_will_fail',
+interface EmbedOptions {
+  apiKey: string
+}
+
+export class OpenAIEmbeddingStrategy implements IEmbeddingStrategy {
+  name = 'openai'
+
+  async embed(documents: Document[], options: EmbedOptions) {
+    const embeddingsOai = new OpenAIEmbeddings({
+      verbose: true,
+      apiKey: options.apiKey,
+      modelName: DEFAULT_EMBEDDING_MODEL.replace('openai/', ''),
+      dimensions: 1024,
     })
-    const { embedding } = await embed({
-      model: openaiClient.embedding(
-        DEFAULT_EMBEDDING_MODEL.replace('openai/', ''),
-        {
-          dimensions: 1024,
-        },
-      ),
-      value: text,
-    })
-    return embedding
+
+    return await embeddingsOai.embedDocuments(
+      documents.map((doc) => doc.pageContent),
+    )
   }
 }

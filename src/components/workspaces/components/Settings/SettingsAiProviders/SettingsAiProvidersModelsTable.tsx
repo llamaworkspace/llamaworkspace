@@ -19,66 +19,76 @@ export const SettingsAiProvidersModelsTable = ({
 }) => {
   return (
     <div className="space-y-2">
-      <div className="text-xl font-bold">Models</div>
+      <div className="text-xl font-semibold">Models</div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[320px]">Name</TableHead>
-            <TableHead>Slug</TableHead>
-            {showCosts && (
-              <>
-                <TableHead>Input*</TableHead>
-                <TableHead>Response*</TableHead>
-              </>
-            )}
-            <TableHead>Enabled</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {models?.map((model) => (
-            <TableRow key={model.slug} className="h-10">
-              <TableCell>{model.publicName}</TableCell>
-              <TableCell>
-                <span className="bg-zinc-100 px-0.5 font-mono text-pink-600">
-                  {model.slug}
-                </span>
-              </TableCell>
-              {showCosts && (
-                <>
-                  <TableCell>
-                    {numberToUsd(model.costPerMille?.request ?? 0)}
-                  </TableCell>
-                  <TableCell>
-                    {numberToUsd(model.costPerMille?.response ?? 0)}
-                  </TableCell>
-                </>
-              )}
-              <TableCell>
-                <Field
-                  name={`models.${model.slug.replaceAll('.', '^')}.enabled`}
-                  render={({ input }) => {
-                    const handleCheckToggle = (checked: boolean) => {
-                      input.onChange(checked)
-                    }
-
-                    return (
-                      <CheckboxField
-                        checked={!!input.value}
-                        onCheckedChange={handleCheckToggle}
-                      />
-                    )
-                  }}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {showCosts && (
-        <div className="mt-2 text-xs text-zinc-500">
-          * Cost per 1,000 tokens
+      {models.length === 0 && (
+        <div className="text-sm text-zinc-500">
+          No models available for this provider.
         </div>
+      )}
+
+      {models.length > 0 && (
+        <>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[320px]">Name</TableHead>
+                <TableHead>Slug</TableHead>
+                {showCosts && (
+                  <>
+                    <TableHead>Input*</TableHead>
+                    <TableHead>Response*</TableHead>
+                  </>
+                )}
+                <TableHead>Enabled</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {models?.map((model) => (
+                <TableRow key={model.slug} className="h-10">
+                  <TableCell>{model.publicName}</TableCell>
+                  <TableCell>
+                    <span className="bg-zinc-100 px-0.5 font-mono text-pink-600">
+                      {model.slug}
+                    </span>
+                  </TableCell>
+                  {showCosts && (
+                    <>
+                      <TableCell>
+                        {numberToUsd(model.costPerMille?.request ?? 0)}
+                      </TableCell>
+                      <TableCell>
+                        {numberToUsd(model.costPerMille?.response ?? 0)}
+                      </TableCell>
+                    </>
+                  )}
+                  <TableCell>
+                    <Field
+                      name={`models.${model.slug.replaceAll('.', '^')}.enabled`}
+                      render={({ input }) => {
+                        const handleCheckToggle = (checked: boolean) => {
+                          input.onChange(checked)
+                        }
+
+                        return (
+                          <CheckboxField
+                            checked={!!input.value}
+                            onCheckedChange={handleCheckToggle}
+                          />
+                        )
+                      }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {showCosts && (
+            <div className="mt-2 text-xs text-zinc-500">
+              * Cost per 1,000 tokens
+            </div>
+          )}
+        </>
       )}
     </div>
   )

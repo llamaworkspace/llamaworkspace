@@ -139,27 +139,27 @@ export class DefaultAppEngine extends AbstractAppEngine {
       },
     })
 
-    const assetIds = assetsOnApps.map((item) => item.assetId)
+    const assetsOnAppsIds = assetsOnApps.map((item) => item.id)
 
     const lastMessage = messages[messages.length - 1]!
 
     const ragItems = await Promise.reduce(
-      assetIds,
-      async (memo: string[], assetId: string) => {
+      assetsOnAppsIds,
+      async (memo: string[], assetOnAppId: string) => {
         return [
           ...memo,
           ...(await ragRetrievalService(prisma, context, {
-            assetId,
+            assetOnAppId,
             text: lastMessage.content,
           })),
         ]
       },
       [],
     )
-    const content = `You answer questions based on the context provided next. It is very important to ignore the context if it is not relevant to the question, or if context looks empty 
-    <CONTEXT START>
+    const content = `To answer the question, you might want (if relevant) to use the context provided next, wrapped in xml tags. The user uploaded this context through files, so he/she might refer to the context as "the uploaded files" or "the uploaded documents".
+    <context>
     ${ragItems.join('\n')}
-    <CONTEXT END>
+    </context>
     `
 
     return {

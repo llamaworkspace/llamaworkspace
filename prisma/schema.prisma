@@ -1,10 +1,12 @@
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+    provider   = "postgresql"
+    url        = env("DATABASE_URL")
+    extensions = [vector]
 }
 
 model Account {
@@ -151,7 +153,7 @@ model AppsOnUsers {
 }
 
 model Asset {
-    id                 String         @id @default(cuid())
+    id                 String           @id @default(cuid())
     workspaceId        String
     uploadStatus       String
     originalName       String
@@ -160,11 +162,30 @@ model Asset {
     markedAsDeletedAt  DateTime?
     remoteDeletedAt    DateTime?
     contentsAsMarkdown String?
-    createdAt          DateTime       @default(now())
-    updatedAt          DateTime       @updatedAt
-    workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt          DateTime         @default(now())
+    updatedAt          DateTime         @updatedAt
+    workspace          Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     assetsOnApps       AssetsOnApps[]
+    assetEmbeddings    AssetEmbedding[]
 }
+
+model AssetEmbedding {
+    id        String                      @id @default(cuid())
+    assetId   String
+    model     String
+    asset     Asset                       @relation(fields: [assetId], references: [id], onDelete: Cascade)
+    items     AssetEmbeddingItem[]
+}
+
+model AssetEmbeddingItem {
+    id                String                      @id @default(cuid())
+    assetEmbeddingId  String
+    contents          String
+    embedding         Unsupported("vector(1024)")
+    assetEmbedding    AssetEmbedding             @relation(fields: [assetEmbeddingId], references: [id], onDelete: Cascade)
+    
+}
+
 
 model AssetsOnApps {
     id              String    @id @default(cuid())
