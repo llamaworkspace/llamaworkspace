@@ -7,7 +7,6 @@ import { WebsiteHomeFeatureApps } from './WebsiteHomeFeatureApps'
 import { WebsiteHomeFeatureChatWithDocs } from './WebsiteHomeFeatureChatWithDocs'
 import { WebsiteHomeFeatureIntegrations } from './WebsiteHomeFeatureIntegrations'
 import { WebsiteHomeFeatureMultiModel } from './WebsiteHomeFeatureMultiModel'
-import { WebsiteHomeFeaturePricing } from './WebsiteHomeFeaturePricing'
 import { WebsiteHomeHero } from './WebsiteHomeHero'
 
 export function WebsiteHome() {
@@ -54,7 +53,7 @@ export function WebsiteHome() {
             <WebsiteHomeFeatureChatWithDocs />
             <WebsiteHomeFeatureIntegrations />
           </div>
-          <WebsiteHomeFeaturePricing />
+
           <WebsiteHomeFAQs />
           <WebsiteFooterCTA />
         </div>

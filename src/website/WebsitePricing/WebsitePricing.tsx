@@ -74,11 +74,16 @@ function WebsiteHomeFeaturePricing() {
           </div>
 
           <div className="mx-auto mt-48 max-w-4xl sm:text-center">
-            <h1 className="text-2xl font-semibold tracking-tighter text-zinc-950 sm:text-3xl">
+            <h1 className="mb-4 text-2xl font-semibold tracking-tighter text-zinc-950 sm:text-4xl">
               Pricing plans after the beta period
             </h1>
+            <h2 className="mx-auto mb-12 max-w-3xl text-lg text-zinc-500">
+              We&apos;re aiming to move out of beta in Q1 2025. Here&apos;s a
+              sneak peek at the pricing we&apos;re planning once we&apos;re out
+              of beta.
+            </h2>
           </div>
-          <div className="mt-8 flow-root">
+          <div className="flow-root">
             <div className="isolate -mt-16 grid max-w-sm grid-cols-1 gap-y-16 divide-y divide-zinc-100 sm:mx-auto lg:-mx-8 lg:mt-0 lg:max-w-none lg:grid-cols-3 lg:divide-x lg:divide-y-0 xl:-mx-4">
               <FreeTier />
               <TeamsTier />
