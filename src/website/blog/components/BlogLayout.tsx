@@ -1,6 +1,6 @@
 import { AnalyticsProvider } from '@/components/global/clientAnalytics'
-import { WebsiteHomeFooter } from '@/website/WebsiteHome/WebsiteHomeFooter'
-import { WebsiteHomeHeader } from '@/website/WebsiteHome/WebsiteHomeHeader'
+import { WebsiteFooter } from '@/website/WebsiteFooter'
+import { WebsiteHeader } from '@/website/WebsiteHeader'
 import Image from 'next/image'
 import type { PropsWithChildren } from 'react'
 
@@ -19,7 +19,7 @@ export const BlogLayout = ({
   return (
     <AnalyticsProvider trackPageViews>
       <div className="relative isolate overflow-hidden ">
-        <WebsiteHomeHeader />
+        <WebsiteHeader />
         <div className="prose prose-zinc relative isolate mx-auto my-16 min-h-[400px] max-w-3xl overflow-hidden  px-4 prose-headings:tracking-tight prose-h1:text-2xl prose-h1:!leading-tight prose-h1:tracking-tighter prose-h1:text-zinc-800 prose-p:text-lg prose-p:leading-relaxed prose-p:text-zinc-900 prose-ul:text-lg prose-ul:leading-relaxed prose-ul:text-zinc-900 sm:prose-h1:text-5xl md:px-0 md:prose-h2:text-3xl">
           <div>
             <h1 className="mb-4 font-semibold">{title}</h1>
@@ -44,7 +44,7 @@ export const BlogLayout = ({
 
           {children}
         </div>
-        <WebsiteHomeFooter />
+        <WebsiteFooter />
       </div>
     </AnalyticsProvider>
   )
