@@ -1,50 +1,98 @@
+import { Badge } from '@/components/ui/badge'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
-import Link from 'next/link'
-import { WebsiteHomeFeatureWrapper } from './WebsiteHomeFeatureWrapper'
+import Head from 'next/head'
+import { WebsiteFAQs } from '../WebsiteFAQs'
+import { WebsiteFooter } from '../WebsiteFooter'
+import { WebsiteFooterCTA } from '../WebsiteFooterCTA'
+import { WebsiteHeader } from '../WebsiteHeader'
 
-export function WebsiteHomeFeaturePricing() {
+export function WebsitePricing() {
   return (
-    <WebsiteHomeFeatureWrapper>
-      <div
-        id="pricing"
-        className="relative rounded-lg border border-[#f0f5e8] py-8"
-      >
+    <>
+      <Head>
+        <title>Pricing - Llama Workspace</title>
+        <meta property="og:title" content="Pricing - Llama Workspace" />
+
+        <meta
+          property="og:description"
+          content="Llama Workdspace is free while in beta."
+        />
+        <meta property="og:url" content="//llamaworkspace.ai" />
+      </Head>
+      <div className="relative isolate overflow-hidden bg-white">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
           aria-hidden="true"
         >
           <div
-            className="relative left-[calc(50%-11rem)] hidden aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-zinc-200 to-zinc-50 opacity-60 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+            className="to-tr relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#fac3f1] to-[#c0c8f3] opacity-60 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
             style={{
               clipPath:
                 'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
             }}
           />
         </div>
-        <div className="">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="mx-auto max-w-4xl sm:text-center">
-              <h2 className="text-base font-bold uppercase leading-7 text-zinc-400">
-                Pricing
-              </h2>
-              <p className="mt-2 text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
-                Start free, pay as you team grows.
-              </p>
-            </div>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-zinc-600 sm:text-center">
-              Get all the benefits of the commercial AI
-            </p>
-            <div className="mt-20 flow-root">
-              <div className="isolate -mt-16 grid max-w-sm grid-cols-1 gap-y-16 divide-y divide-zinc-100 sm:mx-auto lg:-mx-8 lg:mt-0 lg:max-w-none lg:grid-cols-3 lg:divide-x lg:divide-y-0 xl:-mx-4">
-                <FreeTier />
-                <TeamsTier />
-                <EnterpriseTier />
-              </div>
+
+        <WebsiteHeader />
+
+        <div className="space-y-32">
+          <WebsiteHomeFeaturePricing />
+          <WebsiteFAQs />
+          <WebsiteFooterCTA />
+        </div>
+
+        <WebsiteFooter />
+      </div>
+    </>
+  )
+}
+
+function WebsiteHomeFeaturePricing() {
+  return (
+    <div className="mx-auto max-w-6xl overflow-hidden">
+      <div
+        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+        aria-hidden="true"
+      >
+        <div
+          className="relative left-[calc(50%-11rem)] hidden aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-zinc-200 to-zinc-50 opacity-60 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+          }}
+        />
+      </div>
+      <div className="pt-16">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto max-w-4xl sm:text-center">
+            <h2 className="text-base font-bold uppercase leading-7 text-zinc-400">
+              Pricing
+            </h2>
+            <h1 className="text-4xl font-semibold tracking-tighter text-zinc-950 sm:text-6xl">
+              Free while in beta.
+            </h1>
+          </div>
+
+          <div className="mx-auto mt-48 max-w-4xl sm:text-center">
+            <h1 className="mb-4 text-2xl font-semibold tracking-tighter text-zinc-950 sm:text-4xl">
+              Pricing plans after the beta period
+            </h1>
+            <h2 className="mx-auto mb-12 max-w-3xl text-lg text-zinc-500">
+              We&apos;re aiming to move out of beta in Q1 2025. Here&apos;s a
+              sneak peek at the pricing we&apos;re planning once we&apos;re out
+              of beta.
+            </h2>
+          </div>
+          <div className="flow-root">
+            <div className="isolate -mt-16 grid max-w-sm grid-cols-1 gap-y-16 divide-y divide-zinc-100 sm:mx-auto lg:-mx-8 lg:mt-0 lg:max-w-none lg:grid-cols-3 lg:divide-x lg:divide-y-0 xl:-mx-4">
+              <FreeTier />
+              <TeamsTier />
+              <EnterpriseTier />
             </div>
           </div>
         </div>
       </div>
-    </WebsiteHomeFeatureWrapper>
+    </div>
   )
 }
 
@@ -71,12 +119,6 @@ const FreeTier = () => {
         (expect $2-$6/seat/month)
       </p>
 
-      <Link
-        href="/auth/signin"
-        className="mt-10 block rounded-md bg-zinc-950 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-      >
-        Start free
-      </Link>
       <p className="mt-10 text-sm font-semibold leading-6 text-zinc-900">
         The easiest way to get started:
       </p>
@@ -109,9 +151,11 @@ const teamsFeatures = [
 const TeamsTier = () => {
   return (
     <div className="pt-16 lg:pt-0 xl:px-14">
-      <h3 className="text-base font-semibold leading-7 text-zinc-900">Teams</h3>
+      <h3 className="text-base font-semibold leading-7 text-zinc-900">
+        Teams <Badge variant="yellow">Free while in beta</Badge>
+      </h3>
       <p className="mt-6 flex items-baseline gap-x-1">
-        <span className="text-5xl font-bold tracking-tight text-zinc-900">
+        <span className="text-5xl font-bold tracking-tight text-zinc-900 line-through">
           $4
         </span>
         <span className="text-sm font-semibold leading-6 text-zinc-600">
@@ -123,12 +167,6 @@ const TeamsTier = () => {
         <br />
         (expect $2-$6/seat/month)
       </p>
-      <Link
-        href="/auth/signin"
-        className="mt-10 block rounded-md bg-zinc-950 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-      >
-        Start trial
-      </Link>
       <p className="mt-10 text-sm font-semibold leading-6 text-zinc-900">
         Everything in &quot;Free&quot;, plus:
       </p>
@@ -176,12 +214,6 @@ const EnterpriseTier = () => {
         Plus token fees, paid directly to the AI providers.
       </p>
 
-      <Link
-        href="/auth/signin"
-        className="mt-10 block rounded-md bg-zinc-950 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
-      >
-        Get started
-      </Link>
       <p className="mt-10 text-sm font-semibold leading-6 text-zinc-900">
         Everything in &quot;Teams&quot;, plus:
       </p>

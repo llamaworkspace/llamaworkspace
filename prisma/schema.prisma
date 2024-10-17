@@ -98,17 +98,17 @@ model UsersOnWorkspaces {
 }
 
 model WorkspaceInvite {
-    id          String        @id @default(cuid())
-    email       String
-    token       String
-    source      String        @default("direct")
-    invitedById String
-    invitedBy   User          @relation(fields: [invitedById], references: [id], onDelete: Cascade)
-    workspaceId String
-    workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    createdAt   DateTime      @default(now())
-    updatedAt   DateTime      @updatedAt
-    ShareTarget ShareTarget[]
+    id           String        @id @default(cuid())
+    email        String
+    token        String
+    source       String        @default("direct")
+    invitedById  String
+    invitedBy    User          @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+    workspaceId  String
+    workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    shareTargets ShareTarget[]
 
     @@unique([email, workspaceId])
     @@index([token])
@@ -170,22 +170,20 @@ model Asset {
 }
 
 model AssetEmbedding {
-    id        String                      @id @default(cuid())
-    assetId   String
-    model     String
-    asset     Asset                       @relation(fields: [assetId], references: [id], onDelete: Cascade)
-    items     AssetEmbeddingItem[]
+    id      String               @id @default(cuid())
+    assetId String
+    model   String
+    asset   Asset                @relation(fields: [assetId], references: [id], onDelete: Cascade)
+    items   AssetEmbeddingItem[]
 }
 
 model AssetEmbeddingItem {
-    id                String                      @id @default(cuid())
-    assetEmbeddingId  String
-    contents          String
-    embedding         Unsupported("vector(1024)")
-    assetEmbedding    AssetEmbedding             @relation(fields: [assetEmbeddingId], references: [id], onDelete: Cascade)
-    
+    id               String                      @id @default(cuid())
+    assetEmbeddingId String
+    contents         String
+    embedding        Unsupported("vector(1024)")
+    assetEmbedding   AssetEmbedding              @relation(fields: [assetEmbeddingId], references: [id], onDelete: Cascade)
 }
-
 
 model AssetsOnApps {
     id              String    @id @default(cuid())

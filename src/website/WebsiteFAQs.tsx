@@ -20,7 +20,7 @@ const numBooksMultiplier = Math.floor(
 
 const totalCost = AVG_WORDS_MONTH_INDIVIDUAL * wordCost
 
-export function WebsiteHomeFAQs() {
+export function WebsiteFAQs() {
   return (
     <div className="mx-auto max-w-6xl px-6">
       <div className="mx-auto max-w-4xl divide-y divide-zinc-700/10">
