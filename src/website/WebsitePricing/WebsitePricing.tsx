@@ -1,10 +1,10 @@
 import { Badge } from '@/components/ui/badge'
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import Head from 'next/head'
+import { WebsiteFAQs } from '../WebsiteFAQs'
 import { WebsiteFooter } from '../WebsiteFooter'
 import { WebsiteFooterCTA } from '../WebsiteFooterCTA'
 import { WebsiteHeader } from '../WebsiteHeader'
-import { WebsiteHomeFAQs } from '../WebsiteHome/WebsiteHomeFAQs'
 
 export function WebsitePricing() {
   return (
@@ -37,7 +37,7 @@ export function WebsitePricing() {
 
         <div className="space-y-32">
           <WebsiteHomeFeaturePricing />
-          <WebsiteHomeFAQs />
+          <WebsiteFAQs />
           <WebsiteFooterCTA />
         </div>
 

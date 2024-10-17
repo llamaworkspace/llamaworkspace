@@ -1,12 +1,13 @@
 import Head from 'next/head'
+import { WebsiteFAQs } from '../WebsiteFAQs'
 import { WebsiteFooter } from '../WebsiteFooter'
 import { WebsiteFooterCTA } from '../WebsiteFooterCTA'
 import { WebsiteHeader } from '../WebsiteHeader'
-import { WebsiteHomeFAQs } from './WebsiteHomeFAQs'
 import { WebsiteHomeFeatureApps } from './WebsiteHomeFeatureApps'
 import { WebsiteHomeFeatureChatWithDocs } from './WebsiteHomeFeatureChatWithDocs'
 import { WebsiteHomeFeatureIntegrations } from './WebsiteHomeFeatureIntegrations'
 import { WebsiteHomeFeatureMultiModel } from './WebsiteHomeFeatureMultiModel'
+import { WebsiteHomeValueForMoney } from './WebsiteHomeFeatureValueForMoney/WebsiteHomeValueForMoney'
 import { WebsiteHomeHero } from './WebsiteHomeHero'
 
 export function WebsiteHome() {
@@ -52,9 +53,10 @@ export function WebsiteHome() {
             <WebsiteHomeFeatureApps />
             <WebsiteHomeFeatureChatWithDocs />
             <WebsiteHomeFeatureIntegrations />
+            <WebsiteHomeValueForMoney />
           </div>
 
-          <WebsiteHomeFAQs />
+          <WebsiteFAQs />
           <WebsiteFooterCTA />
         </div>
 
