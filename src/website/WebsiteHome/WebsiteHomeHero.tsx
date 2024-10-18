@@ -2,8 +2,8 @@ import Link from 'next/link'
 
 export function WebsiteHomeHero() {
   return (
-    <div className="relative isolate pt-6">
-      <div className="pb-24 sm:py-8 md:pt-12">
+    <div className="relative isolate py-12">
+      <div className="">
         <div className="mx-auto max-w-6xl space-y-16 px-6 lg:px-0">
           <div className="max-w-2xl space-y-4">
             <h1 className="text-4xl font-semibold tracking-tighter text-zinc-950 sm:text-6xl">
@@ -16,8 +16,8 @@ export function WebsiteHomeHero() {
               <span className="font-bold text-zinc-950">
                 ChatGPT Enterprise alternative.
               </span>{' '}
-              Our product works with any Large Language Model, runs on the infra
-              of your choice, and cuts subscription costs by up to 70%.
+              We work with any Large Language Model, on the infra of your
+              choice, and help you cut subscription costs by up to 82%.
             </h2>
           </div>
           <div className="mt-12 items-center space-y-6 lg:mt-8">

@@ -11,9 +11,9 @@ export const WebsiteHomeValueForMoney = () => {
             while keeping costs under control
           </span>
         </h1>
-        <h2 className="max-w-3xl text-2xl font-medium tracking-tight text-zinc-600">
-          Save 70% compared to ChatGPT Teams and 82% compared to ChatGPT
-          Enterprise.
+        <h2 className="max-w-3xl text-2xl font-medium tracking-tight text-zinc-950">
+          Get more for less and save up to 82% on subscription costs compared to
+          similar solutions like ChatGPT Enterprise.
         </h2>
       </div>
       <WebsiteHomeFeatureValueForMoneyBarChart />
