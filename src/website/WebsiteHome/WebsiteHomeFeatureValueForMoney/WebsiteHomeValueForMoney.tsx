@@ -13,7 +13,7 @@ export const WebsiteHomeValueForMoney = () => {
         </h1>
         <h2 className="max-w-3xl text-2xl font-medium tracking-tight text-zinc-950">
           Get more for less and save up to 82% on subscription costs compared to
-          similar solutions like ChatGPT Enterprise.
+          similar solutions, such as ChatGPT Enterprise.
         </h2>
       </div>
       <WebsiteHomeFeatureValueForMoneyBarChart />

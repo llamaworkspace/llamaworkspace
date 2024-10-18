@@ -8,12 +8,11 @@ export function WebsiteHomeFeatureMultiModel() {
         <div className="lg:pr-8 lg:pt-4">
           <div className="lg:max-w-lg">
             <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-              Chat with Gpt-4o, Claude Sonnet and the latest Llama. All from a
-              single interface.
+              Chat with Gpt-4, Claude or the latest Llama. We have them all.
             </p>
             <p className="mt-6 text-2xl leading-8 tracking-tighter text-zinc-900">
-              Ensure continous access to the most powerful models and getting
-              trapped with a specific AI vendor.
+              Access the most powerful models through a single interface and
+              subscription.
             </p>
           </div>
         </div>

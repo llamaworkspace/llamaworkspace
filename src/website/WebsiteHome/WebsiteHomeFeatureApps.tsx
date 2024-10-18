@@ -11,9 +11,8 @@ export function WebsiteHomeFeatureApps() {
               Create and share AI apps to maximize productivity.
             </p>
             <p className="mt-6 text-2xl leading-8 tracking-tighter text-zinc-900">
-              Build and share task-specific apps using natural language for
-              repeating use cases. Enrich them with your own documents and
-              external function calling.
+              Build and share custom-made apps for repeating use cases. Enrich
+              them with your own documents and external function calling.
             </p>
           </div>
         </div>
