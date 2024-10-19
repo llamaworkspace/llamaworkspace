@@ -7,7 +7,6 @@ import { WebsiteHomeFeatureApps } from './WebsiteHomeFeatureApps'
 import { WebsiteHomeFeatureChatWithDocs } from './WebsiteHomeFeatureChatWithDocs'
 import { WebsiteHomeFeatureIntegrations } from './WebsiteHomeFeatureIntegrations'
 import { WebsiteHomeFeatureMultiModel } from './WebsiteHomeFeatureMultiModel'
-import { WebsiteHomeStatement } from './WebsiteHomeFeatureValueForMoney/WebsiteHomeStatement'
 import { WebsiteHomeValueForMoney } from './WebsiteHomeFeatureValueForMoney/WebsiteHomeValueForMoney'
 import { WebsiteHomeHero } from './WebsiteHomeHero'
 
@@ -51,7 +50,7 @@ export function WebsiteHome() {
           <Logos />
 
           <div className="mb-32 space-y-24">
-            <div className="mx-auto -mb-12 max-w-6xl">
+            <div className="mx-auto -mb-12 max-w-6xl px-6 lg:px-0">
               <h1 className="max-w-3xl font-heading text-4xl font-semibold tracking-tighter text-zinc-900 sm:text-6xl ">
                 Give AI superpowers to every employee.
               </h1>
@@ -60,11 +59,15 @@ export function WebsiteHome() {
             <WebsiteHomeFeatureApps />
             <WebsiteHomeFeatureChatWithDocs />
             <WebsiteHomeFeatureIntegrations />
+          </div>
+          <div className="mb-32">
             <WebsiteHomeValueForMoney />
-            <WebsiteHomeStatement />
           </div>
 
-          <WebsiteFAQs />
+          <div className="mb-32">
+            <WebsiteFAQs />
+          </div>
+
           <WebsiteFooterCTA />
         </div>
 
@@ -76,7 +79,7 @@ export function WebsiteHome() {
 
 export default function Logos() {
   return (
-    <div className="mx-auto max-w-6xl rounded-lg ">
+    <div className="mx-auto max-w-6xl rounded-lg px-6 lg:px-0">
       <h2 className="text-center font-heading text-xl font-semibold tracking-tight text-zinc-800">
         Trusted by +800 teams and employees at
       </h2>
