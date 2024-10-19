@@ -62,9 +62,6 @@ export function WebsiteHome() {
             <WebsiteHomeFeatureIntegrations />
             <WebsiteHomeValueForMoney />
           </div>
-          <div className="mb-32">
-            <WebsiteHomeValueForMoney />
-          </div>
 
           <div className="mb-32">
             <WebsiteFAQs />
