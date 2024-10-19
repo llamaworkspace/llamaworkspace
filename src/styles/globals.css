@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,16 +39,16 @@
 
 }
 
-  .EmojiPickerReact {
-      --epr-emoji-fullsize: 32px !important; /* Adjust the size as needed */
-      --epr-emoji-gap: 12px !important; /* Adjust the size as needed */
-      --epr-category-label-font-size: 14px !important;
+.EmojiPickerReact {
+    --epr-emoji-fullsize: 32px !important; /* Adjust the size as needed */
+    --epr-emoji-gap: 12px !important; /* Adjust the size as needed */
+    --epr-category-label-font-size: 14px !important;
 
-      &.epr-main {
-        border: 0 !important;
-      }
-      
-      .epr-emoji-category-label {
-        font-size: var(--epr-category-label-font-size) !important;
-      }
-  }
+    &.epr-main {
+      border: 0 !important;
+    }
+    
+    .epr-emoji-category-label {
+      font-size: var(--epr-category-label-font-size) !important;
+    }
+}

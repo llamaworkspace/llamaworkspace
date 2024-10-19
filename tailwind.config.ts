@@ -21,6 +21,30 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: [
+          ,
+          'ui-sans-serif',
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          'Arial',
+          'sans-serif',
+        ],
+        heading: [
+          'Sen',
+          'ui-sans-serif',
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          'Arial',
+          'sans-serif',
+        ],
+      },
       maxWidth: {
         chat: '720px',
       },
