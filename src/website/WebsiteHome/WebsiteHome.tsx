@@ -60,6 +60,7 @@ export function WebsiteHome() {
             <WebsiteHomeFeatureApps />
             <WebsiteHomeFeatureChatWithDocs />
             <WebsiteHomeFeatureIntegrations />
+            <WebsiteHomeValueForMoney />
           </div>
           <div className="mb-32">
             <WebsiteHomeValueForMoney />
