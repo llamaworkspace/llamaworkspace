@@ -23,7 +23,6 @@ const config = {
     extend: {
       fontFamily: {
         sans: [
-          ,
           'ui-sans-serif',
           'system-ui',
           '-apple-system',

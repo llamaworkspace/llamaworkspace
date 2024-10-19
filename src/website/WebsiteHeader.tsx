@@ -21,7 +21,7 @@ export function WebsiteHeader() {
             />
           </div>
         </Link>
-        <div className="hidden lg:flex lg:gap-x-12"></div>
+
         <div className="hidden items-center space-x-2 lg:flex lg:flex-1 lg:justify-end">
           <Link
             href="/pricing"

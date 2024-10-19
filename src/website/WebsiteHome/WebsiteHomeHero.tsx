@@ -11,7 +11,7 @@ export function WebsiteHomeHero() {
               <br />
               AI assistant for work.
             </h1>
-            <h2 className="text-xl font-medium tracking-tight text-zinc-800 sm:text-2xl">
+            <h2 className="font-heading text-xl font-medium tracking-tighter text-zinc-900 sm:text-2xl">
               We are an open and extensible{' '}
               <span className="font-bold text-zinc-950">
                 ChatGPT Enterprise alternative.
