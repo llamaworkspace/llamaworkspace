@@ -50,6 +50,7 @@ export interface AppEngineAssetParams {
 export interface AppEngineCallbacks {
   pushText: (text: string) => Promise<void>
   usage: (requestTokens: number, responseTokens: number) => void | Promise<void>
+  abortSignal: AbortSignal | null
 }
 
 export interface OnAssetAddedCallbacks {

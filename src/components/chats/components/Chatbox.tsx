@@ -8,7 +8,7 @@ import { ArrowDownCircleIcon } from '@heroicons/react/24/outline'
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import _ from 'underscore'
-import { useMessages, usePrompt } from '../chatHooks'
+import { useMessages, usePrompt as useRunChat } from '../chatHooks'
 
 const MAX_HEIGHT = 200
 
@@ -35,7 +35,7 @@ export function Chatbox({
   const [textAreaExpectedHeight, __setTextAreaExpectedHeight] = useState(24) // do not use __setTextAreaExpectedHeight directly
   const [value, setValue] = useState('')
   const { data: messages } = useMessages(chatId)
-  const { mutate: runPrompt, isLoading } = usePrompt(chatId)
+  const { mutate: runChat, isLoading, abortChatRun } = useRunChat(chatId)
 
   const setTextAreaExpectedHeight = useCallback(
     (height: number) => {
@@ -108,7 +108,11 @@ export function Chatbox({
       return
     }
     setValue('')
-    runPrompt(value)
+    runChat(value)
+  }
+
+  const handleAbortChat = () => {
+    abortChatRun()
   }
 
   const handleTextAreaChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -188,6 +192,7 @@ export function Chatbox({
               </Button>
             </div>
           </div>
+          <Button onClick={handleAbortChat}>stopppp</Button>
         </form>
       )}
       <div className="mt-2 flex justify-end text-xs tracking-tight">

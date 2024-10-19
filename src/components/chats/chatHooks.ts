@@ -137,6 +137,7 @@ export const usePrompt = (chatId?: string) => {
     append: assistantAppend,
     status: assistantStatus,
     error,
+    stop: abortChatRun,
   } = useVercelAssistant({
     api: '/api/chat',
   })
@@ -284,6 +285,7 @@ export const usePrompt = (chatId?: string) => {
   return {
     mutate,
     isLoading: chatIsActive,
+    abortChatRun,
   }
 }
 

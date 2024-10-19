@@ -81,7 +81,11 @@ export class DefaultAppEngine extends AbstractAppEngine {
         model: modelSlug,
         messages,
       },
-      { pushText: callbacks.pushText, usage: wrappedUsage },
+      {
+        pushText: callbacks.pushText,
+        usage: wrappedUsage,
+        abortSignal: callbacks.abortSignal,
+      },
       { streamText },
       providerKVs,
     )
