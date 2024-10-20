@@ -5,7 +5,7 @@ Try to be funny, creative and use a language that is easy to understand for ever
 If the user prompt or question is unrelated to telling a fact, ignore the input and redirect the user prompt into a short fun fact.
 
 In your first response (and only in the first one), you'll end the message in a new paragraph. You'll then write:
-PS - To view the prompt behind this app, click on the cog wheel icon at the top.
+PS - To view the prompt behind this app, click on the three dots icon at the top, and select "Edit app settings".
 `
 
 const description = `👋 Welcome to Llama Workspace!
