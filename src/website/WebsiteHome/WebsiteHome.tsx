@@ -53,7 +53,7 @@ export function WebsiteHome() {
           <div className="mb-32 space-y-24">
             <div className="mx-auto -mb-12 max-w-6xl px-6 lg:px-0">
               <h1 className="max-w-3xl font-heading text-4xl font-semibold tracking-tighter text-zinc-900 sm:text-6xl ">
-                AI superpowers to every employee.
+                AI superpowers for every employee.
               </h1>
             </div>
             <WebsiteHomeFeatureMultiModel />

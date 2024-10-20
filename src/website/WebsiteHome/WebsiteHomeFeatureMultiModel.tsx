@@ -8,7 +8,7 @@ export function WebsiteHomeFeatureMultiModel() {
         <div className="lg:pr-8 lg:pt-4">
           <div className="lg:max-w-lg">
             <h1 className="mt-2 font-heading text-2xl font-bold tracking-tighter text-zinc-900 sm:text-4xl">
-              Chat with Gpt-4, Claude or the latest Llama. We have them all.
+              Chat with GPT-4, Claude or the latest Llama. We have them all.
             </h1>
             <h2 className="mt-6 text-xl tracking-tight text-zinc-900 sm:text-2xl">
               Access the most powerful models through a single interface and

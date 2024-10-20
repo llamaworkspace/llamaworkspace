@@ -75,7 +75,7 @@ export function WebsiteFAQs() {
             }}
           />
           <Faq
-            question="Is Llama Workspace suitable for individual users or it's only made for organizations?"
+            question="Is Llama Workspace suitable for individual users, or it's only made for organizations?"
             answer={() => {
               return (
                 <>
