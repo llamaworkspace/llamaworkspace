@@ -49,7 +49,6 @@ export interface AppEngineAssetParams {
 
 export interface AppEngineCallbacks {
   pushText: (text: string) => Promise<void>
-  abortSignal: AbortSignal | null
   usage: (requestTokens: number, responseTokens: number) => void | Promise<void>
 }
 
@@ -66,6 +65,7 @@ export abstract class AbstractAppEngine {
   abstract run(
     ctx: AppEngineRunParams<EngineAppKeyValues, Record<string, string>>,
     callbacks: AppEngineCallbacks,
+    abortSignal?: AbortSignal | null,
   ): Promise<void>
 
   abstract onAppCreated(

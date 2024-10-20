@@ -47,6 +47,7 @@ export const OpenRouterProvider: () => AiRegistryProvider = () => {
       const { textStream, usage } = await streamText({
         model: oai(payload.model),
         messages: payload.messages,
+        abortSignal: utils.abortSignal ?? undefined,
       })
 
       for await (const chunk of textStream) {
