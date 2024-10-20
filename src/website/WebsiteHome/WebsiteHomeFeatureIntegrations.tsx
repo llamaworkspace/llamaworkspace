@@ -8,10 +8,10 @@ export function WebsiteHomeFeatureIntegrations() {
       <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 rounded-lg bg-[#f4f4e7] bg-opacity-50 p-8 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
         <div className="lg:pr-8 lg:pt-4">
           <div className="lg:max-w-lg">
-            <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
+            <h1 className="mt-2 font-heading text-2xl font-bold tracking-tighter text-zinc-900 sm:text-4xl">
               Integrate with other AI tools or your own code.
-            </p>
-            <p className="mt-6 text-2xl leading-8 tracking-tighter text-zinc-900">
+            </h1>
+            <h2 className="mt-6 text-xl tracking-tight text-zinc-900 sm:text-2xl">
               Provide a frontend for your internal AI tools. Integrate your code
               in minutes{' '}
               <StyledLink
@@ -21,7 +21,7 @@ export function WebsiteHomeFeatureIntegrations() {
               >
                 using our SDK.
               </StyledLink>
-            </p>
+            </h2>
           </div>
         </div>
         <Image

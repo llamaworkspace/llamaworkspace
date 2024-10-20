@@ -9,6 +9,7 @@ import { WebsiteHomeFeatureIntegrations } from './WebsiteHomeFeatureIntegrations
 import { WebsiteHomeFeatureMultiModel } from './WebsiteHomeFeatureMultiModel'
 import { WebsiteHomeValueForMoney } from './WebsiteHomeFeatureValueForMoney/WebsiteHomeValueForMoney'
 import { WebsiteHomeHero } from './WebsiteHomeHero'
+import WebsiteHomeLogos from './WebsiteHomeLogos'
 
 export function WebsiteHome() {
   return (
@@ -47,8 +48,14 @@ export function WebsiteHome() {
 
         <div className="space-y-32">
           <WebsiteHomeHero />
+          <WebsiteHomeLogos />
 
           <div className="mb-32 space-y-24">
+            <div className="mx-auto -mb-12 max-w-6xl px-6 lg:px-0">
+              <h1 className="max-w-3xl font-heading text-4xl font-semibold tracking-tighter text-zinc-900 sm:text-6xl ">
+                AI superpowers for every employee.
+              </h1>
+            </div>
             <WebsiteHomeFeatureMultiModel />
             <WebsiteHomeFeatureApps />
             <WebsiteHomeFeatureChatWithDocs />
@@ -56,7 +63,10 @@ export function WebsiteHome() {
             <WebsiteHomeValueForMoney />
           </div>
 
-          <WebsiteFAQs />
+          <div className="mb-32">
+            <WebsiteFAQs />
+          </div>
+
           <WebsiteFooterCTA />
         </div>
 
