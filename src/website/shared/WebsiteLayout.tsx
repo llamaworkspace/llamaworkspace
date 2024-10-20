@@ -1,10 +1,11 @@
+import { AnalyticsProvider } from '@/components/global/clientAnalytics'
 import { WebsiteFooter } from '../WebsiteFooter'
 import { WebsiteHeader } from '../WebsiteHeader'
 import { SidebarMobile } from './SidebarMobile'
 
 export function WebsiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <AnalyticsProvider trackPageViews>
       <SidebarMobile />
       <div className="relative isolate overflow-hidden bg-white">
         <div
@@ -23,6 +24,6 @@ export function WebsiteLayout({ children }: { children: React.ReactNode }) {
         <div>{children}</div>
         <WebsiteFooter />
       </div>
-    </>
+    </AnalyticsProvider>
   )
 }
