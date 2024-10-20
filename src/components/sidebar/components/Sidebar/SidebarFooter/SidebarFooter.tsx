@@ -2,7 +2,7 @@ import { SidebarFooterUserSettingsDropdown } from './SidebarFooterUserSettingsDr
 
 export function SidebarFooter() {
   return (
-    <div className="flex h-12 shrink-0 items-center justify-between gap-x-4 border-b border-zinc-200/50 px-2">
+    <div className="flex h-12 shrink-0 items-center justify-between gap-x-4 px-2">
       <SidebarFooterUserSettingsDropdown />
     </div>
   )
