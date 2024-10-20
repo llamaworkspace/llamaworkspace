@@ -48,6 +48,7 @@ export const OpenAiProvider = (): OpenAiProviderType => {
         const { textStream, usage } = await streamText({
           model: oai(payload.model),
           messages: payload.messages,
+          abortSignal: utils.abortSignal ?? undefined,
         })
         for await (const chunk of textStream) {
           await pushText(chunk)

@@ -43,6 +43,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
   async run(
     ctx: AppEngineRunParams<DefaultAppEnginePayload, DefaultAppEnginePayload>,
     callbacks: AppEngineCallbacks,
+    abortSignal: AbortSignal | null,
   ) {
     const { prisma, messages, providerSlug, modelSlug, providerKVs } = ctx
 
@@ -85,10 +86,9 @@ export class DefaultAppEngine extends AbstractAppEngine {
         },
         {
           pushText: callbacks.pushText,
-          abortSignal: callbacks.abortSignal,
           usage: wrappedUsage,
         },
-        { streamText },
+        { streamText, abortSignal },
         providerKVs,
       )
     } catch (_error) {

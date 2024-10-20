@@ -67,7 +67,7 @@ export const AnthropicProvider: () => AiRegistryProvider = () => {
       const { textStream, usage } = await streamText({
         model: anthropic(payload.model),
         messages: payload.messages,
-        abortSignal: callbacks.abortSignal ?? undefined,
+        abortSignal: utils.abortSignal ?? undefined,
       })
 
       for await (const chunk of textStream) {

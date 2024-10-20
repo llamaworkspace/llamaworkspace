@@ -24,13 +24,13 @@ export type AiRegistryStreamTextReturnType = ReturnType<typeof streamText>
 export interface AiRegistryCallbacks {
   pushText: (text: string) => Promise<void>
   usage: (promptTokens: number, completionTokens: number) => Promise<void>
-  abortSignal?: AbortSignal | null
 }
 
 export interface AiRegistryUtils {
   streamText: (
     params: AiRegistryStreamTextParams,
   ) => AiRegistryStreamTextReturnType
+  abortSignal?: AbortSignal | null
 }
 
 export type AsyncIterableStreamOrReadableStream<T> = AsyncIterable<T> &

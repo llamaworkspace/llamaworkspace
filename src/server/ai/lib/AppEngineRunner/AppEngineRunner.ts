@@ -79,11 +79,14 @@ export class AppEngineRunner {
         },
         callbacks,
         async ({ pushText }) => {
-          await engine.run(finalCtx, {
-            pushText,
-            usage: processUsage,
-            abortSignal: abortSignal ?? null,
-          })
+          await engine.run(
+            finalCtx,
+            {
+              pushText,
+              usage: processUsage,
+            },
+            abortSignal,
+          )
         },
       )
     } catch (error) {
