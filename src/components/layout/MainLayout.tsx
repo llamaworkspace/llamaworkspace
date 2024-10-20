@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { type PropsWithChildren } from 'react'
 import { EMPTY_APP_NAME } from '../apps/appsConstants'
 import { useAppById } from '../apps/appsHooks'
+import { useChatById } from '../chats/chatHooks'
 import { AnalyticsProvider } from '../global/clientAnalytics'
 import { useGlobalState } from '../global/globalState'
 import { OnboardingCompletedChecker } from '../onboarding/components/OnboardingCompletedChecker'
@@ -27,18 +28,31 @@ export function MainLayout({
   variant,
 }: MainLayoutProps) {
   const { data: app } = useAppById(appId)
+  const { data: chat } = useChatById(chatId)
   const { state } = useGlobalState()
   const { isDesktopSidebarOpen } = state
 
-  const appTitle = app && (app.title ?? EMPTY_APP_NAME)
-  const head = app ? `${appTitle} | Llama Workspace` : 'Llama Workspace'
+  let appTitle = ''
 
+  if (app) {
+    if (app.isDefault) {
+      if (chat?.title) {
+        appTitle = `${chat.title} | Llama Workspace`
+      } else {
+        appTitle = 'Llama Workspace'
+      }
+    } else if (app.title) {
+      appTitle = `${app.title} | Llama Workspace`
+    } else {
+      appTitle = `${EMPTY_APP_NAME} | Llama Workspace`
+    }
+  }
   // IMPORTANT: Keep this key prop, it forces re-renders that otherwise
   // would not happen when navigating between apps.
   return (
     <MainLayoutSessionChecker key={appId}>
       <Head>
-        <title>{head}</title>
+        <title>{appTitle}</title>
       </Head>
       <AnalyticsProvider trackPageViews identifyUser>
         <OnboardingCompletedChecker />
