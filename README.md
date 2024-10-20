@@ -7,7 +7,7 @@
 <p align="center">
 	<h1 align="center"><b>Llama Workspace</b></h1>
 
-<h3 align="center"><strong>An extensible ChatGPT Teams alternative</strong></h3>
+<h3 align="center"><strong>An open & extensible ChatGPT Teams alternative</strong></h3>
 <p align="center">
     <a href="https://llamaworkspace.ai/">Website</a>
     ·
@@ -36,6 +36,12 @@ Llama Workspace is an open-source & extensible ChatGPT Teams/Enterprise alternat
 - **Straightforward self-hosting**: Get up and running with a fewest possible number of commands.
 
 ## Getting started
+
+### Hosted by us
+
+The easiest way to try out the product is to sign up for our hosted version at https://llamaworkspace.ai.
+
+### Self-hosting
 
 All the information on how to self host Llama Workspace can be found in our documentation: https://docs.llamaworkspace.ai
 
