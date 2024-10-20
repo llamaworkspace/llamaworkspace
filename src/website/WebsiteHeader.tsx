@@ -1,9 +1,11 @@
-import { BookOpenIcon } from '@heroicons/react/24/outline'
+import { useGlobalState } from '@/components/global/globalState'
+import { Bars3Icon, BookOpenIcon } from '@heroicons/react/24/outline'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export function WebsiteHeader() {
+  const { toggleMobileSidebar } = useGlobalState()
   return (
     <header className="z-100">
       <nav
@@ -21,7 +23,7 @@ export function WebsiteHeader() {
             />
           </div>
         </Link>
-        <div className="hidden lg:flex lg:gap-x-12"></div>
+
         <div className="hidden items-center space-x-2 lg:flex lg:flex-1 lg:justify-end">
           <Link
             href="/pricing"
@@ -51,6 +53,19 @@ export function WebsiteHeader() {
           >
             Sign-in <span aria-hidden="true">&rarr;</span>
           </Link>
+        </div>
+        <div className="lg:hidden">
+          <button
+            type="button"
+            className="z-100 inline-flex cursor-pointer items-center justify-center rounded-md  p-2 text-zinc-900 hover:bg-gray-100 focus:outline-none"
+            onClick={() => {
+              console.log('clicked')
+              toggleMobileSidebar()
+            }}
+          >
+            <span className="sr-only">Open main menu</span>
+            <Bars3Icon className="h-6 w-6" />
+          </button>
         </div>
       </nav>
     </header>

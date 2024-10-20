@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { ensureError } from '@/lib/utils'
 import { aiProvidersFetcherService } from '@/server/ai/services/aiProvidersFetcher.service'
 import {
   createUserOnWorkspaceContext,
@@ -42,6 +43,7 @@ export class DefaultAppEngine extends AbstractAppEngine {
   async run(
     ctx: AppEngineRunParams<DefaultAppEnginePayload, DefaultAppEnginePayload>,
     callbacks: AppEngineCallbacks,
+    abortSignal: AbortSignal | null,
   ) {
     const { prisma, messages, providerSlug, modelSlug, providerKVs } = ctx
 
@@ -75,16 +77,29 @@ export class DefaultAppEngine extends AbstractAppEngine {
       await callbacks.usage(promptTokens, completionTokens)
     }
 
-    await provider.executeAsStream(
-      {
-        provider: providerSlug,
-        model: modelSlug,
-        messages,
-      },
-      { pushText: callbacks.pushText, usage: wrappedUsage },
-      { streamText },
-      providerKVs,
-    )
+    try {
+      await provider.executeAsStream(
+        {
+          provider: providerSlug,
+          model: modelSlug,
+          messages,
+        },
+        {
+          pushText: callbacks.pushText,
+          usage: wrappedUsage,
+        },
+        { streamText, abortSignal },
+        providerKVs,
+      )
+    } catch (_error) {
+      const error = ensureError(_error)
+
+      if (error.constructor.name === 'ResponseAborted') {
+        await callbacks.usage(0, 0)
+        return
+      }
+      throw error
+    }
 
     if (!isUsageCalled) {
       throw createHttpError(500, 'usage has not been registered.')

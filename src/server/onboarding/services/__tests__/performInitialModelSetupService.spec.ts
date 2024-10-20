@@ -2,7 +2,7 @@ import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceConte
 import { prisma } from '@/server/db'
 import { workspaceWithUsersAndAppsFixture } from '@/server/testing/fixtures/workspaceWithUsersAndApps.fixture'
 import { InitialModel } from '@/shared/globalTypes'
-import type { App, User, Workspace } from '@prisma/client'
+import type { User, Workspace } from '@prisma/client'
 import { performInitialModelSetupService } from '../performInitialModelSetup.service'
 
 const subject = async (
@@ -25,14 +25,12 @@ const subject = async (
 describe('performInitialModelSetupService', () => {
   let workspace: Workspace
   let user: User
-  let app: App
 
   beforeEach(async () => {
     const fixture = await workspaceWithUsersAndAppsFixture(prisma)
 
     workspace = fixture.workspace
     user = fixture.user
-    app = fixture.appWithScopeEverybody
   })
 
   it('marks the onboarding as completed', async () => {

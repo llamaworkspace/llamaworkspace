@@ -30,7 +30,10 @@ export class AppEngineRunner {
     private readonly engines: AbstractAppEngine[],
   ) {}
 
-  async call(chatId: string): Promise<ReadableStream<Uint8Array>> {
+  async call(
+    chatId: string,
+    abortSignal?: AbortSignal | null,
+  ): Promise<ReadableStream<Uint8Array>> {
     let hoistedCtx:
       | AppEngineRunParams<EngineAppKeyValues, Record<string, string>>
       | undefined = undefined
@@ -77,7 +80,14 @@ export class AppEngineRunner {
         },
         callbacks,
         async ({ pushText }) => {
-          await engine.run(finalCtx, { pushText, usage: processUsage })
+          await engine.run(
+            finalCtx,
+            {
+              pushText,
+              usage: processUsage,
+            },
+            abortSignal,
+          )
         },
       )
     } catch (error) {

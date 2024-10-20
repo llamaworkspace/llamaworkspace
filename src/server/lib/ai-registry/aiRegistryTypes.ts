@@ -30,6 +30,7 @@ export interface AiRegistryUtils {
   streamText: (
     params: AiRegistryStreamTextParams,
   ) => AiRegistryStreamTextReturnType
+  abortSignal?: AbortSignal | null
 }
 
 export type AsyncIterableStreamOrReadableStream<T> = AsyncIterable<T> &

@@ -66,6 +66,7 @@ export abstract class AbstractAppEngine {
   abstract run(
     ctx: AppEngineRunParams<EngineAppKeyValues, Record<string, string>>,
     callbacks: AppEngineCallbacks,
+    abortSignal?: AbortSignal | null,
   ): Promise<void>
 
   abstract onAppCreated(
