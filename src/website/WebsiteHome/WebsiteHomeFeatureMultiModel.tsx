@@ -4,17 +4,16 @@ import { WebsiteHomeFeatureWrapper } from './WebsiteHomeFeatureWrapper'
 export function WebsiteHomeFeatureMultiModel() {
   return (
     <WebsiteHomeFeatureWrapper>
-      <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 rounded-lg bg-zinc-100 bg-opacity-60 p-8 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+      <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 rounded-lg bg-zinc-100 bg-opacity-60 p-6 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
         <div className="lg:pr-8 lg:pt-4">
           <div className="lg:max-w-lg">
-            <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-              Chat with Gpt-4o, Claude Sonnet and the latest Llama. All from a
-              single interface.
-            </p>
-            <p className="mt-6 text-2xl leading-8 tracking-tighter text-zinc-900">
-              Ensure continous access to the most powerful models and getting
-              trapped with a specific AI vendor.
-            </p>
+            <h1 className="mt-2 font-heading text-2xl font-bold tracking-tighter text-zinc-900 sm:text-4xl">
+              Chat with GPT-4, Claude or the latest Llama. We have them all.
+            </h1>
+            <h2 className="mt-6 text-xl tracking-tight text-zinc-900 sm:text-2xl">
+              Access the most powerful models through a single interface and
+              subscription.
+            </h2>
           </div>
         </div>
         <Image
