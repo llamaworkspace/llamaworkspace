@@ -72,8 +72,8 @@ export function SidebarMobile() {
 function SidebarContent() {
   const navigation = useNavigation()
 
-  const handleSignIn = () => {
-    navigation.push('/auth/signin')
+  const handleSignIn = async () => {
+    await navigation.push('/auth/signin')
   }
 
   return (
@@ -112,7 +112,7 @@ function SidebarContent() {
         </Link>
       </div>{' '}
       <Link href="/auth/signin">
-        <Button onClick={handleSignIn}>
+        <Button onClick={() => void handleSignIn()}>
           Sign up / Log in
           <span aria-hidden="true" className="ml-1">
             &rarr;

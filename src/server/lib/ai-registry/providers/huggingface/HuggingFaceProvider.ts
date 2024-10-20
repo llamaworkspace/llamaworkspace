@@ -17,12 +17,7 @@ export const HuggingFaceProvider: () => AiRegistryProvider = () => {
         encrypted: true,
       },
     ],
-    executeAsStream: async (
-      payload,
-      callbacks,
-      utils,
-      options: HuggingFaceExecuteOptions,
-    ) => {
+    executeAsStream: async () => {
       await Promise.resolve()
     },
   }
