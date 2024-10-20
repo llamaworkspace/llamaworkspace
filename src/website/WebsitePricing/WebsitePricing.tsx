@@ -47,9 +47,8 @@ function WebsiteHomeFeaturePricing() {
             Pricing plans after the beta period
           </h1>
           <h2 className="mx-auto mb-12 max-w-3xl text-lg text-zinc-500">
-            We&apos;re aiming to move out of beta in Q1 2025. Here&apos;s a
-            sneak peek at the pricing we&apos;re planning once we&apos;re out of
-            beta.
+            Here&apos;s a sneak peek at the pricing we&apos;re planning once
+            we&apos;re out of beta.
           </h2>
         </div>
         <div className="flow-root">
