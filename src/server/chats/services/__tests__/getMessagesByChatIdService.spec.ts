@@ -7,6 +7,7 @@ import { MessageFactory } from '@/server/testing/factories/MessageFactory'
 import { ShareTargetFactory } from '@/server/testing/factories/ShareTargetFactory'
 import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
+import { Author } from '@/shared/aiTypesAndMappers'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Chat, Message, User, Workspace } from '@prisma/client'
 import { Promise } from 'bluebird'
@@ -93,6 +94,35 @@ describe('getMessagesByChatIdService', () => {
       await expect(
         subject(workspace.id, otherUser.id, { chatId: chat.id }),
       ).rejects.toThrow()
+    })
+  })
+
+  describe('when there is a message with null content', () => {
+    it('replaces null messages with "*Empty response*"', async () => {
+      // Create a message with null content
+      await MessageFactory.create(prisma, {
+        chatId: chat.id,
+        message: null,
+        author: Author.Assistant,
+      })
+
+      const result = await subject(workspace.id, user.id, { chatId: chat.id })
+
+      // Check if the null message is replaced with "*Empty response*"
+      const emptyMessage = result.find(
+        (msg) => msg.message === '*Empty response*',
+      )
+      expect(emptyMessage).toBeTruthy()
+
+      // Ensure other messages are not affected
+      const nonEmptyMessages = result.filter(
+        (msg) => msg.message !== '*Empty response*',
+      )
+      expect(nonEmptyMessages.length).toBe(3)
+      nonEmptyMessages.forEach((msg) => {
+        expect(msg.message).not.toBeNull()
+        expect(msg.message).not.toBe('*Empty response*')
+      })
     })
   })
 })

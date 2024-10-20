@@ -3,11 +3,14 @@ import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { isNull } from 'underscore'
 import { scopeChatByWorkspace } from '../chatUtils'
 
 interface GetMessagesPayload {
   chatId: string
 }
+
+const EMPTY_RESPONSE_MESSAGE = '*Empty response*'
 
 export const getMessagesByChatIdService = async function (
   prisma: PrismaClientOrTrxClient,
@@ -31,7 +34,7 @@ export const getMessagesByChatIdService = async function (
       chat.appId,
     )
 
-    return await prisma.message.findMany({
+    const res = await prisma.message.findMany({
       where: {
         chatId,
         chat: scopeChatByWorkspace(
@@ -42,6 +45,13 @@ export const getMessagesByChatIdService = async function (
       orderBy: {
         createdAt: 'asc',
       },
+    })
+
+    return res.map((r) => {
+      return {
+        ...r,
+        message: isNull(r.message) ? EMPTY_RESPONSE_MESSAGE : r.message,
+      }
     })
   })
 }

@@ -27,20 +27,22 @@ export const ChatHeaderShare = ({ appId }: ComponentWithAppId) => {
 
   const button = <Button variant="ghost">Share</Button>
   const tooltip = (
-    <Tooltip open={tooltipOpenBlocker}>
-      <TooltipTrigger asChild>
-        {/* Keep this div or the tooltip will fail when the button is disabled */}
-        <div>
-          <Button variant="ghost" disabled={true}>
-            Share
-          </Button>
-        </div>
-      </TooltipTrigger>
-      {/* mr-2 ensures that the tooltip does not stick to the right of the browser */}
-      <TooltipContent className="mr-2">
-        <p>You do not have sharing permissions for this app.</p>
-      </TooltipContent>
-    </Tooltip>
+    <div>
+      <Tooltip open={tooltipOpenBlocker}>
+        <TooltipTrigger asChild>
+          {/* Keep this div or the tooltip will fail when the button is disabled */}
+          <div>
+            <Button variant="ghost" disabled={true}>
+              Share
+            </Button>
+          </div>
+        </TooltipTrigger>
+        {/* mr-2 ensures that the tooltip does not stick to the right of the browser */}
+        <TooltipContent className="mr-2">
+          <p>You do not have sharing permissions for this app.</p>
+        </TooltipContent>
+      </Tooltip>
+    </div>
   )
 
   return (

@@ -220,7 +220,10 @@ export const useChatRun = (chatId?: string) => {
                   (message) => message.id === 'temp_user',
                 )
                 if (!target) return draft
-                target = userMessage
+                target = {
+                  ...userMessage,
+                  message: userMessage.message ?? '',
+                }
               })
             })
 
@@ -234,7 +237,7 @@ export const useChatRun = (chatId?: string) => {
                   id: 'temp_assistant',
                   chatId,
                   appConfigVersionId: null,
-                  message: null,
+                  message: '',
                   author: ChatAuthor.Assistant,
                   createdAt: new Date(),
                   updatedAt: new Date(),
@@ -256,7 +259,10 @@ export const useChatRun = (chatId?: string) => {
                           (message) => message.id === 'temp_assistant',
                         )
                         if (!target) return draft
-                        target = assistantMessage
+                        target = {
+                          ...assistantMessage,
+                          message: assistantMessage.message ?? '',
+                        }
                       })
                     },
                   )
