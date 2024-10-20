@@ -33,6 +33,8 @@ const RESPONSE_HEADERS = {
 // 1. Before the stream is returned. => We catch them here
 // 2. In-stream errors or any error happening during the stream. => We catch them in the stream
 export async function chatStreamedResponseHandler(req: NextRequest) {
+  const abortSignal = req.signal
+
   try {
     const {
       data: { chatId },
@@ -55,7 +57,7 @@ export async function chatStreamedResponseHandler(req: NextRequest) {
     ]
     const appEngineRunner = new AppEngineRunner(prisma, context, engines)
 
-    const stream = await appEngineRunner.call(chatId)
+    const stream = await appEngineRunner.call(chatId, abortSignal)
 
     const textDecoder = new TextDecoder()
     const textEncoder = new TextEncoder()
