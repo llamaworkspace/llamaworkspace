@@ -61,7 +61,10 @@ export class AppEnginePayloadBuilder {
         throw new Error('System message not found')
       }
 
-      rawMessages.unshift(systemMessage)
+      rawMessages.unshift({
+        ...systemMessage,
+        message: systemMessage.message ?? '',
+      })
       preparedMessages.unshift({
         role: Author.System,
         content: appConfigVersion.systemMessage,
