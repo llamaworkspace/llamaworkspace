@@ -48,10 +48,13 @@ export const OpenAiProvider = (): OpenAiProviderType => {
         const { textStream, usage } = await streamText({
           model: oai(payload.model),
           messages: payload.messages,
+          abortSignal: callbacks.abortSignal ?? undefined,
         })
+
         for await (const chunk of textStream) {
           await pushText(chunk)
         }
+
         const usageResult = await usage // This is a running promise already
 
         await callbacks.usage(
@@ -60,6 +63,13 @@ export const OpenAiProvider = (): OpenAiProviderType => {
         )
       } catch (_error) {
         const error = ensureError(_error)
+
+        // AbortSignal Error
+        if (error.constructor.name === 'ResponseAborted') {
+          await callbacks.usage(0, 0)
+          return
+        }
+
         if (error instanceof APICallError) {
           if (
             error.data &&
