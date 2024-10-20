@@ -5,10 +5,10 @@ import { useEnterSubmit } from '@/lib/frontend/useEnterSubmit'
 import { cn } from '@/lib/utils'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { ArrowDownCircleIcon } from '@heroicons/react/24/outline'
-import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
+import { PaperAirplaneIcon, StopIcon } from '@heroicons/react/24/solid'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import _ from 'underscore'
-import { useMessages, usePrompt as useRunChat } from '../chatHooks'
+import { useChatRun, useMessages } from '../chatHooks'
 
 const MAX_HEIGHT = 200
 
@@ -35,7 +35,11 @@ export function Chatbox({
   const [textAreaExpectedHeight, __setTextAreaExpectedHeight] = useState(24) // do not use __setTextAreaExpectedHeight directly
   const [value, setValue] = useState('')
   const { data: messages } = useMessages(chatId)
-  const { mutate: runChat, isLoading, abortChatRun } = useRunChat(chatId)
+  const {
+    mutate: runChat,
+    isActive: chatIsActive,
+    abortChatRun,
+  } = useChatRun(chatId)
 
   const setTextAreaExpectedHeight = useCallback(
     (height: number) => {
@@ -102,7 +106,7 @@ export function Chatbox({
     ev.preventDefault()
     onChatSubmit?.()
     if (!chatId) return
-    if (isLoading) return
+    if (chatIsActive) return
 
     if (!value?.trim()) {
       return
@@ -183,16 +187,22 @@ export function Chatbox({
               </div>
             </div>
             <div className="self-end">
-              <Button
-                type="submit"
-                disabled={!value || isLoading}
-                variant="secondary"
-              >
-                <PaperAirplaneIcon className="h-5 w-5 text-zinc-600" />
-              </Button>
+              {chatIsActive && (
+                <Button onClick={handleAbortChat} variant="secondary">
+                  <StopIcon className="h-5 w-5 text-zinc-950" />
+                </Button>
+              )}
+              {!chatIsActive && (
+                <Button
+                  type="submit"
+                  disabled={!value || chatIsActive}
+                  variant="secondary"
+                >
+                  <PaperAirplaneIcon className="h-5 w-5 text-zinc-950" />
+                </Button>
+              )}
             </div>
           </div>
-          <Button onClick={handleAbortChat}>stopppp</Button>
         </form>
       )}
       <div className="mt-2 flex justify-end text-xs tracking-tight">

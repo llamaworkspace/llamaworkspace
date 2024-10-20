@@ -66,6 +66,7 @@ export const OpenAiProvider = (): OpenAiProviderType => {
 
         // AbortSignal Error
         if (error.constructor.name === 'ResponseAborted') {
+          // TODO: Handle usage
           await callbacks.usage(0, 0)
           return
         }

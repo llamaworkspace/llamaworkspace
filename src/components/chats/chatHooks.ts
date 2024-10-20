@@ -120,7 +120,7 @@ export const useAppConfigForChat = (chatId?: string) => {
   )
 }
 
-export const usePrompt = (chatId?: string) => {
+export const useChatRun = (chatId?: string) => {
   const utils = api.useUtils()
   const errorHandler = useErrorHandler()
   const errorToast = useErrorToast()
@@ -284,7 +284,7 @@ export const usePrompt = (chatId?: string) => {
 
   return {
     mutate,
-    isLoading: chatIsActive,
+    isActive: chatIsActive,
     abortChatRun,
   }
 }
