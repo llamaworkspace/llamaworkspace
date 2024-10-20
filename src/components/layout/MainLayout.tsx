@@ -36,7 +36,7 @@ export function MainLayout({
 
   if (app) {
     if (app.isDefault) {
-      if (chat && chat.title) {
+      if (chat?.title) {
         appTitle = `${chat.title} | Llama Workspace`
       } else {
         appTitle = 'Llama Workspace'
