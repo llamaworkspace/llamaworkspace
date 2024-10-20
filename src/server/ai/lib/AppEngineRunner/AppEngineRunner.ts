@@ -82,13 +82,15 @@ export class AppEngineRunner {
           await engine.run(finalCtx, {
             pushText,
             usage: processUsage,
-            abortSignal,
+            abortSignal: abortSignal ?? null,
           })
         },
       )
     } catch (error) {
-      if (hoistedCtx?.targetAssistantRawMessage.id)
+      if (hoistedCtx?.targetAssistantRawMessage.id) {
         await this.deleteMessage(hoistedCtx.targetAssistantRawMessage.id)
+      }
+
       throw error
     }
   }
