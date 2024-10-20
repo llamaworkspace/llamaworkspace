@@ -7,11 +7,13 @@
 <p align="center">
 	<h1 align="center"><b>Llama Workspace</b></h1>
 
-<h3 align="center"><strong>An extensible ChatGPT Enterprise alternative</strong></h3>
+<h3 align="center"><strong>An extensible ChatGPT Teams alternative</strong></h3>
 <p align="center">
     <a href="https://llamaworkspace.ai/">Website</a>
     ·
-    <a href="https://go.midday.ai/anPiuRx">Discord</a>
+    <a href="https://docs.llamaworkspace.ai/">Documentation</a>
+    ·
+    <a href="https://discord.gg/wTHhNBDKvW">Discord</a>
     ·
     <a href="https://twitter.com/llamaworkspace">Twitter</a>
 </p>

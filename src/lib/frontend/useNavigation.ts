@@ -9,6 +9,7 @@ import {
 
 export type ApplicationPaths =
   | '/'
+  | '/auth/signin'
   | '/w'
   | '/w/:workspaceId'
   | '/w/:workspaceId/empty'

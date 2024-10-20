@@ -6,7 +6,7 @@ export function WebsiteFooterCTA() {
       <div className="px-6 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-semibold tracking-tight  sm:text-4xl">
-            Get early access to Llama Workspace today
+            Try Llama Workspace today
           </h2>
 
           <div className="mt-10 flex items-center justify-center gap-x-6">
