@@ -14,6 +14,17 @@ import { ragIngestService } from '../ragIngestService'
 import { TextLoadingStrategy } from '../strategies/load/TextLoadingStrategy'
 import { RecursiveCharacterTextSplitStrategy } from '../strategies/split/RecursiveCharacterTextSplitStrategy'
 
+jest.mock('@/server/rag/services/strategies/load/TextLoadingStrategy', () => {
+  const TextLoadingStrategy = jest.fn()
+  /* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */
+  TextLoadingStrategy.prototype.load = jest
+    .fn()
+    .mockResolvedValue([{ pageContent: 'this is a text', metadata: {} }])
+
+  return {
+    TextLoadingStrategy,
+  }
+})
 jest.mock(
   '@/server/rag/services/strategies/split/RecursiveCharacterTextSplitStrategy',
   () => {
