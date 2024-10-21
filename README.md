@@ -7,7 +7,7 @@
 <p align="center">
 	<h1 align="center"><b>Llama Workspace</b></h1>
 
-<h3 align="center"><strong>An open & extensible ChatGPT Teams alternative</strong></h3>
+<h3 align="center"><strong>An open-source & extensible ChatGPT Teams alternative</strong></h3>
 <p align="center">
     <a href="https://llamaworkspace.ai/">Website</a>
     ·
