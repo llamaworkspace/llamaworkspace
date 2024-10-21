@@ -14,7 +14,6 @@ import cuid from 'cuid'
 import createHttpError from 'http-errors'
 import { embeddingsRegistry } from './registries/embeddingsRegistry'
 import { fileLoadersRegistry } from './registries/fileLoadersRegistry'
-import type { ILoadingStrategy } from './strategies/load/ILoadingStrategy'
 import { RecursiveCharacterTextSplitStrategy } from './strategies/split/RecursiveCharacterTextSplitStrategy'
 import { mapFileTypeToLoaderType } from './utils/fileTypeToLoaderTypeMapper'
 import { getTargetEmbeddingModel } from './utils/getTargetEmbeddingModel'
@@ -108,9 +107,7 @@ const loadFile = async (
   type: string,
   filePath: string,
 ): Promise<Document<Record<string, unknown>>> => {
-  let loadingStrategy: ILoadingStrategy
-
-  loadingStrategy = fileLoadersRegistry.getOrThrow(
+  const loadingStrategy = fileLoadersRegistry.getOrThrow(
     mapFileTypeToLoaderType(type),
   )
 
