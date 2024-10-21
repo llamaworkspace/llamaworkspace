@@ -13,9 +13,8 @@ import { Promise } from 'bluebird'
 import cuid from 'cuid'
 import createHttpError from 'http-errors'
 import { embeddingsRegistry } from './registries/embeddingsRegistry'
+import { fileLoadersRegistry } from './registries/fileLoadersRegistry'
 import type { ILoadingStrategy } from './strategies/load/ILoadingStrategy'
-import { PdfLoadingStrategy } from './strategies/load/PdfLoadingStrategy'
-import { TextLoadingStrategy } from './strategies/load/TextLoadingStrategy'
 import { RecursiveCharacterTextSplitStrategy } from './strategies/split/RecursiveCharacterTextSplitStrategy'
 import { getTargetEmbeddingModel } from './utils/getTargetEmbeddingModel'
 
@@ -110,22 +109,19 @@ const loadFile = async (
 ): Promise<Document<Record<string, unknown>>> => {
   let loadingStrategy: ILoadingStrategy
 
-  switch (type.replace('.', '')) {
-    case 'txt':
-      loadingStrategy = new TextLoadingStrategy()
-      break
+  loadingStrategy = fileLoadersRegistry.getOrThrow(mapTypeToLoader(type))
 
-    case 'pdf':
-      loadingStrategy = new PdfLoadingStrategy()
-      break
-    default:
-      throw new Error(`Unsupported asset type: ${type}`)
-  }
   const documents = await loadingStrategy.load(filePath)
+
   if (!documents) {
     throw createHttpError(500, 'No documents found')
   }
   return documents[0]!
+}
+
+const mapTypeToLoader = (type: string) => {
+  const finalType = type.replace('.', '')
+  return finalType
 }
 
 const splitText = async (
