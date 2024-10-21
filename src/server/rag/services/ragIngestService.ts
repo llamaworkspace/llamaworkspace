@@ -16,6 +16,7 @@ import { embeddingsRegistry } from './registries/embeddingsRegistry'
 import { fileLoadersRegistry } from './registries/fileLoadersRegistry'
 import type { ILoadingStrategy } from './strategies/load/ILoadingStrategy'
 import { RecursiveCharacterTextSplitStrategy } from './strategies/split/RecursiveCharacterTextSplitStrategy'
+import { mapFileTypeToLoaderType } from './utils/fileTypeToLoaderTypeMapper'
 import { getTargetEmbeddingModel } from './utils/getTargetEmbeddingModel'
 
 interface RagIngestPayload {
@@ -109,7 +110,9 @@ const loadFile = async (
 ): Promise<Document<Record<string, unknown>>> => {
   let loadingStrategy: ILoadingStrategy
 
-  loadingStrategy = fileLoadersRegistry.getOrThrow(mapTypeToLoader(type))
+  loadingStrategy = fileLoadersRegistry.getOrThrow(
+    mapFileTypeToLoaderType(type),
+  )
 
   const documents = await loadingStrategy.load(filePath)
 
@@ -117,11 +120,6 @@ const loadFile = async (
     throw createHttpError(500, 'No documents found')
   }
   return documents[0]!
-}
-
-const mapTypeToLoader = (type: string) => {
-  const finalType = type.replace('.', '')
-  return finalType
 }
 
 const splitText = async (
