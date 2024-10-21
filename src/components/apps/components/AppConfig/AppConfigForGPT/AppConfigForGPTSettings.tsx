@@ -1,5 +1,5 @@
 import { SelectAiModelsFormField } from '@/components/ai/components/SelectAiModelsFormField'
-import { useAppById } from '@/components/apps/appsHooks'
+import { useAppAssets, useAppById } from '@/components/apps/appsHooks'
 import { StyledLink } from '@/components/ui/StyledLink'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { CheckboxField } from '@/components/ui/forms/CheckboxField'
@@ -8,7 +8,6 @@ import { useIsAdmin } from '@/components/users/usersHooks'
 import { useWorkspaceProperties } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
 import { useNavigation } from '@/lib/frontend/useNavigation'
-import { OPENAI_SUPPORTED_FILE_TYPES } from '@/server/apps/appConstants'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
 import { AppConfigForGPTFileUpload } from './AppConfigForGPTFileUpload/AppConfigForGPTFileUpload'
@@ -35,6 +34,10 @@ export const AppConfigForGPTSettings = ({
   const navigation = useNavigation()
   const { data: app } = useAppById(appId)
 
+  const { data: appAssets } = useAppAssets(appId)
+
+  const hasFiles = appAssets && appAssets.length > 0
+
   const ref = useRef<HTMLTextAreaElement>(null)
   const focusQueryStringEl = navigation.query?.focus
   useEffect(() => {
@@ -42,8 +45,6 @@ export const AppConfigForGPTSettings = ({
       ref.current.focus()
     }
   }, [focusQueryStringEl, disabled])
-
-  const supportedFileTypes = OPENAI_SUPPORTED_FILE_TYPES
 
   return (
     <>
@@ -70,10 +71,7 @@ export const AppConfigForGPTSettings = ({
 
       {app && (
         <div>
-          <AppConfigForGPTFileUpload
-            appId={appId}
-            supportedFileTypes={supportedFileTypes}
-          />
+          <AppConfigForGPTFileUpload appId={appId} />
         </div>
       )}
 
@@ -94,7 +92,7 @@ export const AppConfigForGPTSettings = ({
             }}
           />
         </div>
-        {showOpenaiAssistantSelector && (
+        {showOpenaiAssistantSelector && hasFiles && (
           <div className="">
             <Field
               name="isOpenaiAssistant"

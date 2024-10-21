@@ -7,6 +7,7 @@ import { useCanPerformActionForApp } from '@/components/permissions/permissionsH
 import { FileUploadInput } from '@/components/ui/FileUploadInput'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FormLabel } from '@/components/ui/forms/FormFieldWrapper'
+import { ASSISTANT_SUPPORTED_FILE_TYPES } from '@/server/apps/appConstants'
 import { AssetOnAppStatus } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Asset, AssetsOnApps } from '@prisma/client'
@@ -16,13 +17,11 @@ import { AppConfigForGPTUploadedFile } from './AppConfigForGPTUploadedFile'
 import { useUploadFile } from './appConfigForGPTFileUploadHooks'
 
 interface AppConfigForGPTFileUploadProps {
-  supportedFileTypes: string
   appId?: string
 }
 
 export const AppConfigForGPTFileUpload = ({
   appId,
-  supportedFileTypes,
 }: AppConfigForGPTFileUploadProps) => {
   const [uploadableFiles, setUploadeableFiles] = useState<
     Record<string, Asset>
@@ -107,7 +106,7 @@ export const AppConfigForGPTFileUpload = ({
           onChange={(event) => void handleFileUpload(event)}
           type="file"
           multiple
-          accept={supportedFileTypes}
+          accept={ASSISTANT_SUPPORTED_FILE_TYPES}
           disabled={!canUpdate}
         />
       )}
