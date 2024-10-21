@@ -38,7 +38,7 @@ const posthogInitialize = (trackPageViews = false) => {
       person_profiles: 'identified_only',
       loaded: (posthog) => {
         // debug mode in development. "doInit" must still be called in development
-        if (process.env.NODE_ENV === 'development') {
+        if (env.NEXT_PUBLIC_ENV === 'development') {
           posthog.debug()
         }
       },

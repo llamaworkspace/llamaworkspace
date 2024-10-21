@@ -14,7 +14,7 @@ export function WebsiteHomeHero() {
             <h2 className="font-heading text-xl font-medium tracking-tighter text-zinc-900 sm:text-2xl">
               We are an open and extensible{' '}
               <span className="font-bold text-zinc-950">
-                ChatGPT Enterprise alternative.
+                ChatGPT Teams alternative.
               </span>{' '}
               We work with any Large Language Model, on the infra of your
               choice, and help you cut subscription costs by up to 82%.

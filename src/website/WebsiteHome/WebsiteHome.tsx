@@ -14,9 +14,7 @@ export function WebsiteHome() {
   return (
     <>
       <Head>
-        <title>
-          Llama Workspace - Open Source ChatGPT Enterprise alternative.
-        </title>
+        <title>Llama Workspace - Open Source ChatGPT Teams alternative.</title>
         <meta property="og:title" content="Open Source AI Assistant for work" />
         {/* <meta
           name="image"
@@ -25,7 +23,7 @@ export function WebsiteHome() {
         /> */}
         <meta
           property="og:description"
-          content="A ChatGPT Enterprise alternative that runs on any Large Language Model. On your infra or ours. All while helping you save up to 70% in subscription costs."
+          content="A ChatGPT Teams alternative that runs on any Large Language Model. On your infra or ours. All while helping you save up to 70% in subscription costs."
         />
         <meta property="og:url" content="//llamaworkspace.ai" />
       </Head>

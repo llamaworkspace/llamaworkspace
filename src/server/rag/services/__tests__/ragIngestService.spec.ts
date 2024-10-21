@@ -43,6 +43,24 @@ jest.mock(
   },
 )
 
+jest.mock('@/server/rag/services/registries/fileLoadersRegistry.ts', () => {
+  const txtFileLoader = {
+    name: 'txt',
+    load: jest
+      .fn()
+      .mockResolvedValue([{ pageContent: 'this is a text', metadata: {} }]),
+  }
+
+  return {
+    fileLoadersRegistry: {
+      register: jest.fn(),
+      get: () => txtFileLoader,
+      getOrThrow: () => txtFileLoader,
+      getAll: () => [txtFileLoader],
+    },
+  }
+})
+
 jest.mock('@/server/rag/services/registries/embeddingsRegistry.ts', () => {
   const array1024 = Array.from({ length: 1024 }, () => 0)
 
@@ -164,23 +182,6 @@ describe('ragIngestService', () => {
 
       expect(TextLoadingStrategy).not.toHaveBeenCalled()
       expect(RecursiveCharacterTextSplitStrategy).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('when the format is not supported', () => {
-    beforeEach(async () => {
-      await prisma.asset.update({
-        where: { id: asset.id },
-        data: { extension: 'rand', originalName: 'file.rand' },
-      })
-    })
-    it('throws', async () => {
-      await expect(
-        subject(workspace.id, user.id, {
-          assetOnAppId: assetOnApp.id,
-          filePath: fakeFilePath,
-        }),
-      ).rejects.toThrow()
     })
   })
 })

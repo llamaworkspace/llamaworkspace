@@ -13,10 +13,9 @@ import { Promise } from 'bluebird'
 import cuid from 'cuid'
 import createHttpError from 'http-errors'
 import { embeddingsRegistry } from './registries/embeddingsRegistry'
-import type { ILoadingStrategy } from './strategies/load/ILoadingStrategy'
-import { PdfLoadingStrategy } from './strategies/load/PdfLoadingStrategy'
-import { TextLoadingStrategy } from './strategies/load/TextLoadingStrategy'
+import { fileLoadersRegistry } from './registries/fileLoadersRegistry'
 import { RecursiveCharacterTextSplitStrategy } from './strategies/split/RecursiveCharacterTextSplitStrategy'
+import { mapFileTypeToLoaderType } from './utils/fileTypeToLoaderTypeMapper'
 import { getTargetEmbeddingModel } from './utils/getTargetEmbeddingModel'
 
 interface RagIngestPayload {
@@ -108,20 +107,12 @@ const loadFile = async (
   type: string,
   filePath: string,
 ): Promise<Document<Record<string, unknown>>> => {
-  let loadingStrategy: ILoadingStrategy
+  const loadingStrategy = fileLoadersRegistry.getOrThrow(
+    mapFileTypeToLoaderType(type),
+  )
 
-  switch (type.replace('.', '')) {
-    case 'txt':
-      loadingStrategy = new TextLoadingStrategy()
-      break
-
-    case 'pdf':
-      loadingStrategy = new PdfLoadingStrategy()
-      break
-    default:
-      throw new Error(`Unsupported asset type: ${type}`)
-  }
   const documents = await loadingStrategy.load(filePath)
+
   if (!documents) {
     throw createHttpError(500, 'No documents found')
   }

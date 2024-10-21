@@ -12,7 +12,7 @@ export class GenericRegistry<T extends { name: string }> {
   getOrThrow(name: string): T {
     const item = this.get(name)
     if (!item) {
-      throw new Error(`Item ${name} not found`)
+      throw new Error(`Could not find ${name} in registry`)
     }
     return item
   }
