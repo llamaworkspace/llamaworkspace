@@ -1,8 +1,7 @@
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
-import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
+import { appEnginesRegistry } from '@/server/ai/lib/engines/appEnginesRegistry'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import { AbstractQueueManager } from '@/server/lib/AbstractQueueManager/AbstractQueueManager'
 import { z } from 'zod'
 import { PreprocessingHandler } from './PreprocessingHandler'
@@ -22,8 +21,6 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
   }
 
   protected async handle(action: string, payload: Payload) {
-    const engines = [new DefaultAppEngine(), ...enginesRegistry]
-
     const { assetOnAppId, userId } = payload
 
     const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
@@ -57,7 +54,11 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
       console.log('Finish asset preprocessing')
     }
 
-    const appEngineRunner = new AppEngineRunner(prisma, context, engines)
+    const appEngineRunner = new AppEngineRunner(
+      prisma,
+      context,
+      appEnginesRegistry,
+    )
     console.log('Start onAssetAdded callback')
     await appEngineRunner.onAssetAdded(assetOnAppId)
     console.log('Finish onAssetAdded callback')

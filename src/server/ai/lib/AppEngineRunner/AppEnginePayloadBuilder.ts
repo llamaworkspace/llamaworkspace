@@ -15,11 +15,12 @@ import {
   getAiProviderKVsService,
   getAllAiProvidersKVsService,
 } from '../../services/getProvidersForWorkspace.service'
+
 import type {
   AppEngineConfigParams,
   AppEngineRunParams,
   EngineAppKeyValues,
-} from '../AbstractAppEngine'
+} from '../engines/AbstractAppEngine'
 
 type AppEngineRunParamsWithoutChatRun = Omit<
   AppEngineRunParams<EngineAppKeyValues, Record<string, string>>,
