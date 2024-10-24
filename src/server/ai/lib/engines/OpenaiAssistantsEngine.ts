@@ -2,6 +2,12 @@ import { AppEngineType } from '@/components/apps/appsTypes'
 import { generatePublicErrorString } from '@/lib/aiSdkUtils'
 import { createReadStreamSafe } from '@/lib/backend/nodeUtils'
 import { ensureError } from '@/lib/utils'
+import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
+import createHttpError from 'http-errors'
+import OpenAI from 'openai'
+import type { Uploadable } from 'openai/uploads'
+import { groupBy } from 'underscore'
+import { z } from 'zod'
 import {
   AbstractAppEngine,
   type AppEngineAssetParams,
@@ -9,13 +15,7 @@ import {
   type AppEngineConfigParams,
   type AppEngineRunParams,
   type OnAssetAddedCallbacks,
-} from '@/server/ai/lib/AbstractAppEngine'
-import type { AiRegistryMessage } from '@/server/lib/ai-registry/aiRegistryTypes'
-import createHttpError from 'http-errors'
-import OpenAI from 'openai'
-import type { Uploadable } from 'openai/uploads'
-import { groupBy } from 'underscore'
-import { z } from 'zod'
+} from './AbstractAppEngine'
 
 type AiRegistryMessageWithoutSystemRole = Omit<AiRegistryMessage, 'role'> & {
   role: Exclude<AiRegistryMessage['role'], 'system'>
