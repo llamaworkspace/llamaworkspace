@@ -1,5 +1,4 @@
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
-import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
@@ -22,8 +21,6 @@ class UnbindAssetFromAppQueue extends AbstractQueueManager<typeof zPayload> {
   }
 
   protected async handle(action: string, payload: Payload) {
-    const engines = [new DefaultAppEngine(), ...enginesRegistry]
-
     return prismaAsTrx(prisma, async (prismaAsTrx) => {
       const assetOnAppId = payload.assetOnAppId
 
@@ -49,7 +46,11 @@ class UnbindAssetFromAppQueue extends AbstractQueueManager<typeof zPayload> {
         payload.userId,
       )
 
-      const appEngineRunner = new AppEngineRunner(prisma, context, engines)
+      const appEngineRunner = new AppEngineRunner(
+        prisma,
+        context,
+        enginesRegistry,
+      )
 
       await appEngineRunner.onAssetRemoved(assetOnApp.id)
       await prismaAsTrx.assetsOnApps.deleteMany({

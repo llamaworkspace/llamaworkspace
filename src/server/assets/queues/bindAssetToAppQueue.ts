@@ -1,5 +1,4 @@
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
-import { DefaultAppEngine } from '@/server/ai/lib/DefaultAppEngine'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
@@ -21,8 +20,6 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
   }
 
   protected async handle(action: string, payload: Payload) {
-    const engines = [new DefaultAppEngine(), ...enginesRegistry]
-
     const assetOnAppId = payload.assetOnAppId
 
     const assetOnApp = await prisma.assetsOnApps.findFirstOrThrow({
@@ -47,7 +44,11 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
       payload.userId,
     )
 
-    const appEngineRunner = new AppEngineRunner(prisma, context, engines)
+    const appEngineRunner = new AppEngineRunner(
+      prisma,
+      context,
+      enginesRegistry,
+    )
     await appEngineRunner.onAssetAdded(assetOnAppId)
   }
 }
