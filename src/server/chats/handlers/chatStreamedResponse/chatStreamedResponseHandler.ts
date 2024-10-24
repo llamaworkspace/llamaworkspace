@@ -5,10 +5,10 @@ import {
 } from '@/lib/aiSdkUtils'
 import { ensureError } from '@/lib/utils'
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
+import { appEnginesRegistry } from '@/server/ai/lib/engines/appEnginesRegistry'
 import { authOptions } from '@/server/auth/nextauth'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import { errorLogger } from '@/shared/errors/errorLogger'
 import createHttpError from 'http-errors'
 import { getServerSession } from 'next-auth'
@@ -51,7 +51,7 @@ export async function chatStreamedResponseHandler(req: NextRequest) {
     const appEngineRunner = new AppEngineRunner(
       prisma,
       context,
-      enginesRegistry,
+      appEnginesRegistry,
     )
 
     const stream = await appEngineRunner.call(chatId, abortSignal)

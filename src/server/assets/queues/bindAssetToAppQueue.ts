@@ -1,7 +1,7 @@
 import { AppEngineRunner } from '@/server/ai/lib/AppEngineRunner/AppEngineRunner'
+import { appEnginesRegistry } from '@/server/ai/lib/engines/appEnginesRegistry'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
-import { enginesRegistry } from '@/server/extensions/appEngines/appEngines'
 import { AbstractQueueManager } from '@/server/lib/AbstractQueueManager/AbstractQueueManager'
 import { z } from 'zod'
 
@@ -47,7 +47,7 @@ class BindAssetToAppQueue extends AbstractQueueManager<typeof zPayload> {
     const appEngineRunner = new AppEngineRunner(
       prisma,
       context,
-      enginesRegistry,
+      appEnginesRegistry,
     )
     await appEngineRunner.onAssetAdded(assetOnAppId)
   }

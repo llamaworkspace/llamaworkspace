@@ -13,12 +13,12 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Prisma, PrismaClient } from '@prisma/client'
 import createHttpError from 'http-errors'
 import { aiProvidersFetcherService } from '../../services/aiProvidersFetcher.service'
+import { AppEngineResponseStream } from '../AppEngineResponseStream'
 import type {
   AbstractAppEngine,
   AppEngineRunParams,
   EngineAppKeyValues,
-} from '../AbstractAppEngine'
-import { AppEngineResponseStream } from '../AppEngineResponseStream'
+} from '../engines/AbstractAppEngine'
 import { AppEnginePayloadBuilder } from './AppEnginePayloadBuilder'
 import { chatTitleCreateService } from './chatTitleCreate.service'
 
