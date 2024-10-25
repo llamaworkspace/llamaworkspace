@@ -2,7 +2,7 @@ import type { AiRegistryModel } from '../../../aiRegistryTypes'
 
 export const anthropicModels: AiRegistryModel[] = [
   {
-    slug: 'claude-3-5-sonnet-20240620' as const,
+    slug: 'claude-3-5-sonnet-20241022' as const,
     publicName: 'Claude 3.5 Sonnet' as const,
     default: true,
     costPerMille: {
