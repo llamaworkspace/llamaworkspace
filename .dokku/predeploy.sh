@@ -1,2 +1,2 @@
 #!/bin/bash
-npm run production:deploy
+pnpm run production:deploy

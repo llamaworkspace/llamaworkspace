@@ -3,17 +3,17 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --frozen-lockfile --ignore-scripts && npm cache clean --force
+RUN pnpm ci --frozen-lockfile --ignore-scripts && pnpm cache clean --force
 
 COPY . ./
 
 RUN cp ./infra/.env.demo .env
 
-# RUN ENCRYPTION_KEY=$(npm run cloak:generate | tail -n 1) \
+# RUN ENCRYPTION_KEY=$(pnpm run cloak:generate | tail -n 1) \
 #   && printf "\nENCRYPTION_KEY=$ENCRYPTION_KEY" >> .env
 
-RUN npm run postinstall \
-  && npm run build \
+RUN pnpm run postinstall \
+  && pnpm run build \
   && rm .env
 
 EXPOSE 5000
