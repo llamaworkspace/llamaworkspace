@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2022",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "checkJs": true,
@@ -24,7 +24,8 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "preserveSymlinks": true
   },
   "include": [
     ".eslintrc.cjs",
