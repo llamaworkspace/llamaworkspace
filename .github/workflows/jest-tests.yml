@@ -40,10 +40,10 @@ jobs:
           cache-dependency-path: 'package-lock.json'
 
       - name: Install dependencies
-        run: npm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Prepare test environment
-        run: npm run test:prepare && cp .env.test .env
+        run: pnpm run test:prepare && cp .env.test .env
 
       - name: Run Jest tests
-        run: npm run test:ci
+        run: pnpm run test:ci
