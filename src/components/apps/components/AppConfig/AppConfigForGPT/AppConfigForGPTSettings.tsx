@@ -105,7 +105,7 @@ export const AppConfigForGPTSettings = ({
                     onCheckedChange={handleCheckToggle}
                     checked={!!input.value}
                     {...input}
-                    label="Provide answers from files using OpenAI's processing engine instead of Llama Workspace"
+                    label="Use OpenAI's native engine to read and answer questions from files"
                   />
                 )
               }}
