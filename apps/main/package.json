@@ -35,7 +35,6 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.24",
     "@ai-sdk/openai": "^0.0.33",
-    "@anthropic-ai/sdk": "^0.16.1",
     "@aws-sdk/client-bedrock-runtime": "^3.621.0",
     "@aws-sdk/client-s3": "^3.621.0",
     "@aws-sdk/s3-presigned-post": "^3.621.0",
