@@ -1,4 +1,4 @@
-name: Test suite
+name: Test suite for apps/main
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
       - main
 jobs:
   test:
-    name: Test suite run
+    name: Test suite run for apps/main
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -30,8 +30,8 @@ jobs:
         with:
           path: |
             ~/.pnpm-store
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+            ${{ github.workspace }}/apps/main/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/main/**/*.js', 'apps/main/**/*.jsx', 'apps/main/**/*.ts', 'apps/main/**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
@@ -54,7 +54,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Prepare test environment
-        run: pnpm run test:prepare && cp .env.test .env
+        run: cd apps/main && pnpm run test:prepare && cp .env.test .env
 
       - name: Run Jest tests
-        run: pnpm run test:ci
+        run: cd apps/main && pnpm run test:ci
