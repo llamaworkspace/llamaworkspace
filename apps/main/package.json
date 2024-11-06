@@ -33,7 +33,7 @@
     "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo ."
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^0.0.24",
+    "@ai-sdk/anthropic": "^0.0.56",
     "@ai-sdk/openai": "^0.0.33",
     "@aws-sdk/client-bedrock-runtime": "^3.621.0",
     "@aws-sdk/client-s3": "^3.621.0",
@@ -73,7 +73,7 @@
     "@trpc/next": "^10.38.1",
     "@trpc/react-query": "^10.38.1",
     "@trpc/server": "^10.38.1",
-    "ai": "^3.2.10",
+    "ai": "^3.4.33",
     "bluebird": "^3.7.2",
     "chalk": "^5.3.0",
     "class-variance-authority": "^0.7.0",

@@ -18,8 +18,8 @@ importers:
   apps/main:
     dependencies:
       '@ai-sdk/anthropic':
-        specifier: ^0.0.24
-        version: 0.0.24(zod@3.23.8)
+        specifier: ^0.0.56
+        version: 0.0.56(zod@3.23.8)
       '@ai-sdk/openai':
         specifier: ^0.0.33
         version: 0.0.33(zod@3.23.8)
@@ -138,7 +138,7 @@ importers:
         specifier: ^10.38.1
         version: 10.45.2
       ai:
-        specifier: ^3.2.10
+        specifier: ^3.4.33
         version: 3.4.33(openai@4.71.0(zod@3.23.8))(react@18.3.1)(sswr@2.1.0(svelte@5.1.11))(svelte@5.1.11)(vue@3.5.12(typescript@5.6.3))(zod@3.23.8)
       bluebird:
         specifier: ^3.7.2
@@ -413,8 +413,8 @@ packages:
   '@adobe/css-tools@4.4.0':
     resolution: {integrity: sha512-Ff9+ksdQQB3rMncgqDK78uLznstjyfIf2Arnh22pW8kBpLs6rpKDwgnZT46hin5Hl1WzazzK64DOrhSwYpS7bQ==}
 
-  '@ai-sdk/anthropic@0.0.24':
-    resolution: {integrity: sha512-jJnjdeqRoOyy+aXeWqAViqD8M3SnN/RyoQbvNUX0oJ8m7M5dgam/wHrkFHr85cX2hHhLSq2e2eJgtKCjZ2mWLw==}
+  '@ai-sdk/anthropic@0.0.56':
+    resolution: {integrity: sha512-FC/XbeFANFp8rHH+zEZF34cvRu9T42rQxw9QnUzJ1LXTi1cWjxYOx2Zo4vfg0iofxxqgOe4fT94IdT2ERQ89bA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.0.0
@@ -7780,10 +7780,10 @@ snapshots:
 
   '@adobe/css-tools@4.4.0': {}
 
-  '@ai-sdk/anthropic@0.0.24(zod@3.23.8)':
+  '@ai-sdk/anthropic@0.0.56(zod@3.23.8)':
     dependencies:
-      '@ai-sdk/provider': 0.0.10
-      '@ai-sdk/provider-utils': 0.0.16(zod@3.23.8)
+      '@ai-sdk/provider': 0.0.26
+      '@ai-sdk/provider-utils': 1.0.22(zod@3.23.8)
       zod: 3.23.8
 
   '@ai-sdk/openai@0.0.33(zod@3.23.8)':
@@ -11749,7 +11749,7 @@ snapshots:
   axios@1.7.4(debug@4.3.7):
     dependencies:
       follow-redirects: 1.15.9(debug@4.3.7)
-      form-data: 4.0.0
+      form-data: 4.0.1
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
