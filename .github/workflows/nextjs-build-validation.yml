@@ -1,4 +1,4 @@
-name: NextJS build validation
+name: NextJS build validation for apps/main
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   validation:
-    name: NextJS build validation
+    name: NextJS build validation for apps/main
     runs-on: ubuntu-latest
 
     steps:
@@ -17,8 +17,8 @@ jobs:
         with:
           path: |
             ~/.pnpm-store
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+            ${{ github.workspace }}/apps/main/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/main/**/*.js', 'apps/main/**/*.jsx', 'apps/main/**/*.ts', 'apps/main/**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
@@ -41,7 +41,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Copy ENV files
-        run: cp .env.test .env
+        run: cd apps/main && cp .env.test .env
 
       - name: Build NextJS app
-        run: pnpm run build
+        run: cd apps/main && pnpm run build
