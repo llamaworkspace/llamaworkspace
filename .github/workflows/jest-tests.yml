@@ -1,4 +1,4 @@
-name: Test suite
+name: Test suite for apps/main
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
       - main
 jobs:
   test:
-    name: Test suite run
+    name: Test suite run for apps/main
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -26,24 +26,35 @@ jobs:
           POSTGRES_PASSWORD: password
 
     steps:
-      - name: Enable corepack
-        run: corepack enable
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            ${{ github.workspace }}/apps/main/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/main/**/*.js', 'apps/main/**/*.jsx', 'apps/main/**/*.ts', 'apps/main/**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
+          cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
       - name: Install dependencies
-        run: npm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Prepare test environment
-        run: npm run test:prepare && cp .env.test .env
+        run: cd apps/main && pnpm run test:prepare && cp .env.test .env
 
       - name: Run Jest tests
-        run: npm run test:ci
+        run: cd apps/main && pnpm run test:ci

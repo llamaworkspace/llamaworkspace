@@ -15,9 +15,9 @@ trap _term SIGTERM SIGINT
 # Check if any arguments are passed
 if [ $# -eq 0 ]; then
   echo "Executing pre-start migrations..."
-  npm run db:deploy
+  pnpm run db:deploy
   echo "Initializing app..."
-  npm run start &
+  pnpm run start &
   child=$!
   wait "$child"
 else

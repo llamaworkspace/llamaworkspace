@@ -1,0 +1,3 @@
+{
+  "buildCommand": "pnpm run production:build"
+}

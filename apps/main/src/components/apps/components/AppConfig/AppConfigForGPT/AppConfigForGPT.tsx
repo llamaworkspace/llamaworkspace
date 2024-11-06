@@ -109,6 +109,7 @@ export function AppConfigForGPT({ appId }: AppConfigProps) {
           systemMessage: appConfig?.systemMessage,
           description: appConfig?.description,
           model: appConfig?.model,
+          isOpenaiAssistant: app?.engineType === AppEngineType.Assistant,
         }}
         render={({
           handleSubmit,
