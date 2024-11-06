@@ -12,7 +12,7 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       typescript:
-        specifier: ^5.4.2
+        specifier: ^5.6.3
         version: 5.6.3
 
   apps/demo:
@@ -12150,7 +12150,7 @@ snapshots:
   axios@1.7.4(debug@4.3.7):
     dependencies:
       follow-redirects: 1.15.9(debug@4.3.7)
-      form-data: 4.0.1
+      form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
