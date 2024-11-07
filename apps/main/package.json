@@ -1,5 +1,5 @@
 {
-  "name": "llamaworkspace-app",
+  "name": "main",
   "version": "0.0.12",
   "scripts": {
     "build": "next build",
@@ -91,6 +91,7 @@
     "llamaworkspace": "^0.4.0",
     "lodash": "^4.17.21",
     "micro": "^10.0.1",
+    "mime": "^4.0.4",
     "next": "^14.2.12",
     "next-api-middleware": "^2.0.1",
     "next-auth": "^4.24.7",
