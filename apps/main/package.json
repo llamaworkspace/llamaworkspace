@@ -1,5 +1,5 @@
 {
-  "name": "llamaworkspace-app",
+  "name": "main",
   "version": "0.0.12",
   "scripts": {
     "build": "next build",
@@ -162,6 +162,7 @@
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.2",
     "umzug": "^3.7.0",
+    "@repo/utils": "workspace:*",
     "@repo/tsconfig": "workspace:*"
   },
   "ct3aMetadata": {

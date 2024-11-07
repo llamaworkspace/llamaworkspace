@@ -1,5 +1,6 @@
 import { useGlobalState } from '@/components/global/globalState'
 import { cn } from '@/lib/utils'
+import { sayHello } from '@repo/utils/utils'
 import { SidebarContent } from './SidebarContent'
 
 export function SidebarWrapperDesktop() {
@@ -14,6 +15,7 @@ export function SidebarWrapperDesktop() {
       )}
     >
       <div className="flex h-full grow flex-col overflow-hidden bg-zinc-10">
+        {sayHello()}
         <SidebarContent />
       </div>
     </div>
