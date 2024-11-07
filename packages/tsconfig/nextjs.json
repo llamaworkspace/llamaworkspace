@@ -16,9 +16,6 @@
     "noEmit": true,
     "lib": ["es2022", "DOM", "DOM.Iterable"],
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "strictNullChecks": true
   },
   "exclude": ["node_modules"],
