@@ -11,7 +11,7 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
-
+    "forceConsistentCasingInFileNames": true,
     "lib": ["es2022"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
