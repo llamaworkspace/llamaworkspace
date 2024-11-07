@@ -1,12 +1,21 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Main app Next.js",
-  "extends": "@repo/tsconfig/nextjs.json",
+  "display": "Next.js",
+  "extends": "./base.json",
   "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowJs": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "noEmit": true,
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "strictNullChecks": true
   },
   "exclude": ["node_modules"],
