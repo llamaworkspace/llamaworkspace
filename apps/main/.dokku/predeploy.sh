@@ -1,2 +1,2 @@
 #!/bin/bash
-pnpm run production:deploy --filter=apps/main
+pnpm run production:deploy

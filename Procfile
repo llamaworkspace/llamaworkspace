@@ -1,1 +1,1 @@
-web: pnpm run start --filter=apps/main
+web: pnpm run start
