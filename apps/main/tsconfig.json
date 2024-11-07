@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Next.js",
+  "display": "Main app Next.js",
   "extends": "@repo/tsconfig/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
