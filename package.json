@@ -31,7 +31,8 @@
     "dev:clear-openai": "pnpm run dev:delete-all-openai-vector-stores && pnpm run dev:delete-all-openai-files",
     "dco:up": "docker-compose -f docker-compose.yml up -d",
     "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo .",
-    "bump-deps": "npx npm-check-updates --deep -u && pnpm install"
+    "bump-deps": "npx npm-check-updates --deep -u && pnpm install",
+    "hatchet:token": "docker compose -f docker-compose.yml exec hatchet-lite /hatchet-admin token create --config /config --tenant-id 707d0855-80ab-4e1f-a156-f1c4546cbf52 | xargs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.56",
