@@ -5,6 +5,7 @@
     "build": "next build",
     "dev": "next dev --turbo",
     "hatchet:dev": "env-cmd -f .env tsx --watch src/hatchet/worker.ts",
+    "hatchet:build": "tsc --project ./tsconfig.json",
     "start-demo": "docker-compose -f ./infra/docker-compose.demo.yml up",
     "preinstall": "npx only-allow pnpm",
     "postinstall": "pnpm run prisma:generate",
