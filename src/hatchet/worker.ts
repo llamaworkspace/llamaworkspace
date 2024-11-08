@@ -1,5 +1,6 @@
-import { Workflow } from '@hatchet-dev/typescript-sdk'
+import type { Workflow } from '@hatchet-dev/typescript-sdk'
 import { HatchetClient } from '@hatchet-dev/typescript-sdk/clients/hatchet-client'
+import { scheduleDemoWorkflow } from './workflows/schedule-demo'
 
 const token = process.env.HATCHET_CLIENT_TOKEN
 
@@ -29,12 +30,14 @@ const workflow: Workflow = {
     },
   ],
 }
-async function main() {
-  const worker = await hatchet.worker('first-typescript-workflow')
-  await worker.registerWorkflow(workflow)
-  await worker.start()
 
-  const workflowRun = await hatchet.admin.runWorkflow(
+async function main() {
+  console.log(1111)
+  const worker = await hatchet.worker('main-worker')
+  await worker.registerWorkflow(workflow)
+  await worker.registerWorkflow(scheduleDemoWorkflow)
+
+  const workflowRun = hatchet.admin.runWorkflow(
     'first-typescript-workflow',
     {
       test: 'test',
@@ -45,7 +48,10 @@ async function main() {
       },
     },
   )
-  console.log(workflowRun)
+
+  await worker.start()
+
+  console.log(22222, workflowRun)
 }
 
-main()
+void main()
