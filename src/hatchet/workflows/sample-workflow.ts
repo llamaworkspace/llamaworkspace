@@ -10,6 +10,7 @@ export const sampleWorkflow: Workflow = {
     {
       name: 'step1',
       run: async (ctx) => {
+        await new Promise((resolve) => setTimeout(resolve, 100))
         console.log(
           'starting step1 with the following input',
           ctx.workflowInput(),
