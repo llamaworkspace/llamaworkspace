@@ -11,8 +11,6 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
-    AUTH_DISCORD_ID: z.string(),
-    AUTH_DISCORD_SECRET: z.string(),
     SMTP_EMAIL_FROM: z.string(),
     SMTP_EMAIL_SERVER: z.string(),
     DATABASE_URL: z.string().url(),
@@ -36,8 +34,6 @@ export const env = createEnv({
    */
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
-    AUTH_DISCORD_ID: process.env.AUTH_DISCORD_ID,
-    AUTH_DISCORD_SECRET: process.env.AUTH_DISCORD_SECRET,
     SMTP_EMAIL_FROM: process.env.SMTP_EMAIL_FROM,
     SMTP_EMAIL_SERVER: process.env.SMTP_EMAIL_SERVER,
     DATABASE_URL: process.env.DATABASE_URL,
