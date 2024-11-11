@@ -3,8 +3,8 @@
 // Note that this config is unrelated to the Vercel Edge Runtime and is also required when running locally.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import { env } from '@/env.mjs'
-import * as Sentry from '@sentry/nextjs'
+import { env } from "@/env.js";
+import * as Sentry from "@sentry/nextjs";
 
 function sentryInit() {
   Sentry.init({
@@ -12,9 +12,9 @@ function sentryInit() {
 
     // Setting this option to true will print useful information to the console while you're setting up Sentry.
     debug: false,
-  })
+  });
 }
 
 if (env.NEXT_PUBLIC_SENTRY_DSN) {
-  sentryInit()
+  sentryInit();
 }
