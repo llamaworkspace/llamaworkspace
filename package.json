@@ -16,10 +16,15 @@
     "db:push": "npx prisma db push",
     "db:deploy": "prisma migrate deploy",
     "prettier": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\" --cache",
+    "hatchet:dev": "env-cmd -f .env -f .env.local tsx --watch src/hatchet/worker.ts",
+    "hatchet:start": "env-cmd -f .env -f .env.local tsx src/hatchet/worker.ts",
+    "hatchet:token": "docker compose -f docker-compose.yml exec hatchet-lite /hatchet-admin token create --config /config --tenant-id 707d0855-80ab-4e1f-a156-f1c4546cbf52 | xargs",
+    "bump-deps-report": "npx npm-check-updates --deep -u",
     "dco:up": "docker-compose -f docker/docker-compose.yml up -d"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",
+    "@hatchet-dev/typescript-sdk": "^0.15.0",
     "@prisma/client": "^5.14.0",
     "@sentry/nextjs": "^8",
     "@t3-oss/env-nextjs": "^0.10.1",
@@ -44,6 +49,7 @@
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
+    "env-cmd": "^10.1.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.3",
     "postcss": "^8.4.39",

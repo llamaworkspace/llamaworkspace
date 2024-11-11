@@ -35,6 +35,57 @@ services:
     ports:
       - 8080:8080
 
+  hatchet-postgres:
+    image: postgres:16
+    command: postgres -c 'max_connections=200'
+    restart: always
+    environment:
+      - POSTGRES_USER=hatchet
+      - POSTGRES_PASSWORD=hatchet
+      - POSTGRES_DB=hatchet
+    volumes:
+      - hatchet_lite_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d hatchet -U hatchet"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  hatchet-lite:
+    image: ghcr.io/hatchet-dev/hatchet/hatchet-lite:latest
+    ports:
+      - "8888:8888"
+      - "7077:7077"
+    depends_on:
+      hatchet-postgres:
+        condition: service_healthy
+    environment:
+      RABBITMQ_DEFAULT_USER: "user"
+      RABBITMQ_DEFAULT_PASS: "password"
+      DATABASE_URL: "postgresql://hatchet:hatchet@hatchet-postgres:5432/hatchet?sslmode=disable"
+      DATABASE_POSTGRES_PORT: "5432"
+      DATABASE_POSTGRES_HOST: "hatchet-postgres"
+      SERVER_TASKQUEUE_RABBITMQ_URL: amqp://user:password@localhost:5672/
+      SERVER_AUTH_COOKIE_DOMAIN: localhost
+      SERVER_AUTH_COOKIE_INSECURE: "t"
+      SERVER_GRPC_BIND_ADDRESS: "0.0.0.0"
+      SERVER_GRPC_INSECURE: "t"
+      SERVER_GRPC_BROADCAST_ADDRESS: localhost:7077
+      SERVER_GRPC_PORT: "7077"
+      SERVER_URL: http://localhost:8888
+      SERVER_AUTH_SET_EMAIL_VERIFIED: "t"
+      SERVER_LOGGER_LEVEL: warn
+      SERVER_LOGGER_FORMAT: console
+      DATABASE_LOGGER_LEVEL: warn
+      DATABASE_LOGGER_FORMAT: console
+    volumes:
+      - "hatchet_lite_rabbitmq_data:/var/lib/rabbitmq/mnesia"
+      - "hatchet_lite_config:/config"
+
 volumes:
   llamaws_db:
   llamaws_minio_data:
+  hatchet_lite_postgres_data:
+  hatchet_lite_rabbitmq_data:
+  hatchet_lite_config:
