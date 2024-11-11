@@ -4,6 +4,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbo",
+    "hatchet:dev": "env-cmd -f .env tsx --watch src/hatchet/worker.ts",
     "start-demo": "docker-compose -f ./infra/docker-compose.demo.yml up",
     "preinstall": "npx only-allow pnpm",
     "postinstall": "pnpm run prisma:generate",
@@ -30,7 +31,9 @@
     "dev:delete-all-openai-files": "env-cmd -f .env tsx src/scripts/dev_deleteAllOpenaiFiles.ts",
     "dev:clear-openai": "pnpm run dev:delete-all-openai-vector-stores && pnpm run dev:delete-all-openai-files",
     "dco:up": "docker-compose -f docker-compose.yml up -d",
-    "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo ."
+    "docker:build-local": "docker buildx build -t llamaworkspace/llamaworkspace:local -f ./infra/Dockerfile.demo .",
+    "bump-deps": "npx npm-check-updates --deep -u && pnpm install",
+    "hatchet:token": "docker compose -f docker-compose.yml exec hatchet-lite /hatchet-admin token create --config /config --tenant-id 707d0855-80ab-4e1f-a156-f1c4546cbf52 | xargs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.24",
@@ -42,6 +45,7 @@
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@hatchet-dev/typescript-sdk": "^0.15.0",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@huggingface/inference": "^2.8.1",
@@ -163,9 +167,6 @@
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.2",
     "umzug": "^3.7.0"
-  },
-  "ct3aMetadata": {
-    "initVersion": "7.19.0"
   },
   "engines": {
     "node": ">=20.12"
