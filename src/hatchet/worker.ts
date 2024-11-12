@@ -5,8 +5,8 @@ import { env } from "@/env";
 
 const hatchet = HatchetClient.init({
   token: env.HATCHET_CLIENT_TOKEN,
-  api_url: "http://llamaws-hatchet.llamaws.com",
-  host_port: "llamaws-hatchet.llamaws.com:7077",
+  api_url: env.HATCHET_API_URL,
+  host_port: env.HATCHET_HOST_PORT,
   tls_config: {
     tls_strategy: "none",
   },
