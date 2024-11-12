@@ -7,6 +7,9 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
     AUTH_SECRET:
       process.env.NODE_ENV === "production"
         ? z.string()
@@ -14,9 +17,8 @@ export const env = createEnv({
     SMTP_EMAIL_FROM: z.string(),
     SMTP_EMAIL_SERVER: z.string(),
     DATABASE_URL: z.string().url(),
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+    HATCHET_CLIENT_TOKEN: z.string(),
+    HATCHET_CLIENT_TLS_STRATEGY: z.string(),
   },
 
   /**
@@ -38,6 +40,8 @@ export const env = createEnv({
     SMTP_EMAIL_SERVER: process.env.SMTP_EMAIL_SERVER,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    HATCHET_CLIENT_TOKEN: process.env.HATCHET_CLIENT_TOKEN,
+    HATCHET_CLIENT_TLS_STRATEGY: process.env.HATCHET_CLIENT_TLS_STRATEGY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
