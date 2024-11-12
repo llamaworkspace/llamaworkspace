@@ -42,7 +42,6 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     HATCHET_CLIENT_TOKEN: process.env.HATCHET_CLIENT_TOKEN,
-    HATCHET_CLIENT_TLS_STRATEGY: process.env.HATCHET_CLIENT_TLS_STRATEGY,
     HATCHET_API_URL: process.env.HATCHET_API_URL,
     HATCHET_HOST_PORT: process.env.HATCHET_HOST_PORT,
   },
