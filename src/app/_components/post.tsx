@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 
 import { api } from "@/trpc/react";
 
@@ -46,5 +46,54 @@ export function LatestPost() {
         </button>
       </form>
     </div>
+  );
+}
+
+function PostSkeleton() {
+  return (
+    <div className="w-full max-w-2xl">
+      <h2 className="mb-4 text-2xl font-bold">All Posts</h2>
+      <div className="flex flex-col gap-4">
+        {[1, 2, 3].map((_, i) => (
+          <div key={i} className="rounded-lg bg-white/10 p-4 transition-colors">
+            <div className="h-8 w-3/4 animate-pulse rounded bg-white/20" />
+            <div className="mt-2 h-4 w-1/3 animate-pulse rounded bg-white/20" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PostsList() {
+  const [posts] = api.post.getAll.useSuspenseQuery();
+
+  if (!posts.length) return <div>No posts found</div>;
+
+  return (
+    <div className="w-full max-w-2xl">
+      <h2 className="mb-4 text-2xl font-bold">All Posts</h2>
+      <div className="flex flex-col gap-4">
+        {posts.map((post) => (
+          <div
+            key={post.id}
+            className="rounded-lg bg-white/10 p-4 transition-colors hover:bg-white/20"
+          >
+            <div className="text-2xl">{post.name}</div>
+            <div className="text-gray-300">
+              {post.createdAt.toLocaleString()}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function Posts() {
+  return (
+    <Suspense fallback={<PostSkeleton />}>
+      <PostsList />
+    </Suspense>
   );
 }
