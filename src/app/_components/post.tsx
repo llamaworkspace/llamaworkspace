@@ -19,7 +19,7 @@ export function LatestPost() {
   return (
     <div className="w-full max-w-xs">
       {latestPost ? (
-        <p className="truncate">Your most recent post: {latestPost.name}</p>
+        <p className="truncate">Your most recent post: {latestPost.title}</p>
       ) : (
         <p>You have no posts yet.</p>
       )}
@@ -79,8 +79,8 @@ function PostsList() {
             key={post.id}
             className="rounded-lg bg-white/10 p-4 transition-colors hover:bg-white/20"
           >
-            <div className="text-2xl">{post.name}</div>
-            <div className="text-gray-300">
+            <div className="text-2xl">{post.title}</div>
+            <div className="text-gray-300" suppressHydrationWarning>
               {post.createdAt.toLocaleString()}
             </div>
           </div>

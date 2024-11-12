@@ -18,18 +18,25 @@ export const postRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.post.create({
+      const workspace = await ctx.db.workspace.create({
         data: {
           name: input.name,
-          createdBy: { connect: { id: ctx.session.user.id } },
+        },
+      });
+
+      return ctx.db.app.create({
+        data: {
+          title: input.name,
+          engineType: "LLAMA3",
+          user: { connect: { id: ctx.session.user.id } },
+          workspace: { connect: { id: workspace.id } },
         },
       });
     }),
 
   getLatest: protectedProcedure.query(async ({ ctx }) => {
-    const post = await ctx.db.post.findFirst({
+    const post = await ctx.db.app.findFirst({
       orderBy: { createdAt: "desc" },
-      where: { createdBy: { id: ctx.session.user.id } },
     });
 
     return post ?? null;
@@ -38,7 +45,7 @@ export const postRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    return ctx.db.post.findMany({
+    return ctx.db.app.findMany({
       orderBy: { createdAt: "desc" },
     });
   }),
