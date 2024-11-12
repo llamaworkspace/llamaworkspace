@@ -18,7 +18,8 @@ export const env = createEnv({
     SMTP_EMAIL_SERVER: z.string(),
     DATABASE_URL: z.string().url(),
     HATCHET_CLIENT_TOKEN: z.string(),
-    HATCHET_CLIENT_TLS_STRATEGY: z.string(),
+    HATCHET_API_URL: z.string().url(),
+    HATCHET_HOST_PORT: z.string(),
   },
 
   /**
@@ -42,6 +43,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     HATCHET_CLIENT_TOKEN: process.env.HATCHET_CLIENT_TOKEN,
     HATCHET_CLIENT_TLS_STRATEGY: process.env.HATCHET_CLIENT_TLS_STRATEGY,
+    HATCHET_API_URL: process.env.HATCHET_API_URL,
+    HATCHET_HOST_PORT: process.env.HATCHET_HOST_PORT,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
