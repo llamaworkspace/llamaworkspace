@@ -10,6 +10,7 @@ import {
 import { cn } from '@/lib/utils'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
 interface SignInGoogleProps {
   callbackUrl?: string
@@ -17,6 +18,14 @@ interface SignInGoogleProps {
 }
 
 export function SignInGoogle({ callbackUrl, isDemoMode }: SignInGoogleProps) {
+  return (
+    <Suspense>
+      <SignInGoogleBody callbackUrl={callbackUrl} isDemoMode={isDemoMode} />
+    </Suspense>
+  )
+}
+
+function SignInGoogleBody({ callbackUrl, isDemoMode }: SignInGoogleProps) {
   const searchParams = useSearchParams()
 
   const queryCallbackUrl = callbackUrl ?? searchParams.get('callbackUrl')

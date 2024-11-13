@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
 const errorMessages = {
   OAuthAccountNotLinked:
@@ -10,7 +11,7 @@ const errorMessages = {
     'There was a system error signing you in. Please try again or contact the administrator.',
 }
 
-export function SignInFailedAlert() {
+function SignInFailedAlertBody() {
   const searchParams = useSearchParams()
 
   if (!searchParams.get('error')) {
@@ -29,5 +30,13 @@ export function SignInFailedAlert() {
         <p className="text-xs">Error code: {searchParams.get('error')}</p>
       </AlertDescription>
     </Alert>
+  )
+}
+
+export function SignInFailedAlert() {
+  return (
+    <Suspense>
+      <SignInFailedAlertBody />
+    </Suspense>
   )
 }

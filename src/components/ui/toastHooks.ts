@@ -29,7 +29,7 @@ const getShouldTriggerByKey = (key: string) => {
 
 export const useErrorToast = () => {
   return useCallback((description?: string) => {
-    description = description || 'Something went wrong. Please try again.'
+    description = description ?? 'Something went wrong. Please try again.'
 
     if (!getShouldTriggerByKey(description)) {
       return
