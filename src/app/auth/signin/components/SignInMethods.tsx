@@ -1,16 +1,23 @@
+"use client"
 // import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 // import { Button } from '@/components/ui/button'
 // import { InputField } from '@/components/ui/forms/InputField'
 // import {
 //   composeValidators,
 //   email,
-//   stringOrNumberRequired,
+//   stringRequired,
 // } from '@/lib/frontend/finalFormValidations'
 // import { useNavigation } from '@/lib/frontend/useNavigation'
 import { signIn } from 'next-auth/react'
 import * as React from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { SignInGoogle } from './SignInGoogle'
+import { useSearchParams } from 'next/navigation'
+import { composeValidators, stringRequired, email } from '@/lib/frontend/final-form-validations'
+import { Button } from '@/ui/button'
+import { InputField } from '@/app/ui/forms/InputField'
+
+
 
 interface UserAuthFormValues {
   email: string
@@ -29,25 +36,24 @@ interface SignInMethodsProps {
 }
 
 export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
-  // const [isLoading, setIsLoading] = React.useState(false)
-  // const navigation = useNavigation()
-  // const { query } = navigation
-  // const queryCallbackUrl =
-  //   callbackUrl ?? (navigation.query?.callbackUrl as string | undefined)
+  const [isLoading, setIsLoading] = React.useState(false)
+  const searchParams = useSearchParams()
+  const queryCallbackUrl =
+    callbackUrl ?? searchParams.get('callbackUrl')
 
-  // const handleEmailFormSubmit = async (values: UserAuthFormValues) => {
-  //   setIsLoading(true)
-  //   if (isDemoMode) {
-  //     alert(
-  //       'Emails are disabled in demo mode. To log in, go to your terminal and copy/paste the magic link provided.',
-  //     )
-  //   }
-  //   await signIn('email', {
-  //     email: values.email,
-  //     callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
-  //   })
-  //   setIsLoading(false)
-  // }
+  const handleEmailFormSubmit = async (values: UserAuthFormValues) => {
+    setIsLoading(true)
+    if (isDemoMode) {
+      alert(
+        'Emails are disabled in demo mode. To log in, go to your terminal and copy/paste the magic link provided.',
+      )
+    }
+    await signIn('email', {
+      email: values.email,
+      callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
+    })
+    setIsLoading(false)
+  }
 
   return (
     <div className="grid gap-6">
@@ -75,7 +81,7 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
           </span>
         </div>
       </div>
-      {/* <FinalForm<UserAuthFormValues>
+      <FinalForm<UserAuthFormValues>
         onSubmit={handleEmailFormSubmit}
         render={({ handleSubmit }) => {
           return (
@@ -89,7 +95,7 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
                 <div className="grid gap-1">
                   <Field
                     name="email"
-                    validate={composeValidators(stringOrNumberRequired, email)}
+                    validate={composeValidators(stringRequired, email)}
                     render={({ input, meta }) => {
                       return (
                         <InputField
@@ -115,7 +121,7 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
             </form>
           )
         }}
-      /> */}
+      />
     </div>
   )
 }
@@ -139,21 +145,21 @@ type IconProps = React.HTMLAttributes<SVGElement>
 //   </svg>
 // )
 
-// function getSanitizedCallbackUrl(
-//   rawCallbackUrl: string | undefined,
-//   defaultUrl: string,
-// ) {
-//   if (!rawCallbackUrl) {
-//     return defaultUrl
-//   }
+function getSanitizedCallbackUrl(
+  rawCallbackUrl: string | undefined,
+  defaultUrl: string,
+) {
+  if (!rawCallbackUrl) {
+    return defaultUrl
+  }
 
-//   if (rawCallbackUrl.startsWith('/')) {
-//     return rawCallbackUrl
-//   }
+  if (rawCallbackUrl.startsWith('/')) {
+    return rawCallbackUrl
+  }
 
-//   if (new URL(rawCallbackUrl).origin === window?.location.origin) {
-//     return rawCallbackUrl
-//   }
+  if (new URL(rawCallbackUrl).origin === window?.location.origin) {
+    return rawCallbackUrl
+  }
 
-//   return defaultUrl
-// }
+  return defaultUrl
+}

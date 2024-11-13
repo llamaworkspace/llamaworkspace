@@ -4,9 +4,9 @@ import { GoogleIcon } from '@/ui/icons/GoogleIcon'
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/ui/tooltip'
 
-import { cn } from '@/lib/frontend/frontend-utils'
+import { cn } from '@/lib/utils'
 import { signIn } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 
 interface SignInGoogleProps {
   callbackUrl?: string
