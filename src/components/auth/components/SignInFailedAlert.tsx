@@ -13,6 +13,10 @@ const errorMessages = {
 export function SignInFailedAlert() {
   const searchParams = useSearchParams()
 
+  if (!searchParams.get('error')) {
+    return null
+  }
+
   return (
     <Alert variant="danger">
       <AlertTitle>Sign in failed</AlertTitle>

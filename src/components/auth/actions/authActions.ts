@@ -9,7 +9,7 @@ export const emailSignIn = async (email: string, callbackUrl: string) => {
   try {
     await signIn('nodemailer', {
       email,
-      callbackUrl,
+      redirectTo: callbackUrl,
     })
   } catch (error) {
     if (error instanceof AuthError) {
