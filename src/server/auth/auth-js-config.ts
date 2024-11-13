@@ -33,10 +33,12 @@ declare module 'next-auth' {
  */
 
 export const authJsConfig = {
+  debug: true,
   providers: [
     Nodemailer({
       from: env.SMTP_EMAIL_FROM,
       server: env.SMTP_EMAIL_SERVER,
+      // sendVerificationRequest: sendVerificationRequestForEmailProvider,
     }),
     Google({
       clientId: env.GOOGLE_CLIENT_ID,
