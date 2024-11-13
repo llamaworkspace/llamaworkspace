@@ -1,17 +1,19 @@
-"use client"
+'use client'
 
-import { signIn } from 'next-auth/react'
-import * as React from 'react'
-import { Field, Form as FinalForm } from 'react-final-form'
-import { SignInGoogle } from './SignInGoogle'
-import { useSearchParams } from 'next/navigation'
-import { composeValidators, stringRequired, email } from '@/lib/frontend/final-form-validations'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { InputField } from '@/components/ui/forms/InputField'
 import { SpinnerIcon } from '@/components/ui/icons/SpinnerIcon'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-
-
+import {
+  composeValidators,
+  email,
+  stringRequired,
+} from '@/lib/frontend/final-form-validations'
+import { signIn } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
+import * as React from 'react'
+import { Field, Form as FinalForm } from 'react-final-form'
+import { SignInGoogle } from './SignInGoogle'
 
 interface UserAuthFormValues {
   email: string
@@ -32,8 +34,7 @@ interface SignInMethodsProps {
 export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
   const [isLoading, setIsLoading] = React.useState(false)
   const searchParams = useSearchParams()
-  const queryCallbackUrl =
-    callbackUrl ?? searchParams.get('callbackUrl')
+  const queryCallbackUrl = callbackUrl ?? searchParams.get('callbackUrl')
 
   const handleEmailFormSubmit = async (values: UserAuthFormValues) => {
     setIsLoading(true)
@@ -56,8 +57,9 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
           <AlertTitle>Sign in failed</AlertTitle>
           <AlertDescription className="space-y-2">
             <p>
-              {errorMessages[searchParams.get('error') as keyof typeof errorMessages] ??
-                errorMessages.default}
+              {errorMessages[
+                searchParams.get('error') as keyof typeof errorMessages
+              ] ?? errorMessages.default}
             </p>{' '}
             <p className="text-xs">Error code: {searchParams.get('error')}</p>
           </AlertDescription>
@@ -109,7 +111,6 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
                   {isLoading && (
                     <SpinnerIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
-
                   Sign In with Email
                 </Button>
               </div>
@@ -120,7 +121,6 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
     </div>
   )
 }
-
 
 function getSanitizedCallbackUrl(
   rawCallbackUrl: string | null,
