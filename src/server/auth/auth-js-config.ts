@@ -62,7 +62,7 @@ export const authJsConfig = {
      */
   ],
   pages: {
-    signIn: '/auth/signin',
+    signIn: '/auth/signin/',
     verifyRequest: '/auth/verify-request',
   },
   adapter: PrismaAdapter(db),
