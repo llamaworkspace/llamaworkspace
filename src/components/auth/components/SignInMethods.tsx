@@ -14,8 +14,8 @@ import { Field, Form as FinalForm } from 'react-final-form'
 import { SignInGoogle } from './SignInGoogle'
 import { useSearchParams } from 'next/navigation'
 import { composeValidators, stringRequired, email } from '@/lib/frontend/final-form-validations'
-import { Button } from '@/ui/button'
-import { InputField } from '@/app/ui/forms/InputField'
+import { Button } from '@/components/ui/button'
+import { InputField } from '@/components/ui/forms/InputField'
 
 
 

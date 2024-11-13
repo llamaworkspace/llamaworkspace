@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { Input, type InputProps } from '@/components/ui/input'
+import { Input, type InputProps } from '../input'
 import { FormFieldWrapper } from './FormFieldWrapper'
 import type { DefaultFormInputProps } from './formTypes'
 

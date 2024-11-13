@@ -1,8 +1,7 @@
 'use client'
 
-import { GoogleIcon } from '@/ui/icons/GoogleIcon'
-
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/ui/tooltip'
+import { GoogleIcon } from '@/components/ui/icons/GoogleIcon'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 import { cn } from '@/lib/utils'
 import { signIn } from 'next-auth/react'

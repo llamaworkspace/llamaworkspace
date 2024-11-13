@@ -1,9 +1,7 @@
-import type { PropsWithChildren } from 'react'
-import type { DefaultFormInputProps } from './formTypes'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-
-
+import type { PropsWithChildren } from 'react'
+import { Badge } from '../badge'
+import type { DefaultFormInputProps } from './formTypes'
 
 // Todo: use shadcn form instead of this component
 export const FormFieldWrapper = ({

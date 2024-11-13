@@ -24,7 +24,7 @@ const inputVariants = cva('', {
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
-  VariantProps<typeof inputVariants> {
+    VariantProps<typeof inputVariants> {
   onEnterKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void
   focusOnMount?: boolean
 }
