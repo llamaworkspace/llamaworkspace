@@ -1,14 +1,10 @@
 // Todo: deprectate chakra-ui
 // along with dependencies: @chakra-ui/react @emotion/react @emotion/styled framer-motion
 
-import { useToast } from '@chakra-ui/react'
 import { useCallback } from 'react'
+import { toast } from 'sonner'
 
 const TOAST_DURATION = 5000
-
-interface ToastOptions {
-  duration?: number
-}
 
 const cache: Record<string, Date> = {}
 
@@ -32,42 +28,40 @@ const getShouldTriggerByKey = (key: string) => {
 }
 
 export const useErrorToast = () => {
-  const toast = useToast()
+  return useCallback((description?: string) => {
+    description = description || 'Something went wrong. Please try again.'
 
-  return useCallback(
-    (message: string, options?: ToastOptions) => {
-      const description = message || 'Something went wrong. Please try again.'
+    if (!getShouldTriggerByKey(description)) {
+      return
+    }
 
-      if (!getShouldTriggerByKey(description)) {
-        return
-      }
-
-      toast({
-        title: 'Error',
-        description,
-        status: 'error',
-        duration: options?.duration ?? TOAST_DURATION,
-        isClosable: true,
-        position: 'top',
-      })
-    },
-    [toast],
-  )
+    toast.error('Error', {
+      description,
+      duration: TOAST_DURATION,
+      position: 'top-center',
+      classNames: {
+        toast: 'border-red-200 bg-red-50 bg-opacity-30',
+        title: 'text-red-800 font-semibold',
+        description: 'text-zinc-800',
+        icon: 'text-red-800',
+      },
+    })
+  }, [])
 }
 
-export const useSuccessToast = () => {
-  const toast = useToast()
-  return useCallback(
-    (title = 'Success', description: string) => {
-      toast({
-        title,
-        description,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-        position: 'top',
-      })
-    },
-    [toast],
-  )
-}
+// export const useSuccessToast = () => {
+//   const toast = useToast()
+//   return useCallback(
+//     (title = 'Success', description: string) => {
+//       toast({
+//         title,
+//         description,
+//         status: 'success',
+//         duration: 3000,
+//         isClosable: true,
+//         position: 'top',
+//       })
+//     },
+//     [toast],
+//   )
+// }

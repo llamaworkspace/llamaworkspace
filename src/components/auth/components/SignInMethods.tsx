@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { InputField } from '@/components/ui/forms/InputField'
 import { SpinnerIcon } from '@/components/ui/icons/SpinnerIcon'
+import { useErrorToast } from '@/components/ui/toastHooks'
 import {
   composeValidators,
   email,
@@ -25,6 +26,7 @@ interface SignInMethodsProps {
 }
 
 export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
+  const errorToast = useErrorToast()
   const [isPending, startTransition] = useTransition()
   const searchParams = useSearchParams()
   const queryCallbackUrl = callbackUrl ?? searchParams.get('callbackUrl')
@@ -49,7 +51,11 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
     <div className="grid gap-6">
       <SignInFailedAlert />
       <SignInGoogle callbackUrl={callbackUrl} isDemoMode={isDemoMode} />
-
+      <Button
+        onClick={() => errorToast('This is a sonner toast', { duration: 500 })}
+      >
+        Error Toast
+      </Button>
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
