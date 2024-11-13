@@ -1,25 +1,22 @@
-import { GoogleSvg } from '@/components/ui/icons/Google'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { useNavigation } from '@/lib/frontend/useNavigation'
-import { cn } from '@/lib/clientUtils'
+'use client'
+
+import { GoogleIcon } from '@/ui/icons/GoogleIcon'
+
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/ui/tooltip'
+
+import { cn } from '@/lib/frontend/frontend-utils'
 import { signIn } from 'next-auth/react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface SignInGoogleProps {
   callbackUrl?: string
   isDemoMode?: boolean
 }
 
-export const SignInGoogle = ({
-  callbackUrl,
-  isDemoMode,
-}: SignInGoogleProps) => {
-  const navigation = useNavigation()
-  const queryCallbackUrl =
-    callbackUrl ?? (navigation.query?.callbackUrl as string | undefined)
+export function SignInGoogle({ callbackUrl, isDemoMode }: SignInGoogleProps) {
+  const searchParams = useSearchParams()
+
+  const queryCallbackUrl = callbackUrl ?? searchParams.get('callbackUrl')
 
   const handleSignIn = async () => {
     await signIn('google', {
@@ -37,7 +34,7 @@ export const SignInGoogle = ({
           isDemoMode && 'cursor-not-allowed',
         )}
       >
-        <GoogleSvg />
+        <GoogleIcon />
         <span className="relative whitespace-nowrap text-zinc-800">
           Continue with Google
         </span>
@@ -61,7 +58,7 @@ export const SignInGoogle = ({
 }
 
 function getSanitizedCallbackUrl(
-  rawCallbackUrl: string | undefined,
+  rawCallbackUrl: string | null,
   defaultUrl: string,
 ) {
   if (!rawCallbackUrl) {
