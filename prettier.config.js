@@ -4,11 +4,11 @@ const config = {
   semi: false,
   singleQuote: true,
   plugins: [
-    "prettier-plugin-organize-imports",
+    'prettier-plugin-organize-imports',
     // The order of the plugins matters: Tailwind must be the latest.
     // See https://github.com/tailwindlabs/prettier-plugin-tailwindcss/issues/31#issuecomment-1312202554
-    "prettier-plugin-tailwindcss",
+    'prettier-plugin-tailwindcss',
   ],
-};
+}
 
-export default config;
+export default config
