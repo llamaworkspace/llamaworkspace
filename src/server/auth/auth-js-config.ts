@@ -1,8 +1,9 @@
+import { env } from '@/env'
+import { db } from '@/server/db'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { type DefaultSession, type NextAuthConfig } from 'next-auth'
+import Google from 'next-auth/providers/google'
 import Nodemailer from 'next-auth/providers/nodemailer'
-import { db } from '@/server/db'
-import { env } from '@/env'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -36,6 +37,17 @@ export const authJsConfig = {
     Nodemailer({
       from: env.SMTP_EMAIL_FROM,
       server: env.SMTP_EMAIL_SERVER,
+    }),
+    Google({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
     }),
     /**
      * ...add more providers here.
