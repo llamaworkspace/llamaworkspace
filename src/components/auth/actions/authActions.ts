@@ -4,8 +4,7 @@ import { signIn } from '@/server/auth/auth-js'
 import { AuthError } from 'next-auth'
 import { redirect } from 'next/navigation'
 
-// Define the server action
-export const emailSignIn = async (email: string, callbackUrl: string) => {
+export const emailSignInAction = async (email: string, callbackUrl: string) => {
   try {
     await signIn('nodemailer', {
       email,

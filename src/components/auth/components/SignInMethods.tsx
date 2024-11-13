@@ -11,7 +11,7 @@ import {
 import { useSearchParams } from 'next/navigation'
 import { useTransition } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
-import { emailSignIn } from '../actions/authActions'
+import { emailSignInAction } from '../actions/authActions'
 import { SignInFailedAlert } from './SignInFailedAlert'
 import { SignInGoogle } from './SignInGoogle'
 
@@ -38,7 +38,7 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
     }
 
     startTransition(async () => {
-      await emailSignIn(
+      await emailSignInAction(
         values.email,
         getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
       )

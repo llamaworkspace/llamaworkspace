@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -8,6 +10,7 @@ export const VerifyRequest = () => {
   const handleBack = () => {
     void router.back()
   }
+
   return (
     <>
       <Head>

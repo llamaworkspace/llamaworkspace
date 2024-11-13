@@ -31,22 +31,3 @@ export function SignInFailedAlert() {
     </Alert>
   )
 }
-
-function getSanitizedCallbackUrl(
-  rawCallbackUrl: string | null,
-  defaultUrl: string,
-) {
-  if (!rawCallbackUrl) {
-    return defaultUrl
-  }
-
-  if (rawCallbackUrl.startsWith('/')) {
-    return rawCallbackUrl
-  }
-
-  if (new URL(rawCallbackUrl).origin === window?.location.origin) {
-    return rawCallbackUrl
-  }
-
-  return defaultUrl
-}
