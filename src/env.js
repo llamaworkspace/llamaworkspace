@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs'
+import { z } from 'zod'
 
 export const env = createEnv({
   /**
@@ -8,14 +8,16 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+      .enum(['development', 'test', 'production'])
+      .default('development'),
     AUTH_SECRET:
-      process.env.NODE_ENV === "production"
+      process.env.NODE_ENV === 'production'
         ? z.string()
         : z.string().optional(),
     SMTP_EMAIL_FROM: z.string(),
     SMTP_EMAIL_SERVER: z.string(),
+    GOOGLE_CLIENT_ID: z.string(),
+    GOOGLE_CLIENT_SECRET: z.string(),
     DATABASE_URL: z.string().url(),
     HATCHET_CLIENT_TOKEN: z.string(),
     HATCHET_API_URL: z.string().url(),
@@ -39,6 +41,8 @@ export const env = createEnv({
     AUTH_SECRET: process.env.AUTH_SECRET,
     SMTP_EMAIL_FROM: process.env.SMTP_EMAIL_FROM,
     SMTP_EMAIL_SERVER: process.env.SMTP_EMAIL_SERVER,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     HATCHET_CLIENT_TOKEN: process.env.HATCHET_CLIENT_TOKEN,
@@ -55,4 +59,4 @@ export const env = createEnv({
    * `SOME_VAR=''` will throw an error.
    */
   emptyStringAsUndefined: true,
-});
+})

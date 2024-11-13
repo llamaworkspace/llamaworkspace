@@ -1,8 +1,9 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import Nodemailer from "next-auth/providers/nodemailer";
-import { db } from "@/server/db";
-import { env } from "@/env";
+import { env } from '@/env'
+import { db } from '@/server/db'
+import { PrismaAdapter } from '@auth/prisma-adapter'
+import { type DefaultSession, type NextAuthConfig } from 'next-auth'
+import Google from 'next-auth/providers/google'
+import Nodemailer from 'next-auth/providers/nodemailer'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -10,13 +11,13 @@ import { env } from "@/env";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
-      id: string;
+      id: string
       // ...other properties
       // role: UserRole;
-    } & DefaultSession["user"];
+    } & DefaultSession['user']
   }
 
   // interface User {
@@ -31,11 +32,24 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 
-export const authConfig = {
+export const authJsConfig = {
+  debug: true,
   providers: [
     Nodemailer({
       from: env.SMTP_EMAIL_FROM,
       server: env.SMTP_EMAIL_SERVER,
+      // sendVerificationRequest: sendVerificationRequestForEmailProvider,
+    }),
+    Google({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
     }),
     /**
      * ...add more providers here.
@@ -47,6 +61,10 @@ export const authConfig = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
+  pages: {
+    signIn: '/auth/signin/',
+    verifyRequest: '/auth/verify-request',
+  },
   adapter: PrismaAdapter(db),
   callbacks: {
     session: ({ session, user }) => ({
@@ -57,4 +75,14 @@ export const authConfig = {
       },
     }),
   },
-} satisfies NextAuthConfig;
+  // events: {
+  //   async createUser({ user }) {
+  //     await db.user.create({
+  //       data: {
+  //         id: user.id,
+  //       },
+  //     })
+  //     // await handleUserSignup(prisma, user.id)
+  //   },
+  // },
+} satisfies NextAuthConfig

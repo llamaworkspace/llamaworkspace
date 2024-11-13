@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Added by shadcn/ui cli */
+@layer base {
+  :root {
+    --radius: 0.5rem
+  }
+}
