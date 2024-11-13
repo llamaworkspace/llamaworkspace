@@ -9,11 +9,11 @@ import {
   email,
   stringRequired,
 } from '@/lib/frontend/final-form-validations'
-import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
-import * as React from 'react'
+import { useState, useTransition } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { SignInGoogle } from './SignInGoogle'
+import { emailSignIn } from './thing'
 
 interface UserAuthFormValues {
   email: string
@@ -32,22 +32,45 @@ interface SignInMethodsProps {
 }
 
 export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isPending, startTransition] = useTransition()
+  const [isLoading, setIsLoading] = useState(false)
   const searchParams = useSearchParams()
   const queryCallbackUrl = callbackUrl ?? searchParams.get('callbackUrl')
 
+  // const __handleEmailFormSubmit = async (values: UserAuthFormValues) => {
+  //   setIsLoading(true)
+  //   if (isDemoMode) {
+  //     alert(
+  //       'Emails are disabled in demo mode. To log in, go to your terminal and copy/paste the magic link provided.',
+  //     )
+  //   }
+  //   await signIn('email', {
+  //     email: values.email,
+  //     callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
+  //   })
+  //   setIsLoading(false)
+  // }
+
   const handleEmailFormSubmit = async (values: UserAuthFormValues) => {
-    setIsLoading(true)
+    console.log('handleEmailFormSubmit', values)
+
     if (isDemoMode) {
       alert(
         'Emails are disabled in demo mode. To log in, go to your terminal and copy/paste the magic link provided.',
       )
+      return
     }
-    await signIn('email', {
-      email: values.email,
-      callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
-    })
-    setIsLoading(false)
+    console.log('emailSignIn22')
+    await emailSignIn(
+      values.email,
+      getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
+    )
+    // startTransition(async () => {
+    //   await emailSignIn(
+    //     values.email,
+    //     getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
+    //   )
+    // })
   }
 
   return (

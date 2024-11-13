@@ -73,4 +73,14 @@ export const authJsConfig = {
       },
     }),
   },
+  events: {
+    async createUser({ user }) {
+      await db.user.create({
+        data: {
+          id: user.id,
+        },
+      })
+      // await handleUserSignup(prisma, user.id)
+    },
+  },
 } satisfies NextAuthConfig
