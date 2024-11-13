@@ -19,7 +19,7 @@ export const BoxedRadioGroupField = ({
   options,
   ...input
 }: BoxedRadioGroupFieldProps) => {
-  const error = meta && meta.submitFailed ? (meta.error as string) : undefined
+  const error = meta?.submitFailed ? (meta.error as string) : undefined
 
   const handleChange = (value: string) => {
     input.onChange?.(value)
