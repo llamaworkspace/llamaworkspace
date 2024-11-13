@@ -1,6 +1,5 @@
 'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { InputField } from '@/components/ui/forms/InputField'
 import { SpinnerIcon } from '@/components/ui/icons/SpinnerIcon'
@@ -10,20 +9,14 @@ import {
   stringRequired,
 } from '@/lib/frontend/final-form-validations'
 import { useSearchParams } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
+import { emailSignIn } from '../actions/authActions'
+import { SignInFailedAlert } from './SignInFailedAlert'
 import { SignInGoogle } from './SignInGoogle'
-import { emailSignIn } from './thing'
 
 interface UserAuthFormValues {
   email: string
-}
-
-const errorMessages = {
-  OAuthAccountNotLinked:
-    'This account is already linked with another sign-in method. Please sign in with the same method you used to create this account.',
-  default:
-    'There was a system error signing you in. Please try again or contact the administrator.',
 }
 
 interface SignInMethodsProps {
@@ -33,61 +26,28 @@ interface SignInMethodsProps {
 
 export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
   const [isPending, startTransition] = useTransition()
-  const [isLoading, setIsLoading] = useState(false)
   const searchParams = useSearchParams()
   const queryCallbackUrl = callbackUrl ?? searchParams.get('callbackUrl')
 
-  // const __handleEmailFormSubmit = async (values: UserAuthFormValues) => {
-  //   setIsLoading(true)
-  //   if (isDemoMode) {
-  //     alert(
-  //       'Emails are disabled in demo mode. To log in, go to your terminal and copy/paste the magic link provided.',
-  //     )
-  //   }
-  //   await signIn('email', {
-  //     email: values.email,
-  //     callbackUrl: getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
-  //   })
-  //   setIsLoading(false)
-  // }
-
   const handleEmailFormSubmit = async (values: UserAuthFormValues) => {
-    console.log('handleEmailFormSubmit', values)
-
     if (isDemoMode) {
       alert(
         'Emails are disabled in demo mode. To log in, go to your terminal and copy/paste the magic link provided.',
       )
       return
     }
-    console.log('emailSignIn22')
-    await emailSignIn(
-      values.email,
-      getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
-    )
-    // startTransition(async () => {
-    //   await emailSignIn(
-    //     values.email,
-    //     getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
-    //   )
-    // })
+
+    startTransition(async () => {
+      await emailSignIn(
+        values.email,
+        getSanitizedCallbackUrl(queryCallbackUrl, '/p'),
+      )
+    })
   }
 
   return (
     <div className="grid gap-6">
-      {searchParams.get('error') && (
-        <Alert variant="danger">
-          <AlertTitle>Sign in failed</AlertTitle>
-          <AlertDescription className="space-y-2">
-            <p>
-              {errorMessages[
-                searchParams.get('error') as keyof typeof errorMessages
-              ] ?? errorMessages.default}
-            </p>{' '}
-            <p className="text-xs">Error code: {searchParams.get('error')}</p>
-          </AlertDescription>
-        </Alert>
-      )}
+      <SignInFailedAlert />
       <SignInGoogle callbackUrl={callbackUrl} isDemoMode={isDemoMode} />
 
       <div className="relative">
@@ -130,8 +90,8 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
                     }}
                   />
                 </div>
-                <Button disabled={isLoading}>
-                  {isLoading && (
+                <Button disabled={isPending}>
+                  {isPending && (
                     <SpinnerIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Sign In with Email
