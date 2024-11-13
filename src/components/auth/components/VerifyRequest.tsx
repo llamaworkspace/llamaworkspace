@@ -27,7 +27,7 @@ export const VerifyRequest = () => {
               <h1 className="text-2xl font-semibold tracking-tight">
                 We have sent you a login link
               </h1>
-              <p className="text-muted-foreground ">
+              <p className="text-muted-foreground">
                 Check your Inbox, you&apos;ll find an email sent from us. Click
                 on the link inside the email and we will log you in
                 automatically.

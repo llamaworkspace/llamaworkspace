@@ -49,7 +49,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="flex  flex-col gap-4 ">
+    <div className="flex flex-col gap-4">
       <div className="rounded-md border">
         <Table className="min-w-[360px] overflow-x-auto">
           <TableHeader>

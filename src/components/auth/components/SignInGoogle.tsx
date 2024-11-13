@@ -1,7 +1,11 @@
 'use client'
 
 import { GoogleIcon } from '@/components/ui/icons/GoogleIcon'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { cn } from '@/lib/utils'
 import { signIn } from 'next-auth/react'
@@ -29,7 +33,7 @@ export function SignInGoogle({ callbackUrl, isDemoMode }: SignInGoogleProps) {
         onClick={() => void handleSignIn()}
         disabled={isDemoMode}
         className={cn(
-          'focus-visible:button-focus-outline relative flex w-full min-w-[60px] flex-row items-center justify-center space-x-1  rounded-lg bg-white px-3 py-4 text-sm font-medium text-zinc-700 shadow ring-1 ring-black/5 transition hover:bg-zinc-50 focus:outline-none disabled:cursor-not-allowed disabled:text-zinc-400 disabled:hover:bg-white',
+          'focus-visible:button-focus-outline relative flex w-full min-w-[60px] flex-row items-center justify-center space-x-1 rounded-lg bg-white px-3 py-4 text-sm font-medium text-zinc-700 shadow ring-1 ring-black/5 transition hover:bg-zinc-50 focus:outline-none disabled:cursor-not-allowed disabled:text-zinc-400 disabled:hover:bg-white',
           isDemoMode && 'cursor-not-allowed',
         )}
       >
