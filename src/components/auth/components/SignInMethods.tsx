@@ -1,13 +1,5 @@
 "use client"
-// import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-// import { Button } from '@/components/ui/button'
-// import { InputField } from '@/components/ui/forms/InputField'
-// import {
-//   composeValidators,
-//   email,
-//   stringRequired,
-// } from '@/lib/frontend/finalFormValidations'
-// import { useNavigation } from '@/lib/frontend/useNavigation'
+
 import { signIn } from 'next-auth/react'
 import * as React from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
@@ -16,6 +8,8 @@ import { useSearchParams } from 'next/navigation'
 import { composeValidators, stringRequired, email } from '@/lib/frontend/final-form-validations'
 import { Button } from '@/components/ui/button'
 import { InputField } from '@/components/ui/forms/InputField'
+import { SpinnerIcon } from '@/components/ui/icons/SpinnerIcon'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 
 
@@ -57,18 +51,18 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
 
   return (
     <div className="grid gap-6">
-      {/* {query.error && (
+      {searchParams.get('error') && (
         <Alert variant="danger">
           <AlertTitle>Sign in failed</AlertTitle>
           <AlertDescription className="space-y-2">
             <p>
-              {errorMessages[query.error as keyof typeof errorMessages] ??
+              {errorMessages[searchParams.get('error') as keyof typeof errorMessages] ??
                 errorMessages.default}
             </p>{' '}
-            <p className="text-xs">Error code: {query.error}</p>
+            <p className="text-xs">Error code: {searchParams.get('error')}</p>
           </AlertDescription>
         </Alert>
-      )} */}
+      )}
       <SignInGoogle callbackUrl={callbackUrl} isDemoMode={isDemoMode} />
 
       <div className="relative">
@@ -115,6 +109,7 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
                   {isLoading && (
                     <SpinnerIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
+
                   Sign In with Email
                 </Button>
               </div>
@@ -126,27 +121,9 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
   )
 }
 
-type IconProps = React.HTMLAttributes<SVGElement>
-
-// export const SpinnerIcon = (props: IconProps) => (
-//   <svg
-//     xmlns="http://www.w3.org/2000/svg"
-//     width="24"
-//     height="24"
-//     viewBox="0 0 24 24"
-//     fill="none"
-//     stroke="currentColor"
-//     strokeWidth="2"
-//     strokeLinecap="round"
-//     strokeLinejoin="round"
-//     {...props}
-//   >
-//     <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-//   </svg>
-// )
 
 function getSanitizedCallbackUrl(
-  rawCallbackUrl: string | undefined,
+  rawCallbackUrl: string | null,
   defaultUrl: string,
 ) {
   if (!rawCallbackUrl) {
