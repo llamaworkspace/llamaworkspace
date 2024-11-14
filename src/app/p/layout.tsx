@@ -9,12 +9,11 @@ export default function AppLayout({
     <AnalyticsProvider trackPageViews identifyUser>
       <SidebarProvider>
         <AppSidebar />
-        <main className="bg-background relative flex min-h-svh flex-1 flex-col peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow">
-          <div className="fixed flex h-svh w-full">
+        <main className="bg-background relative flex min-h-svh flex-1 flex-col">
+          <div className="flex h-svh w-full">
             <div className="flex flex-1 flex-col">{children}</div>
           </div>
         </main>
-        {/* {children} */}
       </SidebarProvider>
     </AnalyticsProvider>
   )

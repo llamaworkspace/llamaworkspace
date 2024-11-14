@@ -17,7 +17,6 @@ const Chat = () => {
         <AppHeader />
       </div>
       <div
-        id="chat-messages"
         className={cn(
           'flex flex-1 flex-col overflow-auto bg-purple-500',
           isActive ? 'block' : 'hidden',
@@ -48,7 +47,6 @@ const Chat = () => {
         </div>
       </div>
       <div
-        id="chat-box"
         className={cn(
           'flex-colx flex bg-orange-400',
           isActive ? 'items-end' : 'flex-1 items-center',
