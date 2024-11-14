@@ -4,13 +4,33 @@ export default function AppPage() {
 
 const Chat = () => {
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="aspect-video rounded-xl bg-zinc-200/50">x</div>
-        <div className="aspect-video rounded-xl bg-zinc-200/50">x</div>
-        <div className="aspect-video rounded-xl bg-zinc-200/50">x</div>
+    <div className="flex flex-1 flex-col bg-blue-50 p-4 pt-0">
+      <div className="flex grow flex-col gap-4 bg-green-400">
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
+        <ChatMessage />
       </div>
-      <div className="min-h-[100vh] flex-1 rounded-xl bg-zinc-200/50 md:min-h-min"></div>
+      <ChatBox />
     </div>
   )
+}
+
+const ChatBox = () => {
+  return <div className="w-2xl rounded-lg bg-zinc-200 p-4">ChatBox</div>
+}
+
+const ChatMessage = () => {
+  return <div className="bg-red-400 p-4">ChatMessage</div>
 }
