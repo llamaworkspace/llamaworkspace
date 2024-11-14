@@ -109,7 +109,8 @@ import type { PropsWithChildren } from 'react'
 
 export function AnalyticsProvider({
   trackPageViews,
+  identifyUser,
   children,
-}: PropsWithChildren<{ trackPageViews?: boolean }>) {
+}: PropsWithChildren<{ trackPageViews?: boolean; identifyUser?: boolean }>) {
   return <div>{children}</div>
 }
