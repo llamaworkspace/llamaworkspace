@@ -1,4 +1,12 @@
-import { cn } from '@/lib/utils'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar'
 import { AnalyticsProvider } from '../global/AnalyticsProvider'
 
 export default function AppLayout({
@@ -6,29 +14,26 @@ export default function AppLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <AnalyticsProvider trackPageViews identifyUser>
-      <div>
-        <Sidebar />
-        <Main>{children}</Main>
-      </div>
+      <SidebarProvider>
+        <AppSidebar />
+        <div>
+          <SidebarTrigger />
+          {children}
+        </div>
+      </SidebarProvider>
     </AnalyticsProvider>
   )
 }
-const Sidebar = () => {
-  return <div>Sidebar</div>
-}
 
-const Main = ({ children }: { children: React.ReactNode }) => {
+export function AppSidebar() {
   return (
-    <div
-      className={cn(
-        'transition-spacing h-full duration-200 ease-out',
-        // isDesktopSidebarOpen && 'lg:pl-72',
-        true && 'lg:pl-72',
-      )}
-    >
-      <div className="relative flex h-full w-full min-w-[300px] flex-1 flex-col overflow-hidden">
-        {children}
-      </div>
-    </div>
+    <Sidebar>
+      <SidebarHeader />
+      <SidebarContent>
+        <SidebarGroup />
+        <SidebarGroup />
+      </SidebarContent>
+      <SidebarFooter />
+    </Sidebar>
   )
 }
