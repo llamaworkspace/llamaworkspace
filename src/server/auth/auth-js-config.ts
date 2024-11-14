@@ -33,7 +33,7 @@ declare module 'next-auth' {
  */
 
 export const authJsConfig = {
-  debug: true,
+  debug: false,
   providers: [
     Nodemailer({
       from: env.SMTP_EMAIL_FROM,
