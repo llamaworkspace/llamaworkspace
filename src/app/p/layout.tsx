@@ -1,7 +1,7 @@
 import { AppHeader } from '@/components/global/app-header'
 import { AppSidebar } from '@/components/global/app-sidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { AnalyticsProvider } from '../global/AnalyticsProvider'
+import { AnalyticsProvider } from '../../components/global/analytics-provider'
 
 export default function AppLayout({
   children,
