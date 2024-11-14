@@ -2,7 +2,7 @@ import { SidebarTrigger } from '../ui/sidebar'
 
 export function AppHeader() {
   return (
-    <header className="flex h-12 shrink-0 items-center gap-2 bg-yellow-200 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+    <header className="flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="h-5 w-5" />
         <div

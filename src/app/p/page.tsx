@@ -2,6 +2,7 @@
 import { AppHeader } from '@/components/global/app-header'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
+import { Chatbox } from './chatbox'
 
 export default function AppPage() {
   return <Chat />
@@ -13,56 +14,57 @@ const Chat = () => {
 
   return (
     <>
-      <div className="flex flex-col bg-yellow-300">
+      <div className="flex flex-col">
         <AppHeader />
       </div>
       <div
         className={cn(
-          'flex flex-1 flex-col overflow-auto bg-purple-500',
+          'flex flex-1 flex-col overflow-auto',
           isActive ? 'block' : 'hidden',
         )}
       >
         <div>
-          <div className="relative flex w-full min-w-0 flex-col p-2">
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a thign</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a thign</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a thign</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a thign</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
-            <div className="bg-red-100 p-4">this is a sidebar group</div>
+          <div className="relative mx-auto flex w-full min-w-0 max-w-3xl flex-col">
+            <ChatItem />
+            {/* <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem />
+            <ChatItem /> */}
           </div>
         </div>
       </div>
       <div
         className={cn(
-          'flex-colx flex bg-orange-400',
+          'flex-colx flex',
           isActive ? 'items-end' : 'flex-1 items-center',
         )}
       >
-        <button onClick={toggleActive}>{isActive ? 'Hide' : 'Show'}</button>
-        <ChatBox />
+        <div className="w-full">
+          <div className="mx-auto mb-6 max-w-3xl text-3xl font-semibold tracking-tighter text-zinc-950">
+            How can I help you today?
+          </div>
+          <Chatbox onClick={toggleActive} />
+          <div className="mx-auto max-w-3xl">
+            <button onClick={toggleActive}>{isActive ? 'Hide' : 'Show'}</button>
+          </div>
+        </div>
       </div>
     </>
   )
 }
 
-const ChatBox = () => {
-  return <div className="rounded-xl bg-zinc-200 p-4">ChatBox</div>
-}
-
-const ChatMessage = () => {
-  return <div className="bg-red-400 p-4">ChatMessage</div>
+const ChatItem = () => {
+  return <div className="mb-4 bg-red-100 p-4">this is a sidebar group</div>
 }
