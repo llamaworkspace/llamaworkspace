@@ -1,0 +1,7 @@
+{
+  "caproverUrl": "https://captain.llamaws.com",
+  "caproverName": "captain-01",
+  "caproverPassword": "$CAPROVER_PASSWORD",
+  "appName": "llamaws-app",
+  "branch": "main"
+}

@@ -4,13 +4,13 @@ import { useChatById } from '@/components/chats/chatHooks'
 import { Chat } from '@/components/chats/components/Chat'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
-import { useNavigation } from '@/lib/frontend/useNavigation'
+import { useParams, usePathname } from 'next/navigation'
 
 export default function ChatPage() {
-  const navigation = useNavigation()
+  const params = useParams<{ chat_id: string }>()
+  const pathname = usePathname()
 
-  const query = navigation.query
-  const chatId = query.chat_id as string | undefined
+  const chatId = params?.chat_id
   const { data: chat, isLoading: chatIsLoading } = useChatById(chatId)
   const { data: app, isLoading: appIsLoading } = useAppById(chat?.appId)
 
@@ -33,7 +33,7 @@ export default function ChatPage() {
     <MainLayout appId={app?.id} chatId={chatId} variant={variant}>
       {/* Apply a key to force full remounts; otherwise nested effects might not work... Nextjs related */}
       {!isAppOrChatInvalid && (
-        <Chat appId={app?.id} chatId={chatId} key={navigation.asPath} />
+        <Chat appId={app?.id} chatId={chatId} key={pathname} />
       )}
       {isAppOrChatInvalid && <AppError />}
     </MainLayout>

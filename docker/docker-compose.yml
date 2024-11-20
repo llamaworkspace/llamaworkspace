@@ -1,0 +1,92 @@
+services:
+  postgres:
+    container_name: llamaws_postgres
+    image: pgvector/pgvector:pg16
+
+    volumes:
+      - llamaws_db:/var/lib/postgresql/data
+
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: llamaws
+
+  minio:
+    image: bitnami/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: miniouser
+      MINIO_ROOT_PASSWORD: miniopassword
+      MINIO_DEFAULT_BUCKETS: llamaws
+      MINIO_API_PORT_NUMBER: 9000
+      MINIO_CONSOLE_PORT_NUMBER: 9001
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - llamaws_minio_data:/data
+
+  adminer:
+    container_name: llamaws_adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  hatchet-postgres:
+    image: postgres:15.6
+    command: postgres -c 'max_connections=200'
+    restart: always
+    environment:
+      - POSTGRES_USER=hatchet
+      - POSTGRES_PASSWORD=hatchet
+      - POSTGRES_DB=hatchet
+    volumes:
+      - llamaws_hatchet_lite_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d hatchet -U hatchet']
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  hatchet-lite:
+    image: ghcr.io/hatchet-dev/hatchet/hatchet-lite:latest
+    ports:
+      - '8888:8888'
+      - '7077:7077'
+    depends_on:
+      hatchet-postgres:
+        condition: service_healthy
+    environment:
+      RABBITMQ_DEFAULT_USER: 'user'
+      RABBITMQ_DEFAULT_PASS: 'password'
+      DATABASE_URL: 'postgresql://hatchet:hatchet@hatchet-postgres:5432/hatchet?sslmode=disable'
+      DATABASE_POSTGRES_PORT: '5432'
+      DATABASE_POSTGRES_HOST: 'hatchet-postgres'
+      SERVER_TASKQUEUE_RABBITMQ_URL: amqp://user:password@localhost:5672/
+      SERVER_AUTH_COOKIE_DOMAIN: localhost
+      SERVER_AUTH_COOKIE_INSECURE: 't'
+      SERVER_GRPC_BIND_ADDRESS: '0.0.0.0'
+      SERVER_GRPC_INSECURE: 't'
+      SERVER_GRPC_BROADCAST_ADDRESS: localhost:7077
+      SERVER_GRPC_PORT: '7077'
+      SERVER_URL: http://localhost:8888
+      SERVER_AUTH_SET_EMAIL_VERIFIED: 't'
+      SERVER_LOGGER_LEVEL: warn
+      SERVER_LOGGER_FORMAT: console
+      DATABASE_LOGGER_LEVEL: warn
+      DATABASE_LOGGER_FORMAT: console
+    volumes:
+      - 'llamaws_hatchet_lite_rabbitmq_data:/var/lib/rabbitmq/mnesia'
+      - 'llamaws_hatchet_lite_config:/config'
+
+volumes:
+  llamaws_db:
+  llamaws_minio_data:
+  llamaq_redis_data:
+  llamaws_hatchet_lite_postgres_data:
+  llamaws_hatchet_lite_rabbitmq_data:
+  llamaws_hatchet_lite_config:

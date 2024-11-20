@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-var-requires */
+import { type Config } from 'tailwindcss'
+import { fontFamily } from 'tailwindcss/defaultTheme'
 
-const { merge } = require('lodash')
-const tailwindTypography = require('./tailwind.typography.config')
-
-/** @type {import('tailwindcss').Config} */
-const config = {
+export default {
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -12,6 +9,8 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
+  // Safelist: Needed for toastHooks and sonner
+  safelist: ['text-red-800 border-red-200 bg-red-50 bg-opacity-30'],
   theme: {
     container: {
       center: true,
@@ -22,44 +21,29 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: [
-          'ui-sans-serif',
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'Roboto',
-          'Arial',
-          'sans-serif',
-        ],
-        heading: ['Sen'],
+        sans: ['var(--font-geist-sans)', ...fontFamily.sans],
       },
       maxWidth: {
         chat: '720px',
       },
       colors: {
         brandRed: '#F54040',
-        openai: {
-          light: '#f9fafa',
-          mid: '#80A89C',
-          dark: '#0E7657',
-        },
         zinc: {
           '10': '#FCFCFC',
         },
       },
       keyframes: {
         'accordion-down': {
-          from: { height: 0 },
+          from: { height: '0' },
           to: { height: 'var(--radix-accordion-content-height)' },
         },
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: 0 },
+          to: { height: '0' },
         },
         blink: {
-          '0%, 100%': { opacity: 1 },
-          '50%': { opacity: 0 },
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
         },
       },
       animation: {
@@ -74,7 +58,6 @@ const config = {
       },
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require('tailwindcss-animate')],
-}
-
-module.exports = merge(config, tailwindTypography)
+} satisfies Config

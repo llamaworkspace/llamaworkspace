@@ -1,6 +1,6 @@
 import { useDefaultApp } from '@/components/apps/appsHooks'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
+import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { isBoolean } from 'underscore'
 import {
@@ -14,9 +14,10 @@ import { useCanPerformActionForApp } from '../permissions/permissionsHooks'
  * If there are no apps, it returns hasNoApps=true after it finishes loading.
  */
 export function useDefaultPageRedirection() {
-  const navigation = useNavigation()
-  const appId = navigation.query?.app_id as string
-  const workspaceId = navigation.query?.workspace_id as string
+  const params = useParams<{ app_id?: string; workspace_id?: string }>()
+  const router = useRouter()
+  const appId = params?.app_id
+  const workspaceId = params?.workspace_id
   const { mutate: createStandaloneChat } = useCreateStandaloneChat()
   const { mutate: createChatForApp } = useCreateChatForApp()
   const { data: defaultApp } = useDefaultApp()
@@ -51,7 +52,7 @@ export function useDefaultPageRedirection() {
     }
 
     if (workspaceId) {
-      void navigation.replace(`/w/:workspaceId/settings`, { workspaceId })
+      router.replace(`/w/${workspaceId}/settings`)
     }
   }, [
     redirectIsCalled,
@@ -60,9 +61,9 @@ export function useDefaultPageRedirection() {
     defaultApp,
     createStandaloneChat,
     createChatForApp,
-    navigation,
     workspaceId,
     canUse,
+    router,
   ])
 
   return {

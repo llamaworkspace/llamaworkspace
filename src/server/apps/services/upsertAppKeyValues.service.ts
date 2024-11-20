@@ -9,7 +9,7 @@ import {
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { KeyValue, Prisma } from '@prisma/client'
-import { Promise } from 'bluebird'
+import Promise from 'bluebird'
 import { isBoolean, isNull, isNumber } from 'underscore'
 import { scopeAppByWorkspace } from '../appUtils'
 

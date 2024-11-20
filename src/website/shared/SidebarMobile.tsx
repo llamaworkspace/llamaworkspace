@@ -1,11 +1,11 @@
 import { useGlobalState } from '@/components/global/globalState'
 import { Button } from '@/components/ui/button'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { Dialog, Transition } from '@headlessui/react'
 import { BookOpenIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Fragment } from 'react'
 
 export function SidebarMobile() {
@@ -70,10 +70,10 @@ export function SidebarMobile() {
   )
 }
 function SidebarContent() {
-  const navigation = useNavigation()
+  const router = useRouter()
 
-  const handleSignIn = async () => {
-    await navigation.push('/auth/signin')
+  const handleSignIn = () => {
+    router.push('/auth/signin')
   }
 
   return (

@@ -15,7 +15,7 @@ import type {
   User,
   Workspace,
 } from '@prisma/client'
-import { Promise } from 'bluebird'
+import Promise from 'bluebird'
 import { getApplicableAppConfigToChatService } from '../getApplicableAppConfigToChat.service'
 
 const subject = async (

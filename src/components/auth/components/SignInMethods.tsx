@@ -6,8 +6,8 @@ import {
   email,
   stringOrNumberRequired,
 } from '@/lib/frontend/finalFormValidations'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { signIn } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 import * as React from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { SignInGoogle } from './SignInGoogle'
@@ -30,10 +30,11 @@ interface SignInMethodsProps {
 
 export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
   const [isLoading, setIsLoading] = React.useState(false)
-  const navigation = useNavigation()
-  const { query } = navigation
+
+  const searchParams = useSearchParams()
+  const errorInSearchParams = searchParams?.get('error')
   const queryCallbackUrl =
-    callbackUrl ?? (navigation.query?.callbackUrl as string | undefined)
+    callbackUrl ?? searchParams?.get('callbackUrl') ?? undefined
 
   const handleEmailFormSubmit = async (values: UserAuthFormValues) => {
     setIsLoading(true)
@@ -51,15 +52,16 @@ export function SignInMethods({ callbackUrl, isDemoMode }: SignInMethodsProps) {
 
   return (
     <div className="grid gap-6">
-      {query.error && (
+      {errorInSearchParams && (
         <Alert variant="danger">
           <AlertTitle>Sign in failed</AlertTitle>
           <AlertDescription className="space-y-2">
             <p>
-              {errorMessages[query.error as keyof typeof errorMessages] ??
-                errorMessages.default}
+              {errorMessages[
+                errorInSearchParams as keyof typeof errorMessages
+              ] ?? errorMessages.default}
             </p>{' '}
-            <p className="text-xs">Error code: {query.error}</p>
+            <p className="text-xs">Error code: {errorInSearchParams}</p>
           </AlertDescription>
         </Alert>
       )}

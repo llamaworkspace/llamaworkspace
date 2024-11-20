@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 export const VerifyRequest = () => {
-  const navigation = useNavigation()
+  const router = useRouter()
   const handleBack = () => {
-    void navigation.back()
+    void router.back()
   }
   return (
     <>

@@ -1,6 +1,6 @@
 import { env } from '@/env.mjs'
+import { enqueueJob } from '@/hatchet/hatchet-enqueue'
 import { isTest } from '@/server/utils/globalServerUtils'
-import { sendEmailQueue } from './queues/sendEmailQueue'
 
 const { SMTP_EMAIL_FROM } = env
 
@@ -26,11 +26,19 @@ export const sendEmail = async (params: ISendEmailParams) => {
     ? `${finalFromName} <${fromEmail ?? SMTP_EMAIL_FROM}>`
     : SMTP_EMAIL_FROM
 
-  await sendEmailQueue.enqueue('send', {
+  await enqueueJob('send-email', {
     from,
     to,
     subject,
     text,
     html,
   })
+
+  // await sendEmailQueue.enqueue('send', {
+  //   from,
+  //   to,
+  //   subject,
+  //   text,
+  //   html,
+  // })
 }

@@ -10,7 +10,7 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { Author } from '@/shared/aiTypesAndMappers'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Chat, Message, User, Workspace } from '@prisma/client'
-import { Promise } from 'bluebird'
+import Promise from 'bluebird'
 import { getMessagesByChatIdService } from '../getMessagesByChatId.service'
 
 const subject = async (

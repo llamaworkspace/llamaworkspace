@@ -26,19 +26,6 @@ const config = {
       },
     ],
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    'no-restricted-imports': [
-      'warn',
-      {
-        paths: [
-          {
-            name: 'next/router',
-            importNames: ['useRouter'],
-            message:
-              "Use `import { useNavigation } from '@/lib/frontend/useNavigation'` instead.",
-          },
-        ],
-      },
-    ],
     '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
   },
 }

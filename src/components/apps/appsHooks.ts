@@ -1,8 +1,7 @@
 import { api } from '@/lib/api'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { serialDebouncer } from '@/lib/utils'
 import { produce } from 'immer'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useMemo, useRef } from 'react'
 import { throttle } from 'underscore'
 import { useErrorHandler } from '../global/errorHandlingHooks'
@@ -35,22 +34,14 @@ export const useIsDefaultApp = (appId?: string) => {
 
 export const useCreateApp = () => {
   const errorHandler = useErrorHandler()
-  const navigation = useNavigation()
+  const router = useRouter()
   const utils = api.useContext()
   const { mutate, isLoading, ...rest } = api.apps.create.useMutation({
     onError: errorHandler(),
     onSuccess: (app) => {
       // Important: Invalidate the entire sidebar cache!
       void utils.sidebar.invalidate()
-      void navigation.push(
-        `/p/:appId/configuration`,
-        {
-          appId: app.id,
-        },
-        {
-          focus: 'title',
-        },
-      )
+      router.push(`/p/${app.id}/configuration?focus=title`)
     },
   })
 
@@ -155,7 +146,7 @@ export const useDeleteApp = (onSuccessRedirectTo?: string) => {
     onError: errorHandler(),
     onSuccess: async () => {
       if (onSuccessRedirectTo) {
-        await router.push(onSuccessRedirectTo)
+        router.push(onSuccessRedirectTo)
       }
 
       // Important: Invalidate the entire sidebar cache!
@@ -168,16 +159,12 @@ export const useDeleteApp = (onSuccessRedirectTo?: string) => {
 export const useDuplicateApp = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
-  const navigation = useNavigation()
+  const router = useRouter()
 
   return api.apps.duplicate.useMutation({
     onError: errorHandler(),
     onSuccess: async (app) => {
-      await navigation.push(
-        `/p/:appId/configuration`,
-        { appId: app.id },
-        { focus: 'title' },
-      )
+      router.push(`/p/${app.id}/configuration?focus=title`)
       await utils.apps.invalidate()
       await utils.sidebar.invalidate()
     },

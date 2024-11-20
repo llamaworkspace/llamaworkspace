@@ -7,7 +7,7 @@ import { getMessagesByChatIdService } from '@/server/chats/services/getMessagesB
 import { Author } from '@/shared/aiTypesAndMappers'
 import type { SimplePrimitive } from '@/shared/globalTypes'
 import type { Message, PrismaClient } from '@prisma/client'
-import { Promise } from 'bluebird'
+import BluebirdPromise from 'bluebird'
 import createHttpError from 'http-errors'
 import { chain, isNumber } from 'underscore'
 import { getProviderAndModelFromFullSlug } from '../../aiUtils'
@@ -41,7 +41,7 @@ export class AppEnginePayloadBuilder {
       appConfigVersion,
       { rawMessages, preparedMessages },
       targetAssistantRawMessage,
-    ] = await Promise.all([
+    ] = await BluebirdPromise.all([
       await this.getChat(chatId),
       await this.getAppConfigVersionForChat(chatId),
       await this.buildMessages(chatId),

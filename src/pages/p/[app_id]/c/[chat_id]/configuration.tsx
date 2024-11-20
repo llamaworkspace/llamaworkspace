@@ -1,14 +1,13 @@
 import { AppConfig } from '@/components/apps/components/AppConfig/AppConfig'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
-import { useNavigation } from '@/lib/frontend/useNavigation'
+import { useParams } from 'next/navigation'
 
 export default function AppConfigPage() {
-  const navigation = useNavigation()
-  const query = navigation.query
+  const params = useParams<{ app_id: string; chat_id: string }>()
 
-  const appId = query.app_id as string | undefined
-  const chatId = query.chat_id as string | undefined
+  const appId = params?.app_id
+  const chatId = params?.chat_id
 
   return (
     <MainLayout appId={appId} chatId={chatId} variant={HeaderVariants.Chatbot}>

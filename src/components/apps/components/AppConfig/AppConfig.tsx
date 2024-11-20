@@ -7,7 +7,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { getEnumByValue } from '@/lib/utils'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useSearchParams } from 'next/navigation'
 import { useAppById } from '../../appsHooks'
 import { AppEngineType } from '../../appsTypes'
 import { AppConfigForExternalApp } from './AppConfigForExternalApp/AppConfigForExternalApp'
@@ -18,12 +18,11 @@ interface AppConfigProps {
 }
 
 export function AppConfig({ appId }: AppConfigProps) {
-  const router = useRouter()
   const { data: app } = useAppById(appId)
-
+  const searchParams = useSearchParams()
   if (!app) return null
 
-  const fromChatId = router.query?.fromChatId as string | undefined
+  const fromChatId = searchParams?.get('fromChatId')
   const returnToChatRoute = fromChatId && `/p/${appId}/c/${fromChatId}`
 
   let engineType: JSX.Element

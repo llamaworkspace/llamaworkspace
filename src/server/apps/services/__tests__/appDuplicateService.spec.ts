@@ -15,8 +15,8 @@ import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
 import _ from 'underscore'
 
-jest.mock('@/server/assets/queues/bindAssetToAppQueue.ts', () => {
-  return { bindAssetToAppQueue: { enqueue: jest.fn() } }
+jest.mock('@/hatchet/hatchet-enqueue.ts', () => {
+  return { enqueueJob: jest.fn() }
 })
 
 const subject = async (

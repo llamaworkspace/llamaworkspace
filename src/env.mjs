@@ -39,6 +39,9 @@ const server = z.object({
   LLAMAQ_INCOMING_API_ROUTE_ACCESS_KEY: z.string(),
   DEMO_MODE: z.string().optional(),
   SENTRY_AUTH_TOKEN: z.string().optional(),
+  HATCHET_CLIENT_TOKEN: z.string(),
+  HATCHET_API_URL: z.string().url(),
+  HATCHET_HOST_PORT: z.string(),
 })
 
 /**
@@ -80,6 +83,9 @@ const processEnv = {
   SMTP_EMAIL_FROM: process.env.SMTP_EMAIL_FROM,
   DEMO_MODE: process.env.DEMO_MODE,
   SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
+  HATCHET_CLIENT_TOKEN: process.env.HATCHET_CLIENT_TOKEN,
+  HATCHET_API_URL: process.env.HATCHET_API_URL,
+  HATCHET_HOST_PORT: process.env.HATCHET_HOST_PORT,
   NEXT_PUBLIC_ENV: process.env.NODE_ENV,
   NEXT_PUBLIC_FRONTEND_URL: process.env.NEXT_PUBLIC_FRONTEND_URL,
   NEXT_PUBLIC_TRPC_DEBUG: process.env.NEXT_PUBLIC_TRPC_DEBUG,

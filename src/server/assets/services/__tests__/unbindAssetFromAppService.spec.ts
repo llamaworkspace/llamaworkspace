@@ -1,4 +1,5 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { enqueueJob } from '@/hatchet/hatchet-enqueue'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -9,11 +10,10 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, User, Workspace } from '@prisma/client'
-import { unbindAssetFromAppQueue } from '../../queues/unbindAssetFromAppQueue'
 import { unbindAssetService } from '../unbindAsset.service'
 
-jest.mock('@/server/assets/queues/unbindAssetFromAppQueue.ts', () => {
-  return { unbindAssetFromAppQueue: { enqueue: jest.fn() } }
+jest.mock('@/hatchet/hatchet-enqueue.ts', () => {
+  return { enqueueJob: jest.fn() }
 })
 
 const subject = async (
@@ -106,13 +106,10 @@ describe('unbindAssetService', () => {
     })
 
     /* eslint-disable-next-line @typescript-eslint/unbound-method*/
-    expect(unbindAssetFromAppQueue.enqueue).toHaveBeenCalledWith(
-      'unbindAssetFromApp',
-      {
-        userId: user.id,
-        assetOnAppId: assetOnApp.id,
-      },
-    )
+    expect(enqueueJob).toHaveBeenCalledWith('unbind-asset-from-app', {
+      userId: user.id,
+      assetOnAppId: assetOnApp.id,
+    })
   })
 
   it('does not change the engine type if there are other assets bound', async () => {

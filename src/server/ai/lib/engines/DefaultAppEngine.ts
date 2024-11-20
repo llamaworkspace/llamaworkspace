@@ -10,7 +10,7 @@ import { ragIngestService } from '@/server/rag/services/ragIngestService'
 import { ragRetrievalService } from '@/server/rag/services/ragRetrievalService'
 import type { PrismaClient } from '@prisma/client'
 import { streamText } from 'ai'
-import { Promise } from 'bluebird'
+import Promise from 'bluebird'
 import createHttpError from 'http-errors'
 import { z } from 'zod'
 import {

@@ -1,3 +1,4 @@
+import { enqueueJob } from '@/hatchet/hatchet-enqueue'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -7,7 +8,6 @@ import {
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopeAppByWorkspace } from '../appUtils'
-import { deleteAppQueue } from '../queues/deleteAppQueue'
 
 interface AppDeleteServiceInputProps {
   appId: string
@@ -48,7 +48,7 @@ export const appDeleteService = async (
       },
     })
 
-    await deleteAppQueue.enqueue('deleteApp', {
+    await enqueueJob('delete-app', {
       userId,
       appId,
     })

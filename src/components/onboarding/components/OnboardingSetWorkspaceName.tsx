@@ -54,7 +54,7 @@ interface FormValues {
 const textClasses = 'text-sm text-zinc-700'
 
 interface OnboardingSetWorkspaceNameProps {
-  onSuccess?: () => Promise<void>
+  onSuccess?: () => void
 }
 
 export const OnboardingSetWorkspaceName = ({
@@ -70,7 +70,7 @@ export const OnboardingSetWorkspaceName = ({
 
     await updateWorkspace({ workspaceId: workspace.id, ...values })
     await utils.users.getSelf.invalidate()
-    await onSuccess?.()
+    onSuccess?.()
   }
 
   return (

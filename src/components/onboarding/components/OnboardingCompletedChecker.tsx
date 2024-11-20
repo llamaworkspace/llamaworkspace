@@ -1,10 +1,10 @@
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
-import { useNavigation } from '@/lib/frontend/useNavigation'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 export const OnboardingCompletedChecker = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const navigation = useNavigation()
+  const router = useRouter()
 
   const redirectToOnboarding = workspace && !workspace?.onboardingCompletedAt
   const workspaceId = workspace?.id
@@ -13,11 +13,9 @@ export const OnboardingCompletedChecker = () => {
     if (!workspaceId) return
 
     if (redirectToOnboarding) {
-      void navigation.replace('/w/:workspaceId/onboarding', {
-        workspaceId,
-      })
+      router.replace(`/w/${workspaceId}/onboarding`)
     }
-  }, [redirectToOnboarding, navigation, workspaceId])
+  }, [redirectToOnboarding, router, workspaceId])
 
   return null
 }
