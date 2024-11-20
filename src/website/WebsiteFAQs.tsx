@@ -23,7 +23,7 @@ const totalCost = AVG_WORDS_MONTH_INDIVIDUAL * wordCost
 export function WebsiteFAQs() {
   return (
     <div className="mx-auto max-w-6xl px-6 sm:px-0">
-      <h1 className="max-w-3xl font-heading text-4xl font-semibold tracking-tighter text-zinc-900 sm:text-6xl ">
+      <h1 className="font-heading max-w-3xl text-4xl font-semibold tracking-tighter text-zinc-900 sm:text-6xl ">
         FAQs
       </h1>
       <div className="divide-y divide-zinc-700/10">

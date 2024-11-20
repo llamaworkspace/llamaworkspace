@@ -1,4 +1,5 @@
 import { AssetUploadStatus } from '@/components/assets/assetTypes'
+import { enqueueJob } from '@/hatchet/hatchet-enqueue'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -9,11 +10,10 @@ import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { AssetOnAppStatus } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, Asset, User, Workspace } from '@prisma/client'
-import { bindAssetToAppQueue } from '../../queues/bindAssetToAppQueue'
 import { bindAssetToAppService } from '../bindAssetToApp.service'
 
-jest.mock('@/server/assets/queues/bindAssetToAppQueue.ts', () => {
-  return { bindAssetToAppQueue: { enqueue: jest.fn() } }
+jest.mock('@/hatchet/hatchet-enqueue.ts', () => {
+  return { enqueueJob: jest.fn() }
 })
 
 const subject = async (
@@ -101,7 +101,7 @@ describe('bindAssetToAppService', () => {
       },
     })
     /* eslint-disable-next-line @typescript-eslint/unbound-method*/
-    expect(bindAssetToAppQueue.enqueue).toHaveBeenCalledWith('bindAssetToApp', {
+    expect(enqueueJob).toHaveBeenCalledWith('bind-asset-to-app', {
       userId: user.id,
       assetOnAppId: assetOnApp.id,
     })

@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import { useNavigation } from '@/lib/frontend/useNavigation'
+import { useRouter } from 'next/navigation'
 import { useErrorHandler } from '../global/errorHandlingHooks'
 import { useSelf } from '../users/usersHooks'
 
@@ -32,7 +32,7 @@ export const useRevokeWorkspaceMemberAccess = () => {
   const errorHandler = useErrorHandler()
   const { data: self } = useSelf()
   const utils = api.useContext()
-  const navigation = useNavigation()
+  const router = useRouter()
 
   return api.workspaces.revokeWorkspaceMemberAccess.useMutation({
     onError: errorHandler(),
@@ -40,7 +40,7 @@ export const useRevokeWorkspaceMemberAccess = () => {
       if (self?.id === variables.userId) {
         // If revoking self, invalidate the full router
         void utils.invalidate()
-        void navigation.replace('/p')
+        router.replace('/p')
       } else {
         void utils.workspaces.getWorkspaceMembers.invalidate()
       }

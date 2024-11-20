@@ -3,7 +3,7 @@ import { maskValueWithBullets } from '@/lib/utils'
 import type { AiRegistry } from '@/server/lib/ai-registry/AiRegistry'
 import type { AiRegistryProviderMeta } from '@/server/lib/ai-registry/aiRegistryTypes'
 import type { PrismaClient } from '@prisma/client'
-import { cloneDeep, groupBy } from 'lodash'
+import { groupBy } from 'underscore'
 
 type ProviderKVs = Record<string, string>
 type ProviderName = string
@@ -180,7 +180,7 @@ const _mergeProvidersAndKVs = (
     }
   })
 
-  return cloneDeep({
+  return structuredClone({
     ...aiRegistryProviderMeta,
     fields,
     hasMissingFields,

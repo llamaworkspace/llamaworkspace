@@ -4,9 +4,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { cn } from '@/lib/utils'
 import { signIn } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 
 interface SignInGoogleProps {
   callbackUrl?: string
@@ -17,9 +17,10 @@ export const SignInGoogle = ({
   callbackUrl,
   isDemoMode,
 }: SignInGoogleProps) => {
-  const navigation = useNavigation()
+  const searchParams = useSearchParams()
+
   const queryCallbackUrl =
-    callbackUrl ?? (navigation.query?.callbackUrl as string | undefined)
+    callbackUrl ?? (searchParams?.get('callbackUrl') as string | undefined)
 
   const handleSignIn = async () => {
     await signIn('google', {

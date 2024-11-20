@@ -2,17 +2,16 @@ import { useCreateChatForApp } from '@/components/chats/chatHooks'
 import { Chat } from '@/components/chats/components/Chat'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { HeaderVariants } from '@/components/layout/MainLayout/MainLayoutHeader'
-import { useNavigation } from '@/lib/frontend/useNavigation'
+import { useParams } from 'next/navigation'
 
 import { useEffect, useRef } from 'react'
 
 export default function NewChatPage() {
-  const navigation = useNavigation()
+  const params = useParams<{ app_id: string }>()
 
   const isChatCreateInvokedRef = useRef(false)
-  const query = navigation.query
 
-  const appId = query.app_id as string | undefined
+  const appId = params?.app_id
   const { mutate: createChat } = useCreateChatForApp()
 
   useEffect(() => {

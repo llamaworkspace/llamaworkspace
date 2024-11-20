@@ -15,11 +15,9 @@ import {
   useCurrentWorkspace,
   useWorkspaces,
 } from '@/components/workspaces/workspacesHooks'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { CheckIcon } from '@heroicons/react/20/solid'
 
 function SidebarDesktopHeaderWorkspacesDropdownSub() {
-  const navigation = useNavigation()
   const { data: currentWorkspace } = useCurrentWorkspace()
   const { data: workspaces } = useWorkspaces()
 
@@ -45,9 +43,7 @@ function SidebarDesktopHeaderWorkspacesDropdownSub() {
           ) : (
             <DropdownMenuItemLink
               key={workspace.id}
-              href={navigation.buildPath('/w/:workspaceId', {
-                workspaceId: workspace.id,
-              })}
+              href={`/w/${workspace.id}`}
               className="pl-7"
             >
               {workspace.name}
@@ -60,7 +56,6 @@ function SidebarDesktopHeaderWorkspacesDropdownSub() {
 }
 
 export function SidebarFooterUserSettingsMenu() {
-  const navigation = useNavigation()
   const signOut = useSignOut()
 
   const { data: workspaces } = useWorkspaces()
@@ -68,28 +63,15 @@ export function SidebarFooterUserSettingsMenu() {
   const { isAdmin } = useIsAdmin()
 
   const { data: workspace } = useCurrentWorkspace()
-  const profileLink = workspace?.id
-    ? navigation.buildPath('/w/:workspaceId/profile', {
-        workspaceId: workspace.id,
-      })
-    : '#'
+  const profileLink = workspace?.id ? `/w/${workspace.id}/profile` : '#'
   const workspaceSettingsLink = workspace?.id
-    ? navigation.buildPath('/w/:workspaceId/settings/:tab', {
-        workspaceId: workspace.id,
-        tab: 'general',
-      })
+    ? `/w/${workspace.id}/settings/general`
     : '#'
   const workspaceMembersLink = workspace?.id
-    ? navigation.buildPath('/w/:workspaceId/settings/:tab', {
-        workspaceId: workspace.id,
-        tab: 'members',
-      })
+    ? `/w/${workspace.id}/settings/members`
     : '#'
   const workspaceModelsLink = workspace?.id
-    ? navigation.buildPath('/w/:workspaceId/settings/:tab', {
-        workspaceId: workspace.id,
-        tab: 'models',
-      })
+    ? `/w/${workspace.id}/settings/models`
     : '#'
 
   return (

@@ -7,9 +7,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { validateFormWithZod } from '@/lib/frontend/finalFormValidations'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { InformationCircleIcon } from '@heroicons/react/24/solid'
 import { FORM_ERROR, type Config } from 'final-form'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef } from 'react'
 import { Field, Form as FinalForm } from 'react-final-form'
 import { z } from 'zod'
@@ -23,12 +23,12 @@ type InviteUserFormValues = z.infer<typeof zodInviteUserFormValues>
 
 export const SettingsMembersInviteForm = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const navigation = useNavigation()
+  const searchParams = useSearchParams()
   const { mutateAsync: inviteUser } = useInviteUserToWorkspace()
   const toast = useSuccessToast()
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const focusQueryStringEl = navigation.query?.focus
+  const focusQueryStringEl = searchParams?.get('focus')
 
   useEffect(() => {
     if (inputRef.current && focusQueryStringEl === 'add_members') {

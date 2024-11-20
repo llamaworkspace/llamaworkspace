@@ -1,6 +1,7 @@
 import { cn, getEnumByValue } from '@/lib/utils'
 import { Author } from '@/shared/aiTypesAndMappers'
-import { useRouter } from 'next/router'
+
+import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isBoolean } from 'underscore'
 import { useIsDefaultApp } from '../../apps/appsHooks'
@@ -35,7 +36,8 @@ export function Chat({ appId, chatId }: ChatProps) {
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const autoScrollEnabled = useRef(true)
   const [autoScrollEnabledState, setAutoScrollEnabledState] = useState(true)
-  const router = useRouter()
+
+  const pathname = usePathname()
 
   const handleChatboxHeightChangeStable = useCallback((height: number) => {
     const lines = height / 24 || 1
@@ -101,7 +103,7 @@ export function Chat({ appId, chatId }: ChatProps) {
       _chatContainer.removeEventListener('scroll', handleScroll)
     }
     // Router.asPath is used to force a re-link with chatContainerRef, otherwise nextjs route changes causes issues: the container is removed from the DOM but this listener isn't remounted.
-  }, [router.asPath])
+  }, [pathname])
 
   // If no messages, never show the arrow. For example, in chatbots intro message: Do not show
   const showScrollToBottomIcon = !!(messages?.length && !autoScrollEnabledState)

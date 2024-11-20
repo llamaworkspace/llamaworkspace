@@ -1,5 +1,5 @@
 import type { RouterOutputs } from '@/lib/api'
-import { useNavigation } from '@/lib/frontend/useNavigation'
+import { useParams } from 'next/navigation'
 import { SidebarMainChatHistoryItem } from './SidebarMainChatHistoryItem'
 
 type ChatHistoryForSidebarOutput =
@@ -14,8 +14,8 @@ export const SidebarMainChatHistoryTimeBlock = ({
   title,
   chats,
 }: ChatHistoryTimeBlockProps) => {
-  const navigation = useNavigation()
-  const isIndividualChatPage = navigation.pathname === '/c/[chat_id]'
+  const params = useParams<{ chat_id: string }>()
+  const isIndividualChatPage = params?.chat_id !== null
 
   return (
     <div className="w-full space-y-1">
@@ -30,9 +30,7 @@ export const SidebarMainChatHistoryTimeBlock = ({
               <SidebarMainChatHistoryItem
                 chatId={chat.id}
                 title={chat.title}
-                isActive={
-                  isIndividualChatPage && navigation.query.chat_id === chat.id
-                }
+                isActive={isIndividualChatPage && params?.chat_id === chat.id}
               />
             </div>
           )

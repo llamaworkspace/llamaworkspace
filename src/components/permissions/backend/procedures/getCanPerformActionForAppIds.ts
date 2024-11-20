@@ -1,7 +1,7 @@
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import { protectedProcedure } from '@/server/trpc/trpc'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
-import { Promise } from 'bluebird'
+import Promise from 'bluebird'
 import { z } from 'zod'
 
 const zInput = z.object({

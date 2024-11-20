@@ -7,8 +7,6 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { type AppType } from 'next/app'
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const MainApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -21,9 +19,7 @@ const MainApp: AppType<{ session: Session | null }> = ({
           <SessionProvider session={session}>
             <ChakraProvider>
               <TooltipProvider>
-                <DndProvider backend={HTML5Backend}>
-                  <Component {...pageProps} />
-                </DndProvider>
+                <Component {...pageProps} />
               </TooltipProvider>
             </ChakraProvider>
           </SessionProvider>

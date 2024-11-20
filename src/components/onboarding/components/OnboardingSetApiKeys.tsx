@@ -55,7 +55,7 @@ interface FormValues {
 const textClasses = 'text-sm text-zinc-700'
 
 interface OnboardingSetApiKeysProps {
-  onSuccess?: () => Promise<void>
+  onSuccess?: () => void
 }
 
 export const OnboardingSetApiKeys = ({
@@ -79,7 +79,7 @@ export const OnboardingSetApiKeys = ({
 
     await utils.users.getSelf.invalidate()
 
-    await onSuccess?.()
+    onSuccess?.()
   }
 
   return (

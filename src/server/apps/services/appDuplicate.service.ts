@@ -12,7 +12,7 @@ import {
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { AppConfigVersion, Message } from '@prisma/client'
-import { Promise } from 'bluebird'
+import Promise from 'bluebird'
 import _ from 'underscore'
 import { appCreateService } from './appCreate.service'
 import { getAppKeyValuesService } from './getAppKeyValues.service'

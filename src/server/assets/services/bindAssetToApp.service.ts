@@ -1,5 +1,6 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
 import { AssetUploadStatus } from '@/components/assets/assetTypes'
+import { enqueueJob } from '@/hatchet/hatchet-enqueue'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -10,7 +11,6 @@ import {
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { TRPCError } from '@trpc/server'
 import { scopeAssetByWorkspace } from '../assetUtils'
-import { bindAssetToAppQueue } from '../queues/bindAssetToAppQueue'
 
 interface BindAssetToAppPayload {
   assetId: string
@@ -94,7 +94,7 @@ const setAppEngineTypeToAssistant = async (
 
 const enqueueBindAssetToApp = async (userId: string, assetOnAppId: string) => {
   // Do the actual binding here
-  await bindAssetToAppQueue.enqueue('bindAssetToApp', {
+  await enqueueJob('bind-asset-to-app', {
     userId,
     assetOnAppId,
   })

@@ -1,3 +1,4 @@
+import { enqueueJob } from '@/hatchet/hatchet-enqueue'
 import { createUserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prisma } from '@/server/db'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
@@ -6,11 +7,10 @@ import { UserFactory } from '@/server/testing/factories/UserFactory'
 import { WorkspaceFactory } from '@/server/testing/factories/WorkspaceFactory'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { App, User, Workspace } from '@prisma/client'
-import { deleteAppQueue } from '../../queues/deleteAppQueue'
 import { appDeleteService } from '../appDelete.service'
 
-jest.mock('@/server/apps/queues/deleteAppQueue.ts', () => {
-  return { deleteAppQueue: { enqueue: jest.fn() } }
+jest.mock('@/hatchet/hatchet-enqueue.ts', () => {
+  return { enqueueJob: jest.fn() }
 })
 
 const subject = async (workspaceId: string, userId: string, appId: string) => {
@@ -43,7 +43,7 @@ describe('appDeleteService', () => {
   it('enqueues the app for deletion', async () => {
     await subject(workspace.id, user.id, app.id)
     /* eslint-disable-next-line @typescript-eslint/unbound-method*/
-    expect(deleteAppQueue.enqueue).toHaveBeenCalledWith('deleteApp', {
+    expect(enqueueJob).toHaveBeenCalledWith('delete-app', {
       userId: user.id,
       appId: app.id,
     })

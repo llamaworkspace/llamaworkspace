@@ -8,9 +8,9 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { stringOrNumberRequired } from '@/lib/frontend/finalFormValidations'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { cn } from '@/lib/utils'
 import EmojiPicker, { Emoji, type EmojiClickData } from 'emoji-picker-react'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { Field } from 'react-final-form'
 
@@ -19,10 +19,10 @@ export const AppConfigForGPTNameAndDescription = ({
 }: {
   disabled: boolean
 }) => {
-  const navigation = useNavigation()
+  const searchParams = useSearchParams()
 
   const titleRef = useRef<HTMLInputElement>(null)
-  const focusQueryStringEl = navigation.query?.focus
+  const focusQueryStringEl = searchParams?.get('focus')
   useEffect(() => {
     if (titleRef.current && focusQueryStringEl === 'title' && !disabled) {
       titleRef.current.focus()

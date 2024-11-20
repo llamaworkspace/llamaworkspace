@@ -9,7 +9,7 @@ import type {
 } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import type { Document } from '@langchain/core/documents'
-import { Promise } from 'bluebird'
+import BluebirdPromise from 'bluebird'
 import cuid from 'cuid'
 import createHttpError from 'http-errors'
 import { embeddingsRegistry } from './registries/embeddingsRegistry'
@@ -167,8 +167,10 @@ const saveEmbeddings = async (
 
   const assetEmbeddingId = result!.id
 
-  await Promise.map(embeddingsWithDocuments, async (embeddingWithDocument) => {
-    return await prisma.$queryRaw`
+  await BluebirdPromise.map(
+    embeddingsWithDocuments,
+    async (embeddingWithDocument) => {
+      return await prisma.$queryRaw`
     INSERT INTO "AssetEmbeddingItem" ("id", "assetEmbeddingId", "contents", "embedding")
     VALUES (
       ${cuid()},
@@ -177,5 +179,6 @@ const saveEmbeddings = async (
       ${embeddingWithDocument.embedding}::real[]      
       )
   `
-  })
+    },
+  )
 }

@@ -5,7 +5,7 @@ import type {
   PrismaTrxClient,
 } from '@/shared/globalTypes'
 import type { AiProvider } from '@prisma/client'
-import { Promise } from 'bluebird'
+import Promise from 'bluebird'
 import { isNull } from 'underscore'
 
 interface ModelParams {

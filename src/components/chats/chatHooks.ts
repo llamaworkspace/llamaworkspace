@@ -1,11 +1,11 @@
 import { api } from '@/lib/api'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { ensureError } from '@/lib/utils'
 import { Author, ChatAuthor } from '@/shared/aiTypesAndMappers'
 import { useAssistant as useVercelAssistant } from 'ai/react'
 import { produce } from 'immer'
-import { debounce } from 'lodash'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect } from 'react'
+import { debounce } from 'underscore'
 import { useDefaultApp } from '../apps/appsHooks'
 import { useTrack } from '../global/clientAnalytics'
 import { useErrorHandler } from '../global/errorHandlingHooks'
@@ -31,16 +31,13 @@ export const useChatById = (chatId?: string) => {
 export const useCreateChatForApp = () => {
   const errorHandler = useErrorHandler()
   const utils = api.useContext()
-  const navigation = useNavigation()
+  const router = useRouter()
 
   return api.chats.createChat.useMutation({
     onError: errorHandler(),
     onSuccess: (chat) => {
       void utils.sidebar.invalidate()
-      void navigation.push(`/p/:appId/c/:chatId`, {
-        appId: chat.appId,
-        chatId: chat.id,
-      })
+      void router.push(`/p/${chat.appId}/c/${chat.id}`)
     },
   })
 }
@@ -51,15 +48,13 @@ export const useCreateStandaloneChat = () => {
   const track = useTrack()
 
   const utils = api.useContext()
-  const navigation = useNavigation()
+  const navigation = useRouter()
   const { mutate, ...obj } = api.chats.createChat.useMutation({
     onError: errorHandler(),
     onSuccess: (chat) => {
       track(EventsRegistry.ChatCreated, { chatId: chat.id })
       void utils.sidebar.invalidate()
-      void navigation.push(`/c/:chatId`, {
-        chatId: chat.id,
-      })
+      void navigation.push(`/c/${chat.id}`)
     },
   })
 

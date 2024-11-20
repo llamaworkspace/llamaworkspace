@@ -1,11 +1,11 @@
 import { AppEngineType } from '@/components/apps/appsTypes'
+import { enqueueJob } from '@/hatchet/hatchet-enqueue'
 import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContext'
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { PermissionsVerifier } from '@/server/permissions/PermissionsVerifier'
 import type { PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { PermissionAction } from '@/shared/permissions/permissionDefinitions'
 import { scopeAssetByWorkspace } from '../assetUtils'
-import { unbindAssetFromAppQueue } from '../queues/unbindAssetFromAppQueue'
 
 interface BindAssetPayload {
   assetId: string
@@ -81,7 +81,7 @@ const enqueueUnbindAssetFromApp = async (
   userId: string,
   assetOnAppId: string,
 ) => {
-  await unbindAssetFromAppQueue.enqueue('unbindAssetFromApp', {
+  await enqueueJob('unbind-asset-from-app', {
     userId,
     assetOnAppId,
   })

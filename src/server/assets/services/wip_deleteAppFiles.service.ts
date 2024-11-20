@@ -3,7 +3,7 @@ import type { UserOnWorkspaceContext } from '@/server/auth/userOnWorkspaceContex
 import { prismaAsTrx } from '@/server/lib/prismaAsTrx'
 import { type PrismaClientOrTrxClient } from '@/shared/globalTypes'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { Promise } from 'bluebird'
+import Promise from 'bluebird'
 import { scopeAssetByWorkspace } from '../assetUtils'
 
 const { s3Client, s3BucketName } = getS3Client()

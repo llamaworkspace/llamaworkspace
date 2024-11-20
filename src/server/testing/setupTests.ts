@@ -22,10 +22,8 @@ jest.mock('@/server/messaging/EmailService.ts', () => {
   })
 })
 
-jest.mock('@/server/queues/queuesManager.ts', () => {
-  return jest.fn().mockImplementation(() => {
-    return { call: jest.fn(), registerQueue: jest.fn() }
-  })
+jest.mock('@/hatchet/hatchet-enqueue.ts', () => {
+  return { enqueueJob: jest.fn() }
 })
 
 // This is needed to avoid a random TS error

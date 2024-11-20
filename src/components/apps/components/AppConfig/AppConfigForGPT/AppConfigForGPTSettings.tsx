@@ -7,7 +7,7 @@ import { TextAreaField } from '@/components/ui/forms/TextAreaField'
 import { useIsAdmin } from '@/components/users/usersHooks'
 import { useWorkspaceProperties } from '@/components/workspaces/workspacesHooks'
 import { stringRequired } from '@/lib/frontend/finalFormValidations'
-import { useNavigation } from '@/lib/frontend/useNavigation'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 import { Field } from 'react-final-form'
 import { AppConfigForGPTFileUpload } from './AppConfigForGPTFileUpload/AppConfigForGPTFileUpload'
@@ -31,7 +31,7 @@ export const AppConfigForGPTSettings = ({
   showOpenaiAssistantSelector = false,
   isOpenAiAssistantSelected = false,
 }: AppConfigForGPTSettingsProps) => {
-  const navigation = useNavigation()
+  const searchParams = useSearchParams()
   const { data: app } = useAppById(appId)
 
   const { data: appAssets } = useAppAssets(appId)
@@ -39,7 +39,8 @@ export const AppConfigForGPTSettings = ({
   const hasFiles = appAssets && appAssets.length > 0
 
   const ref = useRef<HTMLTextAreaElement>(null)
-  const focusQueryStringEl = navigation.query?.focus
+  const focusQueryStringEl = searchParams?.get('focus')
+
   useEffect(() => {
     if (ref.current && focusQueryStringEl === 'systemMessage' && !disabled) {
       ref.current.focus()
@@ -135,7 +136,6 @@ const HuggingFaceApiKeyAlert = ({
 }) => {
   const { data: workspaceProperties } = useWorkspaceProperties(workspaceId)
   const { isAdmin } = useIsAdmin()
-  const navigation = useNavigation()
 
   let bodyText: React.ReactNode
 
@@ -149,12 +149,7 @@ const HuggingFaceApiKeyAlert = ({
         <>
           You need a Hugging Face API key if you do not use OpenAI&apos;s
           processing engine.{' '}
-          <StyledLink
-            href={navigation.buildPath('/w/:workspaceId/settings/:tab', {
-              workspaceId,
-              tab: 'models',
-            })}
-          >
+          <StyledLink href={`/w/${workspaceId}/settings/models`}>
             Add the API key here.
           </StyledLink>
         </>
@@ -172,12 +167,7 @@ const HuggingFaceApiKeyAlert = ({
       bodyText = (
         <>
           You need a Hugging Face API key to use this model.{' '}
-          <StyledLink
-            href={navigation.buildPath('/w/:workspaceId/settings/:tab', {
-              workspaceId,
-              tab: 'models',
-            })}
-          >
+          <StyledLink href={`/w/${workspaceId}/settings/models`}>
             Add the API key here.
           </StyledLink>
         </>

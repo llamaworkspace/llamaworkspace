@@ -1,13 +1,13 @@
 import { useCurrentWorkspace } from '@/components/workspaces/workspacesHooks'
-import { useNavigation } from '@/lib/frontend/useNavigation'
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
+import { usePathname } from 'next/navigation'
 import { SidebarMainItemShell } from './SidebarMainItemShell'
 
 export const SidebarMainExploreButton = () => {
   const { data: workspace } = useCurrentWorkspace()
-  const navigation = useNavigation()
+  const pathname = usePathname()
 
-  const isActive = navigation.pathname === `/w/[workspace_id]/apps`
+  const isActive = pathname === `/w/${workspace?.id}/apps`
 
   return (
     <SidebarMainItemShell

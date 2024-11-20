@@ -1,7 +1,8 @@
 import { useCreateChatForApp } from '@/components/chats/chatHooks'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { useRouter } from 'next/router'
+
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 interface AppConfigSubmitButtonGroupProps {
   appId?: string
@@ -19,14 +20,18 @@ export const AppConfigSubmitButtonGroup = ({
   onSave,
 }: AppConfigSubmitButtonGroupProps) => {
   const router = useRouter()
-  const returnToChatRoute = router.asPath.replace(`/configuration`, '')
+  const pathname = usePathname()
+
+  const searchParams = useSearchParams()
+  const returnToChatRoute = pathname?.replace(`/configuration`, '') ?? ''
   const { mutateAsync: createChat } = useCreateChatForApp()
 
   const onSaveAndRedirect = () => {
     async function run() {
       await Promise.resolve(onSave())
-      if (router.query.chat_id) {
-        return void router.push(returnToChatRoute)
+      // Check this
+      if (searchParams?.get('chat_id')) {
+        return void router?.push(returnToChatRoute)
       }
       if (!appId) return
       await createChat({ appId })
